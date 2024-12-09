@@ -171,4 +171,4 @@ echo   }>> packages\admin\package.json
 echo }>> packages\admin\package.json
 
 echo 目录重构完成！
-echo 请运行 'yarn install' 安装依赖 
+echo 请运行 'npm install' 安装依赖 

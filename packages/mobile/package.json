@@ -1,0 +1,8 @@
+{
+  "name": "@health/mobile",
+  "version": "1.0.0",
+  "dependencies": {
+    "react-native": "^0.67.0",
+    "@health/shared": "1.0.0"
+  }
+}
