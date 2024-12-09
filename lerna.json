@@ -2,7 +2,12 @@
   "packages": [
     "packages/*"
   ],
-  "version": "independent",
-  "npmClient": "yarn",
-  "useWorkspaces": true
+  "version": "0.0.0",
+  "npmClient": "npm",
+  "useWorkspaces": true,
+  "command": {
+    "bootstrap": {
+      "npmClientArgs": ["--legacy-peer-deps"]
+    }
+  }
 }

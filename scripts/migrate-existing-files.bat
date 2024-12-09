@@ -1,69 +1,104 @@
 @echo off
-echo 开始迁移已完成的代码文件...
+echo [%date% %time%] 开始文件迁移...
+echo [%date% %time%] 开始文件迁移... > migrate.log
 
-REM 创建必要的目录
-mkdir packages\shared\src\config packages\shared\src\types packages\shared\src\utils
-mkdir packages\backend\src\models packages\backend\src\services
+:: 设置源目录和目标目录
+set SOURCE_DIR=.
+set TARGET_DIR=packages
 
-REM 1. 迁移配置文件
-echo 迁移配置文件...
-move src\config\performance.config.ts packages\shared\src\config\
-move src\config\debug.config.ts packages\shared\src\config\
+:: 创建目录结构
+echo [%date% %time%] 创建目录结构...
+echo [%date% %time%] 创建目录结构... >> migrate.log
 
-REM 2. 迁移模型文件
-echo 迁移模型文件...
-move src\models\health.model.ts packages\backend\src\models\
+mkdir "%TARGET_DIR%\frontend\src\pages\Health" 2>nul
+mkdir "%TARGET_DIR%\frontend\src\pages\Exercise" 2>nul
+mkdir "%TARGET_DIR%\frontend\src\pages\Nutrition" 2>nul
+mkdir "%TARGET_DIR%\frontend\src\components\common" 2>nul
+mkdir "%TARGET_DIR%\frontend\src\components\health" 2>nul
+mkdir "%TARGET_DIR%\frontend\src\components\exercise" 2>nul
+mkdir "%TARGET_DIR%\frontend\src\components\nutrition" 2>nul
+mkdir "%TARGET_DIR%\frontend\src\store" 2>nul
+mkdir "%TARGET_DIR%\frontend\src\utils" 2>nul
+mkdir "%TARGET_DIR%\frontend\src\hooks" 2>nul
+mkdir "%TARGET_DIR%\frontend\src\assets" 2>nul
 
-REM 3. 迁移服务文件
-echo 迁移服务文件...
-move src\services\offline.service.ts packages\backend\src\services\
-move src\services\ai-optimization.service.ts packages\backend\src\services\
-move src\services\security.service.ts packages\backend\src\services\
-move src\services\debug.service.ts packages\backend\src\services\
-move src\services\config.service.ts packages\backend\src\services\
+mkdir "%TARGET_DIR%\backend\src\modules\health\controllers" 2>nul
+mkdir "%TARGET_DIR%\backend\src\modules\health\services" 2>nul
+mkdir "%TARGET_DIR%\backend\src\modules\health\entities" 2>nul
+mkdir "%TARGET_DIR%\backend\src\modules\health\dto" 2>nul
 
-REM 4. 迁移类型定义
-echo 迁移类型定义...
-move src\types\cache.ts packages\shared\src\types\
-move src\types\ai.ts packages\shared\src\types\
-move src\types\edge.ts packages\shared\src\types\
-move src\types\health.ts packages\shared\src\types\
-move src\types\debug.ts packages\shared\src\types\
-move src\types\config.ts packages\shared\src\types\
+mkdir "%TARGET_DIR%\backend\src\modules\exercise\controllers" 2>nul
+mkdir "%TARGET_DIR%\backend\src\modules\exercise\services" 2>nul
+mkdir "%TARGET_DIR%\backend\src\modules\exercise\entities" 2>nul
+mkdir "%TARGET_DIR%\backend\src\modules\exercise\dto" 2>nul
 
-REM 5. 迁移工具函数
-echo 迁移工具函数...
-move src\utils\indexeddb.ts packages\shared\src\utils\
-move src\utils\localStorage.ts packages\shared\src\utils\
+mkdir "%TARGET_DIR%\backend\src\modules\nutrition\controllers" 2>nul
+mkdir "%TARGET_DIR%\backend\src\modules\nutrition\services" 2>nul
+mkdir "%TARGET_DIR%\backend\src\modules\nutrition\entities" 2>nul
+mkdir "%TARGET_DIR%\backend\src\modules\nutrition\dto" 2>nul
 
-REM 6. 更新导入路径
-echo 更新导入路径...
-powershell -Command "(Get-ChildItem -Path packages -Recurse -Filter *.ts) | ForEach-Object { (Get-Content $_.FullName) -replace '@/types', '@health/shared/types' | Set-Content $_.FullName }"
-powershell -Command "(Get-ChildItem -Path packages -Recurse -Filter *.ts) | ForEach-Object { (Get-Content $_.FullName) -replace '@/utils', '@health/shared/utils' | Set-Content $_.FullName }"
-powershell -Command "(Get-ChildItem -Path packages -Recurse -Filter *.ts) | ForEach-Object { (Get-Content $_.FullName) -replace '@/config', '@health/shared/config' | Set-Content $_.FullName }"
-powershell -Command "(Get-ChildItem -Path packages -Recurse -Filter *.ts) | ForEach-Object { (Get-Content $_.FullName) -replace '@/services', '@health/backend/services' | Set-Content $_.FullName }"
-powershell -Command "(Get-ChildItem -Path packages -Recurse -Filter *.ts) | ForEach-Object { (Get-Content $_.FullName) -replace '@/models', '@health/backend/models' | Set-Content $_.FullName }"
+mkdir "%TARGET_DIR%\shared\src\types" 2>nul
+mkdir "%TARGET_DIR%\shared\src\utils" 2>nul
+mkdir "%TARGET_DIR%\shared\src\constants" 2>nul
+mkdir "%TARGET_DIR%\shared\src\interfaces" 2>nul
 
-REM 7. 创建类型定义索引文件
-echo 创建类型定义索引文件...
-echo export * from './cache';> packages\shared\src\types\index.ts
-echo export * from './ai';>> packages\shared\src\types\index.ts
-echo export * from './edge';>> packages\shared\src\types\index.ts
-echo export * from './health';>> packages\shared\src\types\index.ts
-echo export * from './debug';>> packages\shared\src\types\index.ts
-echo export * from './config';>> packages\shared\src\types\index.ts
+:: 复制文件
+echo [%date% %time%] 开始复制文件...
+echo [%date% %time%] 开始复制文件... >> migrate.log
 
-REM 8. 创建工具函数索引文件
-echo 创建工具函数索引文件...
-echo export * from './indexeddb';> packages\shared\src\utils\index.ts
-echo export * from './localStorage';>> packages\shared\src\utils\index.ts
+:: 复制前端文件
+xcopy /E /I /Y "%SOURCE_DIR%\frontend\src\pages\Health\*" "%TARGET_DIR%\frontend\src\pages\Health\"
+xcopy /E /I /Y "%SOURCE_DIR%\frontend\src\pages\Exercise\*" "%TARGET_DIR%\frontend\src\pages\Exercise\"
+xcopy /E /I /Y "%SOURCE_DIR%\frontend\src\pages\Nutrition\*" "%TARGET_DIR%\frontend\src\pages\Nutrition\"
+xcopy /E /I /Y "%SOURCE_DIR%\frontend\src\components\*" "%TARGET_DIR%\frontend\src\components\"
+xcopy /E /I /Y "%SOURCE_DIR%\frontend\src\store\*" "%TARGET_DIR%\frontend\src\store\"
+xcopy /E /I /Y "%SOURCE_DIR%\frontend\src\utils\*" "%TARGET_DIR%\frontend\src\utils\"
+xcopy /E /I /Y "%SOURCE_DIR%\frontend\src\hooks\*" "%TARGET_DIR%\frontend\src\hooks\"
+xcopy /E /I /Y "%SOURCE_DIR%\frontend\src\assets\*" "%TARGET_DIR%\frontend\src\assets\"
 
-REM 9. 创建服务索引文件
-echo 创建服务索引文件...
-echo export * from './offline.service';> packages\backend\src\services\index.ts
-echo export * from './ai-optimization.service';>> packages\backend\src\services\index.ts
-echo export * from './security.service';>> packages\backend\src\services\index.ts
-echo export * from './debug.service';>> packages\backend\src\services\index.ts
-echo export * from './config.service';>> packages\backend\src\services\index.ts
+:: 复制后端文件
+xcopy /E /I /Y "%SOURCE_DIR%\backend\src\modules\health\*" "%TARGET_DIR%\backend\src\modules\health\"
+xcopy /E /I /Y "%SOURCE_DIR%\backend\src\modules\exercise\*" "%TARGET_DIR%\backend\src\modules\exercise\"
+xcopy /E /I /Y "%SOURCE_DIR%\backend\src\modules\nutrition\*" "%TARGET_DIR%\backend\src\modules\nutrition\"
 
-echo 文件迁移完成！ 
+:: 复制共享文件
+xcopy /E /I /Y "%SOURCE_DIR%\shared\types\*" "%TARGET_DIR%\shared\src\types\"
+xcopy /E /I /Y "%SOURCE_DIR%\shared\utils\*" "%TARGET_DIR%\shared\src\utils\"
+xcopy /E /I /Y "%SOURCE_DIR%\shared\constants\*" "%TARGET_DIR%\shared\src\constants\"
+xcopy /E /I /Y "%SOURCE_DIR%\shared\interfaces\*" "%TARGET_DIR%\shared\src\interfaces\"
+
+:: 复制配置文件
+copy /Y "%SOURCE_DIR%\package.json" "%TARGET_DIR%\backend\"
+copy /Y "%SOURCE_DIR%\package.json" "%TARGET_DIR%\frontend\"
+copy /Y "%SOURCE_DIR%\package.json" "%TARGET_DIR%\shared\"
+copy /Y "%SOURCE_DIR%\tsconfig.json" "%TARGET_DIR%\backend\"
+copy /Y "%SOURCE_DIR%\tsconfig.json" "%TARGET_DIR%\frontend\"
+copy /Y "%SOURCE_DIR%\tsconfig.json" "%TARGET_DIR%\shared\"
+
+echo [%date% %time%] 文件迁移完成！
+echo [%date% %time%] 文件迁移完成！ >> migrate.log
+
+:: 安装依赖
+echo [%date% %time%] 开始安装依赖...
+echo [%date% %time%] 开始安装依赖... >> migrate.log
+
+cd "%TARGET_DIR%\shared"
+call npm install --legacy-peer-deps
+cd ..\backend
+call npm install --legacy-peer-deps
+cd ..\frontend
+call npm install --legacy-peer-deps
+cd ..\..
+
+:: 构建共享模块
+echo [%date% %time%] 开始构建共享模块...
+echo [%date% %time%] 开始构建共享模块... >> migrate.log
+
+cd "%TARGET_DIR%\shared"
+call npm run build
+cd ..\..
+
+echo [%date% %time%] 所有操作完成！
+echo [%date% %time%] 所有操作完成！ >> migrate.log
+
+pause

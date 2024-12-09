@@ -1,9 +1,0 @@
-{
-  "name": "@health/backend",
-  "version": "1.0.0",
-  "dependencies": {
-    "@nestjs/common": "^8.0.0",
-    "@nestjs/core": "^8.0.0",
-    "@health/shared": "1.0.0"
-  }
-}
