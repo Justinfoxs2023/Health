@@ -1,0 +1,34 @@
+# 文档配置
+documentation:
+  # 文档目录结构
+  structure:
+    api:
+      - openapi.yaml
+      - api-guidelines.md
+    architecture:
+      - system-design.md
+      - service-design.md
+    deployment:
+      - deployment-guide.md
+      - configuration.md
+
+  # 文档模板配置
+  templates:
+    service:
+      - README.md
+      - API.md
+      - CHANGELOG.md
+    component:
+      - README.md
+      - USAGE.md
+
+  # 自动生成规则
+  auto_generation:
+    enabled: true
+    patterns:
+      - "**/*.js"
+      - "**/*.ts"
+      - "**/*.py"
+    exclude:
+      - "node_modules/**"
+      - "dist/**" 

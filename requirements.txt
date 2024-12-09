@@ -1,0 +1,11 @@
+# 基础依赖
+-r requirements/base.txt
+
+# AI相关依赖
+-r requirements/ai.txt
+
+# 健康相关依赖
+-r requirements/health.txt
+
+# 开发工具依赖
+-r requirements/dev.txt

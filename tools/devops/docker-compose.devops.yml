@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  # 监控服务
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+
+  # 日志聚合
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
+    environment:
+      - discovery.type=single-node
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.9.3
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+
+  # APM服务
+  apm-server:
+    image: docker.elastic.co/apm/apm-server:7.9.3
+    ports:
+      - "8200:8200"
+    depends_on:
+      - elasticsearch
+
+  # 服务注册与发现
+  consul:
+    image: consul:latest
+    ports:
+      - "8500:8500"
+      - "8600:8600/udp"
+
+  # 消息队列
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  # 缓存服务
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379" 

@@ -1,0 +1,48 @@
+.store-container {
+  @include container;
+  padding: var(--spacing-lg);
+
+  .store-header {
+    @include flex(row, space-between, center);
+    margin-bottom: var(--spacing-xl);
+
+    .search-bar {
+      flex: 1;
+      margin: 0 var(--spacing-lg);
+    }
+
+    .filter-section {
+      @include flex(row, flex-end, center);
+      gap: var(--spacing-md);
+    }
+  }
+
+  .recommendations {
+    margin-bottom: var(--spacing-xl);
+
+    .section-title {
+      font-size: var(--font-size-lg);
+      margin-bottom: var(--spacing-md);
+    }
+
+    .product-list {
+      @include grid(repeat(auto-fill, minmax(200px, 1fr)), var(--spacing-lg));
+    }
+  }
+
+  .product-grid {
+    @include grid(repeat(auto-fill, minmax(200px, 1fr)), var(--spacing-lg));
+  }
+
+  .cart-summary {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    max-width: 400px;
+    background: var(--surface-primary);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-lg);
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  }
+} 

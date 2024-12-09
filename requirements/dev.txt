@@ -1,0 +1,20 @@
+# 测试工具
+pytest==7.4.3
+pytest-asyncio==0.21.1
+pytest-cov==4.1.0
+
+# 代码质量
+black==23.11.0
+isort==5.12.0
+mypy==1.7.1
+pylint==2.17.5
+autopep8==2.0.4
+
+# 开发工具
+jupyter==1.0.0
+notebook==7.0.6
+ipython==8.17.2
+
+# 调试工具
+debugpy==1.8.0
+ipdb==0.13.13 

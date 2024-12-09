@@ -1,0 +1,292 @@
+@import '../../design-system/styles/variables';
+@import '../../design-system/styles/mixins';
+
+.ai-analysis {
+  padding: var(--spacing-lg);
+  background: var(--background-default);
+  border-radius: var(--border-radius-lg);
+
+  // 实时分析区域
+  .realtime-analysis {
+    margin-bottom: var(--spacing-xl);
+
+    .video-capture {
+      position: relative;
+      margin-bottom: var(--spacing-lg);
+
+      video, canvas {
+        width: 100%;
+        max-width: 640px;
+        border-radius: var(--border-radius-md);
+        background: var(--background-paper);
+      }
+
+      .pose-feedback {
+        position: absolute;
+        bottom: var(--spacing-md);
+        left: var(--spacing-md);
+        right: var(--spacing-md);
+        padding: var(--spacing-md);
+        background: rgba(0, 0, 0, 0.7);
+        border-radius: var(--border-radius-sm);
+        color: white;
+
+        .pose-status {
+          font-size: var(--font-size-lg);
+          font-weight: var(--font-weight-bold);
+          margin-bottom: var(--spacing-sm);
+
+          &.correct {
+            color: var(--status-success);
+          }
+          &.incorrect {
+            color: var(--status-error);
+          }
+        }
+
+        .corrections {
+          ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+
+            li {
+              margin-bottom: var(--spacing-xs);
+              color: var(--status-warning);
+              font-size: var(--font-size-sm);
+            }
+          }
+        }
+
+        .risk-level {
+          margin-top: var(--spacing-sm);
+          padding: var(--spacing-xs) var(--spacing-sm);
+          border-radius: var(--border-radius-pill);
+          font-size: var(--font-size-sm);
+          display: inline-block;
+
+          &.low { background: var(--status-success); }
+          &.medium { background: var(--status-warning); }
+          &.high { background: var(--status-error); }
+        }
+      }
+    }
+
+    .health-metrics {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--spacing-md);
+
+      .metric {
+        @include card;
+        text-align: center;
+
+        .label {
+          display: block;
+          color: var(--text-secondary);
+          font-size: var(--font-size-sm);
+          margin-bottom: var(--spacing-xs);
+        }
+
+        .value {
+          font-size: var(--font-size-lg);
+          font-weight: var(--font-weight-bold);
+
+          &.low { color: var(--status-success); }
+          &.medium { color: var(--status-warning); }
+          &.high { color: var(--status-error); }
+        }
+      }
+    }
+  }
+
+  // 食物识别区域
+  .food-recognition {
+    margin-bottom: var(--spacing-xl);
+
+    .image-upload {
+      margin-bottom: var(--spacing-lg);
+
+      input[type="file"] {
+        display: none;
+      }
+
+      button {
+        @include card;
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: var(--spacing-sm) var(--spacing-lg);
+        cursor: pointer;
+        transition: background var(--transition-fast);
+
+        &:hover {
+          background: var(--primary-dark);
+        }
+      }
+    }
+
+    .recognition-result {
+      @include card;
+
+      .food-info {
+        margin-bottom: var(--spacing-md);
+        padding-bottom: var(--spacing-md);
+        border-bottom: 1px solid var(--border-light);
+
+        h3 {
+          margin: 0 0 var(--spacing-xs);
+          color: var(--text-primary);
+        }
+
+        .confidence {
+          color: var(--text-secondary);
+          font-size: var(--font-size-sm);
+        }
+      }
+
+      .nutrition-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: var(--spacing-md);
+        margin-bottom: var(--spacing-lg);
+
+        .nutrient {
+          text-align: center;
+          padding: var(--spacing-sm);
+          background: var(--background-elevated);
+          border-radius: var(--border-radius-sm);
+
+          .label {
+            display: block;
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+            margin-bottom: var(--spacing-xs);
+          }
+
+          .value {
+            font-weight: var(--font-weight-medium);
+            color: var(--text-primary);
+          }
+        }
+      }
+
+      .suggestions {
+        ul {
+          list-style: none;
+          padding: 0;
+          margin: var(--spacing-sm) 0;
+
+          li {
+            margin-bottom: var(--spacing-sm);
+            padding-left: var(--spacing-md);
+            position: relative;
+            color: var(--text-secondary);
+
+            &:before {
+              content: "•";
+              position: absolute;
+              left: 0;
+              color: var(--primary);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // 情绪分析区域
+  .emotion-analysis {
+    .emotion-info {
+      @include card;
+
+      .primary-emotion {
+        margin-bottom: var(--spacing-lg);
+
+        .emotion-label {
+          display: block;
+          color: var(--text-secondary);
+          margin-bottom: var(--spacing-xs);
+        }
+
+        .emotion-value {
+          font-size: var(--font-size-lg);
+          font-weight: var(--font-weight-bold);
+          color: var(--primary);
+        }
+
+        .intensity-bar {
+          margin-top: var(--spacing-sm);
+          height: 4px;
+          background: var(--background-elevated);
+          border-radius: var(--border-radius-pill);
+          overflow: hidden;
+
+          .fill {
+            height: 100%;
+            background: var(--primary);
+            transition: width var(--transition-normal);
+          }
+        }
+      }
+
+      .emotion-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--spacing-sm);
+        margin: var(--spacing-sm) 0;
+
+        .emotion-tag {
+          padding: var(--spacing-xs) var(--spacing-sm);
+          background: var(--background-elevated);
+          border-radius: var(--border-radius-pill);
+          font-size: var(--font-size-sm);
+          color: var(--text-secondary);
+        }
+      }
+
+      .emotion-suggestions {
+        margin-top: var(--spacing-lg);
+        padding-top: var(--spacing-lg);
+        border-top: 1px solid var(--border-light);
+
+        ul {
+          list-style: none;
+          padding: 0;
+          margin: var(--spacing-sm) 0;
+
+          li {
+            margin-bottom: var(--spacing-sm);
+            padding-left: var(--spacing-md);
+            position: relative;
+            color: var(--text-secondary);
+
+            &:before {
+              content: "💡";
+              position: absolute;
+              left: 0;
+              font-size: 0.9em;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // 响应式布局
+  @include responsive('mobile') {
+    .health-metrics {
+      grid-template-columns: 1fr !important;
+    }
+
+    .nutrition-grid {
+      grid-template-columns: 1fr 1fr !important;
+    }
+
+    .video-capture {
+      video, canvas {
+        max-width: 100% !important;
+      }
+    }
+  }
+} 

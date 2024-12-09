@@ -1,0 +1,1580 @@
+/* .cursorrules */
+
+# 确保所有新文件都创建在正确的目录下
+When creating a new file:
+  - Use the file browser or command panel to navigate to the correct directory before creating a new file.
+  - Do not create files in the root directory unless it's for a specific reason documented in the development documentation.
+使用 // 作为单行中文注释的前缀
+使用 /** */ 作为多行中文注释的包裹
+将 Python 代码转换为 TypeScript 代码
+为软件开发新功能添加类型定义
+保持了相同的功能和结构
+使用了 TypeScript 的类和接口特性
+
+
+/* 1. 基础交互区域 */
+.basic-interactions {
+  /* 默认指针 */
+  default: {
+    cursor: default;
+    area: ["non-interactive-content", "text-content", "background"];
+  }
+
+  /* 可点击元素 */
+  clickable: {
+    cursor: pointer;
+    area: [
+      "buttons",
+      "links",
+      "menu-items",
+      "tabs",
+      "card-actions",
+      "interactive-icons"
+    ];
+  }
+
+  /* 文本编辑 */
+  text: {
+    cursor: text;
+    area: [
+      "input-fields",
+      "textareas",
+      "editable-content",
+      "search-boxes"
+    ];
+  }
+}
+
+/* 2. 健康数据交互 */
+.health-data-interactions {
+  /* 数据图表交互 */
+  chart-interaction: {
+    cursor: crosshair;
+    area: [
+      "data-charts",
+      "health-graphs",
+      "trend-lines",
+      "data-points"
+    ];
+  }
+
+  /* 可拖拽数据点 */
+  data-point: {
+    cursor: grab;
+    active: grabbing;
+    area: [
+      "adjustable-thresholds",
+      "customizable-goals",
+      "timeline-markers"
+    ];
+  }
+
+  /* 数据选择区域 */
+  data-selection: {
+    cursor: cell;
+    area: [
+      "data-tables",
+      "metric-grids",
+      "selection-ranges"
+    ];
+  }
+}
+
+/* 3. 医疗专业功能 */
+.medical-interactions {
+  /* 3D模型操作 */
+  model-control: {
+    cursor: move;
+    active: grabbing;
+    area: [
+      "body-model-viewer",
+      "organ-models",
+      "anatomical-views"
+    ];
+  }
+
+  /* 医疗图像缩放 */
+  medical-zoom: {
+    cursor: zoom-in;
+    active: zoom-out;
+    area: [
+      "medical-images",
+      "scan-results",
+      "detailed-reports"
+    ];
+  }
+
+  /* 测量工具 */
+  measurement: {
+    cursor: crosshair;
+    area: [
+      "measurement-tools",
+      "analysis-regions",
+      "comparison-views"
+    ];
+  }
+}
+
+/* 4. 状态指示器 */
+.status-indicators {
+  /* 加载状态 */
+  loading: {
+    cursor: wait;
+    area: [
+      "data-loading",
+      "processing-requests",
+      "sync-operations"
+    ];
+  }
+
+  /* 禁用状态 */
+  disabled: {
+    cursor: not-allowed;
+    area: [
+      "disabled-buttons",
+      "locked-features",
+      "restricted-actions"
+    ];
+  }
+
+  /* 帮助信息 */
+  help: {
+    cursor: help;
+    area: [
+      "help-icons",
+      "tooltips",
+      "information-markers"
+    ];
+  }
+}
+
+/* 5. 特殊交互区域 */
+.special-interactions {
+  /* 调整大小 */
+  resize: {
+    cursor: {
+      horizontal: ew-resize;
+      vertical: ns-resize;
+      corner: nwse-resize;
+    }
+    area: [
+      "resizable-panels",
+      "split-views",
+      "adjustable-containers"
+    ];
+  }
+
+  /* 进度调节 */
+  progress: {
+    cursor: col-resize;
+    area: [
+      "progress-bars",
+      "timeline-sliders",
+      "range-controls"
+    ];
+  }
+
+  /* 列表排序 */
+  sortable: {
+    cursor: move;
+    active: grabbing;
+    area: [
+      "sortable-lists",
+      "priority-items",
+      "custom-orders"
+    ];
+  }
+}
+
+/* 6. 健康监测交互 */
+.monitoring-interactions {
+  /* 实时数据监测 */
+  real-time: {
+    cursor: crosshair;
+    area: [
+      "vital-signs-monitor",
+      "ecg-display",
+      "real-time-metrics"
+    ];
+  }
+
+  /* 警报设置 */
+  alert-config: {
+    cursor: pointer;
+    area: [
+      "threshold-settings",
+      "alert-controls",
+      "notification-rules"
+    ];
+  }
+
+  /* 数据标记 */
+  data-marking: {
+    cursor: cell;
+    area: [
+      "event-markers",
+      "annotation-points",
+      "highlight-regions"
+    ];
+  }
+}
+
+/* 7. 辅助功能支持 */
+.accessibility {
+  /* 高对比度模式 */
+  high-contrast: {
+    cursor: {
+      size: 32px;
+      contrast: high;
+      outline: 2px solid #000000;
+    }
+  }
+
+  /* 放大镜模式 */
+  magnifier: {
+    cursor: zoom-in;
+    area: [
+      "accessibility-content",
+      "readable-text",
+      "detailed-images"
+    ];
+  }
+
+  /* 焦点指示 */
+  focus-indicator: {
+    cursor: default;
+    outline: {
+      style: solid;
+      width: 2px;
+      color: #2E7D32;
+      radius: 4px;
+    }
+  }
+}
+
+/* 8. 开发者工具和调试 */
+.developer-tools {
+  /* 代码编辑 */
+  code-edit: {
+    cursor: text;
+    area: [
+      "code-editors",
+      "script-tags",
+      "style-blocks"
+    ];
+  }
+
+  /* 调试模式 */
+  debug-mode: {
+    cursor: wait;
+    area: [
+      "debugger-active",
+      "breakpoints",
+      "debug-panels"
+    ];
+  }
+}
+
+/* 9. 文件管理和版本控制 */
+.file-management {
+  /* 文件操作 */
+  file-operation: {
+    cursor: pointer;
+    area: [
+      "file-explorer",
+      "version-control",
+      "project-tree"
+    ];
+  }
+
+  /* 文件拖放 */
+  file-drag: {
+    cursor: grab;
+    active: grabbing;
+    area: [
+      "file-drag-areas",
+      "drop-zones"
+    ];
+  }
+}
+
+/* 10. 用户反馈和表单处理 */
+.user-feedback {
+  /* 表单提交 */
+  form-submit: {
+    cursor: pointer;
+    area: [
+      "submit-buttons",
+      "form-actions"
+    ];
+  }
+
+  /* 输入验证 */
+  input-validation: {
+    cursor: wait;
+    area: [
+      "input-validation",
+      "error-indicators",
+      "success-indicators"
+    ];
+  }
+}
+
+/* 基础交互规则 */
+
+/* 1. 默认鼠标样式 */
+body {
+  cursor: default; /* 默认箭头样式 */
+}
+
+/* 2. 可点击元素 */
+button,
+a,
+.clickable {
+  cursor: pointer; /* 手型指针,表示可点击 */
+}
+
+/* 3. 文本编辑区域 */
+input,
+textarea,
+[contenteditable="true"] {
+  cursor: text; /* I形光标,表示可输入文本 */
+}
+
+/* 4. 禁用状态 */
+button:disabled,
+.disabled {
+  cursor: not-allowed; /* 禁止符号,表示不可用 */
+}
+
+/* 5. 加载状态 */
+.loading {
+  cursor: progress; /* 进度指示器,表示正在加载 */
+}
+
+/* 6. 帮助提示 */
+[title],
+.help {
+  cursor: help; /* 带问号的指针,表示有帮助信息 */
+}
+
+/* 7. 拖拽相关 */
+.draggable {
+  cursor: move; /* 移动十字箭头,表示可拖动 */
+}
+
+.dragging {
+  cursor: grabbing; /* 抓取状态,表示正在拖动 */
+}
+
+/* 8. 调整大小 */
+.resizable-h {
+  cursor: ew-resize; /* 水平调整大小 */
+}
+
+.resizable-v {
+  cursor: ns-resize; /* 垂直调整大小 */
+}
+
+/* 9. 链接悬停 */
+a:hover {
+  cursor: pointer; /* 手型指针,表示可点击的链接 */
+}
+
+/* 11. 健康数据分析交互 */
+.data-analysis-interactions {
+  /* 数据筛选 */
+  data-filter: {
+    cursor: pointer;
+    area: [
+      "filter-controls",
+      "date-range-selectors",
+      "category-filters",
+      "metric-selectors"
+    ];
+  }
+
+  /* 数据对比 */
+  data-comparison: {
+    cursor: col-resize;
+    area: [
+      "comparison-charts",
+      "before-after-views",
+      "trend-comparisons"
+    ];
+  }
+
+  /* 数据导出 */
+  data-export: {
+    cursor: progress;
+    area: [
+      "export-buttons",
+      "download-areas",
+      "report-generators"
+    ];
+  }
+}
+
+/* 12. 用户隐私保护 */
+.privacy-controls {
+  /* 敏感数据区域 */
+  sensitive-data: {
+    cursor: not-allowed;
+    area: [
+      "masked-content",
+      "protected-fields",
+      "encrypted-data"
+    ];
+  }
+
+  /* 授权操作 */
+  authorization: {
+    cursor: pointer;
+    area: [
+      "permission-controls",
+      "consent-buttons",
+      "access-management"
+    ];
+  }
+}
+
+/* 13. 远程医疗功能 */
+.telemedicine {
+  /* 视频会诊 */
+  video-consultation: {
+    cursor: move;
+    area: [
+      "video-windows",
+      "camera-controls",
+      "screen-sharing"
+    ];
+  }
+
+  /* 实时通讯 */
+  real-time-communication: {
+    cursor: text;
+    area: [
+      "chat-input",
+      "message-areas",
+      "quick-responses"
+    ];
+  }
+}
+
+/* 14. 智能建议系统 */
+.ai-recommendations {
+  /* AI分析结果 */
+  ai-analysis: {
+    cursor: help;
+    area: [
+      "ai-insights",
+      "recommendation-cards",
+      "prediction-models"
+    ];
+  }
+
+  /* 交互式建议 */
+  interactive-suggestions: {
+    cursor: pointer;
+    area: [
+      "suggestion-cards",
+      "action-items",
+      "follow-up-tasks"
+    ];
+  }
+}
+
+/* 15. 系统配置与管理 */
+.system-management {
+  /* 系统设置 */
+  settings: {
+    cursor: default;
+    area: [
+      "configuration-panels",
+      "preference-controls",
+      "system-options"
+    ];
+  }
+
+  /* 用户管理 */
+  user-management: {
+    cursor: pointer;
+    area: [
+      "user-roles",
+      "permission-settings",
+      "access-controls"
+    ];
+  }
+}
+
+/* 16. 错误处理与反馈 */
+.error-handling {
+  /* 错误提示 */
+  error-indication: {
+    cursor: not-allowed;
+    area: [
+      "error-messages",
+      "warning-alerts",
+      "validation-errors"
+    ];
+  }
+
+  /* 恢复操作 */
+  recovery-actions: {
+    cursor: pointer;
+    area: [
+      "retry-buttons",
+      "recovery-options",
+      "fallback-actions"
+    ];
+  }
+}
+
+/* 17. 数据同步状态 */
+.sync-status {
+  /* 同步进行中 */
+  syncing: {
+    cursor: progress;
+    area: [
+      "sync-indicators",
+      "upload-status",
+      "download-progress"
+    ];
+  }
+
+  /* 离线模式 */
+  offline-mode: {
+    cursor: not-allowed;
+    area: [
+      "offline-indicators",
+      "cached-content",
+      "sync-pending"
+    ];
+  }
+}
+
+/* 18. 打印与报告 */
+.report-generation {
+  /* 打印预览 */
+  print-preview: {
+    cursor: zoom-in;
+    area: [
+      "preview-window",
+      "page-navigation",
+      "zoom-controls"
+    ];
+  }
+
+  /* 报告编辑 */
+  report-editing: {
+    cursor: text;
+    area: [
+      "report-templates",
+      "custom-fields",
+      "signature-areas"
+    ];
+  }
+}
+
+/* 19. 健康教育与知识库 */
+.health-education {
+  /* 交互式学习内容 */
+  interactive-learning: {
+    cursor: pointer;
+    area: [
+      "educational-videos",
+      "interactive-tutorials",
+      "knowledge-quizzes"
+    ];
+  }
+
+  /* 3D教学模型 */
+  educational-model: {
+    cursor: move;
+    active: grabbing;
+    area: [
+      "anatomy-models",
+      "procedure-demonstrations",
+      "medical-animations"
+    ];
+  }
+}
+
+/* 20. 处方管理系统 */
+.prescription-management {
+  /* 处方开具 */
+  prescription-writing: {
+    cursor: text;
+    area: [
+      "medication-input",
+      "dosage-selection",
+      "prescription-template"
+    ];
+  }
+
+  /* 药品信息查询 */
+  medicine-lookup: {
+    cursor: help;
+    area: [
+      "drug-database",
+      "interaction-checker",
+      "contraindication-alerts"
+    ];
+  }
+}
+
+/* 21. 医疗设备集成 */
+.device-integration {
+  /* 设备连接控制 */
+  device-control: {
+    cursor: pointer;
+    area: [
+      "device-pairing",
+      "connection-status",
+      "calibration-controls"
+    ];
+  }
+
+  /* 数据采集 */
+  data-collection: {
+    cursor: progress;
+    area: [
+      "real-time-readings",
+      "measurement-collection",
+      "data-synchronization"
+    ];
+  }
+}
+
+/* 22. 紧急响应系统 */
+.emergency-response {
+  /* 紧急呼叫 */
+  emergency-call: {
+    cursor: pointer;
+    area: [
+      "emergency-buttons",
+      "sos-triggers",
+      "quick-contact"
+    ];
+  }
+
+  /* 应急预案 */
+  emergency-protocol: {
+    cursor: help;
+    area: [
+      "protocol-guides",
+      "emergency-contacts",
+      "response-procedures"
+    ];
+  }
+}
+
+
+/* 23. 养生保健功能 */
+.wellness-interactions {
+  /* 穴位指导 */
+  acupoint-guide: {
+    cursor: help;
+    area: [
+      "acupoint-map",
+      "massage-tutorials",
+      "meridian-diagrams"
+    ];
+  }
+
+  /* 冥想引导 */
+  meditation-guide: {
+    cursor: default;
+    area: [
+      "breathing-exercises",
+      "meditation-timer",
+      "mindfulness-practices"
+    ];
+  }
+
+  /* 养生知识库 */
+  wellness-knowledge: {
+    cursor: pointer;
+    area: [
+      "seasonal-health-tips",
+      "traditional-medicine",
+      "health-preservation"
+    ];
+  }
+}
+
+/* 24. 健康饮食管理 */
+.diet-management {
+  /* 食材选择 */
+  ingredient-selection: {
+    cursor: pointer;
+    area: [
+      "seasonal-ingredients",
+      "nutritional-values",
+      "food-properties"
+    ];
+  }
+
+  /* 食谱推荐 */
+  recipe-recommendation: {
+    cursor: pointer;
+    area: [
+      "healthy-recipes",
+      "dietary-suggestions",
+      "cooking-methods"
+    ];
+  }
+
+  /* 饮食记录 */
+  diet-tracking: {
+    cursor: text;
+    area: [
+      "meal-logging",
+      "water-intake",
+      "dietary-notes"
+    ];
+  }
+}
+
+/* 25. 运动健身指导 */
+.fitness-guidance {
+  /* 动作示范 */
+  exercise-demo: {
+    cursor: help;
+    area: [
+      "movement-tutorials",
+      "form-guidance",
+      "exercise-animations"
+    ];
+  }
+
+  /* 训练计划 */
+  workout-plan: {
+    cursor: pointer;
+    area: [
+      "program-selection",
+      "schedule-adjustment",
+      "intensity-settings"
+    ];
+  }
+
+  /* 运动数据 */
+  fitness-metrics: {
+    cursor: crosshair;
+    area: [
+      "performance-tracking",
+      "body-measurements",
+      "fitness-progress"
+    ];
+  }
+}
+
+/* 26. 生活方式管理 */
+.lifestyle-management {
+  /* 作息规划 */
+  daily-routine: {
+    cursor: pointer;
+    area: [
+      "sleep-schedule",
+      "activity-planning",
+      "rest-reminders"
+    ];
+  }
+
+  /* 环境建议 */
+  environment-advice: {
+    cursor: help;
+    area: [
+      "air-quality-tips",
+      "living-space-guidance",
+      "environmental-alerts"
+    ];
+  }
+
+  /* 习惯培养 */
+  habit-building: {
+    cursor: pointer;
+    area: [
+      "habit-tracker",
+      "progress-monitoring",
+      "achievement-rewards"
+    ];
+  }
+}
+
+/* 27. 中医养生功能 */
+.tcm-wellness {
+  /* 经络穴位图 */
+  meridian-point: {
+    cursor: help;
+    area: [
+      "acupoint-map",
+      "meridian-lines",
+      "point-details"
+    ];
+  }
+
+  /* 穴位按摩指导 */
+  massage-guide: {
+    cursor: pointer;
+    active: progress;
+    area: [
+      "massage-tutorials",
+      "pressure-points",
+      "technique-demos"
+    ];
+  }
+
+  /* 养生功法 */
+  wellness-practice: {
+    cursor: move;
+    active: grabbing;
+    area: [
+      "qigong-movements",
+      "breathing-exercises",
+      "meditation-poses"
+    ];
+  }
+}
+
+/* 28. 智能饮食指导 */
+.smart-diet {
+  /* 食材选择器 */
+  food-selector: {
+    cursor: pointer;
+    area: [
+      "ingredient-browser",
+      "nutrition-info",
+      "seasonal-foods"
+    ];
+  }
+
+  /* 营养分析 */
+  nutrition-analysis: {
+    cursor: help;
+    area: [
+      "nutrient-breakdown",
+      "dietary-advice",
+      "balance-indicator"
+    ];
+  }
+
+  /* 食谱编辑 */
+  recipe-editor: {
+    cursor: text;
+    active: progress;
+    area: [
+      "recipe-input",
+      "portion-calculator",
+      "cooking-notes"
+    ];
+  }
+}
+
+/* 29. 运动训练系统 */
+.fitness-system {
+  /* 动作纠正 */
+  posture-correction: {
+    cursor: crosshair;
+    area: [
+      "form-analysis",
+      "alignment-guide",
+      "correction-tips"
+    ];
+  }
+
+  /* 训练强度 */
+  training-intensity: {
+    cursor: col-resize;
+    area: [
+      "intensity-slider",
+      "effort-gauge",
+      "recovery-monitor"
+    ];
+  }
+
+  /* 训练计划编辑 */
+  plan-editor: {
+    cursor: move;
+    active: grabbing;
+    area: [
+      "schedule-blocks",
+      "exercise-arrangement",
+      "rest-periods"
+    ];
+  }
+}
+
+/* 30. 生活节律管理 */
+.lifestyle-rhythm {
+  /* 作息时间 */
+  daily-schedule: {
+    cursor: pointer;
+    area: [
+      "time-blocks",
+      "routine-setup",
+      "reminder-settings"
+    ];
+  }
+
+  /* 睡眠管理 */
+  sleep-management: {
+    cursor: help;
+    area: [
+      "sleep-tracker",
+      "rest-quality",
+      "circadian-rhythm"
+    ];
+  }
+
+  /* 季节养生 */
+  seasonal-wellness: {
+    cursor: pointer;
+    area: [
+      "season-tips",
+      "weather-advice",
+      "adaptation-guide"
+    ];
+  }
+}
+
+/* 31. 中医经络指导 */
+.meridian-guidance {
+  /* 穴位定位 */
+  acupoint-location: {
+    cursor: crosshair;
+    area: [
+      "point-markers",
+      "meridian-paths",
+      "body-map"
+    ];
+  }
+
+  /* 经络走向 */
+  meridian-flow: {
+    cursor: help;
+    area: [
+      "flow-direction",
+      "channel-connections",
+      "energy-paths"
+    ];
+  }
+
+  /* 穴位按摩 */
+  acupoint-massage: {
+    cursor: pointer;
+    active: progress;
+    area: [
+      "pressure-points",
+      "massage-intensity",
+      "technique-guide"
+    ];
+  }
+}
+
+/* 32. 营养膳食规划 */
+.nutrition-planning {
+  /* 食材组合 */
+  food-combination: {
+    cursor: move;
+    active: grabbing;
+    area: [
+      "ingredient-matching",
+      "nutrition-balance",
+      "meal-planning"
+    ];
+  }
+
+  /* 营养计算 */
+  nutrition-calculator: {
+    cursor: text;
+    area: [
+      "calorie-input",
+      "nutrient-ratio",
+      "portion-size"
+    ];
+  }
+
+  /* 食谱定制 */
+  recipe-customization: {
+    cursor: pointer;
+    area: [
+      "preference-settings",
+      "dietary-restrictions",
+      "cooking-methods"
+    ];
+  }
+}
+
+/* 33. 运动康复指导 */
+.rehabilitation-guide {
+  /* 动作矫正 */
+  movement-correction: {
+    cursor: help;
+    area: [
+      "posture-guidance",
+      "movement-analysis",
+      "correction-tips"
+    ];
+  }
+
+  /* 训练进度 */
+  training-progress: {
+    cursor: pointer;
+    area: [
+      "progress-tracking",
+      "milestone-markers",
+      "achievement-records"
+    ];
+  }
+
+  /* 康复评估 */
+  recovery-assessment: {
+    cursor: crosshair;
+    area: [
+      "body-assessment",
+      "flexibility-test",
+      "strength-measurement"
+    ];
+  }
+}
+
+/* 34. 生活起居建议 */
+.lifestyle-advice {
+  /* 作息调整 */
+  routine-adjustment: {
+    cursor: col-resize;
+    area: [
+      "schedule-slider",
+      "time-blocks",
+      "activity-arrangement"
+    ];
+  }
+
+  /* 环境优化 */
+  environment-optimization: {
+    cursor: help;
+    area: [
+      "living-space",
+      "light-adjustment",
+      "air-quality"
+    ];
+  }
+
+  /* 习惯记录 */
+  habit-tracking: {
+    cursor: text;
+    area: [
+      "daily-log",
+      "habit-checklist",
+      "progress-notes"
+    ];
+  }
+}
+
+/* 35. 可访问性增强 */
+.accessibility-enhancement {
+  /* 高对比度模式 */
+  high-contrast: {
+    cursor: {
+      size: "32px",
+      contrast: "high",
+      outline: "2px solid #000000"
+    },
+    area: [
+      "text-content",
+      "navigation-elements",
+      "interactive-components"
+    ];
+  }
+
+  /* 放大镜功能 */
+  magnifier: {
+    cursor: zoom-in;
+    active: zoom-out;
+    area: [
+      "readable-content",
+      "image-details",
+      "data-visualization"
+    ];
+  }
+
+  /* 辅助提示 */
+  assistance: {
+    cursor: help;
+    area: [
+      "help-tooltips",
+      "feature-guides",
+      "instruction-hints"
+    ];
+  }
+}
+
+/* 36. 跨平台适配 */
+.platform-adaptation {
+  /* 触屏设备 */
+  touch-device: {
+    cursor: pointer;
+    area: [
+      "touch-targets",
+      "gesture-areas",
+      "interactive-elements"
+    ];
+  }
+
+  /* iPad适配 */
+  ipad-support: {
+    cursor: default;
+    text-mode: text;
+    area: [
+      "text-inputs",
+      "selection-areas",
+      "editable-content"
+    ];
+  }
+
+  /* 桌面设备 */
+  desktop: {
+    cursor: default;
+    area: [
+      "precision-controls",
+      "hover-elements",
+      "detailed-interactions"
+    ];
+  }
+}
+
+/* 37. 性能优化 */
+.performance-optimization {
+  /* 图标尺寸限制 */
+  icon-size-limit: {
+    max-size: "32px",
+    format: ["png", "svg-static"],
+    area: [
+      "custom-cursors",
+      "interactive-icons",
+      "status-indicators"
+    ];
+  }
+
+  /* 动画优化 */
+  animation-optimization: {
+    cursor: progress;
+    performance: "high",
+    area: [
+      "loading-states",
+      "transition-effects",
+      "progress-indicators"
+    ];
+  }
+}
+
+/* 38. 可访问性增强 */
+.accessibility {
+  /* 高对比度模式 */
+  high-contrast: {
+    cursor: {
+      size: "32px",
+      contrast-ratio: "4.5:1",
+      outline: "2px solid #000"
+    },
+    area: [
+      "text-content",
+      "interactive-elements",
+      "navigation-components"
+    ];
+  }
+
+  /* 键盘导航 */
+  keyboard-navigation: {
+    cursor: pointer;
+    focus-visible: true;
+    area: [
+      "clickable-elements", 
+      "form-controls",
+      "menu-items"
+    ];
+  }
+
+  /* 屏幕阅读器支持 */
+  screen-reader: {
+    cursor: help;
+    aria-label: required;
+    area: [
+      "content-descriptions",
+      "action-hints",
+      "status-updates"
+    ];
+  }
+}
+
+/* 39. 响应式交互 */
+.responsive-interaction {
+  /* 触屏设备 */
+  touch-device: {
+    cursor: pointer;
+    touch-action: manipulation;
+    area: [
+      "tap-targets",
+      "swipe-areas",
+      "touch-controls"
+    ];
+  }
+
+  /* 手势控制 */
+  gesture-control: {
+    cursor: move;
+    active: grabbing;
+    area: [
+      "drag-elements",
+      "zoom-controls",
+      "rotation-handles"
+    ];
+  }
+}
+
+/* 40. 性能优化 */
+.performance {
+  /* 动画优化 */
+  animation: {
+    cursor: progress;
+    performance: {
+      will-change: "transform",
+      gpu-acceleration: true
+    },
+    area: [
+      "loading-states",
+      "transitions",
+      "progress-indicators"
+    ];
+  }
+
+  /* 资源加载 */
+  resource-loading: {
+    cursor: wait;
+    lazy-loading: true;
+    area: [
+      "images",
+      "media-content",
+      "dynamic-components"
+    ];
+  }
+}
+
+# AI 辅助开发规则配置
+# 用于自动检测和修复开发过程中的问题
+
+/* 1. 代码质量规则 */
+.code-quality {
+  /* 自动格式化 */
+  auto-format: {
+    enabled: true;
+    rules: {
+      indentation: 2;
+      max-line-length: 100;
+      semicolons: true;
+      quotes: "single";
+    }
+  }
+
+  /* 类型检查 */
+  type-checking: {
+    enabled: true;
+    strict-mode: true;
+    auto-fix: {
+      missing-types: true;
+      implicit-any: true;
+      strict-null-checks: true;
+    }
+  }
+
+  /* 命名规范 */
+  naming: {
+    auto-correct: true;
+    conventions: {
+      components: "PascalCase";
+      functions: "camelCase";
+      variables: "camelCase";
+      constants: "UPPER_CASE";
+    }
+  }
+}
+
+/* 2. 错误处理规则 */
+.error-handling {
+  /* 自动错误处理 */
+  auto-error-handling: {
+    enabled: true;
+    patterns: {
+      async-functions: true;
+      promises: true;
+      type-assertions: true;
+    }
+  }
+
+  /* 错误报告 */
+  error-reporting: {
+    collect-stack-trace: true;
+    log-to-console: true;
+    send-to-monitoring: true;
+  }
+}
+
+/* 3. 性能优化规则 */
+.performance-rules {
+  /* 优化建议 */
+  optimization-suggestions: {
+    enabled: true;
+    checks: {
+      memoization: true;
+      lazy-loading: true;
+      code-reuse: true;
+    }
+  }
+
+  /* 性能监控 */
+  monitoring: {
+    enabled: true;
+    metrics: {
+      response-time: true;
+      memory-usage: true;
+      cpu-usage: true;
+    }
+  }
+}
+
+/* 4. 代码重构规则 */
+.refactoring {
+  /* 自动重构 */
+  auto-refactor: {
+    enabled: true;
+    suggestions: {
+      unused-code: true;
+      duplicate-code: true;
+      complexity-reduction: true;
+    }
+  }
+
+  /* 模式识别 */
+  pattern-recognition: {
+    design-patterns: true;
+    anti-patterns: true;
+    suggest-improvements: true;
+  }
+}
+
+/* 5. 测试规则 */
+.testing {
+  /* 自动生成测试 */
+  auto-generate-tests: {
+    enabled: true;
+    coverage: {
+      statements: 80;
+      branches: 70;
+      functions: 80;
+      lines: 80;
+    }
+  }
+
+  /* 测试质量 */
+  test-quality: {
+    check-test-names: true;
+    enforce-assertions: true;
+    check-mock-usage: true;
+  }
+}
+
+/* 6. 文档规则 */
+.documentation {
+  /* 自动文档 */
+  auto-document: {
+    enabled: true;
+    generate-for: {
+      functions: true;
+      classes: true;
+      interfaces: true;
+      components: true;
+    }
+  }
+
+  /* 注释规范 */
+  comments: {
+    require-jsdoc: true;
+    enforce-format: true;
+    check-spelling: true;
+  }
+}
+
+/* 7. 安全规则 */
+.security {
+  /* 安全检查 */
+  security-checks: {
+    enabled: true;
+    checks: {
+      xss: true;
+      injection: true;
+      authentication: true;
+    }
+  }
+
+  /* 自动修复 */
+  auto-fix: {
+    sanitize-input: true;
+    escape-output: true;
+    validate-tokens: true;
+  }
+}
+
+/* 8. 版本控制规则 */
+.version-control {
+  /* 提交检查 */
+  commit-checks: {
+    enabled: true;
+    rules: {
+      conventional-commits: true;
+      linked-issues: true;
+      no-conflicts: true;
+    }
+  }
+
+  /* 分支管理 */
+  branch-management: {
+    enforce-naming: true;
+    prevent-direct-master: true;
+    require-reviews: true;
+  }
+}
+
+/* 9. 依赖管理规则 */
+.dependencies {
+  /* 依赖检查 */
+  dependency-checks: {
+    enabled: true;
+    checks: {
+      vulnerabilities: true;
+      outdated-packages: true;
+      unused-dependencies: true;
+    }
+  }
+
+  /* 自动更新 */
+  auto-update: {
+    enabled: true;
+    semver-level: "patch";
+    create-pull-request: true;
+  }
+}
+
+/* 10. 自动修复规则 */
+.auto-fix {
+  /* 常见问题修复 */
+  common-issues: {
+    enabled: true;
+    fixes: {
+      syntax-errors: true;
+      import-errors: true;
+      type-errors: true;
+    }
+  }
+
+  /* 代码优化 */
+  code-optimization: {
+    enabled: true;
+    optimizations: {
+      dead-code: true;
+      unused-imports: true;
+      format-code: true;
+    }
+  }
+}
+
+/* 11. AI 辅助规则执行器 */
+.ai-rule-engine {
+  /* 规则应用 */
+  apply-rules: {
+    enabled: true;
+    auto-fix: true;
+    report-violations: true;
+  }
+
+  /* 实时检查 */
+  real-time-check: {
+    enabled: true;
+    highlight-issues: true;
+    suggest-fixes: true;
+  }
+
+  /* 优化建议 */
+  optimization-suggestions: {
+    enabled: true;
+    show-inline: true;
+    create-tasks: true;
+  }
+}
+
+/* 调试控制台配置规则 */
+.debug-console {
+  /* 1. 基础调试配置 */
+  basic-debug: {
+    /* 断点设置 */
+    breakpoints: {
+      enabled: true;
+      highlight-color: "#ff0000";
+      types: [
+        "line-breakpoint",
+        "conditional-breakpoint",
+        "data-breakpoint"
+      ];
+    }
+
+    /* 调试信息输出 */
+    console-output: {
+      log-levels: [
+        "error",
+        "warn",
+        "info",
+        "debug",
+        "trace"
+      ];
+      format: {
+        timestamp: true;
+        source-line: true;
+        stack-trace: true;
+      }
+    }
+  }
+
+  /* 2. 变量监控 */
+  variable-watch: {
+    /* 变量追踪 */
+    watch-expressions: {
+      enabled: true;
+      auto-refresh: true;
+      highlight-changes: true;
+    }
+
+    /* 作用域查看 */
+    scope-inspection: {
+      local-variables: true;
+      closure-variables: true;
+      global-objects: true;
+    }
+  }
+
+  /* 3. 调用栈分析 */
+  call-stack: {
+    /* 栈追踪 */
+    stack-trace: {
+      depth: "full";
+      async-calls: true;
+      framework-calls: true;
+    }
+
+    /* 性能分析 */
+    performance-profiling: {
+      enabled: true;
+      sampling-rate: 100;
+      timeline-view: true;
+    }
+  }
+}

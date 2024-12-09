@@ -1,0 +1,52 @@
+node_modules/
+vendor/
+
+# Build
+dist/
+build/
+out/
+
+# Environment
+.env
+.env.*
+!.env.*.example
+.env.development
+.env.production
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Run-time data
+data/
+uploads/
+storage/
+tmp/
+temp/
+.cache/
+
+# IDE and editors
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Keys and certificates
+*.pem
+*.key
+*.crt
+*.csr
+
+# Other
+*.bak
+*.backup
+*.old

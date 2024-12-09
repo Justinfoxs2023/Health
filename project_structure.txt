@@ -1,0 +1,134 @@
+health-management-system/
+├── frontend/
+│   ├── mobile-app/                    # React Native移动应用
+│   │   ├── src/
+│   │   │   ├── assets/               # 静态资源
+│   │   │   │   ├── images/          # 图片资源
+│   │   │   │   ├── fonts/           # 字体文件
+│   │   │   │   └── animations/      # 动画文件
+│   │   │   ├── components/          # 通用组件
+│   │   │   │   ├── common/          # 基础组件
+│   │   │   │   ├── health/          # 健康相关组件
+│   │   │   │   ├── charts/          # 图表组件
+│   │   │   │   └── forms/           # 表单组件
+│   │   │   ├── screens/             # 页面组件
+│   │   │   │   ├── auth/            # 认证相关页面
+│   │   │   │   ├── health/          # 健康管理页面
+│   │   │   │   ├── social/          # 社交相关页面
+│   │   │   │   └── profile/         # 个人中心页面
+│   │   │   ├── navigation/          # 路由导航
+│   │   │   ├── redux/               # 状态管理
+│   │   │   │   ├── actions/
+│   │   │   │   ├── reducers/
+│   │   │   │   ├── sagas/
+│   │   │   │   └── store.js
+│   │   │   ├── services/            # API服务
+│   │   │   │   ├── api/
+│   │   │   │   ├── socket/
+│   │   │   │   └── storage/
+│   │   │   └── utils/               # 工具函数
+│   │   ├── __tests__/              # 测试文件
+│   │   ├── app.json
+│   │   └── package.json
+│   └── web-admin/                    # Web管理后台
+│       ├── src/
+│       │   ├── assets/
+│       │   ├── components/
+│       │   ├── pages/
+│       │   ├── services/
+│       │   └── utils/
+│       └── package.json
+│
+├── backend/                          # 后端服务
+│   ├── gateway-service/              # API网关服务
+│   │   ├── src/
+│   │   │   ├── middleware/          # 中间件
+│   │   │   ├── routes/              # 路由
+│   │   │   └── config/              # 配置文件
+│   │   └── package.json
+│   │
+│   ├── user-service/                 # 用户服务
+│   │   ├── src/
+│   │   │   ├── controllers/         # 控制器
+│   │   │   ├── models/              # 数据模型
+│   │   │   ├── services/            # 业务逻辑
+│   │   │   └── utils/               # 工具函数
+│   │   └── package.json
+│   │
+│   ├── health-data-service/         # 健康数据服务
+│   │   ├── src/
+│   │   │   ├── controllers/
+│   │   │   ├── models/
+│   │   │   ├── services/
+│   │   │   └── utils/
+│   │   └── package.json
+│   │
+│   └── community-service/           # 社区服务
+│       ├── src/
+│       │   ├── controllers/
+│       │   ├── models/
+│       │   ├── services/
+│       │   └── utils/
+│       └── package.json
+│
+├── ai-services/                     # AI服务集群
+│   ├── image-recognition/           # 图像识别服务
+│   │   ├── src/
+│   │   │   ├── models/             # AI模型
+│   │   │   ├── training/           # 训练脚本
+│   │   │   └── inference/          # 推理服务
+│   │   └── requirements.txt
+│   │
+│   ├── nlp-service/                # NLP服务
+│   │   ├── src/
+│   │   │   ├── models/
+│   │   │   ├── training/
+│   │   │   └── inference/
+│   │   └── requirements.txt
+│   │
+│   └── recommendation-service/     # 推荐服务
+│       ├── src/
+│       │   ├── models/
+│       │   ├── training/
+│       │   └── inference/
+│       └── requirements.txt
+│
+├── infrastructure/                 # 基础设施
+│   ├── docker/                    # Docker配置
+│   │   ├── frontend/
+│   │   ├── backend/
+│   │   └── ai-services/
+│   │
+│   ├── kubernetes/                # K8s配置
+│   │   ├── deployments/
+│   │   ├── services/
+│   │   └── ingress/
+│   │
+│   └── monitoring/                # 监控配置
+│       ├── prometheus/
+│       └── grafana/
+│
+├── database/                      # 数据库脚本
+│   ├── mongodb/
+│   │   ├── init/
+│   │   └── migrations/
+│   └── redis/
+│
+├── docs/                         # 项目文档
+│   ├── api/                      # API文档
+│   ├── architecture/             # 架构文档
+│   └── deployment/               # 部署文档
+│
+├── tests/                        # 测试用例
+│   ├── unit/
+│   ├── integration/
+│   └── e2e/
+│
+├── scripts/                      # 工具脚本
+│   ├── setup/
+│   ├── deploy/
+│   └── backup/
+│
+├── .gitignore
+├── README.md
+└── docker-compose.yml 

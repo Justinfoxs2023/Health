@@ -1,0 +1,162 @@
+.socialLoginContainer {
+  padding: 24px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  max-width: 600px;
+  margin: 0 auto;
+
+  .title {
+    text-align: center;
+    margin-bottom: 24px;
+    color: #333;
+    font-size: 18px;
+    font-weight: 500;
+  }
+
+  .platformTabs {
+    :global {
+      .ant-tabs-nav {
+        margin-bottom: 24px;
+        &::before {
+          border-bottom-color: #f0f0f0;
+        }
+      }
+      .ant-tabs-tab {
+        font-size: 16px;
+        padding: 12px 24px;
+        &.ant-tabs-tab-active {
+          .ant-tabs-tab-btn {
+            color: #1890ff;
+            font-weight: 500;
+          }
+        }
+      }
+    }
+  }
+
+  .platformGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 20px;
+    padding: 0 12px;
+
+    @media (max-width: 576px) {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+  }
+
+  .platformButton {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.04);
+      transform: translateY(-2px);
+    }
+
+    &.loading {
+      opacity: 0.7;
+      pointer-events: none;
+      .platformIcon {
+        opacity: 0.5;
+      }
+    }
+
+    .platformIcon {
+      font-size: 28px;
+      transition: all 0.3s ease;
+
+      &.wechat { color: #07C160; }
+      &.weibo { color: #E6162D; }
+      &.qq { color: #12B7F5; }
+      &.alipay { color: #1677FF; }
+      &.dingtalk { color: #1890FF; }
+      &.google { color: #4285F4; }
+      &.facebook { color: #1877F2; }
+      &.twitter { color: #1DA1F2; }
+      &.apple { color: #000000; }
+      &.github { color: #24292F; }
+    }
+
+    .platformName {
+      font-size: 14px;
+      color: #666;
+      margin-top: 4px;
+    }
+
+    .loadingIndicator {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  }
+}
+
+.qrCodeContainer {
+  padding: 24px;
+  text-align: center;
+
+  .qrWrapper {
+    margin: 0 auto;
+    padding: 16px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: inline-block;
+  }
+
+  .qrTip {
+    margin-top: 16px;
+    color: #666;
+    font-size: 14px;
+
+    .platformName {
+      color: #1890ff;
+      font-weight: 500;
+    }
+  }
+
+  .qrExpired {
+    text-align: center;
+    margin-top: 16px;
+
+    .expiredText {
+      color: #ff4d4f;
+      margin-bottom: 12px;
+    }
+
+    .refreshButton {
+      margin-top: 8px;
+    }
+  }
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 24px 0;
+  color: #999;
+  font-size: 14px;
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #f0f0f0;
+  }
+
+  .text {
+    padding: 0 16px;
+  }
+} 

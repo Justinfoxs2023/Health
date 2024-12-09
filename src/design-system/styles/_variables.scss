@@ -1,0 +1,87 @@
+// 主题变量
+:root {
+  // 颜色系统
+  --primary: #2E7D32;
+  --primary-light: #4CAF50;
+  --primary-dark: #1B5E20;
+  --secondary: #1565C0;
+  --secondary-light: #1976D2;
+  --secondary-dark: #0D47A1;
+
+  // 状态颜色
+  --status-success: #4CAF50;
+  --status-success-light: #E8F5E9;
+  --status-warning: #FFA726;
+  --status-warning-light: #FFF3E0;
+  --status-error: #EF5350;
+  --status-error-light: #FFEBEE;
+  --status-info: #29B6F6;
+  --status-info-light: #E1F5FE;
+
+  // 背景色
+  --background-default: #FFFFFF;
+  --background-paper: #F5F5F5;
+  --background-elevated: #FAFAFA;
+
+  // 文本颜色
+  --text-primary: #212121;
+  --text-secondary: #757575;
+  --text-hint: #9E9E9E;
+
+  // 边框
+  --border-light: #E0E0E0;
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  --border-radius-pill: 999px;
+
+  // 阴影
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+  --shadow-md: 0 2px 4px rgba(0,0,0,0.16);
+
+  // 间距
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  // 字体
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-md: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 24px;
+
+  // 字重
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+
+  // 动画
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+}
+
+// 深色主题
+[data-theme="dark"] {
+  --primary: #66BB6A;
+  --primary-light: #81C784;
+  --primary-dark: #43A047;
+  --secondary: #42A5F5;
+  --secondary-light: #64B5F6;
+  --secondary-dark: #1E88E5;
+
+  --background-default: #121212;
+  --background-paper: #1E1E1E;
+  --background-elevated: #2C2C2C;
+
+  --text-primary: #FFFFFF;
+  --text-secondary: #B0B0B0;
+  --text-hint: #707070;
+
+  --border-light: #333333;
+
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.24);
+  --shadow-md: 0 2px 4px rgba(0,0,0,0.32);
+} 

@@ -1,0 +1,295 @@
+@import '../../design-system/styles/variables';
+@import '../../design-system/styles/mixins';
+
+.diet-plan {
+  padding: var(--spacing-lg);
+  background: var(--background-default);
+  border-radius: var(--border-radius-lg);
+
+  // 营养目标区域
+  .nutrition-targets {
+    margin-bottom: var(--spacing-xl);
+
+    .targets-grid {
+      display: grid;
+      gap: var(--spacing-md);
+
+      .target-card {
+        &.calories {
+          padding: var(--spacing-lg);
+          background: var(--primary-light);
+          border-radius: var(--border-radius-lg);
+          text-align: center;
+          box-shadow: var(--shadow-sm);
+
+          .target-value {
+            font-size: var(--font-size-xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--primary-dark);
+          }
+
+          .target-label {
+            color: var(--text-secondary);
+            margin-top: var(--spacing-xs);
+          }
+        }
+      }
+
+      .macros-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--spacing-md);
+
+        .macro-card {
+          padding: var(--spacing-md);
+          border-radius: var(--border-radius-md);
+          text-align: center;
+          transition: transform 0.2s ease;
+
+          &:hover {
+            transform: translateY(-2px);
+          }
+
+          .macro-value {
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-medium);
+          }
+
+          .macro-label {
+            font-size: var(--font-size-sm);
+            color: var(--text-secondary);
+          }
+
+          &.protein {
+            background: var(--status-success-light);
+            .macro-value { color: var(--status-success); }
+          }
+
+          &.carbs {
+            background: var(--status-warning-light);
+            .macro-value { color: var(--status-warning); }
+          }
+
+          &.fat {
+            background: var(--status-info-light);
+            .macro-value { color: var(--status-info); }
+          }
+        }
+      }
+    }
+  }
+
+  // 膳食安排区域
+  .meal-schedule {
+    .meals-timeline {
+      .meal-card {
+        margin-bottom: var(--spacing-md);
+        padding: var(--spacing-md);
+        background: var(--background-paper);
+        border-radius: var(--border-radius-md);
+        box-shadow: var(--shadow-sm);
+        border-left: 4px solid transparent;
+
+        &.breakfast { border-color: var(--status-success); }
+        &.lunch { border-color: var(--status-warning); }
+        &.dinner { border-color: var(--status-error); }
+        &.snack { border-color: var(--status-info); }
+
+        .meal-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: var(--spacing-md);
+          padding-bottom: var(--spacing-sm);
+          border-bottom: 1px solid var(--border-light);
+
+          .meal-type {
+            font-weight: var(--font-weight-medium);
+            color: var(--text-primary);
+          }
+
+          .meal-time {
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+          }
+        }
+
+        .food-item {
+          padding: var(--spacing-sm);
+          margin-bottom: var(--spacing-sm);
+          background: var(--background-elevated);
+          border-radius: var(--border-radius-sm);
+
+          .food-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-xs);
+
+            .food-name {
+              font-weight: var(--font-weight-medium);
+            }
+
+            .food-portion {
+              color: var(--text-secondary);
+              font-size: var(--font-size-sm);
+            }
+          }
+
+          .food-nutrients {
+            display: flex;
+            gap: var(--spacing-md);
+            font-size: var(--font-size-sm);
+            color: var(--text-secondary);
+          }
+
+          .food-ingredients {
+            margin-top: var(--spacing-sm);
+            padding-top: var(--spacing-sm);
+            border-top: 1px dashed var(--border-light);
+
+            h5 {
+              color: var(--text-secondary);
+              font-size: var(--font-size-sm);
+              margin-bottom: var(--spacing-xs);
+            }
+
+            p {
+              color: var(--text-secondary);
+              font-size: var(--font-size-sm);
+              line-height: 1.5;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // 饮食限制区域
+  .diet-restrictions {
+    .restriction-card {
+      margin-bottom: var(--spacing-md);
+      padding: var(--spacing-md);
+      background: var(--background-paper);
+      border-radius: var(--border-radius-md);
+      box-shadow: var(--shadow-sm);
+
+      &.allergy {
+        border-left: 4px solid var(--status-error);
+        .restriction-type { color: var(--status-error); }
+      }
+
+      &.preference {
+        border-left: 4px solid var(--status-info);
+        .restriction-type { color: var(--status-info); }
+      }
+
+      &.medical {
+        border-left: 4px solid var(--status-warning);
+        .restriction-type { color: var(--status-warning); }
+      }
+
+      .restriction-header {
+        margin-bottom: var(--spacing-sm);
+      }
+
+      ul {
+        list-style: none;
+        padding-left: var(--spacing-md);
+        margin: var(--spacing-sm) 0;
+
+        li {
+          position: relative;
+          margin-bottom: var(--spacing-xs);
+          color: var(--text-secondary);
+
+          &:before {
+            content: "•";
+            position: absolute;
+            left: -1em;
+            color: var(--text-hint);
+          }
+        }
+      }
+    }
+  }
+
+  // 水分摄入区域
+  .hydration-tracker {
+    .hydration-card {
+      padding: var(--spacing-lg);
+      background: linear-gradient(
+        to right bottom,
+        var(--primary-light),
+        var(--background-paper)
+      );
+      border-radius: var(--border-radius-lg);
+      box-shadow: var(--shadow-md);
+
+      .target-display {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-md);
+        margin-bottom: var(--spacing-lg);
+
+        .water-icon {
+          font-size: 2.5rem;
+        }
+
+        .target-info {
+          .target-value {
+            font-size: var(--font-size-xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--primary-dark);
+          }
+
+          .target-label {
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+          }
+        }
+      }
+
+      .reminders {
+        h4 {
+          color: var(--text-primary);
+          margin-bottom: var(--spacing-sm);
+        }
+
+        ul {
+          list-style: none;
+          padding-left: 0;
+
+          li {
+            margin-bottom: var(--spacing-sm);
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+            padding-left: var(--spacing-md);
+            position: relative;
+
+            &:before {
+              content: "💧";
+              position: absolute;
+              left: 0;
+              font-size: 0.8em;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // 响应式布局
+  @media (max-width: 768px) {
+    .macros-grid {
+      grid-template-columns: 1fr !important;
+    }
+
+    .meal-card {
+      .meal-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-xs);
+      }
+    }
+  }
+} 

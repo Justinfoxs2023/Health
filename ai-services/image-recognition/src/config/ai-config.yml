@@ -1,0 +1,19 @@
+model:
+  name: "health-image-recognition"
+  version: "1.0.0"
+  framework: "tensorflow"
+  
+training:
+  batch_size: 32
+  epochs: 100
+  learning_rate: 0.001
+  
+inference:
+  max_batch_size: 16
+  timeout: 30000
+  gpu_memory_fraction: 0.5
+
+preprocessing:
+  image_size: [224, 224]
+  normalize: true
+  augmentation: true 
