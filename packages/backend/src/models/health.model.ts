@@ -1,8 +1,14 @@
 import { Schema, model, Document } from 'mongoose';
-import { HealthMetrics, ActivityData, NutritionData, SleepData, MentalHealthData } from '../types/health';
+import { 
+  HealthMetricsType,
+  ActivityData, 
+  NutritionData, 
+  SleepData, 
+  MentalHealthData 
+} from '../types/health';
 
 // 健康指标数据模型
-const healthMetricsSchema = new Schema<HealthMetrics>({
+const healthMetricsSchema = new Schema<HealthMetricsType>({
   userId: { type: String, required: true, index: true },
   timestamp: { type: Date, default: Date.now, index: true },
   metrics: {
@@ -141,7 +147,7 @@ healthMetricsSchema.pre('save', async function(next) {
 });
 
 // 导出模型
-export const HealthMetrics = model<HealthMetrics>('HealthMetrics', healthMetricsSchema);
+export const HealthMetrics = model<HealthMetricsType>('HealthMetrics', healthMetricsSchema);
 export const Activity = model<ActivityData>('Activity', activitySchema);
 export const Nutrition = model<NutritionData>('Nutrition', nutritionSchema);
 export const Sleep = model<SleepData>('Sleep', sleepSchema);
