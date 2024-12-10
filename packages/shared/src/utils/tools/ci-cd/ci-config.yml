@@ -1,0 +1,95 @@
+# CI/CD Configuration
+version: 2.1
+
+# Orbs
+orbs:
+  node: circleci/node@4.7
+  docker: circleci/docker@2.1
+  aws-ecr: circleci/aws-ecr@8.1
+  kubernetes: circleci/kubernetes@1.3
+
+parameters:
+  deploy-environment:
+    type: enum
+    default: "development"
+    enum: ["development", "staging", "production"]
+
+# Jobs
+jobs:
+  test:
+    docker:
+      - image: cimg/node:16.13
+    steps:
+      - checkout
+      - node/install-packages
+      - run:
+          name: Run Tests
+          command: npm test
+      - run:
+          name: Upload Coverage
+          command: npm run coverage
+
+  lint:
+    docker:
+      - image: cimg/node:16.13
+    steps:
+      - checkout
+      - node/install-packages
+      - run:
+          name: Run Linting
+          command: npm run lint
+      - run:
+          name: Type Check
+          command: npm run type-check
+
+  build:
+    docker:
+      - image: cimg/node:16.13
+    steps:
+      - checkout
+      - setup_remote_docker
+      - node/install-packages
+      - run:
+          name: Build Frontend
+          command: npm run build:frontend
+      - run:
+          name: Build Backend
+          command: npm run build:backend
+      - run:
+          name: Build AI Services
+          command: npm run build:ai
+
+  deploy:
+    docker:
+      - image: cimg/python:3.9
+    steps:
+      - checkout
+      - kubernetes/install-kubectl
+      - aws-ecr/build-and-push-image:
+          repo: "${AWS_ECR_REPO_NAME}"
+          tag: "${CIRCLE_SHA1}"
+      - run:
+          name: Deploy to Kubernetes
+          command: |
+            kubectl apply -f k8s/
+            kubectl set image deployment/health-app health-app=${AWS_ECR_REPO}:${CIRCLE_SHA1}
+
+# Workflows
+workflows:
+  version: 2
+  build-test-deploy:
+    jobs:
+      - test
+      - lint
+      - build:
+          requires:
+            - test
+            - lint
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - main
+                - staging 

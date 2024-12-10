@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ErrorBoundary 应该应用正确的样式 1`] = `
+<div
+  class="error-boundary"
+>
+  <h2
+    class="error-boundary__title"
+  >
+    errorBoundary.title
+  </h2>
+  <p
+    class="error-boundary__message"
+  >
+    errorBoundary.message
+  </p>
+  <pre
+    class="error-boundary__details"
+  >
+    Test error
+    Error stack trace
+  </pre>
+  <button
+    class="error-boundary__button"
+  >
+    errorBoundary.reload
+  </button>
+</div>
+`; 

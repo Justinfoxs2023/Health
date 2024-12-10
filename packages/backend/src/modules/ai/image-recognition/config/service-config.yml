@@ -1,0 +1,73 @@
+# 服务基础配置
+service:
+  name: image-recognition
+  version: 1.0.0
+  description: "健康图像识别服务"
+  host: "0.0.0.0"
+  port: 5000
+
+# 模型配置
+model:
+  base_path: /app/models
+  version: 1.0.0
+  framework: tensorflow
+  supported_types:
+    - food
+    - exercise
+    - medical
+  preprocessing:
+    image_size: [224, 224]
+    normalize: true
+    augmentation: true
+
+# API配置
+api:
+  prefix: /api/v1
+  rate_limit:
+    enabled: true
+    requests: 100
+    window: 60000
+  endpoints:
+    - path: /analyze/food
+      method: POST
+      auth_required: true
+    - path: /analyze/exercise
+      method: POST
+      auth_required: true
+    - path: /analyze/medical
+      method: POST
+      auth_required: true
+
+# 性能配置
+performance:
+  batch_size: 16
+  workers: 4
+  timeout: 30000
+  gpu:
+    enabled: true
+    memory_fraction: 0.5
+
+# 日志配置
+logging:
+  level: INFO
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  handlers:
+    file:
+      enabled: true
+      path: /app/logs/service.log
+      max_size: 10485760  # 10MB
+      backup_count: 5
+    console:
+      enabled: true
+
+# 监控配置
+monitoring:
+  enabled: true
+  metrics:
+    - request_count
+    - response_time
+    - error_rate
+    - gpu_utilization
+  prometheus:
+    enabled: true
+    port: 9090 

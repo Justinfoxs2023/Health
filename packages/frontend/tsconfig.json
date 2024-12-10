@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@health/shared/*": ["packages/shared/src/*"],
+      "@health/backend/*": ["packages/backend/src/*"],
+      "@health/frontend/*": ["packages/frontend/src/*"],
+      "@health/mobile/*": ["packages/mobile/src/*"],
+      "@health/admin/*": ["packages/admin/src/*"]
+    },
+    "target": "es2020",
+    "module": "commonjs",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  }
+}
