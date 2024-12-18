@@ -1,14 +1,17 @@
 import React from 'react';
-import { StyleSheet, ViewProps } from 'react-native';
+
 import LinearGradient from 'react-native-linear-gradient';
 import { DesignTokens } from '../../../tokens';
+import { StyleSheet, ViewProps } from 'react-native';
 
-interface GradientBackgroundProps extends ViewProps {
+interface IGradientBackgroundProps extends ViewProps {
+  /** variant 的描述 */
   variant?: 'primary' | 'secondary' | 'success' | 'warning';
+  /** intensity 的描述 */
   intensity?: 'light' | 'medium' | 'strong';
 }
 
-export const GradientBackground: React.FC<GradientBackgroundProps> = ({
+export const GradientBackground: React.FC<IGradientBackgroundProps> = ({
   children,
   variant = 'primary',
   intensity = 'medium',
@@ -20,21 +23,14 @@ export const GradientBackground: React.FC<GradientBackgroundProps> = ({
     const alpha = {
       light: ['0.05', '0.1'],
       medium: ['0.1', '0.2'],
-      strong: ['0.2', '0.3']
+      strong: ['0.2', '0.3'],
     }[intensity];
 
-    return [
-      `${baseColor}${alpha[0]}`,
-      `${baseColor}${alpha[1]}`
-    ];
+    return [`${baseColor}${alpha[0]}`, `${baseColor}${alpha[1]}`];
   };
 
   return (
-    <LinearGradient
-      colors={getGradientColors()}
-      style={[styles.gradient, style]}
-      {...props}
-    >
+    <LinearGradient colors={getGradientColors()} style={[styles.gradient, style]} {...props}>
       {children}
     </LinearGradient>
   );
@@ -43,6 +39,6 @@ export const GradientBackground: React.FC<GradientBackgroundProps> = ({
 const styles = StyleSheet.create({
   gradient: {
     flex: 1,
-    width: '100%'
-  }
-}); 
+    width: '100%',
+  },
+});

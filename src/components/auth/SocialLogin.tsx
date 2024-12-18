@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
-import { Tabs, Tooltip, message, Modal, Spin, Button } from 'antd';
+
+import * as Social from '../../types/social';
+import styles from './styles/SocialLogin.module.scss';
+import { AuthInstructions } from '../common/AuthInstructions';
 import { PlatformIcon } from '../social/PlatformIcon';
-import { SocialPlatform } from '../../utils/socialPlatform';
 import { QRCode } from 'antd';
 import { QrPollingService } from '../../services/qr-polling.service';
 import { ReloadOutlined } from '@ant-design/icons';
-import * as Social from '../../types/social';
-import styles from './styles/SocialLogin.module.scss';
+import { SocialPlatform } from '../../utils/socialPlatform';
+import { Tabs, Tooltip, message, Modal, Spin, Button } from 'antd';
 import { socialAuthConfig } from '../../config/socialAuthConfig';
-import { AuthInstructions } from '../common/AuthInstructions';
 
-interface SocialLoginProps {
-  onSuccess?: (response: Social.LoginResponse) => void;
-  onError?: (error: Error) => void;
+interface ISocialLoginProps {
+  /** onSuccess 的描述 */
+    onSuccess: response: SocialLoginResponse  void;
+  onError: error: Error  void;
 }
 
 const { TabPane } = Tabs;
@@ -20,10 +22,7 @@ const { TabPane } = Tabs;
 const DOMESTIC_PLATFORMS: Social.Platform[] = ['wechat', 'weibo', 'qq'];
 const INTERNATIONAL_PLATFORMS: Social.Platform[] = ['google', 'facebook', 'apple'];
 
-export const SocialLogin: React.FC<SocialLoginProps> = ({
-  onSuccess,
-  onError
-}) => {
+export const SocialLogin: React.FC<ISocialLoginProps> = ({ onSuccess, onError }) => {
   const [loading, setLoading] = useState<Social.Platform | null>(null);
   const [qrVisible, setQrVisible] = useState(false);
   const [qrUrl, setQrUrl] = useState('');
@@ -34,7 +33,7 @@ export const SocialLogin: React.FC<SocialLoginProps> = ({
 
   const handleLogin = async (platform: Social.Platform) => {
     if (loading) return;
-    
+
     setLoading(platform);
     try {
       await SocialPlatform.login(platform);
@@ -58,18 +57,18 @@ export const SocialLogin: React.FC<SocialLoginProps> = ({
       const pollingService = new QrPollingService(
         platform,
         qrUrl,
-        (response) => {
+        response => {
           handleQrClose();
           onSuccess?.(response);
         },
-        (error) => {
+        error => {
           handleQrClose();
           onError?.(error);
         },
         () => {
           setQrExpired(true);
           message.warning('二维码已过期，请点击刷新');
-        }
+        },
       );
       setPolling(pollingService);
       pollingService.start();
@@ -97,7 +96,7 @@ export const SocialLogin: React.FC<SocialLoginProps> = ({
 
   const handlePlatformClick = (platform: Social.Platform) => {
     const config = socialAuthConfig[platform];
-    
+
     if (config.authType === 'qrcode') {
       handleQrLogin(platform);
     } else {
@@ -110,10 +109,10 @@ export const SocialLogin: React.FC<SocialLoginProps> = ({
       {platforms.map(platform => {
         const config = SocialPlatform.getConfig(platform);
         const isLoading = loading === platform;
-        
+
         return (
           <Tooltip key={platform} title={`使用${config.name}登录`}>
-            <div 
+            <div
               className={`${styles.platformButton} ${isLoading ? styles.loading : ''}`}
               onClick={() => handlePlatformClick(platform)}
             >
@@ -123,7 +122,7 @@ export const SocialLogin: React.FC<SocialLoginProps> = ({
                 color={config.color}
                 className={`${styles.platformIcon} ${styles[platform]}`}
               />
-              <span className={styles.platformName}>{config.name}</span>
+              <span className={stylesplatformName}>{configname}</span>
               {isLoading && (
                 <div className={styles.loadingIndicator}>
                   <Spin size="small" />
@@ -138,14 +137,14 @@ export const SocialLogin: React.FC<SocialLoginProps> = ({
 
   return (
     <div className={styles.socialLoginContainer}>
-      <h3 className={styles.title}>第三方账号登录</h3>
-      
+      <h3 className={stylestitle}></h3>
+
       <Tabs defaultActiveKey="domestic" centered className={styles.platformTabs}>
-        <TabPane tab="国内平台" key="domestic">
-          {renderPlatformIcons(DOMESTIC_PLATFORMS)}
+        <TabPane tab="" key="domestic">
+          {renderPlatformIconsDOMESTIC_PLATFORMS}
         </TabPane>
-        <TabPane tab="国际平台" key="international">
-          {renderPlatformIcons(INTERNATIONAL_PLATFORMS)}
+        <TabPane tab="" key="international">
+          {renderPlatformIconsINTERNATIONAL_PLATFORMS}
         </TabPane>
       </Tabs>
 
@@ -159,30 +158,26 @@ export const SocialLogin: React.FC<SocialLoginProps> = ({
       >
         <div className={styles.qrCodeContainer}>
           <div className={styles.qrWrapper}>
-            <QRCode 
-              value={qrUrl} 
-              size={200}
-              style={{ opacity: qrExpired ? 0.3 : 1 }}
-            />
+            <QRCode value={qrUrl} size={200} style={{ opacity: qrExpired ? 0.3 : 1 }} />
           </div>
           {!qrExpired ? (
             <p className={styles.qrTip}>
               请使用
-              <span className={styles.platformName}>
-                {currentPlatform ? SocialPlatform.getConfig(currentPlatform).name : ''}
+              <span className={stylesplatformName}>
+                {currentPlatform  SocialPlatformgetConfigcurrentPlatformname  }
               </span>
               扫描二维码登录
             </p>
           ) : (
             <div className={styles.qrExpired}>
-              <p className={styles.expiredText}>二维码已过期</p>
+              <p className={stylesexpiredText}></p>
               <Button
                 type="primary"
                 icon={<ReloadOutlined />}
                 onClick={handleQrRefresh}
-                className={styles.refreshButton}
+                className={stylesrefreshButton}
               >
-                刷新二维码
+                
               </Button>
             </div>
           )}
@@ -201,4 +196,4 @@ export const SocialLogin: React.FC<SocialLoginProps> = ({
       )}
     </div>
   );
-}; 
+};

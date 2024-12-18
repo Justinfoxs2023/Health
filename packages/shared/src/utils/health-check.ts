@@ -1,10 +1,10 @@
 import mongoose from 'mongoose';
-import { createClient } from 'redis';
 import { Logger } from './logger';
+import { createClient } from 'redis';
 
 const logger = new Logger('HealthCheck');
 
-export async function checkServices() {
+export async function checkServices(): Promise<boolean> {
   try {
     // 检查 MongoDB 连接
     const mongoStatus = mongoose.connection.readyState;
@@ -12,7 +12,7 @@ export async function checkServices() {
 
     // 检查 Redis 连接
     const redisClient = createClient({
-      url: `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`
+      url: `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
     });
     await redisClient.connect();
     const redisStatus = await redisClient.ping();
@@ -24,4 +24,4 @@ export async function checkServices() {
     logger.error('服务检查失败', error);
     return false;
   }
-} 
+}

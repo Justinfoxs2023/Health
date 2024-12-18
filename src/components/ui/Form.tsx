@@ -1,100 +1,104 @@
 import React from 'react';
+
 import { theme } from '../../styles/theme';
 
-interface FormFieldProps {
-  label: string;
-  error?: string;
-  required?: boolean;
-  children: React.ReactNode;
+interface IFormFieldProps {
+  /** label 的描述 */
+    label: string;
+  /** error 的描述 */
+    error: string;
+  /** required 的描述 */
+    required: false | true;
+  /** children 的描述 */
+    children: ReactReactNode;
 }
 
-export const FormField: React.FC<FormFieldProps> = ({
-  label,
-  error,
-  required,
-  children
-}) => {
+export const FormField: React.FC<IFormFieldProps> = ({ label, error, required, children }) => {
   return (
     <div className="form-field">
       <label className="field-label">
         {label}
-        {required && <span className="required-mark">*</span>}
+        {required && <span className="requiredmark"></span>}
       </label>
-      <div className="field-content">{children}</div>
-      {error && <div className="field-error">{error}</div>}
+      <div className="fieldcontent">{children}</div>
+      {error && <div className="fielderror">{error}</div>}
 
-      <style jsx>{`
-        .form-field {
-          margin-bottom: ${theme.spacing(3)};
+      <style jsx>{
+        formfield {
+          marginbottom {themespacing3}
         }
 
-        .field-label {
-          display: block;
-          margin-bottom: ${theme.spacing(1)};
-          color: ${theme.colors.text.primary};
-          font-weight: 500;
+        fieldlabel {
+          display block
+          marginbottom {themespacing1}
+          color {themecolorstextprimary}
+          fontweight 500
         }
 
-        .required-mark {
-          color: ${theme.colors.error};
-          margin-left: ${theme.spacing(0.5)};
+        requiredmark {
+          color {themecolorserror}
+          marginleft {themespacing05}
         }
 
-        .field-error {
-          margin-top: ${theme.spacing(0.5)};
-          color: ${theme.colors.error};
-          font-size: ${theme.typography.body2.fontSize};
+        fielderror {
+          margintop {themespacing05}
+          color {themecolorserror}
+          fontsize {themetypographybody2fontSize}
         }
-      `}</style>
+      }</style>
     </div>
   );
 };
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  fullWidth?: boolean;
+  /** fullWidth 的描述 */
+    fullWidth?: undefined | false | true;
 }
 
 export const Input: React.FC<InputProps> = ({ fullWidth = false, ...props }) => {
   return (
     <>
       <input className="input" {...props} />
-      <style jsx>{`
-        .input {
-          padding: ${theme.spacing(1.5)} ${theme.spacing(2)};
-          border: 1px solid rgba(0, 0, 0, 0.23);
-          border-radius: ${theme.borderRadius.small};
-          font-size: ${theme.typography.body1.fontSize};
-          width: ${fullWidth ? '100%' : 'auto'};
-          transition: border-color ${theme.transitions.short};
+      <style jsx>{
+        input {
+          padding {themespacing15} {themespacing2}
+          border 1px solid rgba0 0 0 023
+          borderradius {themeborderRadiussmall}
+          fontsize {themetypographybody1fontSize}
+          width {fullWidth  100  auto}
+          transition bordercolor {themetransitionsshort}
         }
 
-        .input:hover {
-          border-color: rgba(0, 0, 0, 0.87);
+        inputhover {
+          bordercolor rgba0 0 0 087
         }
 
-        .input:focus {
-          outline: none;
-          border-color: ${theme.colors.primary.main};
-          box-shadow: 0 0 0 2px ${theme.colors.primary.light}40;
+        inputfocus {
+          outline none
+          bordercolor {themecolorsprimarymain}
+          boxshadow 0 0 0 2px {themecolorsprimarylight}40
         }
 
-        .input:disabled {
-          background: ${theme.colors.background.default};
-          color: ${theme.colors.text.disabled};
-          cursor: not-allowed;
+        inputdisabled {
+          background {themecolorsbackgrounddefault}
+          color {themecolorstextdisabled}
+          cursor notallowed
         }
-      `}</style>
+      }</style>
     </>
   );
 };
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'contained' | 'outlined' | 'text';
-  color?: 'primary' | 'secondary';
-  fullWidth?: boolean;
+interface IButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  /** variant 的描述 */
+    variant?: undefined | "contained" | "outlined" | "text";
+  /** color 的描述 */
+    color?: undefined | "primary" | "secondary";
+  /** fullWidth 的描述 */
+    fullWidth?: undefined | false | true;
 }
 
-export const Button: React.FC<ButtonProps> = ({
+export const Button: React.FC<IButtonProps> = ({
   variant = 'contained',
   color = 'primary',
   fullWidth = false,
@@ -103,67 +107,67 @@ export const Button: React.FC<ButtonProps> = ({
 }) => {
   return (
     <>
-      <button className={`button ${variant} ${color}`} {...props}>
+      <button className={button {variant} {color}} {props}>
         {children}
       </button>
-      <style jsx>{`
-        .button {
-          padding: ${theme.spacing(1.5)} ${theme.spacing(3)};
-          border-radius: ${theme.borderRadius.medium};
-          font-size: ${theme.typography.body1.fontSize};
-          font-weight: 500;
-          cursor: pointer;
-          transition: all ${theme.transitions.short};
-          width: ${fullWidth ? '100%' : 'auto'};
+      <style jsx>{
+        button {
+          padding {themespacing15} {themespacing3}
+          borderradius {themeborderRadiusmedium}
+          fontsize {themetypographybody1fontSize}
+          fontweight 500
+          cursor pointer
+          transition all {themetransitionsshort}
+          width {fullWidth  100  auto}
         }
 
-        .button.contained.primary {
-          background: ${theme.colors.primary.main};
-          color: ${theme.colors.primary.contrastText};
-          border: none;
+        buttoncontainedprimary {
+          background {themecolorsprimarymain}
+          color {themecolorsprimarycontrastText}
+          border none
         }
 
-        .button.contained.secondary {
-          background: ${theme.colors.secondary.main};
-          color: ${theme.colors.secondary.contrastText};
-          border: none;
+        buttoncontainedsecondary {
+          background {themecolorssecondarymain}
+          color {themecolorssecondarycontrastText}
+          border none
         }
 
-        .button.outlined.primary {
-          background: transparent;
-          color: ${theme.colors.primary.main};
-          border: 1px solid ${theme.colors.primary.main};
+        buttonoutlinedprimary {
+          background transparent
+          color {themecolorsprimarymain}
+          border 1px solid {themecolorsprimarymain}
         }
 
-        .button.outlined.secondary {
-          background: transparent;
-          color: ${theme.colors.secondary.main};
-          border: 1px solid ${theme.colors.secondary.main};
+        buttonoutlinedsecondary {
+          background transparent
+          color {themecolorssecondarymain}
+          border 1px solid {themecolorssecondarymain}
         }
 
-        .button.text {
-          background: transparent;
-          border: none;
-          padding: ${theme.spacing(1)} ${theme.spacing(1.5)};
+        buttontext {
+          background transparent
+          border none
+          padding {themespacing1} {themespacing15}
         }
 
-        .button.text.primary {
-          color: ${theme.colors.primary.main};
+        buttontextprimary {
+          color {themecolorsprimarymain}
         }
 
-        .button.text.secondary {
-          color: ${theme.colors.secondary.main};
+        buttontextsecondary {
+          color {themecolorssecondarymain}
         }
 
-        .button:hover:not(:disabled) {
-          opacity: 0.9;
+        buttonhovernotdisabled {
+          opacity 09
         }
 
-        .button:disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
+        buttondisabled {
+          opacity 05
+          cursor notallowed
         }
-      `}</style>
+      }</style>
     </>
   );
-}; 
+};

@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 social-auth.config.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export const socialAuthConfig = {
   wechat: {
     name: '微信',
@@ -7,12 +14,7 @@ export const socialAuthConfig = {
     scopes: ['snsapi_userinfo'],
     description: '使用微信扫码登录，安全快捷',
     authType: 'qrcode' as const,
-    instructions: [
-      '打开微信APP',
-      '点击右上角"+"号',
-      '选择"扫一扫"',
-      '扫描二维码完成授权'
-    ]
+    instructions: ['打开微信APP', '点击右上角"+"号', '选择"扫一扫"', '扫描二维码完成授权'],
   },
   qq: {
     name: 'QQ',
@@ -22,11 +24,7 @@ export const socialAuthConfig = {
     scopes: ['get_user_info'],
     description: '使用QQ账号一键登录',
     authType: 'popup' as const,
-    instructions: [
-      '点击QQ图标',
-      '在弹出窗口中登录QQ',
-      '确认授权信息'
-    ]
+    instructions: ['点击QQ图标', '在弹出窗口中登录QQ', '确认授权信息'],
   },
   weibo: {
     name: '微博',
@@ -36,11 +34,7 @@ export const socialAuthConfig = {
     scopes: ['email'],
     description: '使用微博账号登录',
     authType: 'redirect' as const,
-    instructions: [
-      '点击微博图标',
-      '登录微博账号',
-      '确认授权请求'
-    ]
+    instructions: ['点击微博图标', '登录微博账号', '确认授权请求'],
   },
   google: {
     name: 'Google',
@@ -53,8 +47,8 @@ export const socialAuthConfig = {
     instructions: [
       'Click Google icon',
       'Select your Google account',
-      'Review and accept permissions'
-    ]
+      'Review and accept permissions',
+    ],
   },
   facebook: {
     name: 'Facebook',
@@ -64,11 +58,7 @@ export const socialAuthConfig = {
     scopes: ['public_profile', 'email'],
     description: 'Continue with Facebook',
     authType: 'popup' as const,
-    instructions: [
-      'Click Facebook icon',
-      'Login to Facebook',
-      'Review permissions'
-    ]
+    instructions: ['Click Facebook icon', 'Login to Facebook', 'Review permissions'],
   },
   apple: {
     name: 'Apple',
@@ -78,13 +68,9 @@ export const socialAuthConfig = {
     scopes: ['name', 'email'],
     description: 'Sign in with Apple',
     authType: 'redirect' as const,
-    instructions: [
-      'Click Apple icon',
-      'Sign in with your Apple ID',
-      'Review and confirm'
-    ]
-  }
+    instructions: ['Click Apple icon', 'Sign in with your Apple ID', 'Review and confirm'],
+  },
 } as const;
 
-export type SocialPlatform = keyof typeof socialAuthConfig;
-export type AuthType = typeof socialAuthConfig[SocialPlatform]['authType']; 
+export type SocialPlatformType = keyof typeof socialAuthConfig;
+export type AuthType = (typeof socialAuthConfig)[SocialPlatformType]['authType'];

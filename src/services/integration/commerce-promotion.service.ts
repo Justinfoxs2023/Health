@@ -1,41 +1,48 @@
+/**
+ * @fileoverview TS 文件 commerce-promotion.service.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 @Injectable()
 export class CommercePromotionService {
   constructor(
     private readonly commerceService: CommerceService,
     private readonly promotionService: PromotionService,
-    private readonly analyticsService: AnalyticsService
+    private readonly analyticsService: AnalyticsService,
   ) {}
 
   // 商品推广奖励
   async processProductPromotionReward(
-    promotionData: ProductPromotionData
+    promotionData: ProductPromotionData,
   ): Promise<ProductRewardResult> {
     try {
       // 分析产品推广效果
       const promotionEffect = await this.analyzePromotionEffect({
         productId: promotionData.productId,
         promoterId: promotionData.promoterId,
-        salesData: await this.getSalesData(promotionData.productId)
+        salesData: await this.getSalesData(promotionData.productId),
       });
 
       // 计算推广价值
       const promotionValue = await this.calculatePromotionValue({
         effect: promotionEffect,
         productType: promotionData.productType,
-        marketConditions: await this.getMarketConditions()
+        marketConditions: await this.getMarketConditions(),
       });
 
       // 生成奖励方案
       const rewardPlan = await this.generateProductReward({
         value: promotionValue,
         promotionChain: await this.getPromotionChain(promotionData.promoterId),
-        salesPerformance: promotionEffect.performance
+        salesPerformance: promotionEffect.performance,
       });
 
       return {
         promotionId: promotionData.id,
         reward: rewardPlan,
-        performance: promotionEffect
+        performance: promotionEffect,
       };
     } catch (error) {
       this.logger.error('商品推广奖励处理失败', error);
@@ -44,9 +51,7 @@ export class CommercePromotionService {
   }
 
   // 复购奖励计算
-  async calculateRepurchaseReward(
-    repurchaseData: RepurchaseData
-  ): Promise<RepurchaseRewardResult> {
+  async calculateRepurchaseReward(repurchaseData: RepurchaseData): Promise<RepurchaseRewardResult> {
     // 实现复购奖励计算逻辑
   }
-} 
+}

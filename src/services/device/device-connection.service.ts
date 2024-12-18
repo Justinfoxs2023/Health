@@ -1,11 +1,11 @@
-import { Logger } from '../../utils/logger';
-import { Device, DeviceType, ConnectionInfo } from '../../types/device';
 import { EventEmitter } from '../../utils/event-emitter';
+import { IDevice, DeviceType, IConnectionInfo } from '../../types/device';
+import { Logger } from '../../utils/logger';
 
 export class DeviceConnectionService {
   private logger: Logger;
   private events: EventEmitter;
-  private connectedDevices: Map<string, Device>;
+  private connectedDevices: Map<string, IDevice>;
 
   constructor() {
     this.logger = new Logger('DeviceConnection');
@@ -14,17 +14,17 @@ export class DeviceConnectionService {
   }
 
   // 扫描设备
-  async scanDevices(type?: DeviceType): Promise<Device[]> {
+  async scanDevices(type?: DeviceType): Promise<IDevice[]> {
     try {
       // 扫描蓝牙设备
       const bluetoothDevices = await this.scanBluetoothDevices(type);
-      
+
       // 扫描WiFi设备
       const wifiDevices = await this.scanWifiDevices(type);
-      
+
       // 扫描USB设备
       const usbDevices = await this.scanUsbDevices(type);
-      
+
       return [...bluetoothDevices, ...wifiDevices, ...usbDevices];
     } catch (error) {
       this.logger.error('设备扫描失败', error);
@@ -33,7 +33,7 @@ export class DeviceConnectionService {
   }
 
   // 连接设备
-  async connectDevice(device: Device): Promise<void> {
+  async connectDevice(device: IDevice): Promise<void> {
     try {
       switch (device.connectionInfo.protocol) {
         case 'bluetooth':
@@ -71,4 +71,4 @@ export class DeviceConnectionService {
       throw error;
     }
   }
-} 
+}

@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 index.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 /** API 配置 */
 export const API_CONFIG = {
   BASE_URL: process.env.API_BASE_URL || 'http://localhost:3000',
@@ -30,7 +37,7 @@ export const STORAGE_KEYS = {
   /** 访问令牌 */
   TOKEN: 'token',
   /** 刷新令牌 */
-  REFRESH_TOKEN: 'refresh_token'
+  REFRESH_TOKEN: 'refresh_token',
 } as const;
 
 /** 主题配置 */
@@ -135,4 +142,4 @@ export const BLOOD_TYPE = {
 export const RH_TYPE = {
   POSITIVE: '+',
   NEGATIVE: '-',
-}; 
+};

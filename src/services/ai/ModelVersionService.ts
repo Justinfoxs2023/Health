@@ -1,17 +1,23 @@
-import { Logger } from '@/utils/Logger';
-import { ModelVersionError } from '@/utils/errors';
 import { RedisService } from '../cache/RedisService';
 
-interface ModelVersion {
+import { Logger } from '@/utils/Logger';
+import { ModelVersionError } from '@/utils/errors';
+
+interface IModelVersion {
+  /** version 的描述 */
   version: string;
+  /** path 的描述 */
   path: string;
+  /** createdAt 的描述 */
   createdAt: Date;
+  /** metrics 的描述 */
   metrics: {
     accuracy: number;
     precision: number;
     recall: number;
     f1Score: number;
   };
+  /** config 的描述 */
   config: any;
 }
 
@@ -28,14 +34,14 @@ export class ModelVersionService {
   /**
    * 注册新模型版本
    */
-  async registerModel(modelName: string, version: ModelVersion): Promise<void> {
+  async registerModel(modelName: string, version: IModelVersion): Promise<void> {
     try {
       const key = `${this.modelPrefix}${modelName}:${version.version}`;
       await this.redis.set(key, JSON.stringify(version));
-      
+
       // 更新最新版本记录
       await this.updateLatestVersion(modelName, version.version);
-      
+
       this.logger.info('模型版本注册成功', { modelName, version: version.version });
     } catch (error) {
       this.logger.error('模型版本注册失败', error);
@@ -46,16 +52,16 @@ export class ModelVersionService {
   /**
    * 获取最新模型版本
    */
-  async getLatestVersion(modelName: string): Promise<ModelVersion> {
+  async getLatestVersion(modelName: string): Promise<IModelVersion> {
     try {
       const latestVersion = await this.redis.get(`${this.modelPrefix}${modelName}:latest`);
       if (!latestVersion) {
         throw new ModelVersionError('NO_MODEL_VERSION', '未找到模型版本');
       }
-      
+
       const key = `${this.modelPrefix}${modelName}:${latestVersion}`;
       const modelData = await this.redis.get(key);
-      
+
       return JSON.parse(modelData);
     } catch (error) {
       this.logger.error('获取最新模型版本失败', error);
@@ -66,15 +72,15 @@ export class ModelVersionService {
   /**
    * 获取指定版本模型
    */
-  async getModelVersion(modelName: string, version: string): Promise<ModelVersion> {
+  async getModelVersion(modelName: string, version: string): Promise<IModelVersion> {
     try {
       const key = `${this.modelPrefix}${modelName}:${version}`;
       const modelData = await this.redis.get(key);
-      
+
       if (!modelData) {
         throw new ModelVersionError('MODEL_VERSION_NOT_FOUND', '未找到指定版本模型');
       }
-      
+
       return JSON.parse(modelData);
     } catch (error) {
       this.logger.error('获取模型版本失败', error);
@@ -86,16 +92,16 @@ export class ModelVersionService {
    * 比较模型版本
    */
   async compareVersions(
-    modelName: string, 
-    version1: string, 
-    version2: string
+    modelName: string,
+    version1: string,
+    version2: string,
   ): Promise<{
     comparison: 'better' | 'worse' | 'equal';
     metrics: any;
   }> {
     const model1 = await this.getModelVersion(modelName, version1);
     const model2 = await this.getModelVersion(modelName, version2);
-    
+
     return this.evaluatePerformance(model1.metrics, model2.metrics);
   }
 
@@ -107,7 +113,7 @@ export class ModelVersionService {
     // 实现性能评估逻辑
     const score1 = this.calculateScore(metrics1);
     const score2 = this.calculateScore(metrics2);
-    
+
     return {
       comparison: score1 > score2 ? 'better' : score1 < score2 ? 'worse' : 'equal',
       metrics: {
@@ -115,9 +121,9 @@ export class ModelVersionService {
           accuracy: metrics1.accuracy - metrics2.accuracy,
           precision: metrics1.precision - metrics2.precision,
           recall: metrics1.recall - metrics2.recall,
-          f1Score: metrics1.f1Score - metrics2.f1Score
-        }
-      }
+          f1Score: metrics1.f1Score - metrics2.f1Score,
+        },
+      },
     };
   }
 
@@ -129,4 +135,4 @@ export class ModelVersionService {
       metrics.f1Score * 0.3
     );
   }
-} 
+}

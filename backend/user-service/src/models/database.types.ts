@@ -1,4 +1,12 @@
-export interface DatabaseModels {
+/**
+ * @fileoverview TS 文件 database.types.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
+export interface IDatabaseModels {
+  /** User 的描述 */
   User: {
     id: string;
     email: string;
@@ -14,6 +22,7 @@ export interface DatabaseModels {
     updatedAt: Date;
   };
 
+  /** HealthData 的描述 */
   HealthData: {
     id: string;
     userId: string;
@@ -23,6 +32,7 @@ export interface DatabaseModels {
     source: string;
   };
 
+  /** Profile 的描述 */
   Profile: {
     id: string;
     userId: string;
@@ -43,6 +53,7 @@ export interface DatabaseModels {
     }>;
   };
 
+  /** Notification 的描述 */
   Notification: {
     id: string;
     userId: string;
@@ -53,4 +64,4 @@ export interface DatabaseModels {
     read: boolean;
     createdAt: Date;
   };
-} 
+}

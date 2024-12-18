@@ -1,27 +1,22 @@
 import React from 'react';
-import { View, Text, FlatList, TouchableOpacity, Image, StyleSheet } from 'react-native';
-import { useQuery } from 'react-query';
-import { getNutritionArticles } from '../../api/nutrition';
+
 import { CategoryFilter, SearchBar, LoadingSpinner } from '../../components';
-import { Category } from '../../components/CategoryFilter/types';
+import { ICategory } from '../../components/CategoryFilter/types';
+import { View, Text, FlatList, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { getNutritionArticles } from '../../api/nutrition';
+import { useQuery } from 'react-query';
 
 export const ArticleScreen = () => {
   const [category, setCategory] = React.useState('');
   const [searchText, setSearchText] = React.useState('');
 
-  const { data, isLoading, refetch } = useQuery(
-    ['nutritionArticles', category, searchText],
-    () => getNutritionArticles({ category, search: searchText })
+  const { data, isLoading, refetch } = useQuery(['nutritionArticles', category, searchText], () =>
+    getNutritionArticles({ category, search: searchText }),
   );
 
   const renderArticleItem = ({ item }) => (
     <TouchableOpacity style={styles.articleCard}>
-      {item.coverImage && (
-        <Image 
-          source={{ uri: item.coverImage }}
-          style={styles.coverImage}
-        />
-      )}
+      {item.coverImage && <Image source={{ uri: item.coverImage }} style={styles.coverImage} />}
       <View style={styles.articleInfo}>
         <Text style={styles.title}>{item.title}</Text>
         <Text style={styles.summary} numberOfLines={2}>
@@ -51,7 +46,7 @@ export const ArticleScreen = () => {
           { id: 'disease', name: '疾病饮食' },
           { id: 'sports', name: '运动营养' },
           { id: 'special', name: '特殊人群' },
-          { id: 'safety', name: '食品安全' }
+          { id: 'safety', name: '食品安全' },
         ]}
         selectedCategory={category}
         onSelect={setCategory}
@@ -74,7 +69,7 @@ export const ArticleScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   articleCard: {
     margin: 10,
@@ -84,30 +79,30 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3
+    elevation: 3,
   },
   coverImage: {
     width: '100%',
     height: 200,
     borderTopLeftRadius: 10,
-    borderTopRightRadius: 10
+    borderTopRightRadius: 10,
   },
   articleInfo: {
-    padding: 15
+    padding: 15,
   },
   title: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 8
+    marginBottom: 8,
   },
   summary: {
     fontSize: 14,
     color: '#666',
-    marginBottom: 8
+    marginBottom: 8,
   },
   stats: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 8
-  }
-}); 
+    marginTop: 8,
+  },
+});

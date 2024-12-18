@@ -1,32 +1,36 @@
-import { createHash } from 'crypto';
-import { promisify } from 'util';
-import { exec } from 'child_process';
 import { Image } from '../../schemas/Image';
+import { createHash } from 'crypto';
+import { exec } from 'child_process';
 import { logger } from '../logger';
+import { promisify } from 'util';
 
 const execAsync = promisify(exec);
 
-interface SecurityCheckResult {
+interface ISecurityCheckResult {
+  /** type 的描述 */
   type: string;
+  /** status 的描述 */
   status: 'success' | 'error' | 'warning';
+  /** message 的描述 */
   message: string;
+  /** timestamp 的描述 */
   timestamp: number;
 }
 
 class ImageSecurityService {
   /** 文件类型检查 */
-  private async checkFileType(buffer: Buffer): Promise<SecurityCheckResult> {
+  private async checkFileType(buffer: Buffer): Promise<ISecurityCheckResult> {
     try {
       // 检查文件头
       const fileSignature = buffer.toString('hex', 0, 4);
       const validSignatures = {
-        'ffd8ffe0': 'image/jpeg',
+        ffd8ffe0: 'image/jpeg',
         '89504e47': 'image/png',
         '47494638': 'image/gif',
       };
 
-      const mimeType = Object.entries(validSignatures).find(([sig]) => 
-        fileSignature.startsWith(sig)
+      const mimeType = Object.entries(validSignatures).find(([sig]) =>
+        fileSignature.startsWith(sig),
       )?.[1];
 
       if (!mimeType) {
@@ -56,7 +60,7 @@ class ImageSecurityService {
   }
 
   /** 文件大小检查 */
-  private async checkFileSize(buffer: Buffer): Promise<SecurityCheckResult> {
+  private async checkFileSize(buffer: Buffer): Promise<ISecurityCheckResult> {
     try {
       const maxSize = 10 * 1024 * 1024; // 10MB
       const size = buffer.length;
@@ -88,12 +92,12 @@ class ImageSecurityService {
   }
 
   /** 图片完整性检查 */
-  private async checkImageIntegrity(buffer: Buffer): Promise<SecurityCheckResult> {
+  private async checkImageIntegrity(buffer: Buffer): Promise<ISecurityCheckResult> {
     try {
       // 使用 ClamAV 进行病毒扫描
       const tempFile = `/tmp/${createHash('md5').update(buffer).digest('hex')}`;
       await promisify(require('fs').writeFile)(tempFile, buffer);
-      
+
       try {
         await execAsync(`clamscan ${tempFile}`);
         return {
@@ -103,7 +107,8 @@ class ImageSecurityService {
           timestamp: Date.now(),
         };
       } catch (error) {
-        if (error.code === 1) { // ClamAV 发现威胁
+        if (error.code === 1) {
+          // ClamAV 发现威胁
           return {
             type: 'integrity',
             status: 'error',
@@ -127,27 +132,21 @@ class ImageSecurityService {
   }
 
   /** 元数据检查 */
-  private async checkMetadata(buffer: Buffer): Promise<SecurityCheckResult> {
+  private async checkMetadata(buffer: Buffer): Promise<ISecurityCheckResult> {
     try {
       // 检查是否包含敏感元数据
-      const sensitivePatterns = [
-        /location/i,
-        /gps/i,
-        /coordinate/i,
-        /author/i,
-        /copyright/i,
-      ];
+      const sensitivePatterns = [/location/i, /gps/i, /coordinate/i, /author/i, /copyright/i];
 
       // 使用 ExifTool 提取元数据
       const tempFile = `/tmp/${createHash('md5').update(buffer).digest('hex')}`;
       await promisify(require('fs').writeFile)(tempFile, buffer);
-      
+
       try {
         const { stdout } = await execAsync(`exiftool -json ${tempFile}`);
         const metadata = JSON.parse(stdout)[0];
 
-        const sensitiveFields = Object.keys(metadata).filter(field => 
-          sensitivePatterns.some(pattern => pattern.test(field))
+        const sensitiveFields = Object.keys(metadata).filter(field =>
+          sensitivePatterns.some(pattern => pattern.test(field)),
         );
 
         if (sensitiveFields.length > 0) {
@@ -180,7 +179,7 @@ class ImageSecurityService {
   }
 
   /** 执行所有安全检查 */
-  async performSecurityChecks(buffer: Buffer): Promise<SecurityCheckResult[]> {
+  async performSecurityChecks(buffer: Buffer): Promise<ISecurityCheckResult[]> {
     const checks = [
       this.checkFileType(buffer),
       this.checkFileSize(buffer),
@@ -192,7 +191,7 @@ class ImageSecurityService {
   }
 
   /** 更新图片安全状态 */
-  async updateImageSecurityStatus(imageId: string, checks: SecurityCheckResult[]): Promise<void> {
+  async updateImageSecurityStatus(imageId: string, checks: ISecurityCheckResult[]): Promise<void> {
     try {
       await Image.findByIdAndUpdate(imageId, {
         $set: { securityChecks: checks },
@@ -204,11 +203,11 @@ class ImageSecurityService {
   }
 
   /** 验证图片是否安全 */
-  isImageSafe(checks: SecurityCheckResult[]): boolean {
+  isImageSafe(checks: ISecurityCheckResult[]): boolean {
     const hasError = checks.some(check => check.status === 'error');
     return !hasError;
   }
 }
 
 // 创建单例实例
-export const imageSecurity = new ImageSecurityService(); 
+export const imageSecurity = new ImageSecurityService();

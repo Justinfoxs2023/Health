@@ -1,34 +1,38 @@
 import { store } from '@/store';
 
-interface ModuleConfig {
+interface IModuleConfig {
+  /** name 的描述 */
   name: string;
-  components: string[];
-  dependencies?: string[];
-  preload?: boolean;
+  /** components 的描述 */
+  components: string;
+  /** dependencies 的描述 */
+  dependencies: string;
+  /** preload 的描述 */
+  preload: false | true;
 }
 
 export class ModuleOrganizer {
-  private static moduleConfigs: Record<string, ModuleConfig> = {
+  private static moduleConfigs: Record<string, IModuleConfig> = {
     dataVisualization: {
       name: '数据可视化',
       components: ['Charts', 'Trends', 'Reports'],
-      preload: true
+      preload: true,
     },
     userInteraction: {
       name: '用户交互',
       components: ['Chat', 'Community', 'Consultation'],
-      dependencies: ['dataVisualization']
+      dependencies: ['dataVisualization'],
     },
     healthManagement: {
       name: '健康管理',
       components: ['Tracking', 'Planning', 'Reminders'],
-      dependencies: ['dataVisualization']
+      dependencies: ['dataVisualization'],
     },
     aiServices: {
       name: 'AI服务',
       components: ['ImageRecognition', 'HealthAssessment', 'Recommendations'],
-      preload: true
-    }
+      preload: true,
+    },
   };
 
   // 初始化模块
@@ -48,22 +52,18 @@ export class ModuleOrganizer {
 
     // 加载依赖
     if (config.dependencies) {
-      await Promise.all(
-        config.dependencies.map(dep => this.loadModule(dep))
-      );
+      await Promise.all(config.dependencies.map(dep => this.loadModule(dep)));
     }
 
     // 加载组件
     await Promise.all(
-      config.components.map(component => 
-        import(`@/components/${moduleName}/${component}`)
-      )
+      config.components.map(component => import(`@/components/${moduleName}/${component}`)),
     );
 
     // 更新状态
     store.dispatch({
       type: 'modules/moduleLoaded',
-      payload: moduleName
+      payload: moduleName,
     });
   }
 
@@ -71,4 +71,4 @@ export class ModuleOrganizer {
   static getModuleStatus(moduleName: string) {
     return store.getState().modules[moduleName];
   }
-} 
+}

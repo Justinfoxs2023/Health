@@ -6,43 +6,43 @@ export const aiConfig = {
   // DeepSeek配置
   deepseek: {
     apiKey: process.env.DEEPSEEK_API_KEY,
-    model: "deepseek-chat",
+    model: 'deepseek-chat',
     defaultParams: {
       temperature: 0.5,
-      maxTokens: 2000
-    }
+      maxTokens: 2000,
+    },
   },
-  
+
   // 图像识别服务配置
   imageRecognition: {
-    provider: process.env.VISION_API_PROVIDER || "baidu",
+    provider: process.env.VISION_API_PROVIDER || 'baidu',
     apiKey: process.env.VISION_API_KEY,
     apiSecret: process.env.VISION_API_SECRET,
-    supportedTypes: ["food", "exercise", "medical"],
-    confidenceThreshold: 0.8
+    supportedTypes: ['food', 'exercise', 'medical'],
+    confidenceThreshold: 0.8,
   },
 
   // 健康评估配置
   healthAssessment: {
-    model: "deepseek-chat",
-    evaluationFactors: ["vital_signs", "exercise", "diet", "sleep"],
-    updateFrequency: "daily",
-    cacheExpiry: 86400 // 24小时
+    model: 'deepseek-chat',
+    evaluationFactors: ['vital_signs', 'exercise', 'diet', 'sleep'],
+    updateFrequency: 'daily',
+    cacheExpiry: 86400, // 24小时
   },
 
   // 推荐系统配置
   recommendation: {
-    model: "deepseek-chat",
-    types: ["diet", "exercise", "lifestyle"],
+    model: 'deepseek-chat',
+    types: ['diet', 'exercise', 'lifestyle'],
     refreshInterval: 3600,
-    cacheEnabled: true
+    cacheEnabled: true,
   },
 
   // 智能问答配置
   chatbot: {
-    model: "deepseek-chat",
-    supportedDomains: ["health", "medical", "lifestyle"],
+    model: 'deepseek-chat',
+    supportedDomains: ['health', 'medical', 'lifestyle'],
     contextLength: 10,
-    temperature: 0.7
-  }
-}; 
+    temperature: 0.7,
+  },
+};

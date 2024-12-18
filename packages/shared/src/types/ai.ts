@@ -1,4 +1,11 @@
-export interface AIOptimizationConfig {
+/**
+ * @fileoverview TS 文件 ai.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
+export interface IAIOptimizationConfig {
   /** 模型类型 */
   modelType: 'transformer' | 'cnn' | 'rnn';
   /** 批处理大小 */
@@ -35,4 +42,4 @@ export interface AIOptimizationConfig {
     /** GPU内存限制（MB） */
     gpuMemoryLimit?: number;
   };
-} 
+}

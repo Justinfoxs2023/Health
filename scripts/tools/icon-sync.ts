@@ -3,8 +3,11 @@ import path from 'path';
 import sharp from 'sharp';
 
 interface IconSyncConfig {
+  /** sourceDir 的描述 */
   sourceDir: string;
+  /** outputDir 的描述 */
   outputDir: string;
+  /** sizes 的描述 */
   sizes: number[];
 }
 
@@ -36,7 +39,7 @@ class IconSyncTool {
 
       console.log('图标同步完成');
     } catch (error) {
-      console.error('图标同步失败:', error);
+      console.error('Error in icon-sync.ts:', '图标同步失败:', error);
     }
   }
 
@@ -52,10 +55,7 @@ class IconSyncTool {
       const outputFileName = `${baseName}_${size}.png`;
       const outputPath = path.join(this.config.outputDir, outputFileName);
 
-      await sharp(sourcePath)
-        .resize(size, size)
-        .png()
-        .toFile(outputPath);
+      await sharp(sourcePath).resize(size, size).png().toFile(outputPath);
     }
   }
 }
@@ -64,8 +64,8 @@ class IconSyncTool {
 const config: IconSyncConfig = {
   sourceDir: 'assets/icons/source',
   outputDir: 'assets/icons/generated',
-  sizes: [16, 24, 32, 48]
+  sizes: [16, 24, 32, 48],
 };
 
 const iconSync = new IconSyncTool(config);
-iconSync.syncIcons(); 
+iconSync.syncIcons();

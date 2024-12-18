@@ -1,21 +1,37 @@
-interface ErrorConfig {
+/**
+ * @fileoverview TS 文件 ErrorHandlingMiddleware.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
+interface IErrorConfig {
+  /** logLevel 的描述 */
   logLevel: 'debug' | 'info' | 'warn' | 'error';
+  /** retryStrategy 的描述 */
   retryStrategy: 'immediate' | 'exponential' | 'none';
+  /** maxRetries 的描述 */
   maxRetries: number;
+  /** notifyUser 的描述 */
   notifyUser: boolean;
 }
 
-interface ErrorLog {
+interface IErrorLog {
+  /** timestamp 的描述 */
   timestamp: Date;
+  /** type 的描述 */
   type: string;
+  /** message 的描述 */
   message: string;
+  /** stack 的描述 */
   stack?: string;
+  /** context 的描述 */
   context?: any;
 }
 
 export class ErrorHandlingMiddleware {
-  private config: ErrorConfig;
-  private errorLogs: ErrorLog[] = [];
+  private config: IErrorConfig;
+  private errorLogs: IErrorLog[] = [];
   private retryCount: Map<string, number> = new Map();
 
   constructor() {
@@ -23,18 +39,18 @@ export class ErrorHandlingMiddleware {
       logLevel: 'error',
       retryStrategy: 'exponential',
       maxRetries: 3,
-      notifyUser: true
+      notifyUser: true,
     };
   }
 
   // 全局错误处理
   async handleError(error: Error, context?: any): Promise<void> {
-    const errorLog: ErrorLog = {
+    const errorLog: IErrorLog = {
       timestamp: new Date(),
       type: error.name,
       message: error.message,
       stack: error.stack,
-      context
+      context,
     };
 
     // 记录错误
@@ -55,7 +71,7 @@ export class ErrorHandlingMiddleware {
   }
 
   // 错误日志记录
-  private async logError(error: ErrorLog): Promise<void> {
+  private async logError(error: IErrorLog): Promise<void> {
     this.errorLogs.push(error);
 
     // 本地存储
@@ -63,8 +79,8 @@ export class ErrorHandlingMiddleware {
       const logs = await this.getStoredLogs();
       logs.push(error);
       localStorage.setItem('error-logs', JSON.stringify(logs));
-    } catch (e) {
-      console.error('Error saving log:', e);
+    } catch (error) {
+      console.error('Error in ErrorHandlingMiddleware.ts:', 'Error saving log:', error);
     }
 
     // 控制台输出
@@ -79,7 +95,7 @@ export class ErrorHandlingMiddleware {
         console.warn(error);
         break;
       case 'error':
-        console.error(error);
+        console.error('Error in ErrorHandlingMiddleware.ts:', error);
         break;
     }
   }
@@ -132,26 +148,26 @@ export class ErrorHandlingMiddleware {
   }
 
   // 错误上报
-  private async reportError(error: ErrorLog): Promise<void> {
+  private async reportError(error: IErrorLog): Promise<void> {
     try {
       await fetch('/api/error-reporting', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(error)
+        body: JSON.stringify(error),
       });
-    } catch (e) {
-      console.error('Error reporting failed:', e);
+    } catch (error) {
+      console.error('Error in ErrorHandlingMiddleware.ts:', 'Error reporting failed:', error);
     }
   }
 
   // 获取存储的日志
-  private async getStoredLogs(): Promise<ErrorLog[]> {
+  private async getStoredLogs(): Promise<IErrorLog[]> {
     try {
       const logs = localStorage.getItem('error-logs');
       return logs ? JSON.parse(logs) : [];
-    } catch (e) {
+    } catch (error) {
       return [];
     }
   }
@@ -169,7 +185,7 @@ export class ErrorHandlingMiddleware {
       NetworkError: '网络连接出现问题，请检查网络设置',
       TimeoutError: '请求超时，请稍后重试',
       ValidationError: '输入数据有误，请检查后重试',
-      AuthenticationError: '登录已过期，请重新登录'
+      AuthenticationError: '登录已过期，请重新登录',
     };
     return messages[error.name] || '系统出现错误，请稍后重试';
   }
@@ -184,7 +200,7 @@ export class ErrorHandlingMiddleware {
   getErrorStats(): {
     total: number;
     byType: Record<string, number>;
-    recentErrors: ErrorLog[];
+    recentErrors: IErrorLog[];
   } {
     const byType: Record<string, number> = {};
     this.errorLogs.forEach(log => {
@@ -194,7 +210,7 @@ export class ErrorHandlingMiddleware {
     return {
       total: this.errorLogs.length,
       byType,
-      recentErrors: this.errorLogs.slice(-10)
+      recentErrors: this.errorLogs.slice(-10),
     };
   }
-} 
+}

@@ -1,20 +1,21 @@
-import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
-import { Post } from '@/schemas/community/post.schema';
-import { Comment } from '@/schemas/community/comment.schema';
-import { Interaction } from '@/schemas/community/interaction.schema';
-import { CreatePostDto, UpdatePostDto } from '@/dto/community/post.dto';
-import { CreateCommentDto } from '@/dto/community/comment.dto';
-import { PaginationDto } from '@/dto/common/pagination.dto';
+
 import { BadRequestException, NotFoundException } from '@/exceptions';
+import { Comment } from '@/schemas/community/comment.schema';
+import { CreateCommentDto } from '@/dto/community/comment.dto';
+import { CreatePostDto, UpdatePostDto } from '@/dto/community/post.dto';
+import { Interaction } from '@/schemas/community/interaction.schema';
+import { PaginationDto } from '@/dto/common/pagination.dto';
+import { Post } from '@/schemas/community/post.schema';
 
 @Injectable()
 export class PostService {
   constructor(
     @InjectModel(Post.name) private postModel: Model<Post>,
     @InjectModel(Comment.name) private commentModel: Model<Comment>,
-    @InjectModel(Interaction.name) private interactionModel: Model<Interaction>
+    @InjectModel(Interaction.name) private interactionModel: Model<Interaction>,
   ) {}
 
   async createPost(userId: string, createPostDto: CreatePostDto): Promise<Post> {
@@ -26,10 +27,10 @@ export class PostService {
         views: 0,
         likes: 0,
         comments: 0,
-        shares: 0
+        shares: 0,
       },
       created_at: new Date(),
-      updated_at: new Date()
+      updated_at: new Date(),
     });
 
     return post.save();
@@ -52,7 +53,7 @@ export class PostService {
         .limit(pageSize)
         .populate('user_id', 'username avatar')
         .populate('category_id', 'name'),
-      this.postModel.countDocuments(filter)
+      this.postModel.countDocuments(filter),
     ]);
 
     return {
@@ -60,8 +61,8 @@ export class PostService {
       pagination: {
         current: page,
         pageSize,
-        total
-      }
+        total,
+      },
     };
   }
 
@@ -76,10 +77,7 @@ export class PostService {
     }
 
     // 增加浏览量
-    await this.postModel.updateOne(
-      { _id: id },
-      { $inc: { 'metrics.views': 1 } }
-    );
+    await this.postModel.updateOne({ _id: id }, { $inc: { 'metrics.views': 1 } });
 
     return post;
   }
@@ -113,11 +111,15 @@ export class PostService {
     await Promise.all([
       this.postModel.deleteOne({ _id: id }),
       this.commentModel.deleteMany({ post_id: id }),
-      this.interactionModel.deleteMany({ target_id: id, target_type: 'post' })
+      this.interactionModel.deleteMany({ target_id: id, target_type: 'post' }),
     ]);
   }
 
-  async createComment(userId: string, postId: string, createCommentDto: CreateCommentDto): Promise<Comment> {
+  async createComment(
+    userId: string,
+    postId: string,
+    createCommentDto: CreateCommentDto,
+  ): Promise<Comment> {
     const post = await this.postModel.findById(postId);
 
     if (!post) {
@@ -131,18 +133,15 @@ export class PostService {
       status: 'active',
       metrics: {
         likes: 0,
-        replies: 0
+        replies: 0,
       },
       created_at: new Date(),
-      updated_at: new Date()
+      updated_at: new Date(),
     });
 
     await Promise.all([
       comment.save(),
-      this.postModel.updateOne(
-        { _id: postId },
-        { $inc: { 'metrics.comments': 1 } }
-      )
+      this.postModel.updateOne({ _id: postId }, { $inc: { 'metrics.comments': 1 } }),
     ]);
 
     return comment;
@@ -159,7 +158,7 @@ export class PostService {
         .skip(skip)
         .limit(pageSize)
         .populate('user_id', 'username avatar'),
-      this.commentModel.countDocuments({ post_id: postId, parent_id: null })
+      this.commentModel.countDocuments({ post_id: postId, parent_id: null }),
     ]);
 
     // 获取每个评论的回复
@@ -171,9 +170,9 @@ export class PostService {
           .populate('user_id', 'username avatar');
         return {
           ...comment.toObject(),
-          replies
+          replies,
         };
-      })
+      }),
     );
 
     return {
@@ -181,8 +180,8 @@ export class PostService {
       pagination: {
         current: page,
         pageSize,
-        total
-      }
+        total,
+      },
     };
   }
 
@@ -197,7 +196,7 @@ export class PostService {
       user_id: userId,
       target_id: postId,
       target_type: 'post',
-      interaction_type: 'like'
+      interaction_type: 'like',
     });
 
     if (existingLike) {
@@ -210,12 +209,9 @@ export class PostService {
         target_id: postId,
         target_type: 'post',
         interaction_type: 'like',
-        created_at: new Date()
+        created_at: new Date(),
       }).save(),
-      this.postModel.updateOne(
-        { _id: postId },
-        { $inc: { 'metrics.likes': 1 } }
-      )
+      this.postModel.updateOne({ _id: postId }, { $inc: { 'metrics.likes': 1 } }),
     ]);
   }
 
@@ -230,7 +226,7 @@ export class PostService {
       user_id: userId,
       target_id: commentId,
       target_type: 'comment',
-      interaction_type: 'like'
+      interaction_type: 'like',
     });
 
     if (existingLike) {
@@ -243,12 +239,9 @@ export class PostService {
         target_id: commentId,
         target_type: 'comment',
         interaction_type: 'like',
-        created_at: new Date()
+        created_at: new Date(),
       }).save(),
-      this.commentModel.updateOne(
-        { _id: commentId },
-        { $inc: { 'metrics.likes': 1 } }
-      )
+      this.commentModel.updateOne({ _id: commentId }, { $inc: { 'metrics.likes': 1 } }),
     ]);
   }
 
@@ -263,7 +256,7 @@ export class PostService {
       user_id: userId,
       target_id: postId,
       target_type: 'post',
-      interaction_type: 'favorite'
+      interaction_type: 'favorite',
     });
 
     if (existingFavorite) {
@@ -275,7 +268,7 @@ export class PostService {
       target_id: postId,
       target_type: 'post',
       interaction_type: 'favorite',
-      created_at: new Date()
+      created_at: new Date(),
     }).save();
   }
-} 
+}

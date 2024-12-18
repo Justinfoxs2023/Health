@@ -1,6 +1,6 @@
-import { OpenAI } from 'openai';
-import { Logger } from '../utils/logger';
 import { CodeAnalysis, TestCase, Documentation } from '../types/ai';
+import { Logger } from '../utils/logger';
+import { OpenAI } from 'openai';
 
 export class DevAssistantService {
   private openai: OpenAI;
@@ -8,7 +8,7 @@ export class DevAssistantService {
 
   constructor() {
     this.openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY
+      apiKey: process.env.OPENAI_API_KEY,
     });
     this.logger = new Logger('DevAssistant');
   }
@@ -17,14 +17,17 @@ export class DevAssistantService {
   async reviewCode(code: string): Promise<CodeAnalysis> {
     try {
       const response = await this.openai.chat.completions.create({
-        model: "gpt-4",
-        messages: [{
-          role: "system",
-          content: "你是一个专业的代码审查助手，请分析以下代码并提供改进建议"
-        }, {
-          role: "user",
-          content: code
-        }]
+        model: 'gpt-4',
+        messages: [
+          {
+            role: 'system',
+            content: '你是一个专业的代码审查助手，请分析以下代码并提供改进建议',
+          },
+          {
+            role: 'user',
+            content: code,
+          },
+        ],
       });
 
       return this.parseCodeAnalysis(response.choices[0].message.content);
@@ -38,14 +41,17 @@ export class DevAssistantService {
   async generateTests(sourceCode: string): Promise<TestCase[]> {
     try {
       const response = await this.openai.chat.completions.create({
-        model: "gpt-4",
-        messages: [{
-          role: "system",
-          content: "请为以下代码生成完整的单元测试用例"
-        }, {
-          role: "user",
-          content: sourceCode
-        }]
+        model: 'gpt-4',
+        messages: [
+          {
+            role: 'system',
+            content: '请为以下代码生成完整的单元测试用例',
+          },
+          {
+            role: 'user',
+            content: sourceCode,
+          },
+        ],
       });
 
       return this.parseTestCases(response.choices[0].message.content);
@@ -54,4 +60,4 @@ export class DevAssistantService {
       throw error;
     }
   }
-} 
+}

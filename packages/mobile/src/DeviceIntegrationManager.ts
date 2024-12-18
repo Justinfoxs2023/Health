@@ -1,14 +1,24 @@
-interface DeviceConfig {
+/**
+ * @fileoverview TS 文件 DeviceIntegrationManager.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
+interface IDeviceConfig {
+  /** enableCamera 的描述 */
   enableCamera: boolean;
+  /** enableSensors 的描述 */
   enableSensors: boolean;
+  /** enableNotifications 的描述 */
   enableNotifications: boolean;
 }
 
 export class DeviceIntegrationManager {
-  private static config: DeviceConfig;
+  private static config: IDeviceConfig;
 
   // 初始化设备功能
-  static async init(config: DeviceConfig) {
+  static async init(config: IDeviceConfig) {
     this.config = config;
 
     if (config.enableCamera) {
@@ -30,7 +40,7 @@ export class DeviceIntegrationManager {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
       return stream;
     } catch (error) {
-      console.error('相机初始化失败:', error);
+      console.error('Error in DeviceIntegrationManager.ts:', '相机初始化失败:', error);
       throw error;
     }
   }
@@ -67,7 +77,7 @@ export class DeviceIntegrationManager {
         notification.close();
       };
     } catch (error) {
-      console.error('发送通知失败:', error);
+      console.error('Error in DeviceIntegrationManager.ts:', '发送通知失败:', error);
     }
   }
 
@@ -84,4 +94,4 @@ export class DeviceIntegrationManager {
     const { acceleration, rotationRate } = event;
     // TODO: 实现具体的处理逻辑
   };
-} 
+}

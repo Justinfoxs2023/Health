@@ -1,26 +1,34 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
+
 import LinearGradient from 'react-native-linear-gradient';
 import { ColorTokens } from '../../styles/colors/colorTokens';
+import { TouchableOpacity, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
 
-interface GradientButtonProps {
+interface IGradientButtonProps {
+  /** title 的描述 */
   title: string;
+  /** onPress 的描述 */
   onPress: () => void;
+  /** variant 的描述 */
   variant?: 'primary' | 'secondary' | 'accent';
+  /** size 的描述 */
   size?: 'small' | 'medium' | 'large';
+  /** disabled 的描述 */
   disabled?: boolean;
+  /** style 的描述 */
   style?: ViewStyle;
+  /** textStyle 的描述 */
   textStyle?: TextStyle;
 }
 
-export const GradientButton: React.FC<GradientButtonProps> = ({
+export const GradientButton: React.FC<IGradientButtonProps> = ({
   title,
   onPress,
   variant = 'primary',
   size = 'medium',
   disabled = false,
   style,
-  textStyle
+  textStyle,
 }) => {
   const getGradientColors = () => {
     if (disabled) {
@@ -44,17 +52,17 @@ export const GradientButton: React.FC<GradientButtonProps> = ({
       case 'small':
         return {
           height: 32,
-          paddingHorizontal: 16
+          paddingHorizontal: 16,
         };
       case 'large':
         return {
           height: 56,
-          paddingHorizontal: 32
+          paddingHorizontal: 32,
         };
       default:
         return {
           height: 44,
-          paddingHorizontal: 24
+          paddingHorizontal: 24,
         };
     }
   };
@@ -71,9 +79,7 @@ export const GradientButton: React.FC<GradientButtonProps> = ({
         end={{ x: 1, y: 0 }}
         style={[styles.gradient, getButtonSize()]}
       >
-        <Text style={[styles.text, textStyle]}>
-          {title}
-        </Text>
+        <Text style={[styles.text, textStyle]}>{title}</Text>
       </LinearGradient>
     </TouchableOpacity>
   );
@@ -82,15 +88,15 @@ export const GradientButton: React.FC<GradientButtonProps> = ({
 const styles = StyleSheet.create({
   button: {
     borderRadius: 8,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   gradient: {
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   text: {
     color: ColorTokens.neutral.white,
     fontSize: 16,
-    fontWeight: '600'
-  }
-}); 
+    fontWeight: '600',
+  },
+});

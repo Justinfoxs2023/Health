@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 custom.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // Redis类型定义
 declare class Redis {
   get(key: string): Promise<string | null>;
@@ -13,71 +20,75 @@ declare class Redis {
 // 环境变量类型定义
 declare namespace NodeJS {
   interface ProcessEnv {
-    NODE_ENV: 'development' | 'production' | 'test';
+    NODE_ENV: development  production  test;
     PORT: string;
     MONGODB_URI: string;
     REDIS_HOST: string;
     REDIS_PORT: string;
     REDIS_PASSWORD: string;
     JWT_SECRET: string;
-    // 添加其他环境变量
+     
   }
 }
 
 // 扩展Express请求对象
 declare namespace Express {
   interface Request {
-    user?: {
+    user: {
       id: string;
-      roles: string[];
+      roles: string;
     };
   }
 }
 
 declare module 'analytics' {
   export interface Analytics {
-    // 定义类型
+     
   }
 }
 
 declare module 'community' {
   export interface Community {
-    // 定义类型
+     
   }
 }
 
 declare module 'improvement' {
   export interface Improvement {
-    // 定义类型
+     
   }
 }
 
 declare module 'membership' {
   export interface Membership {
-    // 定义类型
+     
   }
 }
 
 declare module 'models' {
   export interface Models {
-    // 定义类型
+     
   }
 }
 
 declare module 'protection' {
   export interface Protection {
-    // 定义类型
+     
   }
 }
 
 declare module 'provider' {
   export interface Provider {
-    // 定义类型
+     
   }
 }
 
 declare module 'supervision' {
   export interface Supervision {
-    // 定义类型
+     
   }
-} 
+}
+
+declare module 'react-chartjs-2';
+declare module '@mui/material/*';
+declare module 'chart.js';

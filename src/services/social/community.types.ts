@@ -1,19 +1,30 @@
+/**
+ * @fileoverview TS 文件 community.types.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // 社区基础类型
-export interface Community {
-  id: string;
-  name: string;
-  description: string;
-  type: 'health' | 'fitness' | 'nutrition' | 'mental' | 'general';
+export interface ICommunity {
+  /** id 的描述 */
+    id: string;
+  /** name 的描述 */
+    name: string;
+  /** description 的描述 */
+    description: string;
+  /** type 的描述 */
+    type: health  fitness  nutrition  mental  general;
   createdAt: Date;
   creatorId: string;
-  
-  // 社区设置
+
+   
   settings: {
-    privacy: 'public' | 'private' | 'invite-only';
+    privacy: public  private  inviteonly;
     joinApproval: boolean;
     postApproval: boolean;
-    allowedContentTypes: ('text' | 'image' | 'video' | 'link')[];
-    rules: string[];
+    allowedContentTypes: text  image  video  link;
+    rules: string;
   };
 
   // 统计信息
@@ -30,17 +41,21 @@ export interface Community {
 }
 
 // 社区成员
-export interface CommunityMember {
-  userId: string;
-  communityId: string;
-  joinDate: Date;
-  role: 'admin' | 'moderator' | 'expert' | 'member';
-  
-  // 成员状态
-  status: 'active' | 'inactive' | 'banned';
+export interface ICommunityMember {
+  /** userId 的描述 */
+    userId: string;
+  /** communityId 的描述 */
+    communityId: string;
+  /** joinDate 的描述 */
+    joinDate: Date;
+  /** role 的描述 */
+    role: admin  moderator  expert  member;
+
+   
+  status: active  inactive  banned;
   reputation: number;
-  
-  // 贡献统计
+
+   
   contributions: {
     posts: number;
     comments: number;
@@ -58,22 +73,26 @@ export interface CommunityMember {
 }
 
 // 社区内容
-export interface CommunityContent {
-  id: string;
-  communityId: string;
-  authorId: string;
-  type: 'post' | 'question' | 'event' | 'article';
+export interface ICommunityContent {
+  /** id 的描述 */
+    id: string;
+  /** communityId 的描述 */
+    communityId: string;
+  /** authorId 的描述 */
+    authorId: string;
+  /** type 的描述 */
+    type: post  question  event  article;
   createdAt: Date;
   updatedAt: Date;
 
-  // 内容主体
+   
   content: {
     title: string;
     body: string;
-    media?: Array<{
-      type: 'image' | 'video';
+    media: Array{
+      type: image  video;
       url: string;
-      thumbnail?: string;
+      thumbnail: string;
     }>;
     tags: string[];
   };
@@ -98,24 +117,28 @@ export interface CommunityContent {
 }
 
 // 活动管理
-export interface CommunityEvent {
-  id: string;
-  communityId: string;
-  organizerId: string;
-  type: 'offline' | 'online' | 'hybrid';
-  
-  // 活动信息
+export interface ICommunityEvent {
+  /** id 的描述 */
+    id: string;
+  /** communityId 的描述 */
+    communityId: string;
+  /** organizerId 的描述 */
+    organizerId: string;
+  /** type 的描述 */
+    type: offline  online  hybrid;
+
+   
   info: {
     title: string;
     description: string;
     startTime: Date;
     endTime: Date;
     timezone: string;
-    location?: {
-      online?: {
+    location: {
+      online: {
         platform: string;
         link: string;
-        password?: string;
+        password: string;
       };
       offline?: {
         address: string;
@@ -151,18 +174,23 @@ export interface CommunityEvent {
 }
 
 // 专家问答
-export interface ExpertQA {
-  id: string;
-  communityId: string;
-  questionerId: string;
-  expertId?: string;
-  
-  // 问题详情
-  question: {
+export interface IExpertQA {
+  /** id 的描述 */
+    id: string;
+  /** communityId 的描述 */
+    communityId: string;
+  /** questionerId 的描述 */
+    questionerId: string;
+  /** expertId 的描述 */
+    expertId: string;
+
+   
+  /** question 的描述 */
+    question: {
     title: string;
     content: string;
-    topics: string[];
-    attachments?: Array<{
+    topics: string;
+    attachments: Array{
       type: string;
       url: string;
     }>;
@@ -194,13 +222,17 @@ export interface ExpertQA {
 }
 
 // 积分奖励系统
-export interface RewardSystem {
-  userId: string;
-  totalPoints: number;
-  level: number;
-  
-  // 积分历史
-  history: Array<{
+export interface IRewardSystem {
+  /** userId 的描述 */
+    userId: string;
+  /** totalPoints 的描述 */
+    totalPoints: number;
+  /** level 的描述 */
+    level: number;
+
+   
+  /** history 的描述 */
+    history: Array{
     timestamp: Date;
     action: string;
     points: number;
@@ -230,4 +262,4 @@ export interface RewardSystem {
     features: string[];
     unlocked: boolean;
   }>;
-} 
+}

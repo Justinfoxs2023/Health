@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 advanced-prediction.service.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export class AdvancedPredictionService {
   private readonly modelManager: ModelManager;
   private readonly realtimePredictor: RealtimePredictor;
@@ -13,13 +20,13 @@ export class AdvancedPredictionService {
     try {
       // 识别关键因素
       const factors = await this.identifyKeyFactors(data);
-      
+
       // 分析因素相关性
       const correlations = await this.analyzeFactorCorrelations(factors);
-      
+
       // 构建预测模型
       const model = await this.buildPredictionModel(factors, correlations);
-      
+
       // 生成预测结果
       return await this.generatePredictions(model, data);
     } catch (error) {
@@ -33,13 +40,13 @@ export class AdvancedPredictionService {
     try {
       // 获取实时数据
       const realtimeData = await this.realtimePredictor.getLatestData();
-      
+
       // 更新预测模型
       await this.modelManager.updateModel(modelId, realtimeData);
-      
+
       // 生成新预测
       const predictions = await this.realtimePredictor.predict(modelId);
-      
+
       // 更新置信区间
       return await this.updateConfidenceIntervals(predictions);
     } catch (error) {
@@ -53,15 +60,15 @@ export class AdvancedPredictionService {
     try {
       // 生成场景变量
       const scenarios = await this.generateScenarios(baseData);
-      
+
       // 运行模拟
       const simulations = await Promise.all(
-        scenarios.map(scenario => this.runSimulation(scenario))
+        scenarios.map(scenario => this.runSimulation(scenario)),
       );
-      
+
       // 分析结果
       const analysis = await this.analyzeSimulationResults(simulations);
-      
+
       // 生成建议
       return await this.generateScenarioRecommendations(analysis);
     } catch (error) {
@@ -69,4 +76,4 @@ export class AdvancedPredictionService {
       throw error;
     }
   }
-} 
+}

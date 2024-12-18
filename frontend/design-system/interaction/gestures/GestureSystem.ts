@@ -1,10 +1,15 @@
 import { PanResponder, PanResponderGestureState } from 'react-native';
 
-export interface GestureConfig {
+export interface IGestureConfig {
+  /** onSwipe 的描述 */
   onSwipe?: (direction: 'left' | 'right' | 'up' | 'down') => void;
+  /** onPinch 的描述 */
   onPinch?: (scale: number) => void;
+  /** onRotate 的描述 */
   onRotate?: (rotation: number) => void;
+  /** onLongPress 的描述 */
   onLongPress?: () => void;
+  /** threshold 的描述 */
   threshold?: {
     swipe?: number;
     pinch?: number;
@@ -18,10 +23,10 @@ export class GestureSystem {
     swipe: 50,
     pinch: 0.2,
     rotate: 20,
-    longPress: 500
+    longPress: 500,
   };
 
-  static createPanResponder(config: GestureConfig) {
+  static createPanResponder(config: IGestureConfig) {
     const threshold = { ...this.DEFAULT_THRESHOLD, ...config.threshold };
 
     return PanResponder.create({
@@ -38,14 +43,14 @@ export class GestureSystem {
 
       onPanResponderRelease: () => {
         // 手势结束
-      }
+      },
     });
   }
 
   private static handleSwipe(
     gestureState: PanResponderGestureState,
-    config: GestureConfig,
-    threshold: Required<GestureConfig['threshold']>
+    config: IGestureConfig,
+    threshold: Required<IGestureConfig['threshold']>,
   ) {
     const { dx, dy } = gestureState;
 
@@ -59,4 +64,4 @@ export class GestureSystem {
   static isValidSwipe(velocity: number, distance: number, threshold: number): boolean {
     return Math.abs(velocity) > 0.3 && Math.abs(distance) > threshold;
   }
-} 
+}

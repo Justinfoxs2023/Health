@@ -1,15 +1,19 @@
-import { Logger } from '@/utils/Logger';
-import { CacheError } from '@/utils/errors';
-import { RedisService } from './RedisService';
 import * as tf from '@tensorflow/tfjs-node';
+import { RedisService } from './RedisService';
+
+import { CacheError } from '@/utils/errors';
+import { Logger } from '@/utils/Logger';
 
 export class AIModelCacheService {
   private logger: Logger;
   private redis: RedisService;
-  private memoryCache: Map<string, {
-    model: tf.LayersModel;
-    lastUsed: Date;
-  }>;
+  private memoryCache: Map<
+    string,
+    {
+      model: tf.LayersModel;
+      lastUsed: Date;
+    }
+  >;
   private readonly maxMemoryModels = 5;
 
   constructor() {
@@ -54,10 +58,14 @@ export class AIModelCacheService {
   private async cacheModel(modelPath: string, model: tf.LayersModel): Promise<void> {
     try {
       // 1. 保存到Redis
-      const modelJSON = JSON.stringify(await model.save(tf.io.withSaveHandler(async (artifacts) => {
-        return artifacts;
-      })));
-      
+      const modelJSON = JSON.stringify(
+        await model.save(
+          tf.io.withSaveHandler(async artifacts => {
+            return artifacts;
+          }),
+        ),
+      );
+
       await this.redis.set(`model:${modelPath}`, modelJSON, 86400); // 缓存24小时
 
       // 2. 保存到内存缓存
@@ -77,7 +85,7 @@ export class AIModelCacheService {
       // 移除最久未使用的模型
       let oldestPath: string | null = null;
       let oldestDate = new Date();
-      
+
       this.memoryCache.forEach((value, path) => {
         if (value.lastUsed < oldestDate) {
           oldestDate = value.lastUsed;
@@ -93,7 +101,7 @@ export class AIModelCacheService {
     // 添加新模型到缓存
     this.memoryCache.set(modelPath, {
       model,
-      lastUsed: new Date()
+      lastUsed: new Date(),
     });
   }
 
@@ -105,7 +113,7 @@ export class AIModelCacheService {
       // 清理内存缓存
       const now = new Date();
       const oneHour = 60 * 60 * 1000;
-      
+
       for (const [path, data] of this.memoryCache.entries()) {
         if (now.getTime() - data.lastUsed.getTime() > oneHour) {
           this.memoryCache.delete(path);
@@ -119,4 +127,4 @@ export class AIModelCacheService {
       throw new CacheError('CACHE_CLEANUP_FAILED', error.message);
     }
   }
-} 
+}

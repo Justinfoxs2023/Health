@@ -1,31 +1,40 @@
 import React from 'react';
-import { View, StyleSheet, Share, Platform } from 'react-native';
+
 import { Card, Text, Button, useTheme } from 'react-native-paper';
+import { View, StyleSheet, Share, Platform } from 'react-native';
 import { captureRef } from 'react-native-view-shot';
 
-interface WorkoutShareData {
+interface IWorkoutShareData {
+  /** id 的描述 */
   id: string;
+  /** date 的描述 */
   date: string;
+  /** duration 的描述 */
   duration: number;
+  /** caloriesBurned 的描述 */
   caloriesBurned: number;
+  /** exercises 的描述 */
   exercises: Array<{
     name: string;
     sets: number;
     reps: number;
     weight?: number;
   }>;
+  /** achievements 的描述 */
   achievements?: Array<{
     title: string;
     description: string;
   }>;
 }
 
-interface ShareWorkoutProps {
-  workout: WorkoutShareData;
+interface IShareWorkoutProps {
+  /** workout 的描述 */
+  workout: IWorkoutShareData;
+  /** onShare 的描述 */
   onShare?: () => void;
 }
 
-export const ShareWorkout = ({ workout, onShare }: ShareWorkoutProps) => {
+export const ShareWorkout = ({ workout, onShare }: IShareWorkoutProps) => {
   const theme = useTheme();
   const shareRef = React.useRef(null);
 
@@ -59,7 +68,7 @@ ${workout.achievements?.map(a => `- ${a.title}`).join('\n')}
         onShare?.();
       }
     } catch (error) {
-      console.error('分享失败:', error);
+      console.error('Error in ShareWorkout.tsx:', '分享失败:', error);
     }
   };
 
@@ -74,15 +83,11 @@ ${workout.achievements?.map(a => `- ${a.title}`).join('\n')}
 
           <View style={styles.stats}>
             <View style={styles.statItem}>
-              <Text style={styles.statValue}>
-                {Math.round(workout.duration / 60)}
-              </Text>
+              <Text style={styles.statValue}>{Math.round(workout.duration / 60)}</Text>
               <Text style={styles.statLabel}>分钟</Text>
             </View>
             <View style={styles.statItem}>
-              <Text style={styles.statValue}>
-                {workout.caloriesBurned}
-              </Text>
+              <Text style={styles.statValue}>{workout.caloriesBurned}</Text>
               <Text style={styles.statLabel}>千卡</Text>
             </View>
           </View>
@@ -101,12 +106,8 @@ ${workout.achievements?.map(a => `- ${a.title}`).join('\n')}
               <Text style={styles.achievementsTitle}>获得成就</Text>
               {workout.achievements.map((achievement, index) => (
                 <View key={index} style={styles.achievement}>
-                  <Text style={styles.achievementTitle}>
-                    {achievement.title}
-                  </Text>
-                  <Text style={styles.achievementDesc}>
-                    {achievement.description}
-                  </Text>
+                  <Text style={styles.achievementTitle}>{achievement.title}</Text>
+                  <Text style={styles.achievementDesc}>{achievement.description}</Text>
                 </View>
               ))}
             </View>
@@ -114,12 +115,7 @@ ${workout.achievements?.map(a => `- ${a.title}`).join('\n')}
         </Card.Content>
       </Card>
 
-      <Button
-        mode="contained"
-        onPress={handleShare}
-        style={styles.shareButton}
-        icon="share"
-      >
+      <Button mode="contained" onPress={handleShare} style={styles.shareButton} icon="share">
         分享到社交平台
       </Button>
     </View>
@@ -195,4 +191,4 @@ const styles = StyleSheet.create({
   shareButton: {
     marginTop: 8,
   },
-}); 
+});

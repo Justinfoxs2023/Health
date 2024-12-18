@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
-import { Logger } from '../utils/logger';
 import { AdminRole } from '../types/admin';
+import { Logger } from '../utils/logger';
+import { Request, Response, NextFunction } from 'express';
 
 export class AdminAuthMiddleware {
   private logger: Logger;
@@ -13,12 +13,12 @@ export class AdminAuthMiddleware {
   async verifyAdmin(req: Request, res: Response, next: NextFunction) {
     try {
       const user = req.user;
-      
+
       // 验证用户角色
       if (!this.isAdmin(user.roles)) {
         return res.status(403).json({
           code: 403,
-          message: '没有管理员权限'
+          message: '没有管理员权限',
         });
       }
 
@@ -26,7 +26,7 @@ export class AdminAuthMiddleware {
       if (!this.hasPermission(user.roles, req.path)) {
         return res.status(403).json({
           code: 403,
-          message: '没有操作权限'
+          message: '没有操作权限',
         });
       }
 
@@ -35,7 +35,7 @@ export class AdminAuthMiddleware {
       this.logger.error('管理员权限验证失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
@@ -52,4 +52,4 @@ export class AdminAuthMiddleware {
   }
 }
 
-export const adminAuth = new AdminAuthMiddleware(); 
+export const adminAuth = new AdminAuthMiddleware();

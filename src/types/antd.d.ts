@@ -1,38 +1,36 @@
+/**
+ * @fileoverview TS 文件 antd.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 declare module 'antd' {
-  export const message: {
-    success: (content: string) => void;
-    error: (content: string) => void;
-    warning: (content: string) => void;
-    info: (content: string) => void;
-  };
-
-  export class Tabs extends React.Component<{
-    defaultActiveKey?: string;
-    centered?: boolean;
-    className?: string;
-    children?: React.ReactNode;
-  }> {
-    static TabPane: React.FC<{
-      tab: string;
-      key: string;
-      children?: React.ReactNode;
-    }>;
-  }
-
-  export const Tooltip: React.FC<{
-    title: string;
+  export const Row: React.FC<{
+    gutter?: number | [number, number];
+    justify?: 'start' | 'end' | 'center' | 'space-around' | 'space-between';
+    align?: 'top' | 'middle' | 'bottom';
     children: React.ReactNode;
   }>;
 
-  export const Modal: React.FC<{
-    title?: string;
-    open?: boolean;
-    onCancel?: () => void;
-    footer?: React.ReactNode | null;
-    centered?: boolean;
-    width?: number;
+  export const Col: React.FC<{
+    span?: number;
+    xs?: number | object;
+    sm?: number | object;
+    md?: number | object;
+    lg?: number | object;
+    xl?: number | object;
+    children: React.ReactNode;
+  }>;
+
+  export const Card: React.FC<{
+    title?: React.ReactNode;
     className?: string;
-    children?: React.ReactNode;
+    children: React.ReactNode;
+  }>;
+
+  export const Empty: React.FC<{
+    description?: React.ReactNode;
   }>;
 
   export const Spin: React.FC<{
@@ -40,26 +38,19 @@ declare module 'antd' {
     tip?: string;
   }>;
 
-  export const Button: React.FC<{
-    type?: 'primary' | 'default' | 'dashed' | 'link' | 'text';
-    size?: 'small' | 'middle' | 'large';
-    icon?: React.ReactNode;
-    onClick?: () => void;
-    className?: string;
-    children?: React.ReactNode;
-  }>;
+  export const message: {
+    success: (content: string) => void;
+    error: (content: string) => void;
+  };
 
-  export const QRCode: React.FC<{
-    value: string;
-    size?: number;
-    style?: React.CSSProperties;
-  }>;
-
-  export const Space: React.FC<{
-    size?: 'small' | 'middle' | 'large' | number;
-    align?: 'start' | 'end' | 'center' | 'baseline';
-    direction?: 'vertical' | 'horizontal';
-    wrap?: boolean;
-    children?: React.ReactNode;
-  }>;
-} 
+  export const Tabs: React.FC<{
+    defaultActiveKey?: string;
+    children: React.ReactNode;
+  }> & {
+    TabPane: React.FC<{
+      tab: React.ReactNode;
+      key: string;
+      children: React.ReactNode;
+    }>;
+  };
+}

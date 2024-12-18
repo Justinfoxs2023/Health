@@ -1,6 +1,7 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+
 import Loading, { loading } from '../index';
+import { render, screen } from '@testing-library/react';
 
 describe('Loading Component', () => {
   it('应该在visible为true时显示', () => {
@@ -69,4 +70,4 @@ describe('Loading Service', () => {
     loading.hideAll();
     expect(screen.queryByText('加载中...')).not.toBeInTheDocument();
   });
-}); 
+});

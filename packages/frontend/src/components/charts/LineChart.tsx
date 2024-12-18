@@ -1,33 +1,43 @@
 import React from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
+
 import { LineChart as RNLineChart } from 'react-native-chart-kit';
 import { Text } from '../common';
+import { View, StyleSheet, Dimensions } from 'react-native';
 
-interface DataPoint {
+interface IDataPoint {
+  /** x 的描述 */
   x: string | number;
+  /** y 的描述 */
   y: number;
 }
 
-interface Props {
-  data: DataPoint[];
+interface IProps {
+  /** data 的描述 */
+  data: IDataPoint[];
+  /** title 的描述 */
   title?: string;
+  /** color 的描述 */
   color?: string;
+  /** width 的描述 */
   width?: number;
+  /** height 的描述 */
   height?: number;
 }
 
-export const LineChart: React.FC<Props> = ({
+export const LineChart: React.FC<IProps> = ({
   data,
   title,
   color = '#2E7D32',
   width = Dimensions.get('window').width - 40,
-  height = 220
+  height = 220,
 }) => {
   const chartData = {
     labels: data.map(point => point.x.toString()),
-    datasets: [{
-      data: data.map(point => point.y)
-    }]
+    datasets: [
+      {
+        data: data.map(point => point.y),
+      },
+    ],
   };
 
   const chartConfig = {
@@ -38,13 +48,13 @@ export const LineChart: React.FC<Props> = ({
     color: () => color,
     labelColor: () => '#666',
     style: {
-      borderRadius: 16
+      borderRadius: 16,
     },
     propsForDots: {
       r: '4',
       strokeWidth: '2',
-      stroke: color
-    }
+      stroke: color,
+    },
   };
 
   return (
@@ -76,5 +86,5 @@ const styles = StyleSheet.create({
   chart: {
     marginVertical: 8,
     borderRadius: 8,
-  }
-}); 
+  },
+});

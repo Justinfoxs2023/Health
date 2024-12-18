@@ -1,52 +1,53 @@
+import {
+  IPerformanceMetrics,
+  IPerformanceWarning,
+  IOptimizationSuggestion,
+  IPerformanceReport,
+  IPerformanceConfig,
+} from './performance.types';
+import { BehaviorSubject, Observable, interval } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
-import { BehaviorSubject, Observable, interval } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import {
-  PerformanceMetrics,
-  PerformanceWarning,
-  OptimizationSuggestion,
-  PerformanceReport,
-  PerformanceConfig
-} from './performance.types';
 
-@Injectable({
-  providedIn: 'root'
+@Injec
+table({
+  providedIn: 'root',
 })
 export class PerformanceService {
-  private readonly config: PerformanceConfig = {
+  private readonly config: IPerformanceConfig = {
     intervals: {
       memory: 5000,
       cpu: 2000,
       fps: 1000,
-      network: 10000
+      network: 10000,
     },
     thresholds: {
       memory: 0.9,
       cpu: 0.8,
       fps: 30,
       temperature: 45,
-      rtt: 500
+      rtt: 500,
     },
     autoOptimize: {
       enabled: true,
       strategies: {
         memoryCleanup: true,
         imageOptimization: true,
-        codeOptimization: false
-      }
-    }
+        codeOptimization: false,
+      },
+    },
   };
 
-  private metrics = new BehaviorSubject<PerformanceMetrics>({
+  private metrics = new BehaviorSubject<IPerformanceMetrics>({
     memory: { used: 0, total: 0, limit: 0 },
     cpu: { usage: 0, temperature: 0 },
     fps: { current: 0, average: 0, drops: 0 },
     network: { rtt: 0, downlink: 0, effectiveType: 'unknown' },
-    battery: { level: 1, charging: false }
+    battery: { level: 1, charging: false },
   });
 
-  private warnings = new BehaviorSubject<PerformanceWarning[]>([]);
+  private warnings = new BehaviorSubject<IPerformanceWarning[]>([]);
   private fpsHistory: number[] = [];
   private isMonitoring = false;
 
@@ -83,17 +84,17 @@ export class PerformanceService {
   }
 
   // 获取性能指标
-  getMetrics(): Observable<PerformanceMetrics> {
+  getMetrics(): Observable<IPerformanceMetrics> {
     return this.metrics.asObservable();
   }
 
   // 获取性能警告
-  getWarnings(): Observable<PerformanceWarning[]> {
+  getWarnings(): Observable<IPerformanceWarning[]> {
     return this.warnings.asObservable();
   }
 
   // 生成性能报告
-  async generateReport(): Promise<PerformanceReport> {
+  async generateReport(): Promise<IPerformanceReport> {
     const currentMetrics = this.metrics.value;
     const currentWarnings = this.warnings.value;
     const suggestions = this.generateOptimizationSuggestions(currentMetrics);
@@ -103,7 +104,7 @@ export class PerformanceService {
       metrics: currentMetrics,
       warnings: currentWarnings,
       suggestions,
-      score: this.calculatePerformanceScore(currentMetrics)
+      score: this.calculatePerformanceScore(currentMetrics),
     };
   }
 
@@ -141,8 +142,8 @@ export class PerformanceService {
           memory: {
             used: memory.usedJSHeapSize,
             total: memory.totalJSHeapSize,
-            limit: memory.jsHeapSizeLimit
-          }
+            limit: memory.jsHeapSizeLimit,
+          },
         });
         this.checkMemoryWarnings();
       });
@@ -179,14 +180,14 @@ export class PerformanceService {
   private startNetworkMonitoring(): void {
     if ('connection' in navigator) {
       const connection = (navigator as any).connection;
-      
+
       const updateNetworkInfo = () => {
         this.updateMetrics({
           network: {
             rtt: connection.rtt,
             downlink: connection.downlink,
-            effectiveType: connection.effectiveType
-          }
+            effectiveType: connection.effectiveType,
+          },
         });
         this.checkNetworkWarnings();
       };
@@ -203,8 +204,8 @@ export class PerformanceService {
           this.updateMetrics({
             battery: {
               level: battery.level,
-              charging: battery.charging
-            }
+              charging: battery.charging,
+            },
           });
         };
 
@@ -217,17 +218,17 @@ export class PerformanceService {
   private startAutoOptimization(): void {
     interval(30000).subscribe(() => {
       const metrics = this.metrics.value;
-      
+
       if (this.shouldOptimize(metrics)) {
         this.performAutoOptimization(metrics);
       }
     });
   }
 
-  private updateMetrics(update: Partial<PerformanceMetrics>): void {
+  private updateMetrics(update: Partial<IPerformanceMetrics>): void {
     this.metrics.next({
       ...this.metrics.value,
-      ...update
+      ...update,
     });
   }
 
@@ -244,24 +245,22 @@ export class PerformanceService {
       fps: {
         current: currentFPS,
         average: averageFPS,
-        drops
-      }
+        drops,
+      },
     });
 
     this.checkFPSWarnings(currentFPS);
   }
 
   private calculateAverageFPS(): number {
-    return Math.round(
-      this.fpsHistory.reduce((sum, fps) => sum + fps, 0) / this.fpsHistory.length
-    );
+    return Math.round(this.fpsHistory.reduce((sum, fps) => sum + fps, 0) / this.fpsHistory.length);
   }
 
   private countFPSDrops(): number {
     return this.fpsHistory.filter(fps => fps < this.config.thresholds.fps).length;
   }
 
-  private shouldOptimize(metrics: PerformanceMetrics): boolean {
+  private shouldOptimize(metrics: IPerformanceMetrics): boolean {
     return (
       metrics.memory.used / metrics.memory.total > this.config.thresholds.memory ||
       metrics.fps.current < this.config.thresholds.fps ||
@@ -269,10 +268,13 @@ export class PerformanceService {
     );
   }
 
-  private async performAutoOptimization(metrics: PerformanceMetrics): Promise<void> {
+  private async performAutoOptimization(metrics: IPerformanceMetrics): Promise<void> {
     const { strategies } = this.config.autoOptimize;
 
-    if (strategies.memoryCleanup && metrics.memory.used / metrics.memory.total > this.config.thresholds.memory) {
+    if (
+      strategies.memoryCleanup &&
+      metrics.memory.used / metrics.memory.total > this.config.thresholds.memory
+    ) {
       await this.optimizeMemory();
     }
 
@@ -297,8 +299,8 @@ export class PerformanceService {
     // 实现代码优化逻辑
   }
 
-  private calculatePerformanceScore(metrics: PerformanceMetrics): number {
+  private calculatePerformanceScore(metrics: IPerformanceMetrics): number {
     // 实现性能评分计算逻辑
     return 0;
   }
-} 
+}

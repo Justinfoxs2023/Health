@@ -1,43 +1,56 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+
 import { Card, Text, Button, ProgressBar, useTheme } from 'react-native-paper';
 import { CountdownCircleTimer } from 'react-native-countdown-circle-timer';
+import { View, StyleSheet, ScrollView } from 'react-native';
 
-interface Exercise {
+interface IExercise {
+  /** id 的描述 */
   id: string;
+  /** name 的描述 */
   name: string;
+  /** sets 的描述 */
   sets: number;
+  /** reps 的描述 */
   reps: number;
+  /** duration 的描述 */
   duration?: number;
+  /** restTime 的描述 */
   restTime: number;
 }
 
-interface WorkoutExecutionProps {
-  exercises: Exercise[];
-  onComplete: (results: WorkoutResult) => void;
+interface IWorkoutExecutionProps {
+  /** exercises 的描述 */
+  exercises: IExercise[];
+  /** onComplete 的描述 */
+  onComplete: (results: IWorkoutResult) => void;
+  /** onPause 的描述 */
   onPause: () => void;
 }
 
-interface WorkoutResult {
+interface IWorkoutResult {
+  /** completedExercises 的描述 */
   completedExercises: Array<{
     exerciseId: string;
     completedSets: number;
     totalReps: number;
     duration?: number;
   }>;
+  /** totalDuration 的描述 */
   totalDuration: number;
+  /** caloriesBurned 的描述 */
   caloriesBurned: number;
 }
 
-export const WorkoutExecution = ({ exercises, onComplete, onPause }: WorkoutExecutionProps) => {
+export const WorkoutExecution = ({ exercises, onComplete, onPause }: IWorkoutExecutionProps) => {
   const theme = useTheme();
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
   const [currentSet, setCurrentSet] = useState(1);
   const [isResting, setIsResting] = useState(false);
-  const [results, setResults] = useState<WorkoutResult>({
+  const [results, setResults] = useState<IWorkoutResult>({
     completedExercises: [],
     totalDuration: 0,
-    caloriesBurned: 0
+    caloriesBurned: 0,
   });
 
   const currentExercise = exercises[currentExerciseIndex];
@@ -51,12 +64,12 @@ export const WorkoutExecution = ({ exercises, onComplete, onPause }: WorkoutExec
         exerciseId: currentExercise.id,
         completedSets: currentSet,
         totalReps: currentSet * currentExercise.reps,
-        duration: currentExercise.duration
+        duration: currentExercise.duration,
       };
 
       setResults(prev => ({
         ...prev,
-        completedExercises: [...prev.completedExercises, exerciseResult]
+        completedExercises: [...prev.completedExercises, exerciseResult],
       }));
 
       if (currentExerciseIndex < exercises.length - 1) {
@@ -94,9 +107,7 @@ export const WorkoutExecution = ({ exercises, onComplete, onPause }: WorkoutExec
           <Text style={styles.setInfo}>
             第 {currentSet} 组 / 共 {currentExercise.sets} 组
           </Text>
-          <Text style={styles.repInfo}>
-            {currentExercise.reps} 次
-          </Text>
+          <Text style={styles.repInfo}>{currentExercise.reps} 次</Text>
 
           {isResting ? (
             <View style={styles.timerContainer}>
@@ -106,29 +117,19 @@ export const WorkoutExecution = ({ exercises, onComplete, onPause }: WorkoutExec
                 colors={[theme.colors.primary]}
                 onComplete={handleRestComplete}
               >
-                {({ remainingTime }) => (
-                  <Text style={styles.timerText}>{remainingTime}</Text>
-                )}
+                {({ remainingTime }) => <Text style={styles.timerText}>{remainingTime}</Text>}
               </CountdownCircleTimer>
               <Text style={styles.restText}>休息时间</Text>
             </View>
           ) : (
-            <Button
-              mode="contained"
-              onPress={handleSetComplete}
-              style={styles.completeButton}
-            >
+            <Button mode="contained" onPress={handleSetComplete} style={styles.completeButton}>
               完成本组
             </Button>
           )}
         </Card.Content>
       </Card>
 
-      <Button
-        mode="outlined"
-        onPress={onPause}
-        style={styles.pauseButton}
-      >
+      <Button mode="outlined" onPress={onPause} style={styles.pauseButton}>
         暂停训练
       </Button>
     </ScrollView>
@@ -192,4 +193,4 @@ const styles = StyleSheet.create({
   pauseButton: {
     marginTop: 8,
   },
-}); 
+});

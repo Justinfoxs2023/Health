@@ -1,5 +1,5 @@
-import { Logger } from '../../utils/logger';
 import { EventEmitter } from '../../utils/event-emitter';
+import { Logger } from '../../utils/logger';
 import { StateManager } from '../../utils/state-manager';
 
 export class PlatformStateService {
@@ -18,17 +18,17 @@ export class PlatformStateService {
     try {
       // 1. 验证状态
       await this.validateState(state);
-      
+
       // 2. 合并状态
       const mergedState = await this.mergeState(platform, state);
-      
+
       // 3. 更新状态
       await this.stateManager.setState(platform, mergedState);
-      
+
       // 4. 广播更新
       this.events.emit('stateUpdated', {
         platform,
-        state: mergedState
+        state: mergedState,
       });
     } catch (error) {
       this.logger.error('状态同步失败', error);
@@ -43,7 +43,7 @@ export class PlatformStateService {
         callback(event.state);
       }
     };
-    
+
     this.events.on('stateUpdated', handler);
     return () => this.events.off('stateUpdated', handler);
   }
@@ -62,26 +62,23 @@ export class PlatformStateService {
   async rollbackState(platform: string, version: string): Promise<void> {
     try {
       // 1. 获取历史状态
-      const historicalState = await this.stateManager.getHistoricalState(
-        platform,
-        version
-      );
-      
+      const historicalState = await this.stateManager.getHistoricalState(platform, version);
+
       // 2. 验证回滚
       await this.validateRollback(platform, historicalState);
-      
+
       // 3. 执行回滚
       await this.stateManager.setState(platform, historicalState);
-      
+
       // 4. 广播回滚
       this.events.emit('stateRollback', {
         platform,
         version,
-        state: historicalState
+        state: historicalState,
       });
     } catch (error) {
       this.logger.error('状态回滚失败', error);
       throw error;
     }
   }
-} 
+}

@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 points.service.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export class PointsService {
   private readonly pointsRepo: PointsRepository;
   private readonly activityTracker: ActivityTracker;
@@ -13,21 +20,21 @@ export class PointsService {
     try {
       // 验证活动
       await this.validateActivity(activity);
-      
+
       // 计算积分
       const points = await this.calculatePoints(activity);
-      
+
       // 记录交易
       const transaction = await this.pointsRepo.createTransaction({
         userId,
         activity,
         points,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
 
       // 更新总积分
       await this.updateTotalPoints(userId, points);
-      
+
       // 检查升级条件
       await this.checkUpgradeEligibility(userId);
 
@@ -43,13 +50,13 @@ export class PointsService {
     try {
       // 验证积分余额
       await this.validatePointsBalance(userId, redemption.points);
-      
+
       // 检查兑换资格
       await this.validateRedemptionEligibility(userId, redemption);
-      
+
       // 执行兑换
       const result = await this.processRedemption(userId, redemption);
-      
+
       // 更新积分余额
       await this.deductPoints(userId, redemption.points);
 
@@ -57,7 +64,7 @@ export class PointsService {
         success: true,
         redemption: result,
         remainingPoints: await this.getPointsBalance(userId),
-        expiryDate: result.expiryDate
+        expiryDate: result.expiryDate,
       };
     } catch (error) {
       this.logger.error('积分兑换失败', error);
@@ -70,21 +77,21 @@ export class PointsService {
     try {
       // 获取积分到期信息
       const expiryInfo = await this.getPointsExpiryInfo(userId);
-      
+
       // 处理过期积分
       const expiredPoints = await this.processExpiredPoints(expiryInfo);
-      
+
       // 发送到期提醒
       await this.sendExpiryNotifications(userId, expiryInfo);
 
       return {
         expiredPoints,
         nextExpiryDate: expiryInfo.nextExpiryDate,
-        remainingPoints: await this.getPointsBalance(userId)
+        remainingPoints: await this.getPointsBalance(userId),
       };
     } catch (error) {
       this.logger.error('管理积分到期失败', error);
       throw error;
     }
   }
-} 
+}

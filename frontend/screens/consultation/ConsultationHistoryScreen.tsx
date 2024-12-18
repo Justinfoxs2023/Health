@@ -1,13 +1,16 @@
 import React from 'react';
-import { View, FlatList, StyleSheet, Text, TouchableOpacity, Image } from 'react-native';
-import { useQuery } from '@tanstack/react-query';
-import { getConsultationHistory } from '../../api/consultation';
+
 import { LoadingSpinner, Icon, EmptyState } from '../../components';
+import { View, FlatList, StyleSheet, Text, TouchableOpacity, Image } from 'react-native';
 import { format } from 'date-fns';
+import { getConsultationHistory } from '../../api/consultation';
+import { useQuery } from '@tanstack/react-query';
 import { zhCN } from 'date-fns/locale';
 
-interface ConsultationRecord {
+interface IConsultationRecord {
+  /** id 的描述 */
   id: string;
+  /** expert 的描述 */
   expert: {
     id: string;
     name: string;
@@ -15,19 +18,32 @@ interface ConsultationRecord {
     title: string;
     hospital: string;
   };
+  /** date 的描述 */
   date: string;
+  /** timeSlot 的描述 */
   timeSlot: string;
+  /** status 的描述 */
   status: 'upcoming' | 'completed' | 'cancelled';
+  /** description 的描述 */
   description: string;
+  /** diagnosis 的描述 */
   diagnosis?: string;
+  /** prescription 的描述 */
   prescription?: string;
+  /** followUpDate 的描述 */
   followUpDate?: string;
+  /** price 的描述 */
   price: number;
 }
 
 export const ConsultationHistoryScreen = ({ navigation }) => {
-  const [selectedStatus, setSelectedStatus] = React.useState<'upcoming' | 'completed' | 'all'>('all');
-  const { data: history, isLoading } = useQuery<ConsultationRecord[]>('consultationHistory', getConsultationHistory);
+  const [selectedStatus, setSelectedStatus] = React.useState<'upcoming' | 'completed' | 'all'>(
+    'all',
+  );
+  const { data: history, isLoading } = useQuery<IConsultationRecord[]>(
+    'consultationHistory',
+    getConsultationHistory,
+  );
 
   const filteredHistory = history?.filter(record => {
     if (selectedStatus === 'all') return true;
@@ -61,7 +77,7 @@ export const ConsultationHistoryScreen = ({ navigation }) => {
     }
   };
 
-  const renderConsultation = ({ item: record }: { item: ConsultationRecord }) => (
+  const renderConsultation = ({ item: record }: { item: IConsultationRecord }) => (
     <TouchableOpacity
       style={styles.recordCard}
       onPress={() => navigation.navigate('ConsultationDetail', { id: record.id })}
@@ -75,7 +91,9 @@ export const ConsultationHistoryScreen = ({ navigation }) => {
             <Text style={styles.hospital}>{record.expert.hospital}</Text>
           </View>
         </View>
-        <View style={[styles.statusBadge, { backgroundColor: `${getStatusColor(record.status)}20` }]}>
+        <View
+          style={[styles.statusBadge, { backgroundColor: `${getStatusColor(record.status)}20` }]}
+        >
           <Text style={[styles.statusText, { color: getStatusColor(record.status) }]}>
             {getStatusText(record.status)}
           </Text>
@@ -175,122 +193,122 @@ export const ConsultationHistoryScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   header: {
     flexDirection: 'row',
     backgroundColor: '#fff',
     paddingHorizontal: 15,
-    paddingVertical: 10
+    paddingVertical: 10,
   },
   tab: {
     flex: 1,
     alignItems: 'center',
-    paddingVertical: 8
+    paddingVertical: 8,
   },
   activeTab: {
     borderBottomWidth: 2,
-    borderBottomColor: '#2E7D32'
+    borderBottomColor: '#2E7D32',
   },
   tabText: {
     fontSize: 14,
-    color: '#666'
+    color: '#666',
   },
   activeTabText: {
     color: '#2E7D32',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   list: {
-    padding: 15
+    padding: 15,
   },
   recordCard: {
     backgroundColor: '#fff',
     borderRadius: 12,
-    padding: 15
+    padding: 15,
   },
   cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 15
+    marginBottom: 15,
   },
   expertInfo: {
     flexDirection: 'row',
-    flex: 1
+    flex: 1,
   },
   avatar: {
     width: 50,
     height: 50,
     borderRadius: 25,
-    marginRight: 12
+    marginRight: 12,
   },
   expertName: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 4
+    marginBottom: 4,
   },
   expertTitle: {
     fontSize: 14,
     color: '#666',
-    marginBottom: 2
+    marginBottom: 2,
   },
   hospital: {
     fontSize: 12,
-    color: '#999'
+    color: '#999',
   },
   statusBadge: {
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 12
+    borderRadius: 12,
   },
   statusText: {
     fontSize: 12,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   timeInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 15
+    marginBottom: 15,
   },
   timeText: {
     fontSize: 14,
     color: '#666',
-    marginLeft: 6
+    marginLeft: 6,
   },
   timeIcon: {
-    marginLeft: 15
+    marginLeft: 15,
   },
   divider: {
     height: StyleSheet.hairlineWidth,
     backgroundColor: '#f0f0f0',
-    marginBottom: 15
+    marginBottom: 15,
   },
   descriptionSection: {
-    marginBottom: 12
+    marginBottom: 12,
   },
   descriptionLabel: {
     fontSize: 14,
     color: '#666',
-    marginBottom: 4
+    marginBottom: 4,
   },
   description: {
     fontSize: 14,
     color: '#333',
-    lineHeight: 20
+    lineHeight: 20,
   },
   diagnosisSection: {
-    marginBottom: 12
+    marginBottom: 12,
   },
   diagnosisLabel: {
     fontSize: 14,
     color: '#666',
-    marginBottom: 4
+    marginBottom: 4,
   },
   diagnosis: {
     fontSize: 14,
     color: '#333',
-    lineHeight: 20
+    lineHeight: 20,
   },
   footer: {
     flexDirection: 'row',
@@ -299,25 +317,25 @@ const styles = StyleSheet.create({
     marginTop: 15,
     paddingTop: 15,
     borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: '#f0f0f0'
+    borderTopColor: '#f0f0f0',
   },
   price: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#F57C00'
+    color: '#F57C00',
   },
   actionButton: {
     backgroundColor: '#2E7D32',
     paddingHorizontal: 15,
     paddingVertical: 8,
-    borderRadius: 20
+    borderRadius: 20,
   },
   actionButtonText: {
     color: '#fff',
     fontSize: 14,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   separator: {
-    height: 10
-  }
-}); 
+    height: 10,
+  },
+});

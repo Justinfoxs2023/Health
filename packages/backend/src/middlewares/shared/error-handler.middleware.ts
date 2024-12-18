@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
-import { Logger } from '../../utils/logger';
 import { AppError } from '../../types/shared';
+import { Logger } from '../../utils/logger';
+import { Request, Response, NextFunction } from 'express';
 
 export class ErrorHandlerMiddleware {
   private logger: Logger;
@@ -18,7 +18,7 @@ export class ErrorHandlerMiddleware {
         path: req.path,
         method: req.method,
         query: req.query,
-        body: req.body
+        body: req.body,
       });
 
       // 格式化错误响应
@@ -26,7 +26,7 @@ export class ErrorHandlerMiddleware {
         code: error.code || 'UNKNOWN_ERROR',
         message: error.message || '服务器错误',
         details: error.details,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
 
       // 发送错误响应
@@ -36,10 +36,10 @@ export class ErrorHandlerMiddleware {
       res.status(500).json({
         code: 'ERROR_HANDLER_FAILED',
         message: '服务器错误',
-        timestamp: new Date()
+        timestamp: new Date(),
       });
     }
   }
 }
 
-export const errorHandler = new ErrorHandlerMiddleware(); 
+export const errorHandler = new ErrorHandlerMiddleware();

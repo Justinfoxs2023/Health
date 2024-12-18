@@ -1,5 +1,5 @@
-import { Logger } from '../../utils/logger';
 import { DeepseekService } from '../ai/deepseek.service';
+import { Logger } from '../../utils/logger';
 import { RekognitionService } from './rekognition.service';
 
 export class SpecializedAnalysisService {
@@ -18,7 +18,7 @@ export class SpecializedAnalysisService {
     try {
       const [poseAnalysis, medicalContext] = await Promise.all([
         this.rekognition.analyzeExercisePose(imageKey, 'rehab'),
-        this.deepseek.getMedicalContext(condition)
+        this.deepseek.getMedicalContext(condition),
       ]);
 
       return await this.deepseek.analyzeRehabilitation({
@@ -26,8 +26,8 @@ export class SpecializedAnalysisService {
         condition: medicalContext,
         requirements: {
           type: 'rehabilitation',
-          focus: ['安全性', '有效性', '进展']
-        }
+          focus: ['安全性', '有效性', '进展'],
+        },
       });
     } catch (error) {
       this.logger.error('康复训练分析失败:', error);
@@ -39,11 +39,11 @@ export class SpecializedAnalysisService {
   async assessInjuryRisk(imageKey: string, userProfile: any) {
     try {
       const analysis = await this.rekognition.analyzeExercisePose(imageKey, 'risk');
-      
+
       return await this.deepseek.assessInjuryRisk({
         pose: analysis,
         userProfile,
-        history: await this.getUserExerciseHistory(userProfile.userId)
+        history: await this.getUserExerciseHistory(userProfile.userId),
       });
     } catch (error) {
       this.logger.error('损伤风险评估失败:', error);
@@ -56,18 +56,18 @@ export class SpecializedAnalysisService {
     try {
       const [poseAnalysis, sportMetrics] = await Promise.all([
         this.rekognition.analyzeExercisePose(imageKey, 'performance'),
-        this.getSportSpecificMetrics(sport)
+        this.getSportSpecificMetrics(sport),
       ]);
 
       return await this.deepseek.analyzePerformance({
         pose: poseAnalysis,
         sport,
         metrics: sportMetrics,
-        standards: await this.getSportStandards(sport)
+        standards: await this.getSportStandards(sport),
       });
     } catch (error) {
       this.logger.error('运动表现分析失败:', error);
       throw error;
     }
   }
-} 
+}

@@ -1,27 +1,35 @@
 import * as tf from '@tensorflow/tfjs';
-import { VoicePrintService } from './voice-print.service';
+import { ILocalDatabase } from '../utils/local-database';
 import { ImagePreprocessingService } from './image-preprocessing.service';
-import { LocalDatabase } from '../utils/local-database';
+import { VoicePrintService } from './voice-print.service';
 
-interface ModalityConfig {
+interface IModalityConfig {
+  /** type 的描述 */
   type: 'audio' | 'image' | 'text';
+  /** weight 的描述 */
   weight: number;
+  /** model 的描述 */
   model: tf.LayersModel;
+  /** preprocessor 的描述 */
   preprocessor: any;
 }
 
-interface FusionResult {
+interface IFusionResult {
+  /** prediction 的描述 */
   prediction: any;
+  /** confidence 的描述 */
   confidence: number;
+  /** modalityScores 的描述 */
   modalityScores: Record<string, number>;
+  /** features 的描述 */
   features: Record<string, Float32Array>;
 }
 
 export class MultimodalFusionService {
-  private db: LocalDatabase;
+  private db: ILocalDatabase;
   private voicePrintService: VoicePrintService;
   private imageService: ImagePreprocessingService;
-  private modalities: Map<string, ModalityConfig> = new Map();
+  private modalities: Map<string, IModalityConfig> = new Map();
   private fusionModel: tf.LayersModel | null = null;
 
   constructor() {
@@ -45,7 +53,7 @@ export class MultimodalFusionService {
         type: 'audio',
         weight: 0.4,
         model: audioModel,
-        preprocessor: this.voicePrintService
+        preprocessor: this.voicePrintService,
       });
 
       // 加载图像模态
@@ -54,7 +62,7 @@ export class MultimodalFusionService {
         type: 'image',
         weight: 0.4,
         model: imageModel,
-        preprocessor: this.imageService
+        preprocessor: this.imageService,
       });
 
       // 加载文本模态
@@ -63,10 +71,10 @@ export class MultimodalFusionService {
         type: 'text',
         weight: 0.2,
         model: textModel,
-        preprocessor: null
+        preprocessor: null,
       });
     } catch (error) {
-      console.error('加载模态失败:', error);
+      console.error('Error in multimodal-fusion.service.ts:', '加载模态失败:', error);
     }
   }
 
@@ -75,7 +83,7 @@ export class MultimodalFusionService {
     try {
       this.fusionModel = await tf.loadLayersModel('/models/fusion/model.json');
     } catch (error) {
-      console.error('加载融合模型失败:', error);
+      console.error('Error in multimodal-fusion.service.ts:', '加载融合模型失败:', error);
     }
   }
 
@@ -84,17 +92,17 @@ export class MultimodalFusionService {
     audio?: Float32Array;
     image?: ImageData;
     text?: string;
-  }): Promise<FusionResult> {
+  }): Promise<IFusionResult> {
     try {
       // 特征提取
       const features = await this.extractFeatures(inputs);
-      
+
       // 单模态预测
       const modalityPredictions = await this.getModalityPredictions(features);
-      
+
       // 特征融合
       const fusedFeatures = await this.fuseFeatures(features);
-      
+
       // 最终预测
       const prediction = await this.makePrediction(fusedFeatures, modalityPredictions);
 
@@ -102,10 +110,10 @@ export class MultimodalFusionService {
         prediction: prediction.result,
         confidence: prediction.confidence,
         modalityScores: prediction.modalityScores,
-        features
+        features,
       };
     } catch (error) {
-      console.error('多模态分析失败:', error);
+      console.error('Error in multimodal-fusion.service.ts:', '多模态分析失败:', error);
       throw error;
     }
   }
@@ -117,10 +125,7 @@ export class MultimodalFusionService {
     for (const [modalityName, config] of this.modalities.entries()) {
       const input = inputs[modalityName];
       if (input && config.preprocessor) {
-        features[modalityName] = await this.extractModalityFeatures(
-          input,
-          config
-        );
+        features[modalityName] = await this.extractModalityFeatures(input, config);
       }
     }
 
@@ -130,16 +135,16 @@ export class MultimodalFusionService {
   // 提取单个模态特征
   private async extractModalityFeatures(
     input: any,
-    config: ModalityConfig
+    config: IModalityConfig,
   ): Promise<Float32Array> {
     const preprocessed = await this.preprocessInput(input, config);
     const tensor = tf.tensor(preprocessed);
-    const features = await config.model.predict(tensor.expandDims(0)) as tf.Tensor;
+    const features = (await config.model.predict(tensor.expandDims(0))) as tf.Tensor;
     return new Float32Array(await features.data());
   }
 
   // 预处理输入
-  private async preprocessInput(input: any, config: ModalityConfig): Promise<any> {
+  private async preprocessInput(input: any, config: IModalityConfig): Promise<any> {
     switch (config.type) {
       case 'audio':
         return await config.preprocessor.preprocessAudio(input);
@@ -160,7 +165,7 @@ export class MultimodalFusionService {
 
   // 获取单模态预测
   private async getModalityPredictions(
-    features: Record<string, Float32Array>
+    features: Record<string, Float32Array>,
   ): Promise<Record<string, any>> {
     const predictions: Record<string, any> = {};
 
@@ -168,7 +173,7 @@ export class MultimodalFusionService {
       const config = this.modalities.get(modalityName);
       if (config) {
         const tensor = tf.tensor(feature).expandDims(0);
-        const prediction = await config.model.predict(tensor) as tf.Tensor;
+        const prediction = (await config.model.predict(tensor)) as tf.Tensor;
         predictions[modalityName] = await prediction.data();
       }
     }
@@ -177,19 +182,17 @@ export class MultimodalFusionService {
   }
 
   // 特征融合
-  private async fuseFeatures(
-    features: Record<string, Float32Array>
-  ): Promise<Float32Array> {
+  private async fuseFeatures(features: Record<string, Float32Array>): Promise<Float32Array> {
     if (!this.fusionModel) throw new Error('融合模型未加载');
 
     // 特征连接
     const concatenated = this.concatenateFeatures(features);
-    
+
     // 应用注意力机制
     const attention = await this.applyAttention(concatenated);
-    
+
     // 特征融合
-    const fusedTensor = await this.fusionModel.predict(attention) as tf.Tensor;
+    const fusedTensor = (await this.fusionModel.predict(attention)) as tf.Tensor;
     return new Float32Array(await fusedTensor.data());
   }
 
@@ -212,7 +215,7 @@ export class MultimodalFusionService {
   // 最终预测
   private async makePrediction(
     fusedFeatures: Float32Array,
-    modalityPredictions: Record<string, any>
+    modalityPredictions: Record<string, any>,
   ): Promise<{
     result: any;
     confidence: number;
@@ -222,7 +225,7 @@ export class MultimodalFusionService {
     return {
       result: null,
       confidence: 0,
-      modalityScores: {}
+      modalityScores: {},
     };
   }
 
@@ -244,9 +247,9 @@ export class MultimodalFusionService {
     const configs = Array.from(this.modalities.entries()).map(([name, config]) => ({
       name,
       weight: config.weight,
-      type: config.type
+      type: config.type,
     }));
 
     await this.db.put('modality-configs', configs);
   }
-} 
+}

@@ -1,32 +1,42 @@
 import React from 'react';
-import { View, ScrollView, StyleSheet, Text, TouchableOpacity, Dimensions } from 'react-native';
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { getExerciseVideoDetail, updateVideoProgress } from '../../api/exercise';
-import { LoadingSpinner, Icon, VideoPlayer } from '../../components';
 
-interface VideoDetail {
+import { LoadingSpinner, Icon, VideoPlayer } from '../../components';
+import { View, ScrollView, StyleSheet, Text, TouchableOpacity, Dimensions } from 'react-native';
+import { getExerciseVideoDetail, updateVideoProgress } from '../../api/exercise';
+import { useQuery, useMutation } from '@tanstack/react-query';
+
+interface IVideoDetail {
+  /** id 的描述 */
   id: string;
+  /** title 的描述 */
   title: string;
+  /** description 的描述 */
   description: string;
+  /** videoUrl 的描述 */
   videoUrl: string;
+  /** duration 的描述 */
   duration: number;
+  /** instructor 的描述 */
   instructor: {
     id: string;
     name: string;
     avatarUrl: string;
     description: string;
   };
+  /** relatedVideos 的描述 */
   relatedVideos: {
     id: string;
     title: string;
     thumbnailUrl: string;
     duration: number;
   }[];
+  /** sections 的描述 */
   sections: {
     title: string;
     startTime: number;
     description?: string;
   }[];
+  /** tips 的描述 */
   tips: string[];
 }
 
@@ -34,16 +44,15 @@ export const ExerciseVideoPlayerScreen = ({ route, navigation }) => {
   const { id } = route.params;
   const [currentTime, setCurrentTime] = React.useState(0);
   const [isFullscreen, setIsFullscreen] = React.useState(false);
-  const { data: video, isLoading } = useQuery<VideoDetail>(
-    ['exerciseVideo', id],
-    () => getExerciseVideoDetail(id)
+  const { data: video, isLoading } = useQuery<IVideoDetail>(['exerciseVideo', id], () =>
+    getExerciseVideoDetail(id),
   );
 
   const progressMutation = useMutation(updateVideoProgress);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      headerShown: !isFullscreen
+      headerShown: !isFullscreen,
     });
   }, [navigation, isFullscreen]);
 
@@ -53,7 +62,7 @@ export const ExerciseVideoPlayerScreen = ({ route, navigation }) => {
     if (Math.floor(progress.currentTime) % 30 === 0) {
       progressMutation.mutate({
         videoId: id,
-        progress: progress.currentTime
+        progress: progress.currentTime,
       });
     }
   };
@@ -94,7 +103,7 @@ export const ExerciseVideoPlayerScreen = ({ route, navigation }) => {
                 key={index}
                 style={[
                   styles.sectionItem,
-                  currentTime >= section.startTime && styles.currentSection
+                  currentTime >= section.startTime && styles.currentSection,
                 ]}
                 onPress={() => {
                   // 跳转到对应时间点
@@ -124,18 +133,19 @@ export const ExerciseVideoPlayerScreen = ({ route, navigation }) => {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>相关视频</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              {video?.relatedVideos.map((relatedVideo) => (
+              {video?.relatedVideos.map(relatedVideo => (
                 <TouchableOpacity
                   key={relatedVideo.id}
                   style={styles.relatedVideo}
                   onPress={() => navigation.replace('ExerciseVideoPlayer', { id: relatedVideo.id })}
                 >
                   <View style={styles.relatedThumbnail}>
-                    <Image source={{ uri: relatedVideo.thumbnailUrl }} style={styles.thumbnailImage} />
+                    <Image
+                      source={{ uri: relatedVideo.thumbnailUrl }}
+                      style={styles.thumbnailImage}
+                    />
                     <View style={styles.durationBadge}>
-                      <Text style={styles.durationText}>
-                        {formatTime(relatedVideo.duration)}
-                      </Text>
+                      <Text style={styles.durationText}>{formatTime(relatedVideo.duration)}</Text>
                     </View>
                   </View>
                   <Text style={styles.relatedTitle} numberOfLines={2}>
@@ -154,12 +164,12 @@ export const ExerciseVideoPlayerScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   playerContainer: {
     width: '100%',
     aspectRatio: 16 / 9,
-    backgroundColor: '#000'
+    backgroundColor: '#000',
   },
   fullscreenPlayer: {
     position: 'absolute',
@@ -170,92 +180,92 @@ const styles = StyleSheet.create({
     zIndex: 999,
     aspectRatio: undefined,
     width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height
+    height: Dimensions.get('window').height,
   },
   player: {
-    flex: 1
+    flex: 1,
   },
   content: {
-    flex: 1
+    flex: 1,
   },
   header: {
     padding: 15,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   title: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 8
+    marginBottom: 8,
   },
   instructorInfo: {
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   instructorName: {
     fontSize: 14,
-    color: '#666'
+    color: '#666',
   },
   duration: {
     fontSize: 14,
-    color: '#666'
+    color: '#666',
   },
   section: {
     marginTop: 10,
     backgroundColor: '#fff',
-    padding: 15
+    padding: 15,
   },
   sectionTitle: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 12
+    marginBottom: 12,
   },
   sectionItem: {
     paddingVertical: 12,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#f0f0f0'
+    borderBottomColor: '#f0f0f0',
   },
   currentSection: {
-    backgroundColor: '#E8F5E9'
+    backgroundColor: '#E8F5E9',
   },
   sectionHeader: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   sectionTime: {
     fontSize: 14,
     color: '#666',
-    marginRight: 10
+    marginRight: 10,
   },
   sectionName: {
     fontSize: 14,
     color: '#333',
-    flex: 1
+    flex: 1,
   },
   sectionDesc: {
     fontSize: 12,
     color: '#666',
     marginTop: 4,
-    marginLeft: 45
+    marginLeft: 45,
   },
   tipItem: {
     flexDirection: 'row',
-    marginBottom: 10
+    marginBottom: 10,
   },
   tipIcon: {
     marginRight: 8,
-    marginTop: 2
+    marginTop: 2,
   },
   tipText: {
     flex: 1,
     fontSize: 14,
     color: '#666',
-    lineHeight: 20
+    lineHeight: 20,
   },
   relatedVideo: {
     width: 160,
-    marginRight: 10
+    marginRight: 10,
   },
   relatedThumbnail: {
     width: '100%',
@@ -263,11 +273,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     overflow: 'hidden',
     marginBottom: 8,
-    position: 'relative'
+    position: 'relative',
   },
   thumbnailImage: {
     width: '100%',
-    height: '100%'
+    height: '100%',
   },
   durationBadge: {
     position: 'absolute',
@@ -276,15 +286,15 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.7)',
     paddingHorizontal: 6,
     paddingVertical: 2,
-    borderRadius: 4
+    borderRadius: 4,
   },
   durationText: {
     color: '#fff',
-    fontSize: 12
+    fontSize: 12,
   },
   relatedTitle: {
     fontSize: 14,
     color: '#333',
-    lineHeight: 18
-  }
-}); 
+    lineHeight: 18,
+  },
+});

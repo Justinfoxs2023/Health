@@ -1,5 +1,12 @@
+/**
+ * @fileoverview TS 文件 types.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // 社区功能数据类型定义
-interface CommunityTypes {
+interface ICommunityTypes {
   // 用户社区类型
   UserProfile {
     userId: string;

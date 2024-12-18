@@ -2,7 +2,8 @@ import { Logger } from '../utils/logger';
 import { Redis } from '../utils/redis';
 
 // 基础服务接口
-export interface BaseService {
+export interface IBaseService {
+  /** logger 的描述 */
   logger: Logger;
   init(): Promise<void>;
   validate(data: any): Promise<boolean>;
@@ -10,7 +11,7 @@ export interface BaseService {
 }
 
 // 用户服务接口
-export interface IUserService extends BaseService {
+export interface IUserService extends IBaseService {
   findById(id: string): Promise<any>;
   findByEmail(email: string): Promise<any>;
   updateUser(id: string, data: any): Promise<any>;
@@ -35,11 +36,14 @@ export interface IRedisService {
 
 // 验证器接口
 export interface IValidator {
-  validate(data: any, schema: any): Promise<{
+  validate(
+    data: any,
+    schema: any,
+  ): Promise<{
     error?: {
       details: Array<{
         message: string;
       }>;
     };
   }>;
-} 
+}

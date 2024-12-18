@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+
 import { Card, Text, useTheme } from 'react-native-paper';
 import { HealthMetrics } from './health/HealthMetrics';
+import { View, StyleSheet } from 'react-native';
 
 export const HealthStatus = () => {
   const theme = useTheme();
@@ -21,11 +22,7 @@ export const HealthStatus = () => {
     <Card style={styles.container}>
       <Card.Content>
         <Text style={styles.title}>健康状况</Text>
-        <HealthMetrics 
-          data={healthData}
-          title="心率"
-          unit="次/分钟"
-        />
+        <HealthMetrics data={healthData} title="心率" unit="次/分钟" />
       </Card.Content>
     </Card>
   );
@@ -40,4 +37,4 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 12,
   },
-}); 
+});

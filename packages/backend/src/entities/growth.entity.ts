@@ -1,6 +1,13 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
-@Entity('user_activities')
+@Entit
+y('user_activities')
 export class UserActivity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -64,4 +71,4 @@ export class UserLevel {
 
   @CreateDateColumn()
   achievedAt: Date;
-} 
+}

@@ -1,23 +1,23 @@
-import { injectable, inject } from 'inversify';
-import { TYPES } from '../di/types';
-import { Logger } from '../types/logger';
-import { RedisClient } from '../infrastructure/redis';
 import { EmailService } from '../utils/email.service';
+import { ILogger } from '../types/logger';
+import { IRedisClient } from '../infrastructure/redis';
+import { TYPES } from '../di/types';
 import { generateToken } from '../utils/crypto';
+import { injectable, inject } from 'inversify';
 
 @injectable()
 export class EmailVerificationService {
   constructor(
-    @inject(TYPES.Logger) private logger: Logger,
-    @inject(TYPES.Redis) private redis: RedisClient,
-    @inject(TYPES.EmailService) private emailService: EmailService
+    @inject(TYPES.Logger) private logger: ILogger,
+    @inject(TYPES.Redis) private redis: IRedisClient,
+    @inject(TYPES.EmailService) private emailService: EmailService,
   ) {}
 
   async sendVerificationEmail(userId: string, email: string): Promise<void> {
     try {
       const token = await generateToken(32);
       const key = `email:verify:${userId}`;
-      
+
       // 存储验证token
       await this.redis.setex(key, 3600, token); // 1小时有效期
 
@@ -27,8 +27,8 @@ export class EmailVerificationService {
         subject: '邮箱验证',
         template: 'email-verification',
         context: {
-          verificationLink: `${process.env.APP_URL}/verify-email?token=${token}&userId=${userId}`
-        }
+          verificationLink: `${process.env.APP_URL}/verify-email?token=${token}&userId=${userId}`,
+        },
       });
 
       this.logger.info(`发送验证邮件: ${email}`);
@@ -52,4 +52,4 @@ export class EmailVerificationService {
 
     return true;
   }
-} 
+}

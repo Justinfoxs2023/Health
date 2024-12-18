@@ -1,8 +1,9 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
-import { Skeleton } from '../index';
+
 import { HealthDataCardSkeleton } from '../HealthDataCardSkeleton';
 import { HealthDataTableSkeleton } from '../HealthDataTableSkeleton';
+import { Skeleton } from '../index';
+import { render, screen } from '@testing-library/react';
 
 describe('Skeleton', () => {
   it('应该正确渲染基础骨架屏', () => {
@@ -24,14 +25,12 @@ describe('Skeleton', () => {
   });
 
   it('应该支持自定义尺寸', () => {
-    const { container } = render(
-      <Skeleton width={200} height={100} borderRadius={8} />
-    );
+    const { container } = render(<Skeleton width={200} height={100} borderRadius={8} />);
     const skeleton = container.firstChild as HTMLElement;
     expect(skeleton).toHaveStyle({
       width: '200px',
       height: '100px',
-      borderRadius: '8px'
+      borderRadius: '8px',
     });
   });
 
@@ -48,13 +47,11 @@ describe('Skeleton', () => {
   });
 
   it('应该支持自定义颜色', () => {
-    const { container } = render(
-      <Skeleton backgroundColor="#f0f0f0" animationColor="#e0e0e0" />
-    );
+    const { container } = render(<Skeleton backgroundColor="#f0f0f0" animationColor="#e0e0e0" />);
     const skeleton = container.firstChild as HTMLElement;
     expect(skeleton).toHaveStyle({
       backgroundColor: '#f0f0f0',
-      '--skeleton-animation-color': '#e0e0e0'
+      '--skeleton-animation-color': '#e0e0e0',
     });
   });
 });
@@ -71,10 +68,7 @@ describe('HealthDataCardSkeleton', () => {
 
   it('应该支持自定义类名和样式', () => {
     const { container } = render(
-      <HealthDataCardSkeleton
-        className="custom-class"
-        style={{ margin: '20px' }}
-      />
+      <HealthDataCardSkeleton className="custom-class" style={{ margin: '20px' }} />,
     );
     const skeleton = container.firstChild as HTMLElement;
     expect(skeleton).toHaveClass('custom-class');
@@ -101,13 +95,10 @@ describe('HealthDataTableSkeleton', () => {
 
   it('应该支持自定义类名和样式', () => {
     const { container } = render(
-      <HealthDataTableSkeleton
-        className="custom-class"
-        style={{ margin: '20px' }}
-      />
+      <HealthDataTableSkeleton className="custom-class" style={{ margin: '20px' }} />,
     );
     const skeleton = container.firstChild as HTMLElement;
     expect(skeleton).toHaveClass('custom-class');
     expect(skeleton).toHaveStyle({ margin: '20px' });
   });
-}); 
+});

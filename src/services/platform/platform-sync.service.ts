@@ -1,16 +1,11 @@
-import { Logger } from '../../utils/logger';
-import { 
-  PlatformType, 
-  PlatformConfig, 
-  AuthInfo, 
-  SyncConfig 
-} from '../../types/platform';
 import { HealthData } from '../../types/health';
+import { Logger } from '../../utils/logger';
+import { PlatformType, IPlatformConfig, IAuthInfo, ISyncConfig } from '../../types/platform';
 
 export class PlatformSyncService {
   private logger: Logger;
-  private platformConfigs: Map<PlatformType, PlatformConfig>;
-  private authCache: Map<string, AuthInfo>;
+  private platformConfigs: Map<PlatformType, IPlatformConfig>;
+  private authCache: Map<string, IAuthInfo>;
 
   constructor() {
     this.logger = new Logger('PlatformSync');
@@ -21,21 +16,21 @@ export class PlatformSyncService {
   async syncPlatformData(
     userId: string,
     platform: PlatformType,
-    config: SyncConfig
+    config: ISyncConfig,
   ): Promise<HealthData[]> {
     try {
       // 1. 验证授权
       const authInfo = await this.validateAuth(userId, platform);
-      
+
       // 2. 获取数据
       const platformData = await this.fetchPlatformData(authInfo, config);
-      
+
       // 3. 转换数据格式
       const healthData = await this.transformPlatformData(platformData, platform);
-      
+
       // 4. 更新同步状态
       await this.updateSyncStatus(userId, platform);
-      
+
       return healthData;
     } catch (error) {
       this.logger.error('平台数据同步失败', error);
@@ -44,11 +39,7 @@ export class PlatformSyncService {
   }
 
   // 配置平台授权
-  async configurePlatform(
-    userId: string,
-    platform: PlatformType,
-    authCode: string
-  ): Promise<void> {
+  async configurePlatform(userId: string, platform: PlatformType, authCode: string): Promise<void> {
     try {
       // 1. 获取平台配置
       const config = this.platformConfigs.get(platform);
@@ -58,10 +49,10 @@ export class PlatformSyncService {
 
       // 2. 获取访问令牌
       const authInfo = await this.getAccessToken(authCode, config);
-      
+
       // 3. 保存授权信息
       await this.saveAuthInfo(userId, platform, authInfo);
-      
+
       // 4. 初始化同步配置
       await this.initializeSyncConfig(userId, platform);
     } catch (error) {
@@ -71,10 +62,7 @@ export class PlatformSyncService {
   }
 
   // 刷新授权令牌
-  private async refreshAuth(
-    userId: string,
-    platform: PlatformType
-  ): Promise<AuthInfo> {
+  private async refreshAuth(userId: string, platform: PlatformType): Promise<IAuthInfo> {
     try {
       const authInfo = this.authCache.get(`${userId}:${platform}`);
       if (!authInfo?.refreshToken) {
@@ -82,10 +70,7 @@ export class PlatformSyncService {
       }
 
       const config = this.platformConfigs.get(platform);
-      const newAuthInfo = await this.refreshAccessToken(
-        authInfo.refreshToken,
-        config
-      );
+      const newAuthInfo = await this.refreshAccessToken(authInfo.refreshToken, config);
 
       await this.saveAuthInfo(userId, platform, newAuthInfo);
       return newAuthInfo;
@@ -94,4 +79,4 @@ export class PlatformSyncService {
       throw error;
     }
   }
-} 
+}

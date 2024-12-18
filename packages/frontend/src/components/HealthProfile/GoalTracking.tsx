@@ -1,7 +1,8 @@
 import React from 'react';
+
 import { Card, Progress, Timeline } from 'antd';
-import { useQuery } from 'react-query';
 import { getGoalProgress } from '../../services/health.service';
+import { useQuery } from 'react-query';
 
 export const GoalTracking: React.FC = () => {
   const { data: goals } = useQuery('healthGoals', getGoalProgress);
@@ -11,16 +12,10 @@ export const GoalTracking: React.FC = () => {
       {goals?.map(goal => (
         <div key={goal.id} className="goal-item">
           <h4>{goal.name}</h4>
-          <Progress
-            percent={goal.progress}
-            status={goal.progress >= 100 ? 'success' : 'active'}
-          />
+          <Progress percent={goal.progress} status={goal.progress >= 100 ? 'success' : 'active'} />
           <Timeline>
             {goal.milestones.map(milestone => (
-              <Timeline.Item 
-                key={milestone.id}
-                color={milestone.completed ? 'green' : 'gray'}
-              >
+              <Timeline.Item key={milestone.id} color={milestone.completed ? 'green' : 'gray'}>
                 {milestone.description}
               </Timeline.Item>
             ))}
@@ -29,4 +24,4 @@ export const GoalTracking: React.FC = () => {
       ))}
     </Card>
   );
-}; 
+};

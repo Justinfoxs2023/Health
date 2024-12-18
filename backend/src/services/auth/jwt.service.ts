@@ -1,11 +1,14 @@
 import jwt from 'jsonwebtoken';
-import { randomBytes } from 'crypto';
 import { User } from '../../schemas/User';
 import { logger } from '../logger';
+import { randomBytes } from 'crypto';
 
-interface TokenPayload {
+interface ITokenPayload {
+  /** userId 的描述 */
   userId: string;
+  /** type 的描述 */
   type: 'access' | 'refresh';
+  /** csrfToken 的描述 */
   csrfToken?: string;
 }
 
@@ -24,28 +27,28 @@ class JWTService {
 
     // 生成访问令牌
     const accessToken = jwt.sign(
-      { userId, type: 'access', csrfToken } as TokenPayload,
+      { userId, type: 'access', csrfToken } as ITokenPayload,
       this.ACCESS_TOKEN_SECRET,
-      { expiresIn: this.ACCESS_TOKEN_EXPIRES }
+      { expiresIn: this.ACCESS_TOKEN_EXPIRES },
     );
 
     // 生成刷新令牌
     const refreshToken = jwt.sign(
-      { userId, type: 'refresh' } as TokenPayload,
+      { userId, type: 'refresh' } as ITokenPayload,
       this.REFRESH_TOKEN_SECRET,
-      { expiresIn: this.REFRESH_TOKEN_EXPIRES }
+      { expiresIn: this.REFRESH_TOKEN_EXPIRES },
     );
 
     // 保存刷新令牌到用户记录
     await User.findByIdAndUpdate(userId, {
       refreshToken: refreshToken,
-      lastTokenRefresh: new Date()
+      lastTokenRefresh: new Date(),
     });
 
     return {
       accessToken,
       refreshToken,
-      csrfToken
+      csrfToken,
     };
   }
 
@@ -54,7 +57,7 @@ class JWTService {
    */
   static verifyAccessToken(token: string, csrfToken?: string) {
     try {
-      const payload = jwt.verify(token, this.ACCESS_TOKEN_SECRET) as TokenPayload;
+      const payload = jwt.verify(token, this.ACCESS_TOKEN_SECRET) as ITokenPayload;
 
       // 验证令牌类型
       if (payload.type !== 'access') {
@@ -78,7 +81,7 @@ class JWTService {
    */
   static async verifyRefreshToken(token: string) {
     try {
-      const payload = jwt.verify(token, this.REFRESH_TOKEN_SECRET) as TokenPayload;
+      const payload = jwt.verify(token, this.REFRESH_TOKEN_SECRET) as ITokenPayload;
 
       // 验证令牌类型
       if (payload.type !== 'refresh') {
@@ -117,7 +120,7 @@ class JWTService {
   static async revokeRefreshToken(userId: string) {
     try {
       await User.findByIdAndUpdate(userId, {
-        $unset: { refreshToken: 1, lastTokenRefresh: 1 }
+        $unset: { refreshToken: 1, lastTokenRefresh: 1 },
       });
     } catch (error) {
       logger.error('令牌撤销失败:', error);
@@ -135,11 +138,11 @@ class JWTService {
     try {
       await User.updateMany(
         { lastTokenRefresh: { $lt: expiryDate } },
-        { $unset: { refreshToken: 1, lastTokenRefresh: 1 } }
+        { $unset: { refreshToken: 1, lastTokenRefresh: 1 } },
       );
     } catch (error) {
       logger.error('过期令牌清理失败:', error);
       throw error;
     }
   }
-} 
+}

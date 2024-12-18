@@ -2,8 +2,8 @@ import { PerformanceMonitorService } from './performance-monitor.service';
 
 export class ResourceOptimizationService {
   private monitor: PerformanceMonitorService;
-  private memoryThreshold: number = 0.8; // 80%
-  private cpuThreshold: number = 0.7;    // 70%
+  private memoryThreshold = 0.8; // 80%
+  private cpuThreshold = 0.7; // 70%
 
   constructor() {
     this.monitor = new PerformanceMonitorService();
@@ -13,7 +13,7 @@ export class ResourceOptimizationService {
   private async startMonitoring(): Promise<void> {
     setInterval(async () => {
       const metrics = await this.getResourceMetrics();
-      
+
       if (metrics.memoryUsage > this.memoryThreshold) {
         await this.optimizeMemory();
       }
@@ -67,4 +67,4 @@ export class ResourceOptimizationService {
   private deferNonCriticalTasks(): void {
     // 实现非关键任务延迟逻辑
   }
-} 
+}

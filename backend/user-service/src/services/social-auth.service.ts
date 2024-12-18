@@ -1,23 +1,23 @@
-import { injectable, inject } from 'inversify';
-import { TYPES } from '../di/types';
-import { Logger } from '../types/logger';
-import { UserRepository } from '../repositories/user.repository';
 import { AuthService } from './auth.service';
-import { SocialProfile } from '../types/user.types';
+import { ILogger } from '../types/logger';
+import { ISocialProfile } from '../types/user.types';
+import { TYPES } from '../di/types';
+import { UserRepository } from '../repositories/user.repository';
+import { injectable, inject } from 'inversify';
 
 @injectable()
 export class SocialAuthService {
   constructor(
-    @inject(TYPES.Logger) private logger: Logger,
+    @inject(TYPES.Logger) private logger: ILogger,
     @inject(TYPES.UserRepository) private userRepository: UserRepository,
-    @inject(TYPES.AuthService) private authService: AuthService
+    @inject(TYPES.AuthService) private authService: AuthService,
   ) {}
 
-  async handleSocialLogin(platform: string, profile: SocialProfile): Promise<any> {
+  async handleSocialLogin(platform: string, profile: ISocialProfile): Promise<any> {
     try {
       // 查找或创建用户
       let user = await this.userRepository.findBySocialId(platform, profile.id);
-      
+
       if (!user) {
         user = await this.userRepository.create({
           email: profile.email,
@@ -25,10 +25,10 @@ export class SocialAuthService {
           socialConnections: {
             [platform]: {
               id: profile.id,
-              profile: profile
-            }
+              profile: profile,
+            },
           },
-          emailVerified: true // 社交登录的邮箱默认已验证
+          emailVerified: true, // 社交登录的邮箱默认已验证
         });
       }
 
@@ -40,14 +40,18 @@ export class SocialAuthService {
     }
   }
 
-  async linkSocialAccount(userId: string, platform: string, profile: SocialProfile): Promise<void> {
+  async linkSocialAccount(
+    userId: string,
+    platform: string,
+    profile: ISocialProfile,
+  ): Promise<void> {
     await this.userRepository.update(userId, {
       $set: {
         [`socialConnections.${platform}`]: {
           id: profile.id,
-          profile: profile
-        }
-      }
+          profile: profile,
+        },
+      },
     });
   }
-} 
+}

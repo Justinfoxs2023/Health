@@ -1,13 +1,20 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
-import { Card, Text, Button, Chip, useTheme, ProgressBar } from 'react-native-paper';
 
-interface UserProfile {
+import { Card, Text, Button, Chip, useTheme, ProgressBar } from 'react-native-paper';
+import { View, StyleSheet, ScrollView } from 'react-native';
+
+interface IUserProfile {
+  /** fitnessLevel 的描述 */
   fitnessLevel: 'beginner' | 'intermediate' | 'advanced';
+  /** goals 的描述 */
   goals: string[];
+  /** restrictions 的描述 */
   restrictions: string[];
+  /** preferredTime 的描述 */
   preferredTime: number; // 单位：分钟
+  /** availableEquipment 的描述 */
   availableEquipment: string[];
+  /** recentWorkouts 的描述 */
   recentWorkouts: Array<{
     type: string;
     intensity: number;
@@ -15,38 +22,58 @@ interface UserProfile {
   }>;
 }
 
-interface Exercise {
+interface IExercise {
+  /** id 的描述 */
   id: string;
+  /** name 的描述 */
   name: string;
+  /** type 的描述 */
   type: 'strength' | 'cardio' | 'flexibility';
+  /** targetMuscles 的描述 */
   targetMuscles: string[];
+  /** equipment 的描述 */
   equipment: string[];
+  /** difficulty 的描述 */
   difficulty: number;
+  /** recommendedSets 的描述 */
   recommendedSets: number;
+  /** recommendedReps 的描述 */
   recommendedReps: number;
+  /** restTime 的描述 */
   restTime: number;
+  /** calories 的描述 */
   calories: number;
 }
 
-interface WorkoutRecommenderProps {
-  userProfile: UserProfile;
-  onSelectWorkout: (workout: RecommendedWorkout) => void;
+interface IWorkoutRecommenderProps {
+  /** userProfile 的描述 */
+  userProfile: IUserProfile;
+  /** onSelectWorkout 的描述 */
+  onSelectWorkout: (workout: IRecommendedWorkout) => void;
 }
 
-interface RecommendedWorkout {
+interface IRecommendedWorkout {
+  /** id 的描述 */
   id: string;
+  /** name 的描述 */
   name: string;
-  exercises: Exercise[];
+  /** exercises 的描述 */
+  exercises: IExercise[];
+  /** duration 的描述 */
   duration: number;
+  /** intensity 的描述 */
   intensity: number;
+  /** targetAreas 的描述 */
   targetAreas: string[];
+  /** estimatedCalories 的描述 */
   estimatedCalories: number;
+  /** matchScore 的描述 */
   matchScore: number;
 }
 
-export const WorkoutRecommender = ({ userProfile, onSelectWorkout }: WorkoutRecommenderProps) => {
+export const WorkoutRecommender = ({ userProfile, onSelectWorkout }: IWorkoutRecommenderProps) => {
   const theme = useTheme();
-  const [recommendations, setRecommendations] = useState<RecommendedWorkout[]>([]);
+  const [recommendations, setRecommendations] = useState<IRecommendedWorkout[]>([]);
   const [loading, setLoading] = useState(false);
 
   const generateRecommendations = async () => {
@@ -56,7 +83,7 @@ export const WorkoutRecommender = ({ userProfile, onSelectWorkout }: WorkoutReco
       const workouts = await generateWorkoutPlans(userProfile);
       setRecommendations(workouts);
     } catch (error) {
-      console.error('生成推荐失败:', error);
+      console.error('Error in WorkoutRecommender.tsx:', '生成推荐失败:', error);
     } finally {
       setLoading(false);
     }
@@ -93,11 +120,7 @@ export const WorkoutRecommender = ({ userProfile, onSelectWorkout }: WorkoutReco
       </Button>
 
       {recommendations.map(workout => (
-        <Card 
-          key={workout.id} 
-          style={styles.workoutCard}
-          onPress={() => onSelectWorkout(workout)}
-        >
+        <Card key={workout.id} style={styles.workoutCard} onPress={() => onSelectWorkout(workout)}>
           <Card.Content>
             <View style={styles.workoutHeader}>
               <Text style={styles.workoutTitle}>{workout.name}</Text>
@@ -229,28 +252,33 @@ const styles = StyleSheet.create({
 });
 
 // 推荐算法实现
-async function generateWorkoutPlans(userProfile: UserProfile): Promise<RecommendedWorkout[]> {
-  // 这里实现基于用户画像的训练计划生成算法
-  // 可以考虑:
-  // 1. 用户的健身水平
-  // 2. 训练目标
-  // 3. 可用设备
-  // 4. 时间限制
-  // 5. 最近的训练记录
-  // 6. 身体状况和限制
-  
-  // 示例实现
-  return [
-    {
-      id: '1',
-      name: '全身力量训练',
-      exercises: [],
-      duration: 45,
-      intensity: 3,
-      targetAreas: ['胸部', '背部', '腿部'],
-      estimatedCalories: 300,
-      matchScore: 0.95
-    },
-    // ... 更多推荐
-  ];
-} 
+async function generateWorkoutPlans(userProfile: IUserProfile): Promise<IRecommendedWorkout[]> {
+  try {
+    // 这里实现基于用户画像的训练计划生成算法
+    // 可以考虑:
+    // 1. 用户的健身水平
+    // 2. 训练目标
+    // 3. 可用设备
+    // 4. 时间限制
+    // 5. 最近的训练记录
+    // 6. 身体状况和限制
+
+    // 示例实现
+    return [
+      {
+        id: '1',
+        name: '全身力量训练',
+        exercises: [],
+        duration: 45,
+        intensity: 3,
+        targetAreas: ['胸部', '背部', '腿部'],
+        estimatedCalories: 300,
+        matchScore: 0.95,
+      },
+      // ... 更多推荐
+    ];
+  } catch (error) {
+    console.error('Error in generateWorkoutPlans:', error);
+    throw error;
+  }
+}

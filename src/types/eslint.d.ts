@@ -1,8 +1,15 @@
+/**
+ * @fileoverview TS 文件 eslint.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 declare module 'eslint' {
   export interface LintResult {
     filePath: string;
-    messages: Array<{
-      ruleId: string | null;
+    messages: Array{
+      ruleId: string  null;
       severity: number;
       message: string;
       line: number;
@@ -15,15 +22,19 @@ declare module 'eslint' {
     source: string;
   }
 
-  export interface ESLintOptions {
-    fix?: boolean;
-    extensions?: string[];
-    baseConfig?: any;
-    useEslintrc?: boolean;
+  export interface IESLintOptions {
+    /** fix 的描述 */
+      fix: false | true;
+    /** extensions 的描述 */
+      extensions: string;
+    /** baseConfig 的描述 */
+      baseConfig: any;
+    /** useEslintrc 的描述 */
+      useEslintrc: false | true;
   }
 
   export class ESLint {
-    constructor(options?: ESLintOptions);
+    constructor(options?: IESLintOptions);
     lintFiles(patterns: string[]): Promise<LintResult[]>;
     loadFormatter(name: string): Promise<{
       format: (results: LintResult[]) => Promise<string>;
@@ -48,4 +59,4 @@ declare module 'eslint' {
       source: string;
     };
   }
-} 
+}

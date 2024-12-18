@@ -1,7 +1,7 @@
+import mongoose from 'mongoose';
+import { CacheService } from './cache.service';
 import { Logger } from '../utils/logger';
 import { MetricsService } from './metrics.service';
-import { CacheService } from './cache.service';
-import mongoose from 'mongoose';
 
 export class OptimizationService {
   private logger: Logger;
@@ -17,12 +17,16 @@ export class OptimizationService {
   /**
    * 优化数据库查询
    */
-  async optimizeQuery(model: any, query: any, options: {
-    useCache?: boolean;
-    cacheTTL?: number;
-    batchSize?: number;
-    timeout?: number;
-  } = {}) {
+  async optimizeQuery(
+    model: any,
+    query: any,
+    options: {
+      useCache?: boolean;
+      cacheTTL?: number;
+      batchSize?: number;
+      timeout?: number;
+    } = {},
+  ) {
     const startTime = Date.now();
     const queryHash = this.hashQuery(query);
 
@@ -40,19 +44,16 @@ export class OptimizationService {
       const queryOptions = {
         maxTimeMS: options.timeout || 5000,
         batchSize: options.batchSize || 1000,
-        lean: true
+        lean: true,
       };
 
       // 执行查询
-      const result = await model
-        .find(optimizedQuery)
-        .setOptions(queryOptions)
-        .exec();
+      const result = await model.find(optimizedQuery).setOptions(queryOptions).exec();
 
       // 缓存结果
       if (options.useCache) {
         await this.cache.smartSet(queryHash, result, {
-          ttl: options.cacheTTL
+          ttl: options.cacheTTL,
         });
       }
 
@@ -60,7 +61,7 @@ export class OptimizationService {
       await this.metrics.recordQueryPerformance({
         query: queryHash,
         duration: Date.now() - startTime,
-        resultSize: result.length
+        resultSize: result.length,
       });
 
       return result;
@@ -79,13 +80,9 @@ export class OptimizationService {
       maxConcurrent?: number;
       timeout?: number;
       retryCount?: number;
-    } = {}
+    } = {},
   ) {
-    const {
-      maxConcurrent = 5,
-      timeout = 30000,
-      retryCount = 3
-    } = options;
+    const { maxConcurrent = 5, timeout = 30000, retryCount = 3 } = options;
 
     const results: T[] = [];
     const errors: Error[] = [];
@@ -97,9 +94,9 @@ export class OptimizationService {
         try {
           const result = await Promise.race([
             task(),
-            new Promise((_, reject) => 
-              setTimeout(() => reject(new Error('Task timeout')), timeout)
-            )
+            new Promise((_, reject) =>
+              setTimeout(() => reject(new Error('Task timeout')), timeout),
+            ),
           ]);
           results[index] = result;
           completedTasks++;
@@ -118,15 +115,13 @@ export class OptimizationService {
     // 分批执行任务
     for (let i = 0; i < tasks.length; i += maxConcurrent) {
       const batch = tasks.slice(i, i + maxConcurrent);
-      await Promise.all(batch.map((task, index) => 
-        executeTask(task, i + index)
-      ));
+      await Promise.all(batch.map((task, index) => executeTask(task, i + index)));
     }
 
     return {
       results: results.filter(r => r !== undefined),
       errors,
-      completed: completedTasks
+      completed: completedTasks,
     };
   }
 
@@ -137,10 +132,10 @@ export class OptimizationService {
     try {
       // 监控数据库连接
       const dbStats = await this.getDatabaseStats();
-      
+
       // 监控内存使用
       const memoryUsage = process.memoryUsage();
-      
+
       // 监控CPU使用
       const cpuUsage = process.cpuUsage();
 
@@ -149,16 +144,15 @@ export class OptimizationService {
         database: dbStats,
         memory: memoryUsage,
         cpu: cpuUsage,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
 
       // 检查资源阈值
       await this.checkResourceThresholds({
         dbStats,
         memoryUsage,
-        cpuUsage
+        cpuUsage,
       });
-
     } catch (error) {
       this.logger.error('资源监控失败', error);
       throw error;
@@ -191,9 +185,6 @@ export class OptimizationService {
    * 生成查询哈希
    */
   private hashQuery(query: any): string {
-    return require('crypto')
-      .createHash('md5')
-      .update(JSON.stringify(query))
-      .digest('hex');
+    return require('crypto').createHash('md5').update(JSON.stringify(query)).digest('hex');
   }
-} 
+}

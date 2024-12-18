@@ -1,10 +1,10 @@
-import { injectable, inject } from 'inversify';
-import { TYPES } from '../di/types';
-import { Logger } from '../types/logger';
-import { RedisClient } from '../infrastructure/redis';
-import { SystemSettings } from '../types/system-settings';
-import { defaultSettings } from '../config/default-settings';
 import { EventEmitter } from 'events';
+import { ILogger } from '../types/logger';
+import { IRedisClient } from '../infrastructure/redis';
+import { ISystemSettings } from '../types/system-settings';
+import { TYPES } from '../di/types';
+import { defaultSettings } from '../config/default-settings';
+import { injectable, inject } from 'inversify';
 
 @injectable()
 export class ConfigManagerService {
@@ -12,8 +12,8 @@ export class ConfigManagerService {
   private configEvents = new EventEmitter();
 
   constructor(
-    @inject(TYPES.Logger) private logger: Logger,
-    @inject(TYPES.Redis) private redis: RedisClient
+    @inject(TYPES.Logger) private logger: ILogger,
+    @inject(TYPES.Redis) private redis: IRedisClient,
   ) {
     this.initializeSettings();
   }
@@ -30,9 +30,9 @@ export class ConfigManagerService {
     }
   }
 
-  async getSettings<T extends keyof SystemSettings>(
-    section?: T
-  ): Promise<T extends keyof SystemSettings ? SystemSettings[T] : SystemSettings> {
+  async getSettings<T extends keyof ISystemSettings>(
+    section?: T,
+  ): Promise<T extends keyof ISystemSettings ? ISystemSettings[T] : ISystemSettings> {
     try {
       const settings = await this.redis.get(this.SETTINGS_KEY);
       const parsedSettings = settings ? JSON.parse(settings) : defaultSettings;
@@ -43,18 +43,18 @@ export class ConfigManagerService {
     }
   }
 
-  async updateSettings<T extends keyof SystemSettings>(
+  async updateSettings<T extends keyof ISystemSettings>(
     section: T,
-    updates: Partial<SystemSettings[T]>
-  ): Promise<SystemSettings[T]> {
+    updates: Partial<ISystemSettings[T]>,
+  ): Promise<ISystemSettings[T]> {
     try {
       const currentSettings = await this.getSettings();
       const updatedSettings = {
         ...currentSettings,
         [section]: {
           ...currentSettings[section],
-          ...updates
-        }
+          ...updates,
+        },
       };
 
       // 验证设置
@@ -67,7 +67,7 @@ export class ConfigManagerService {
       this.configEvents.emit('configUpdated', {
         section,
         updates,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
 
       return updatedSettings[section];
@@ -81,9 +81,9 @@ export class ConfigManagerService {
     this.configEvents.on('configUpdated', callback);
   }
 
-  private async validateSettings<T extends keyof SystemSettings>(
+  private async validateSettings<T extends keyof ISystemSettings>(
     section: T,
-    settings: SystemSettings[T]
+    settings: ISystemSettings[T],
   ) {
     switch (section) {
       case 'security':
@@ -131,4 +131,4 @@ export class ConfigManagerService {
   private async validatePushConfig(config: NotificationSettings['push']) {
     // 实现推送配置验证逻辑
   }
-} 
+}

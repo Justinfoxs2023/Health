@@ -1,6 +1,6 @@
-import { Worker } from 'worker_threads';
 import { Logger } from '../../utils/logger';
 import { RedisConfig } from '../../config/redis.config';
+import { Worker } from 'worker_threads';
 
 export class RealtimeAnalyzerService {
   private workers: Worker[] = [];
@@ -14,18 +14,18 @@ export class RealtimeAnalyzerService {
 
   private initializeWorkers() {
     const workerCount = require('os').cpus().length;
-    
+
     for (let i = 0; i < workerCount; i++) {
       const worker = new Worker('./workers/analysis.worker.js');
-      
-      worker.on('message', (result) => {
+
+      worker.on('message', result => {
         this.handleWorkerResult(result);
       });
-      
-      worker.on('error', (error) => {
+
+      worker.on('error', error => {
         this.logger.error('Worker错误:', error);
       });
-      
+
       this.workers.push(worker);
     }
   }
@@ -35,7 +35,7 @@ export class RealtimeAnalyzerService {
     try {
       const frames = await this.extractKeyFrames(videoStream);
       const results = await this.processFramesInParallel(frames);
-      
+
       return this.aggregateResults(results);
     } catch (error) {
       this.logger.error('实时姿势分析失败:', error);
@@ -47,18 +47,18 @@ export class RealtimeAnalyzerService {
   private async processFramesInParallel(frames: Buffer[]) {
     const batchSize = 5;
     const results = [];
-    
+
     for (let i = 0; i < frames.length; i += batchSize) {
       const batch = frames.slice(i, i + batchSize);
       const batchResults = await Promise.all(
         batch.map((frame, index) => {
           const worker = this.workers[index % this.workers.length];
           return this.processFrameWithWorker(worker, frame);
-        })
+        }),
       );
       results.push(...batchResults);
     }
-    
+
     return results;
   }
 
@@ -71,4 +71,4 @@ export class RealtimeAnalyzerService {
   private async cacheResult(key: string, result: any) {
     await this.redis.setex(key, 60, JSON.stringify(result));
   }
-} 
+}

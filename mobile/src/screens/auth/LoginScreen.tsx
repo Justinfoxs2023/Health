@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+
 import { Button, TextInput, Text } from 'react-native-paper';
-import { useAuth } from '../../hooks/useAuth';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, StyleSheet } from 'react-native';
+import { useAuth } from '../../hooks/useAuth';
 
 export const LoginScreen = () => {
   const [email, setEmail] = useState('');
@@ -33,12 +34,7 @@ export const LoginScreen = () => {
           style={styles.input}
         />
         {error && <Text style={styles.error}>{error}</Text>}
-        <Button 
-          mode="contained" 
-          onPress={handleLogin}
-          loading={loading}
-          style={styles.button}
-        >
+        <Button mode="contained" onPress={handleLogin} loading={loading} style={styles.button}>
           登录
         </Button>
       </View>
@@ -70,4 +66,4 @@ const styles = StyleSheet.create({
     color: 'red',
     marginBottom: 10,
   },
-}); 
+});

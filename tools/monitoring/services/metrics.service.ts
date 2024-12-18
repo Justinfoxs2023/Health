@@ -42,54 +42,54 @@ export class MetricsService {
     this.apiResponseTime = new Histogram({
       name: 'api_response_time',
       help: 'API响应时间分布',
-      labelNames: ['method', 'endpoint', 'status']
+      labelNames: ['method', 'endpoint', 'status'],
     });
 
     this.apiRequestCount = new Counter({
       name: 'api_request_count',
       help: 'API请求总数',
-      labelNames: ['method', 'endpoint']
+      labelNames: ['method', 'endpoint'],
     });
 
     this.apiErrorCount = new Counter({
       name: 'api_error_count',
       help: 'API错误总数',
-      labelNames: ['method', 'endpoint', 'error_type']
+      labelNames: ['method', 'endpoint', 'error_type'],
     });
 
     // 系统资源指标
     this.cpuUsage = new Gauge({
       name: 'system_cpu_usage',
-      help: 'CPU使用率'
+      help: 'CPU使用率',
     });
 
     this.memoryUsage = new Gauge({
       name: 'system_memory_usage',
-      help: '内存使用率'
+      help: '内存使用率',
     });
 
     this.diskUsage = new Gauge({
       name: 'system_disk_usage',
-      help: '磁盘使用率'
+      help: '磁盘使用率',
     });
 
     // 业务指标
     this.activeUsers = new Gauge({
       name: 'active_users',
       help: '活跃用户数',
-      labelNames: ['type']
+      labelNames: ['type'],
     });
 
     this.healthDataPoints = new Counter({
       name: 'health_data_points',
       help: '健康数据点数',
-      labelNames: ['type']
+      labelNames: ['type'],
     });
 
     this.aiProcessingTime = new Histogram({
       name: 'ai_processing_time',
       help: 'AI处理时间分布',
-      labelNames: ['model', 'operation']
+      labelNames: ['model', 'operation'],
     });
   }
 
@@ -104,11 +104,7 @@ export class MetricsService {
   }
 
   // 更新系统资源使用情况
-  async updateSystemMetrics(metrics: {
-    cpu: number;
-    memory: number;
-    disk: number;
-  }) {
+  async updateSystemMetrics(metrics: { cpu: number; memory: number; disk: number }) {
     this.cpuUsage.set(metrics.cpu);
     this.memoryUsage.set(metrics.memory);
     this.diskUsage.set(metrics.disk);
@@ -140,18 +136,18 @@ export class MetricsService {
       api: {
         responseTime: this.apiResponseTime.get(),
         requestCount: this.apiRequestCount.get(),
-        errorCount: this.apiErrorCount.get()
+        errorCount: this.apiErrorCount.get(),
       },
       system: {
         cpu: this.cpuUsage.get(),
         memory: this.memoryUsage.get(),
-        disk: this.diskUsage.get()
+        disk: this.diskUsage.get(),
       },
       business: {
         activeUsers: this.activeUsers.get(),
         healthDataPoints: this.healthDataPoints.get(),
-        aiProcessingTime: this.aiProcessingTime.get()
-      }
+        aiProcessingTime: this.aiProcessingTime.get(),
+      },
     };
   }
-} 
+}

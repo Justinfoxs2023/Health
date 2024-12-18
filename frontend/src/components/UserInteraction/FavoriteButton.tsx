@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+
 import { Button, Popover, Input, Select, message, Space, Tag } from 'antd';
 import { StarOutlined, StarFilled, FolderOutlined, PlusOutlined } from '@ant-design/icons';
 import { useUserInteraction } from '../../hooks/useUserInteraction';
@@ -6,24 +7,31 @@ import { useUserInteraction } from '../../hooks/useUserInteraction';
 const { Option } = Select;
 const { TextArea } = Input;
 
-interface FavoriteButtonProps {
+interface IFavoriteButtonProps {
+  /** contentId 的描述 */
   contentId: string;
+  /** contentType 的描述 */
   contentType: string;
+  /** initialIsFavorited 的描述 */
   initialIsFavorited?: boolean;
+  /** onFavoriteChange 的描述 */
   onFavoriteChange?: (isFavorited: boolean) => void;
+  /** size 的描述 */
   size?: 'small' | 'middle' | 'large';
+  /** className 的描述 */
   className?: string;
+  /** style 的描述 */
   style?: React.CSSProperties;
 }
 
-export const FavoriteButton: React.FC<FavoriteButtonProps> = ({
+export const FavoriteButton: React.FC<IFavoriteButtonProps> = ({
   contentId,
   contentType,
   initialIsFavorited = false,
   onFavoriteChange,
   size = 'middle',
   className,
-  style
+  style,
 }) => {
   const [isFavorited, setIsFavorited] = useState(initialIsFavorited);
   const [loading, setLoading] = useState(false);
@@ -39,19 +47,23 @@ export const FavoriteButton: React.FC<FavoriteButtonProps> = ({
 
   const { addFavorite, removeFavorite, getFolders } = useUserInteraction();
 
-  useEffect(() => {
-    const loadFolders = async () => {
-      try {
-        const userFolders = await getFolders();
-        setFolders(userFolders);
-      } catch (err) {
-        console.error('Failed to load folders:', err);
-        message.error('加载收藏夹失败');
-      }
-    };
+  console.error(
+    'Error in FavoriteButton.tsx:',
+    () => {
+      const loadFolders = async () => {
+        try {
+          const userFolders = await getFolders();
+          setFolders(userFolders);
+        } catch (err) {
+          console.error('Error in FavoriteButton.tsx:', 'Failed to load folders:', err);
+          message.error('加载收藏夹失败');
+        }
+      };
 
-    loadFolders();
-  }, [getFolders]);
+      loadFolders();
+    },
+    [getFolders],
+  );
 
   const handleFavorite = async () => {
     if (isFavorited) {
@@ -72,7 +84,7 @@ export const FavoriteButton: React.FC<FavoriteButtonProps> = ({
     } catch (err) {
       setError('取消收藏失败');
       message.error('操作失败，请重试');
-      console.error('Unfavorite failed:', err);
+      console.error('Error in FavoriteButton.tsx:', 'Unfavorite failed:', err);
     } finally {
       setLoading(false);
     }
@@ -87,7 +99,7 @@ export const FavoriteButton: React.FC<FavoriteButtonProps> = ({
         contentType,
         folder: selectedFolder,
         note,
-        tags
+        tags,
       });
       setIsFavorited(true);
       onFavoriteChange?.(true);
@@ -96,7 +108,7 @@ export const FavoriteButton: React.FC<FavoriteButtonProps> = ({
     } catch (err) {
       setError('收藏失败');
       message.error('操作失败，请重试');
-      console.error('Favorite failed:', err);
+      console.error('Error in FavoriteButton.tsx:', 'Favorite failed:', err);
     } finally {
       setLoading(false);
     }
@@ -178,11 +190,7 @@ export const FavoriteButton: React.FC<FavoriteButtonProps> = ({
           <div style={{ marginBottom: 8 }}>标签：</div>
           <Space size={[4, 8]} wrap>
             {tags.map((tag, index) => (
-              <Tag
-                key={tag}
-                closable
-                onClose={() => setTags(tags.filter(t => t !== tag))}
-              >
+              <Tag key={tag} closable onClose={() => setTags(tags.filter(t => t !== tag))}>
                 {tag}
               </Tag>
             ))}
@@ -205,9 +213,7 @@ export const FavoriteButton: React.FC<FavoriteButtonProps> = ({
           </Space>
         </div>
 
-        {error && (
-          <div style={{ color: '#ff4d4f', marginBottom: 8 }}>{error}</div>
-        )}
+        {error && <div style={{ color: '#ff4d4f', marginBottom: 8 }}>{error}</div>}
 
         <div style={{ textAlign: 'right' }}>
           <Space>
@@ -245,4 +251,4 @@ export const FavoriteButton: React.FC<FavoriteButtonProps> = ({
       </Button>
     </Popover>
   );
-}; 
+};

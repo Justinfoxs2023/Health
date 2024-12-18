@@ -10,7 +10,7 @@ const zhCN = {
     save: '保存',
     edit: '编辑',
     delete: '删除',
-    more: '更多'
+    more: '更多',
   },
   analysis: {
     error: '分析数据时发生错误',
@@ -19,14 +19,14 @@ const zhCN = {
     riskLevel: {
       low: '低风险',
       medium: '中等风险',
-      high: '高风险'
+      high: '高风险',
     },
     riskFactors: '风险因素',
     trendAnalysis: '健康趋势分析',
     trendType: {
       improving: '持续改善',
       stable: '保持稳定',
-      worsening: '趋于恶化'
+      worsening: '趋于恶化',
     },
     changeRate: '变化率',
     confidence: '置信度',
@@ -37,7 +37,7 @@ const zhCN = {
     pattern: {
       daily: '日周期',
       weekly: '周周期',
-      monthly: '月周期'
+      monthly: '月周期',
     },
     outliers: '异常值',
     deviation: '偏离度',
@@ -45,10 +45,10 @@ const zhCN = {
       trend: '趋势图',
       scatter: '散点图',
       distribution: '分布图',
-      radar: '雷达图'
+      radar: '雷达图',
     },
     distribution: '数值分布',
-    dimensionScore: '维度得分'
+    dimensionScore: '维度得分',
   },
   advice: {
     title: '个性化健康建议',
@@ -65,15 +65,15 @@ const zhCN = {
     category: {
       immediate: '立即行动',
       short_term: '近期改善',
-      long_term: '长期保持'
+      long_term: '长期保持',
     },
     confidence: '建议可信度',
     impact: '影响程度',
     impact: {
       high: '高',
       medium: '中',
-      low: '低'
-    }
+      low: '低',
+    },
   },
   healthData: {
     type: {
@@ -85,8 +85,8 @@ const zhCN = {
       HEIGHT: '身高',
       STEPS: '步数',
       SLEEP: '睡眠',
-      OXYGEN: '血氧'
-    }
+      OXYGEN: '血氧',
+    },
   },
   validation: {
     required: '此项为必填项',
@@ -94,7 +94,7 @@ const zhCN = {
     minLength: '最少需要 {min} 个字符',
     maxLength: '最多允许 {max} 个字符',
     min: '不能小于 {min}',
-    max: '不能大于 {max}'
+    max: '不能大于 {max}',
   },
   auth: {
     login: '登录',
@@ -109,7 +109,7 @@ const zhCN = {
     loginError: '登录失败',
     logoutSuccess: '退出成功',
     registerSuccess: '注册成功',
-    registerError: '注册失败'
+    registerError: '注册失败',
   },
   settings: {
     title: '设置',
@@ -117,24 +117,24 @@ const zhCN = {
       title: '主题设置',
       light: '浅色',
       dark: '深色',
-      system: '跟随系统'
+      system: '跟随系统',
     },
     language: {
       title: '语言设置',
       zh: '中文',
-      en: '英文'
+      en: '英文',
     },
     notification: {
       title: '通知设置',
       enable: '启用通知',
       sound: '声音提醒',
-      vibrate: '振动提醒'
+      vibrate: '振动提醒',
     },
     privacy: {
       title: '隐私设置',
       dataSharing: '数据共享',
-      analytics: '使用分析'
-    }
+      analytics: '使用分析',
+    },
   },
   error: {
     network: '网络错误',
@@ -143,8 +143,8 @@ const zhCN = {
     forbidden: '禁止访问',
     notFound: '资源不存在',
     timeout: '请求超时',
-    unknown: '未知错误'
-  }
+    unknown: '未知错误',
+  },
 };
 
-export default zhCN; 
+export default zhCN;

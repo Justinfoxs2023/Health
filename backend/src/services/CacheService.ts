@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRedis } from '@liaoliaots/nestjs-redis';
 import Redis from 'ioredis';
+import { InjectRedis } from '@liaoliaots/nestjs-redis';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class CacheService {
@@ -201,15 +201,7 @@ export class CacheService {
       end
       return 0
     `;
-    const result = await this.redis.eval(
-      script,
-      1,
-      key,
-      now - window * 1000,
-      now,
-      limit,
-      window
-    );
+    const result = await this.redis.eval(script, 1, key, now - window * 1000, now, limit, window);
     return result === 1;
   }
-} 
+}

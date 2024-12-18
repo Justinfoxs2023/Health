@@ -1,6 +1,7 @@
-import { Logger } from '@/utils/Logger';
 import * as crypto from 'crypto';
+
 import { EncryptionError } from '@/utils/errors';
+import { Logger } from '@/utils/Logger';
 
 export class DataEncryptionService {
   private logger: Logger;
@@ -37,7 +38,7 @@ export class DataEncryptionService {
       const result = {
         iv: this.iv.toString('hex'),
         encryptedData: encrypted,
-        authTag: authTag.toString('hex')
+        authTag: authTag.toString('hex'),
       };
 
       return JSON.stringify(result);
@@ -59,7 +60,7 @@ export class DataEncryptionService {
       const decipher = crypto.createDecipheriv(
         this.algorithm,
         this.secretKey,
-        Buffer.from(iv, 'hex')
+        Buffer.from(iv, 'hex'),
       );
 
       // 设置认证标签
@@ -89,13 +90,11 @@ export class DataEncryptionService {
   async verifyIntegrity(encryptedData: string, originalHash: string): Promise<boolean> {
     try {
       const data = await this.decrypt(encryptedData);
-      const hash = crypto.createHash('sha256')
-        .update(JSON.stringify(data))
-        .digest('hex');
+      const hash = crypto.createHash('sha256').update(JSON.stringify(data)).digest('hex');
       return hash === originalHash;
     } catch (error) {
       this.logger.error('数据完整性验证失败', error);
       throw new EncryptionError('INTEGRITY_CHECK_FAILED', error.message);
     }
   }
-} 
+}

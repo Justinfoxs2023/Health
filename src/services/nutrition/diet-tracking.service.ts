@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 diet-tracking.service.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 @Injectable()
 export class DietTrackingService {
   // 饮食记录
@@ -47,4 +54,4 @@ export class DietTrackingService {
       balanceGuide: string[];
     };
   };
-} 
+}

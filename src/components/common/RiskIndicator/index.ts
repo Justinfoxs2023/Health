@@ -1,2 +1,3 @@
 import { RiskIndicator } from './RiskIndicator';
-export { RiskIndicator }; 
+
+export { RiskIndicator };

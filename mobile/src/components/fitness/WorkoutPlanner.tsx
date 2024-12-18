@@ -1,16 +1,21 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+
 import { Text, useTheme } from 'react-native-paper';
+import { View, StyleSheet, ScrollView } from 'react-native';
 import { WorkoutPlanCard } from './WorkoutPlanCard';
 
-interface WorkoutPlan {
+interface IWorkoutPlan {
+  /** id 的描述 */
   id: string;
+  /** title 的描述 */
   title: string;
+  /** exercises 的描述 */
   exercises: Array<{
     name: string;
     sets: number;
     reps: number;
   }>;
+  /** progress 的描述 */
   progress: number;
 }
 
@@ -18,16 +23,16 @@ export const WorkoutPlanner = () => {
   const theme = useTheme();
 
   // 模拟数据，实际应从API获取
-  const workoutPlans: WorkoutPlan[] = [
+  const workoutPlans: IWorkoutPlan[] = [
     {
       id: '1',
       title: '每日基础训练',
       exercises: [
         { name: '俯卧撑', sets: 3, reps: 15 },
         { name: '深蹲', sets: 3, reps: 20 },
-        { name: '平板支撑', sets: 3, reps: 60 }
+        { name: '平板支撑', sets: 3, reps: 60 },
       ],
-      progress: 0.6
+      progress: 0.6,
     },
     {
       id: '2',
@@ -35,10 +40,10 @@ export const WorkoutPlanner = () => {
       exercises: [
         { name: '慢跑', sets: 1, reps: 30 },
         { name: '跳绳', sets: 3, reps: 100 },
-        { name: '高抬腿', sets: 3, reps: 50 }
+        { name: '高抬腿', sets: 3, reps: 50 },
       ],
-      progress: 0.3
-    }
+      progress: 0.3,
+    },
   ];
 
   const handleStartWorkout = (planId: string) => {
@@ -72,4 +77,4 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 16,
   },
-}); 
+});

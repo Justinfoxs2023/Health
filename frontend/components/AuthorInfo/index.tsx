@@ -1,18 +1,21 @@
 import React from 'react';
+
 import { View, Image, Text, StyleSheet } from 'react-native';
 import { format } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
 
-interface Props {
+interface IProps {
+  /** author 的描述 */
   author: {
     id: string;
     name: string;
     avatar: string;
   };
+  /** timestamp 的描述 */
   timestamp?: string;
 }
 
-export const AuthorInfo: React.FC<Props> = ({ author, timestamp }) => {
+export const AuthorInfo: React.FC<IProps> = ({ author, timestamp }) => {
   return (
     <View style={styles.container}>
       <Image source={{ uri: author.avatar }} style={styles.avatar} />
@@ -31,25 +34,25 @@ export const AuthorInfo: React.FC<Props> = ({ author, timestamp }) => {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   avatar: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    marginRight: 8
+    marginRight: 8,
   },
   info: {
-    flex: 1
+    flex: 1,
   },
   name: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#333'
+    color: '#333',
   },
   time: {
     fontSize: 12,
     color: '#999',
-    marginTop: 2
-  }
-}); 
+    marginTop: 2,
+  },
+});

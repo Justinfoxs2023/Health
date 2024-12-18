@@ -1,7 +1,8 @@
 import React, { useState, useMemo } from 'react';
+
 import { ChevronUpIcon, ChevronDownIcon } from '@heroicons/react/solid';
 
-export interface TableColumn<T> {
+export interface ITableColumn<T> {
   /** 列标题 */
   title: React.ReactNode;
   /** 列数据字段名 */
@@ -18,11 +19,11 @@ export interface TableColumn<T> {
   fixed?: 'left' | 'right';
 }
 
-export interface TableProps<T> {
+export interface ITableProps<T> {
   /** 数据源 */
   dataSource: T[];
   /** 列配置 */
-  columns: TableColumn<T>[];
+  columns: ITableColumn<T>[];
   /** 行键值 */
   rowKey: keyof T | ((record: T) => string);
   /** 加载状态 */
@@ -56,7 +57,7 @@ export function Table<T extends Record<string, any>>({
   onSelectChange,
   onSortChange,
   className = '',
-}: TableProps<T>) {
+}: ITableProps<T>): import('D:/Health/node_modules/@types/react/jsx-runtime').JSX.Element {
   const [sortField, setSortField] = useState<keyof T | null>(null);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | null>(null);
 
@@ -101,7 +102,11 @@ export function Table<T extends Record<string, any>>({
 
   return (
     <div className={`overflow-x-auto ${className}`}>
-      <table className={`min-w-full divide-y divide-gray-200 ${bordered ? 'border border-gray-200' : ''}`}>
+      <table
+        className={`min-w-full divide-y divide-gray-200 ${
+          bordered ? 'border border-gray-200' : ''
+        }`}
+      >
         <thead className="bg-gray-50">
           <tr>
             {selectable && (
@@ -110,7 +115,7 @@ export function Table<T extends Record<string, any>>({
                   type="checkbox"
                   className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                   checked={selectedRowKeys.length === dataSource.length}
-                  onChange={(e) => handleSelectAll(e.target.checked)}
+                  onChange={e => handleSelectAll(e.target.checked)}
                 />
               </th>
             )}
@@ -207,7 +212,7 @@ export function Table<T extends Record<string, any>>({
                       className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                       checked={selectedRowKeys.includes(getRowKey(record))}
                       onChange={() => handleSelectRow(record)}
-                      onClick={(e) => e.stopPropagation()}
+                      onClick={e => e.stopPropagation()}
                     />
                   </td>
                 )}
@@ -230,4 +235,4 @@ export function Table<T extends Record<string, any>>({
       </table>
     </div>
   );
-} 
+}

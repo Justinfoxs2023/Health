@@ -1,6 +1,6 @@
 import { renderHook, act } from '@testing-library/react';
-import { useStorage } from '../useStorage';
 import { storage } from '../../services/storage';
+import { useStorage } from '../useStorage';
 
 describe('useStorage', () => {
   beforeEach(() => {
@@ -155,4 +155,4 @@ describe('useStorage', () => {
 
     expect(setItemSpy).toHaveBeenCalledWith('test', { name: 'updated' }, config);
   });
-}); 
+});

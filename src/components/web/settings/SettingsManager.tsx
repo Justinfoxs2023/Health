@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { 
+
+import {
   ProfileSettings,
   NotificationSettings,
   PrivacySettings,
-  IntegrationSettings 
+  IntegrationSettings,
 } from './sections';
 import { useSettings } from '../../../hooks/useSettings';
 
-export const SettingsManager: React.FC<{
+expor
+t const SettingsManager: React.FC<{
   userId: string;
   config: SettingsConfig;
 }> = ({ userId, config }) => {
@@ -18,17 +20,17 @@ export const SettingsManager: React.FC<{
     try {
       await updateSettings(section, data);
     } catch (error) {
-      console.error('保存设置失败:', error);
+      console.error('Error in SettingsManager.tsx:', '保存设置失败:', error);
     }
   };
 
   const renderSection = () => {
-    if (loading) return <div>加载中...</div>;
+    if (loading) return <div></div>;
 
     switch (activeSection) {
       case 'profile':
         return (
-          <ProfileSettings 
+          <ProfileSettings
             data={settings.profile}
             onSave={data => handleSave('profile', data)}
             config={config.profile}
@@ -36,7 +38,7 @@ export const SettingsManager: React.FC<{
         );
       case 'notification':
         return (
-          <NotificationSettings 
+          <NotificationSettings
             data={settings.notification}
             onSave={data => handleSave('notification', data)}
             config={config.notification}
@@ -44,7 +46,7 @@ export const SettingsManager: React.FC<{
         );
       case 'privacy':
         return (
-          <PrivacySettings 
+          <PrivacySettings
             data={settings.privacy}
             onSave={data => handleSave('privacy', data)}
             config={config.privacy}
@@ -52,7 +54,7 @@ export const SettingsManager: React.FC<{
         );
       case 'integration':
         return (
-          <IntegrationSettings 
+          <IntegrationSettings
             data={settings.integration}
             onSave={data => handleSave('integration', data)}
             config={config.integration}
@@ -68,18 +70,16 @@ export const SettingsManager: React.FC<{
       <div className="settings-nav">
         {config.sections.map(section => (
           <button
-            key={section.id}
-            className={`nav-item ${activeSection === section.id ? 'active' : ''}`}
-            onClick={() => setActiveSection(section.id)}
+            key={sectionid}
+            className={navitem {activeSection === sectionid  active  }}
+            onClick={ => setActiveSectionsectionid}
           >
-            {section.name}
+            {sectionname}
           </button>
         ))}
       </div>
 
-      <div className="settings-content">
-        {renderSection()}
-      </div>
+      <div className="settingscontent">{renderSection}</div>
     </div>
   );
-}; 
+};

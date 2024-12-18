@@ -1,16 +1,19 @@
-import { DialectRecognitionService } from './dialect-recognition.service';
-import { LocalDatabase } from '../utils/local-database';
 import * as tf from '@tensorflow/tfjs';
+import { DialectRecognitionService } from './dialect-recognition.service';
+import { ILocalDatabase } from '../utils/local-database';
 
-interface AccuracyMetrics {
+interface IAccuracyMetrics {
+  /** totalSamples 的描述 */
   totalSamples: number;
+  /** correctRecognitions 的描述 */
   correctRecognitions: number;
+  /** confusionMatrix 的描述 */
   confusionMatrix: Map<string, Map<string, number>>;
 }
 
 export class DialectAccuracyEnhancementService extends DialectRecognitionService {
-  private db: LocalDatabase;
-  private accuracyMetrics: AccuracyMetrics;
+  private db: ILocalDatabase;
+  private accuracyMetrics: IAccuracyMetrics;
   private contextModel: tf.LayersModel | null = null;
   private adaptiveThresholds: Map<string, number> = new Map();
 
@@ -20,7 +23,7 @@ export class DialectAccuracyEnhancementService extends DialectRecognitionService
     this.accuracyMetrics = {
       totalSamples: 0,
       correctRecognitions: 0,
-      confusionMatrix: new Map()
+      confusionMatrix: new Map(),
     };
     this.initializeEnhancements();
   }
@@ -36,7 +39,11 @@ export class DialectAccuracyEnhancementService extends DialectRecognitionService
     try {
       this.contextModel = await tf.loadLayersModel('/models/dialect-context/model.json');
     } catch (error) {
-      console.error('加载上下文模型失败:', error);
+      console.error(
+        'Error in dialect-accuracy-enhancement.service.ts:',
+        '加载上下文模型失败:',
+        error,
+      );
     }
   }
 
@@ -63,13 +70,13 @@ export class DialectAccuracyEnhancementService extends DialectRecognitionService
   private async enhanceRecognitionResult(result: any) {
     // 应用上下文理解
     const contextEnhanced = await this.applyContextUnderstanding(result);
-    
+
     // 应用自适应阈值
     const thresholdAdjusted = this.applyAdaptiveThresholds(contextEnhanced);
-    
+
     // 应用语音模式识别
     const patternEnhanced = await this.applySpeechPatternRecognition(thresholdAdjusted);
-    
+
     // 更新准确率指标
     await this.updateAccuracyMetrics(patternEnhanced);
 
@@ -89,10 +96,14 @@ export class DialectAccuracyEnhancementService extends DialectRecognitionService
       return {
         ...result,
         confidence: result.confidence * contextScore[0],
-        contextEnhanced: true
+        contextEnhanced: true,
       };
     } catch (error) {
-      console.error('应用上下文理解失败:', error);
+      console.error(
+        'Error in dialect-accuracy-enhancement.service.ts:',
+        '应用上下文理解失败:',
+        error,
+      );
       return result;
     }
   }
@@ -100,14 +111,14 @@ export class DialectAccuracyEnhancementService extends DialectRecognitionService
   // 自适应阈值调整
   private applyAdaptiveThresholds(result: any) {
     const environmentType = this.detectEnvironmentType();
-    const threshold = this.adaptiveThresholds.get(environmentType) || 
-                     this.adaptiveThresholds.get('general')!;
+    const threshold =
+      this.adaptiveThresholds.get(environmentType) || this.adaptiveThresholds.get('general')!;
 
     if (result.confidence < threshold) {
       return {
         ...result,
         needsVerification: true,
-        suggestedAlternatives: this.generateAlternatives(result)
+        suggestedAlternatives: this.generateAlternatives(result),
       };
     }
 
@@ -117,18 +128,18 @@ export class DialectAccuracyEnhancementService extends DialectRecognitionService
   // 语音模式识别
   private async applySpeechPatternRecognition(result: any) {
     const patterns = await this.detectSpeechPatterns(result.audio);
-    
+
     return {
       ...result,
       patterns,
-      enhancedConfidence: this.calculateEnhancedConfidence(result, patterns)
+      enhancedConfidence: this.calculateEnhancedConfidence(result, patterns),
     };
   }
 
   // 更新准确率指标
   private async updateAccuracyMetrics(result: any) {
     this.accuracyMetrics.totalSamples++;
-    
+
     if (result.correct) {
       this.accuracyMetrics.correctRecognitions++;
     }
@@ -150,13 +161,13 @@ export class DialectAccuracyEnhancementService extends DialectRecognitionService
     confusionMatrix: any;
     recommendations: string[];
   }> {
-    const overallAccuracy = this.accuracyMetrics.correctRecognitions / 
-                           this.accuracyMetrics.totalSamples;
+    const overallAccuracy =
+      this.accuracyMetrics.correctRecognitions / this.accuracyMetrics.totalSamples;
 
     return {
       overallAccuracy,
       confusionMatrix: Object.fromEntries(this.confusionMatrix),
-      recommendations: this.generateAccuracyRecommendations(overallAccuracy)
+      recommendations: this.generateAccuracyRecommendations(overallAccuracy),
     };
   }
 
@@ -179,7 +190,7 @@ export class DialectAccuracyEnhancementService extends DialectRecognitionService
 
   // 辅助方法
   private async getRecentContext(): Promise<string[]> {
-    return await this.db.get('recent-context') || [];
+    return (await this.db.get('recent-context')) || [];
   }
 
   private encodeContext(context: string[]): number[] {
@@ -206,4 +217,4 @@ export class DialectAccuracyEnhancementService extends DialectRecognitionService
     // 实现增强置信度计算逻辑
     return result.confidence;
   }
-} 
+}

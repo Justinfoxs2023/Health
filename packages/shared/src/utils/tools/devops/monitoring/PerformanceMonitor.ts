@@ -1,6 +1,6 @@
-import { MetricsCollector } from './MetricsCollector';
 import { AlertManager } from './AlertManager';
 import { LogManager } from './LogManager';
+import { MetricsCollector } from './MetricsCollector';
 
 export class PerformanceMonitor {
   private metricsCollector: MetricsCollector;
@@ -16,11 +16,11 @@ export class PerformanceMonitor {
   // 监控API性能
   async monitorApiPerformance() {
     const metrics = await this.metricsCollector.collectApiMetrics();
-    
+
     if (metrics.responseTime > 1000) {
       await this.alertManager.sendAlert({
         level: 'warning',
-        message: 'API response time exceeds 1s'
+        message: 'API response time exceeds 1s',
       });
     }
 
@@ -30,11 +30,11 @@ export class PerformanceMonitor {
   // 监控资源使用
   async monitorResourceUsage() {
     const usage = await this.metricsCollector.collectResourceMetrics();
-    
+
     if (usage.memory > 80) {
       await this.alertManager.sendAlert({
         level: 'critical',
-        message: 'High memory usage detected'
+        message: 'High memory usage detected',
       });
     }
 
@@ -44,14 +44,14 @@ export class PerformanceMonitor {
   // 监控错误率
   async monitorErrorRate() {
     const errorRate = await this.metricsCollector.collectErrorMetrics();
-    
+
     if (errorRate > 5) {
       await this.alertManager.sendAlert({
         level: 'error',
-        message: 'High error rate detected'
+        message: 'High error rate detected',
       });
     }
 
     await this.logManager.logMetrics('error_rate', { rate: errorRate });
   }
-} 
+}

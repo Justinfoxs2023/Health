@@ -1,7 +1,8 @@
 import React from 'react';
+
 import { VirtualScroll } from './index';
 
-export interface VirtualListProps<T = any> {
+export interface IVirtualListProps<T = any> {
   /** 数据源 */
   items: T[];
   /** 行高 */
@@ -52,8 +53,8 @@ export function VirtualList<T extends Record<string, any>>({
   loading,
   empty,
   onScroll,
-  onReachBottom
-}: VirtualListProps<T>) {
+  onReachBottom,
+}: IVirtualListProps<T>): import('D:/Health/node_modules/@types/react/jsx-runtime').JSX.Element {
   // 获取项键值
   const getItemKey = (item: T, index: number): React.Key => {
     if (typeof itemKey === 'function') {
@@ -69,15 +70,11 @@ export function VirtualList<T extends Record<string, any>>({
 
     return (
       <div
-        className={`virtual-list__item ${
-          isSelected ? 'virtual-list__item--selected' : ''
-        }`}
+        className={`virtual-list__item ${isSelected ? 'virtual-list__item--selected' : ''}`}
         onClick={() => {
           if (selectable && onSelectChange) {
             onSelectChange(
-              isSelected
-                ? selectedKeys.filter((k) => k !== key)
-                : [...selectedKeys, key]
+              isSelected ? selectedKeys.filter(k => k !== key) : [...selectedKeys, key],
             );
           }
         }}
@@ -87,22 +84,18 @@ export function VirtualList<T extends Record<string, any>>({
             <input
               type="checkbox"
               checked={isSelected}
-              onChange={(e) => {
+              onChange={e => {
                 if (onSelectChange) {
                   onSelectChange(
-                    e.target.checked
-                      ? [...selectedKeys, key]
-                      : selectedKeys.filter((k) => k !== key)
+                    e.target.checked ? [...selectedKeys, key] : selectedKeys.filter(k => k !== key),
                   );
                 }
               }}
-              onClick={(e) => e.stopPropagation()}
+              onClick={e => e.stopPropagation()}
             />
           </div>
         )}
-        <div className="virtual-list__content">
-          {renderItem(item, index)}
-        </div>
+        <div className="virtual-list__content">{renderItem(item, index)}</div>
       </div>
     );
   };
@@ -117,9 +110,7 @@ export function VirtualList<T extends Record<string, any>>({
 
   return (
     <div
-      className={`virtual-list ${bordered ? 'virtual-list--bordered' : ''} ${
-        className || ''
-      }`}
+      className={`virtual-list ${bordered ? 'virtual-list--bordered' : ''} ${className || ''}`}
       style={style}
     >
       <VirtualScroll
@@ -188,4 +179,4 @@ style.textContent = `
     color: var(--theme-text-color-secondary);
   }
 `;
-document.head.appendChild(style); 
+document.head.appendChild(style);

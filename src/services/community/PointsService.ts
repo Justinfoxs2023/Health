@@ -1,7 +1,8 @@
-import { Logger } from '@/utils/Logger';
-import { PointsError } from '@/utils/errors';
 import { PointsTransaction } from '../models/PointsTypes';
 import { RedisService } from '../cache/RedisService';
+
+import { Logger } from '@/utils/Logger';
+import { PointsError } from '@/utils/errors';
 
 export class PointsService {
   private logger: Logger;
@@ -11,7 +12,7 @@ export class PointsService {
     comment_added: 5,
     post_liked: 2,
     answer_accepted: 15,
-    daily_login: 3
+    daily_login: 3,
   };
 
   constructor() {
@@ -25,7 +26,7 @@ export class PointsService {
   async awardPoints(
     userId: string,
     action: keyof typeof this.pointsRules,
-    metadata?: any
+    metadata?: any,
   ): Promise<PointsTransaction> {
     try {
       // 1. 验证行为
@@ -53,7 +54,7 @@ export class PointsService {
   /**
    * 获取用户积分
    */
-  async getUserPoints(userId: string): Promise<UserPoints> {
+  async getUserPoints(userId: string): Promise<IUserPoints> {
     try {
       // 1. 获取基本积分
       const basePoints = await this.getBasePoints(userId);
@@ -69,7 +70,7 @@ export class PointsService {
         points: basePoints,
         level,
         history,
-        metadata: await this.getPointsMetadata(userId)
+        metadata: await this.getPointsMetadata(userId),
       };
     } catch (error) {
       this.logger.error('获取用户积分失败', error);
@@ -80,11 +81,7 @@ export class PointsService {
   /**
    * 积分兑换
    */
-  async exchangePoints(
-    userId: string,
-    itemId: string,
-    points: number
-  ): Promise<ExchangeResult> {
+  async exchangePoints(userId: string, itemId: string, points: number): Promise<IExchangeResult> {
     try {
       // 1. 验证积分余额
       await this.validatePointsBalance(userId, points);
@@ -122,7 +119,7 @@ export class PointsService {
   private async updatePoints(
     userId: string,
     points: number,
-    action: string
+    action: string,
   ): Promise<PointsTransaction> {
     // 实现积分更新逻辑
     return null;
@@ -137,17 +134,26 @@ export class PointsService {
   }
 }
 
-interface UserPoints {
+interface IUserPoints {
+  /** userId 的描述 */
   userId: string;
+  /** points 的描述 */
   points: number;
+  /** level 的描述 */
   level: number;
-  history: PointsTransaction[];
+  /** history 的描述 */
+  history: PointsTransaction;
+  /** metadata 的描述 */
   metadata: any;
 }
 
-interface ExchangeResult {
-  success: boolean;
+interface IExchangeResult {
+  /** success 的描述 */
+  success: false | true;
+  /** itemId 的描述 */
   itemId: string;
+  /** points 的描述 */
   points: number;
+  /** timestamp 的描述 */
   timestamp: Date;
-} 
+}

@@ -7,7 +7,7 @@ export class ImagePreprocessingService {
     const options = {
       maxSizeMB: 1,
       maxWidthOrHeight: 1024,
-      useWebWorker: true
+      useWebWorker: true,
     };
     return await compress(file, options);
   }
@@ -15,28 +15,26 @@ export class ImagePreprocessingService {
   // 图像增强
   async enhanceImage(imageData: ImageData): Promise<ImageData> {
     const tensor = tf.browser.fromPixels(imageData);
-    
+
     // 亮度调整
     const brightened = tensor.add(tf.scalar(0.2));
-    
+
     // 对比度增强
     const mean = tf.scalar(0.5);
     const factor = tf.scalar(1.2);
     const contrasted = brightened.sub(mean).mul(factor).add(mean);
-    
+
     // 锐化
-    const kernel = tf.tensor2d([
-      [-1, -1, -1],
-      [-1,  9, -1],
-      [-1, -1, -1]
-    ]).expandDims(2).expandDims(3);
-    
-    const sharpened = tf.conv2d(
-      contrasted.expandDims(0),
-      kernel,
-      [1, 1],
-      'same'
-    ).squeeze();
+    const kernel = tf
+      .tensor2d([
+        [-1, -1, -1],
+        [-1, 9, -1],
+        [-1, -1, -1],
+      ])
+      .expandDims(2)
+      .expandDims(3);
+
+    const sharpened = tf.conv2d(contrasted.expandDims(0), kernel, [1, 1], 'same').squeeze();
 
     return tf.browser.toPixels(sharpened);
   }
@@ -47,8 +45,8 @@ export class ImagePreprocessingService {
       files.map(async file => {
         const compressed = await this.compressImage(file);
         return compressed;
-      })
+      }),
     );
     return processedFiles;
   }
-} 
+}

@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, ScrollView, TextInput, TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { useMutation } from 'react-query';
-import { createQuestion } from '../../api/nutrition';
+
 import { ImageUploader, CategorySelector, TagInput, LoadingOverlay } from '../../components';
+import { View, ScrollView, TextInput, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { createQuestion } from '../../api/nutrition';
+import { useMutation } from 'react-query';
 
 export const AskQuestionScreen = ({ navigation }) => {
   const [title, setTitle] = React.useState('');
@@ -15,7 +16,7 @@ export const AskQuestionScreen = ({ navigation }) => {
   const mutation = useMutation(createQuestion, {
     onSuccess: () => {
       navigation.goBack();
-    }
+    },
   });
 
   const handleSubmit = () => {
@@ -30,7 +31,7 @@ export const AskQuestionScreen = ({ navigation }) => {
       category,
       tags,
       images,
-      isPrivate
+      isPrivate,
     });
   };
 
@@ -44,16 +45,9 @@ export const AskQuestionScreen = ({ navigation }) => {
           onChangeText={setTitle}
           maxLength={100}
         />
-        
+
         <CategorySelector
-          categories={[
-            '饮食咨询',
-            '营养方案',
-            '体重管理',
-            '疾病饮食',
-            '运动营养',
-            '其他'
-          ]}
+          categories={['饮食咨询', '营养方案', '体重管理', '疾病饮食', '运动营养', '其他']}
           selectedCategory={category}
           onSelect={setCategory}
         />
@@ -67,27 +61,12 @@ export const AskQuestionScreen = ({ navigation }) => {
           textAlignVertical="top"
         />
 
-        <ImageUploader
-          images={images}
-          onImagesChange={setImages}
-          maxImages={5}
-        />
+        <ImageUploader images={images} onImagesChange={setImages} maxImages={5} />
 
-        <TagInput
-          tags={tags}
-          onTagsChange={setTags}
-          placeholder="添加标签(最多5个)"
-          maxTags={5}
-        />
+        <TagInput tags={tags} onTagsChange={setTags} placeholder="添加标签(最多5个)" maxTags={5} />
 
-        <TouchableOpacity
-          style={styles.privateToggle}
-          onPress={() => setIsPrivate(!isPrivate)}
-        >
-          <View style={[
-            styles.checkbox,
-            isPrivate && styles.checkboxChecked
-          ]} />
+        <TouchableOpacity style={styles.privateToggle} onPress={() => setIsPrivate(!isPrivate)}>
+          <View style={[styles.checkbox, isPrivate && styles.checkboxChecked]} />
           <Text>设为私密提问</Text>
         </TouchableOpacity>
       </ScrollView>
@@ -95,7 +74,7 @@ export const AskQuestionScreen = ({ navigation }) => {
       <TouchableOpacity
         style={[
           styles.submitButton,
-          (!title.trim() || !content.trim() || !category) && styles.submitButtonDisabled
+          (!title.trim() || !content.trim() || !category) && styles.submitButtonDisabled,
         ]}
         onPress={handleSubmit}
         disabled={!title.trim() || !content.trim() || !category}
@@ -111,18 +90,18 @@ export const AskQuestionScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   scrollView: {
     flex: 1,
-    padding: 15
+    padding: 15,
   },
   titleInput: {
     fontSize: 18,
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
     paddingVertical: 10,
-    marginBottom: 15
+    marginBottom: 15,
   },
   contentInput: {
     height: 200,
@@ -130,12 +109,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#f9f9f9',
     borderRadius: 8,
     padding: 12,
-    marginVertical: 15
+    marginVertical: 15,
   },
   privateToggle: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 15
+    marginVertical: 15,
   },
   checkbox: {
     width: 20,
@@ -143,24 +122,24 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#2E7D32',
     borderRadius: 4,
-    marginRight: 10
+    marginRight: 10,
   },
   checkboxChecked: {
-    backgroundColor: '#2E7D32'
+    backgroundColor: '#2E7D32',
   },
   submitButton: {
     backgroundColor: '#2E7D32',
     padding: 15,
     margin: 15,
     borderRadius: 8,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   submitButtonDisabled: {
-    backgroundColor: '#ccc'
+    backgroundColor: '#ccc',
   },
   submitButtonText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: 'bold'
-  }
-}); 
+    fontWeight: 'bold',
+  },
+});

@@ -1,11 +1,6 @@
-import { OpenAI } from 'openai';
+import { HealthData, RiskAssessment, Recommendation, Anomaly } from '../types/health';
 import { Logger } from '../utils/logger';
-import { 
-  HealthData, 
-  RiskAssessment, 
-  Recommendation, 
-  Anomaly 
-} from '../types/health';
+import { OpenAI } from 'openai';
 
 export class HealthAIService {
   private openai: OpenAI;
@@ -13,7 +8,7 @@ export class HealthAIService {
 
   constructor() {
     this.openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY
+      apiKey: process.env.OPENAI_API_KEY,
     });
     this.logger = new Logger('HealthAI');
   }
@@ -22,14 +17,17 @@ export class HealthAIService {
   async predictHealthRisks(healthData: HealthData): Promise<RiskAssessment> {
     try {
       const response = await this.openai.chat.completions.create({
-        model: "gpt-4",
-        messages: [{
-          role: "system",
-          content: "你是一个专业的健康风险评估专家，请分析以下健康数据并提供风险评估"
-        }, {
-          role: "user",
-          content: JSON.stringify(healthData)
-        }]
+        model: 'gpt-4',
+        messages: [
+          {
+            role: 'system',
+            content: '你是一个专业的健康风险评估专家，请分析以下健康数据并提供风险评估',
+          },
+          {
+            role: 'user',
+            content: JSON.stringify(healthData),
+          },
+        ],
       });
 
       return this.parseRiskAssessment(response.choices[0].message.content);
@@ -40,17 +38,23 @@ export class HealthAIService {
   }
 
   // 生成个性化建议
-  async generateRecommendations(healthData: HealthData, userProfile: any): Promise<Recommendation[]> {
+  async generateRecommendations(
+    healthData: HealthData,
+    userProfile: any,
+  ): Promise<Recommendation[]> {
     try {
       const response = await this.openai.chat.completions.create({
-        model: "gpt-4",
-        messages: [{
-          role: "system",
-          content: "基于用户的健康数据和个人画像，生成个性化的健康建议"
-        }, {
-          role: "user",
-          content: JSON.stringify({ healthData, userProfile })
-        }]
+        model: 'gpt-4',
+        messages: [
+          {
+            role: 'system',
+            content: '基于用户的健康数据和个人画像，生成个性化的健康建议',
+          },
+          {
+            role: 'user',
+            content: JSON.stringify({ healthData, userProfile }),
+          },
+        ],
       });
 
       return this.parseRecommendations(response.choices[0].message.content);
@@ -65,10 +69,10 @@ export class HealthAIService {
     try {
       // 1. 统计分析
       const stats = await this.calculateStatistics(healthMetrics);
-      
+
       // 2. 异常检测
       const anomalies = await this.detectOutliers(healthMetrics, stats);
-      
+
       // 3. 上下文分析
       return await this.enrichAnomalies(anomalies, healthMetrics);
     } catch (error) {
@@ -81,14 +85,17 @@ export class HealthAIService {
   async analyzeTrends(healthHistory: HealthData[]): Promise<TrendAnalysis> {
     try {
       const response = await this.openai.chat.completions.create({
-        model: "gpt-4",
-        messages: [{
-          role: "system",
-          content: "分析用户的健康历史数据，识别关键趋势和模式"
-        }, {
-          role: "user",
-          content: JSON.stringify(healthHistory)
-        }]
+        model: 'gpt-4',
+        messages: [
+          {
+            role: 'system',
+            content: '分析用户的健康历史数据，识别关键趋势和模式',
+          },
+          {
+            role: 'user',
+            content: JSON.stringify(healthHistory),
+          },
+        ],
       });
 
       return this.parseTrendAnalysis(response.choices[0].message.content);
@@ -97,4 +104,4 @@ export class HealthAIService {
       throw error;
     }
   }
-} 
+}

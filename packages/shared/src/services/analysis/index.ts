@@ -1,5 +1,5 @@
-import { IHealthData, HealthDataType } from '../../types';
 import { HEALTH_THRESHOLDS } from '../../constants';
+import { IHealthData, HealthDataType } from '../../types';
 import { logger } from '../logger';
 
 /** 健康风险等级 */
@@ -10,11 +10,16 @@ export enum RiskLevel {
 }
 
 /** 健康风险评估结果 */
-export interface RiskAssessment {
+export interface IRiskAssessment {
+  /** level 的描述 */
   level: RiskLevel;
+  /** score 的描述 */
   score: number;
+  /** factors 的描述 */
   factors: string[];
+  /** suggestions 的描述 */
   suggestions: string[];
+  /** details 的描述 */
   details: {
     type: HealthDataType;
     score: number;
@@ -31,15 +36,21 @@ export enum TrendType {
 }
 
 /** 健康趋势分析结果 */
-export interface TrendAnalysis {
+export interface ITrendAnalysis {
+  /** type 的描述 */
   type: TrendType;
+  /** changeRate 的描述 */
   changeRate: number;
+  /** prediction 的描述 */
   prediction: number[];
+  /** confidence 的描述 */
   confidence: number;
+  /** seasonality 的描述 */
   seasonality?: {
     pattern: 'daily' | 'weekly' | 'monthly';
     strength: number;
   };
+  /** outliers 的描述 */
   outliers?: {
     timestamp: Date;
     value: number;
@@ -48,26 +59,39 @@ export interface TrendAnalysis {
 }
 
 /** 健康建议类型 */
-export interface HealthAdvice {
+export interface IHealthAdvice {
+  /** type 的描述 */
   type: HealthDataType;
+  /** advice 的描述 */
   advice: string;
+  /** priority 的描述 */
   priority: number;
+  /** relatedData 的描述 */
   relatedData?: IHealthData[];
+  /** category 的描述 */
   category: 'immediate' | 'short_term' | 'long_term';
+  /** confidence 的描述 */
   confidence: number;
+  /** impact 的描述 */
   impact: 'high' | 'medium' | 'low';
 }
 
 /** 维度分析结果 */
-interface DimensionAnalysis {
+interface IDimensionAnalysis {
+  /** type 的描述 */
   type: HealthDataType;
+  /** score 的描述 */
   score: number;
+  /** status 的描述 */
   status: 'normal' | 'warning' | 'danger';
+  /** details 的描述 */
   details: string[];
+  /** trends 的描述 */
   trends: {
     shortTerm: TrendType;
     longTerm: TrendType;
   };
+  /** patterns 的描述 */
   patterns: {
     cyclical: boolean;
     seasonal: boolean;
@@ -76,13 +100,20 @@ interface DimensionAnalysis {
 }
 
 /** 相关性分析结果 */
-interface CorrelationAnalysis {
+interface ICorrelationAnalysis {
+  /** type1 的描述 */
   type1: HealthDataType;
+  /** type2 的描述 */
   type2: HealthDataType;
+  /** correlation 的描述 */
   correlation: number;
+  /** significance 的描述 */
   significance: number;
+  /** description 的描述 */
   description: string;
+  /** timeOffset 的描述 */
   timeOffset?: number; // 时间滞后效应
+  /** causalityScore 的描述 */
   causalityScore?: number; // 因果关系强度
 }
 
@@ -109,12 +140,12 @@ export class HealthAnalysisService {
   }
 
   /** 评估健康风险 */
-  public async assessRisk(data: IHealthData[]): Promise<RiskAssessment> {
+  public async assessRisk(data: IHealthData[]): Promise<IRiskAssessment> {
     try {
       const factors: string[] = [];
       const suggestions: string[] = [];
       let totalScore = 0;
-      const details: RiskAssessment['details'] = [];
+      const details: IRiskAssessment['details'] = [];
 
       // 分析每种类型的健康数据
       Object.values(HealthDataType).forEach(type => {
@@ -122,7 +153,7 @@ export class HealthAnalysisService {
         if (typeData.length > 0) {
           const analysis = this.analyzeDataType(type, typeData);
           totalScore += analysis.score;
-          
+
           if (analysis.factor) {
             factors.push(analysis.factor);
           }
@@ -134,7 +165,7 @@ export class HealthAnalysisService {
             type,
             score: analysis.score,
             status: this.getStatusFromScore(analysis.score),
-            factors: analysis.factors || []
+            factors: analysis.factors || [],
           });
         }
       });
@@ -155,7 +186,7 @@ export class HealthAnalysisService {
         score: totalScore,
         factors,
         suggestions,
-        details
+        details,
       };
     } catch (error) {
       logger.error('Health risk assessment failed', { error });
@@ -164,7 +195,10 @@ export class HealthAnalysisService {
   }
 
   /** 分析健康趋势 */
-  public async analyzeTrend(data: IHealthData[], dataType: HealthDataType): Promise<TrendAnalysis> {
+  public async analyzeTrend(
+    data: IHealthData[],
+    dataType: HealthDataType,
+  ): Promise<ITrendAnalysis> {
     try {
       // 按时间排序
       const sortedData = [...data]
@@ -186,7 +220,7 @@ export class HealthAnalysisService {
 
       // 选择最佳预测模型
       const bestModel = this.selectBestPredictionModel(values, timestamps);
-      
+
       // 计算变化率
       const changeRate = this.calculateChangeRate(values);
 
@@ -205,7 +239,7 @@ export class HealthAnalysisService {
         prediction,
         confidence,
         seasonality,
-        outliers
+        outliers,
       };
     } catch (error) {
       logger.error('Health trend analysis failed', { error });
@@ -214,7 +248,7 @@ export class HealthAnalysisService {
   }
 
   /** 检测异常值 */
-  private detectOutliers(values: number[], timestamps: Date[]): TrendAnalysis['outliers'] {
+  private detectOutliers(values: number[], timestamps: Date[]): ITrendAnalysis['outliers'] {
     const mean = this.calculateMean(values);
     const std = this.calculateStandardDeviation(values, mean);
     const threshold = 2; // Z-score阈值
@@ -226,7 +260,7 @@ export class HealthAnalysisService {
           return {
             timestamp: timestamps[index],
             value,
-            deviation: zScore
+            deviation: zScore,
           };
         }
         return null;
@@ -235,12 +269,10 @@ export class HealthAnalysisService {
   }
 
   /** 检测季节性 */
-  private detectSeasonality(values: number[], timestamps: Date[]): TrendAnalysis['seasonality'] {
+  private detectSeasonality(values: number[], timestamps: Date[]): ITrendAnalysis['seasonality'] {
     // 计算时间间隔
-    const intervals = timestamps.slice(1).map((t, i) => 
-      t.getTime() - timestamps[i].getTime()
-    );
-    
+    const intervals = timestamps.slice(1).map((t, i) => t.getTime() - timestamps[i].getTime());
+
     // 检查是否存在规律性间隔
     const dailyPattern = this.checkPattern(intervals, 24 * 60 * 60 * 1000);
     const weeklyPattern = this.checkPattern(intervals, 7 * 24 * 60 * 60 * 1000);
@@ -261,17 +293,14 @@ export class HealthAnalysisService {
 
   /** 检查时间模式 */
   private checkPattern(intervals: number[], targetInterval: number): number {
-    const deviations = intervals.map(interval => 
-      Math.abs(interval - targetInterval) / targetInterval
+    const deviations = intervals.map(
+      interval => Math.abs(interval - targetInterval) / targetInterval,
     );
-    return 1 - (deviations.reduce((sum, dev) => sum + dev, 0) / deviations.length);
+    return 1 - deviations.reduce((sum, dev) => sum + dev, 0) / deviations.length;
   }
 
   /** 选择最佳预测模型 */
-  private selectBestPredictionModel(
-    values: number[],
-    timestamps: Date[]
-  ): PredictionModelType {
+  private selectBestPredictionModel(values: number[], timestamps: Date[]): PredictionModelType {
     // 计算各模型的预测误差
     const errors = new Map<PredictionModelType, number>();
 
@@ -288,16 +317,17 @@ export class HealthAnalysisService {
     });
 
     // 返回误差最小的模型
-    return Array.from(errors.entries()).reduce((best, [model, error]) => 
-      error < errors.get(best)! ? model : best
-    , PredictionModelType.LINEAR);
+    return Array.from(errors.entries()).reduce(
+      (best, [model, error]) => (error < errors.get(best)! ? model : best),
+      PredictionModelType.LINEAR,
+    );
   }
 
   /** 使用指定模型进行预测 */
   private predictWithModel(
     values: number[],
     timestamps: Date[],
-    model: PredictionModelType
+    model: PredictionModelType,
   ): number[] {
     switch (model) {
       case PredictionModelType.LINEAR:
@@ -329,9 +359,7 @@ export class HealthAnalysisService {
     const intercept = (sumY - slope * sumX) / n;
 
     // 预测未来3个点
-    return Array.from({ length: 3 }, (_, i) => 
-      slope * (n + i) + intercept
-    );
+    return Array.from({ length: 3 }, (_, i) => slope * (n + i) + intercept);
   }
 
   /** 指数预测 */
@@ -350,9 +378,7 @@ export class HealthAnalysisService {
     const intercept = (sumY - slope * sumX) / n;
 
     // 预测未来3个点
-    return Array.from({ length: 3 }, (_, i) => 
-      Math.exp(slope * (n + i) + intercept)
-    );
+    return Array.from({ length: 3 }, (_, i) => Math.exp(slope * (n + i) + intercept));
   }
 
   /** 移动平均预测 */
@@ -374,9 +400,7 @@ export class HealthAnalysisService {
 
   /** 计算预测误差 */
   private calculatePredictionError(predictions: number[], actuals: number[]): number {
-    const squaredErrors = predictions.map((pred, i) => 
-      Math.pow(pred - actuals[i], 2)
-    );
+    const squaredErrors = predictions.map((pred, i) => Math.pow(pred - actuals[i], 2));
     return Math.sqrt(squaredErrors.reduce((a, b) => a + b, 0) / predictions.length);
   }
 
@@ -406,8 +430,10 @@ export class HealthAnalysisService {
 
     // 查找时间窗口内的其他异常数据
     allData.forEach(d => {
-      if (d.type !== data.type &&
-          Math.abs(d.timestamp.getTime() - data.timestamp.getTime()) <= timeWindow) {
+      if (
+        d.type !== data.type &&
+        Math.abs(d.timestamp.getTime() - data.timestamp.getTime()) <= timeWindow
+      ) {
         const threshold = HEALTH_THRESHOLDS[d.type];
         if (threshold) {
           if (d.value > threshold.MAX || d.value < threshold.MIN) {
@@ -423,12 +449,12 @@ export class HealthAnalysisService {
   /** 计算维度得分 */
   private calculateTypeDimensionScore(
     type: HealthDataType,
-    data: IHealthData[]
+    data: IHealthData[],
   ): { score: number; status: 'normal' | 'warning' | 'danger'; details: string[] } {
     const values = data.map(d => d.value);
     const mean = this.calculateMean(values);
     const threshold = HEALTH_THRESHOLDS[type];
-    
+
     if (!threshold) {
       return { score: 0, status: 'normal', details: [] };
     }
@@ -471,7 +497,7 @@ export class HealthAnalysisService {
   }
 
   /** 生成基于得分的建议 */
-  private generateScoreBasedSuggestions(dimensions: DimensionAnalysis[]): string[] {
+  private generateScoreBasedSuggestions(dimensions: IDimensionAnalysis[]): string[] {
     const suggestions: string[] = [];
 
     dimensions.forEach(dim => {
@@ -522,7 +548,11 @@ export class HealthAnalysisService {
   }
 
   /** 描述相关性 */
-  private describeCorrelation(type1: HealthDataType, type2: HealthDataType, correlation: number): string {
+  private describeCorrelation(
+    type1: HealthDataType,
+    type2: HealthDataType,
+    correlation: number,
+  ): string {
     const strength = Math.abs(correlation);
     const direction = correlation > 0 ? '正相关' : '负相关';
     let description = '';
@@ -539,7 +569,10 @@ export class HealthAnalysisService {
   }
 
   /** 分析单个类型的健康数据 */
-  private analyzeDataType(type: HealthDataType, data: IHealthData[]): {
+  private analyzeDataType(
+    type: HealthDataType,
+    data: IHealthData[],
+  ): {
     score: number;
     factor?: string;
     suggestion?: string;
@@ -590,11 +623,11 @@ export class HealthAnalysisService {
     // 简单线性回归预测
     const n = values.length;
     const prediction: number[] = [];
-    
+
     if (n >= 2) {
       const lastValue = values[n - 1];
-      const trend = (values[n - 1] - values[n - 2]);
-      
+      const trend = values[n - 1] - values[n - 2];
+
       // 预测未来3个点
       for (let i = 1; i <= 3; i++) {
         prediction.push(lastValue + trend * i);
@@ -620,7 +653,7 @@ export class HealthAnalysisService {
   }
 
   /** 生成类型特定的建议 */
-  private generateTypeAdvice(type: HealthDataType, data: IHealthData[]): HealthAdvice {
+  private generateTypeAdvice(type: HealthDataType, data: IHealthData[]): IHealthAdvice {
     const latestValue = data[data.length - 1].value;
     const threshold = HEALTH_THRESHOLDS[type];
 
@@ -647,14 +680,14 @@ export class HealthAnalysisService {
       type,
       advice,
       priority,
-      relatedData: data
+      relatedData: data,
     };
   }
 
   /** 生成健康建议 */
-  public async generateAdvice(data: IHealthData[]): Promise<HealthAdvice[]> {
+  public async generateAdvice(data: IHealthData[]): Promise<IHealthAdvice[]> {
     try {
-      const advice: HealthAdvice[] = [];
+      const advice: IHealthAdvice[] = [];
 
       // 为每种类型的数据生成建议
       Object.values(HealthDataType).forEach(type => {
@@ -675,7 +708,7 @@ export class HealthAnalysisService {
             priority: 2,
             category: 'short_term',
             confidence: 1 - corr.significance,
-            impact: Math.abs(corr.correlation) > 0.8 ? 'high' : 'medium'
+            impact: Math.abs(corr.correlation) > 0.8 ? 'high' : 'medium',
           });
         }
       });
@@ -690,7 +723,7 @@ export class HealthAnalysisService {
             priority: 3,
             category: 'immediate',
             confidence: 0.9,
-            impact: 'high'
+            impact: 'high',
           });
         }
       });
@@ -704,8 +737,8 @@ export class HealthAnalysisService {
   }
 
   /** 计算健康评分 */
-  private async calculateHealthScore(data: IHealthData[]): Promise<DimensionAnalysis[]> {
-    const dimensions: DimensionAnalysis[] = [];
+  private async calculateHealthScore(data: IHealthData[]): Promise<IDimensionAnalysis[]> {
+    const dimensions: IDimensionAnalysis[] = [];
 
     // 为每种类型计算评分
     Object.values(HealthDataType).forEach(type => {
@@ -718,13 +751,11 @@ export class HealthAnalysisService {
         // 计算短期和长期趋势
         const shortTermData = typeData.slice(-7); // 最近7天
         const longTermData = typeData; // 全部数据
-        
+
         const shortTermTrend = this.determineTrendType(
-          this.calculateChangeRate(shortTermData.map(d => d.value))
+          this.calculateChangeRate(shortTermData.map(d => d.value)),
         );
-        const longTermTrend = this.determineTrendType(
-          this.calculateChangeRate(values)
-        );
+        const longTermTrend = this.determineTrendType(this.calculateChangeRate(values));
 
         // 检测模式
         const timestamps = typeData.map(d => d.timestamp);
@@ -737,13 +768,13 @@ export class HealthAnalysisService {
           details: this.generateDimensionDetails(values, type),
           trends: {
             shortTerm: shortTermTrend,
-            longTerm: longTermTrend
+            longTerm: longTermTrend,
           },
           patterns: {
             cyclical: Boolean(seasonality),
             seasonal: Boolean(seasonality),
-            frequency: seasonality ? this.getPatternFrequency(seasonality.pattern) : undefined
-          }
+            frequency: seasonality ? this.getPatternFrequency(seasonality.pattern) : undefined,
+          },
         });
       }
     });
@@ -754,17 +785,21 @@ export class HealthAnalysisService {
   /** 计算维度得分 */
   private calculateDimensionScore(values: number[], mean: number, std: number): number {
     const normalizedValues = values.map(v => Math.abs((v - mean) / std));
-    return Math.min(5, Math.max(0, 5 - normalizedValues.reduce((a, b) => a + b, 0) / values.length));
+    return Math.min(
+      5,
+      Math.max(0, 5 - normalizedValues.reduce((a, b) => a + b, 0) / values.length),
+    );
   }
 
   /** 获取维度状态 */
-  private getDimensionStatus(values: number[], type: HealthDataType): 'normal' | 'warning' | 'danger' {
+  private getDimensionStatus(
+    values: number[],
+    type: HealthDataType,
+  ): 'normal' | 'warning' | 'danger' {
     const threshold = HEALTH_THRESHOLDS[type];
     if (!threshold) return 'normal';
 
-    const abnormalCount = values.filter(v => 
-      v > threshold.MAX || v < threshold.MIN
-    ).length;
+    const abnormalCount = values.filter(v => v > threshold.MAX || v < threshold.MIN).length;
 
     if (abnormalCount > values.length * 0.3) return 'danger';
     if (abnormalCount > values.length * 0.1) return 'warning';
@@ -809,4 +844,4 @@ export class HealthAnalysisService {
   }
 }
 
-export const healthAnalysisService = HealthAnalysisService.getInstance(); 
+export const healthAnalysisService = HealthAnalysisService.getInstance();

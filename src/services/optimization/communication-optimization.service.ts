@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 communication-optimization.service.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export class CommunicationOptimizationService {
   private readonly performanceMonitor: PerformanceMonitor;
   private readonly networkManager: NetworkManager;
@@ -12,12 +19,12 @@ export class CommunicationOptimizationService {
     try {
       // 监控性能指标
       const metrics = await this.performanceMonitor.getMetrics(channelId);
-      
+
       // 优化网络配置
       await this.networkManager.optimizeConfiguration({
         bandwidth: metrics.bandwidth,
         latency: metrics.latency,
-        packetLoss: metrics.packetLoss
+        packetLoss: metrics.packetLoss,
       });
 
       // 实施自适应策略
@@ -26,7 +33,7 @@ export class CommunicationOptimizationService {
       return {
         optimizedMetrics: await this.measureOptimizedPerformance(),
         improvements: adaptiveStrategy.improvements,
-        recommendations: await this.generateOptimizationRecommendations()
+        recommendations: await this.generateOptimizationRecommendations(),
       };
     } catch (error) {
       this.logger.error('优化实时通讯失败', error);
@@ -39,21 +46,21 @@ export class CommunicationOptimizationService {
     try {
       // 分析流质量
       const quality = await this.analyzeStreamQuality(streamId);
-      
+
       // 动态调整编码
       await this.adjustEncoding(quality);
-      
+
       // 优化缓冲策略
       await this.optimizeBuffering(quality);
 
       return {
         quality: await this.measureStreamQuality(),
         stability: await this.assessStreamStability(),
-        adaptiveSettings: await this.getAdaptiveSettings()
+        adaptiveSettings: await this.getAdaptiveSettings(),
       };
     } catch (error) {
       this.logger.error('优化媒体流失败', error);
       throw error;
     }
   }
-} 
+}

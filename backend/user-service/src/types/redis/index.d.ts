@@ -16,4 +16,4 @@ declare module 'ioredis' {
   }
 }
 
-export type RedisClient = IORedis; 
+export type RedisClientType = IORedis;

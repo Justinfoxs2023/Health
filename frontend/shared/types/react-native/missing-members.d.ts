@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 missing-members.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 declare module 'react-native' {
   import React from 'react';
 
@@ -70,27 +77,17 @@ declare module 'react-native' {
       stop: () => void;
     }
 
-    export function timing(
-      value: Animated.Value,
-      config: AnimationConfig
-    ): CompositeAnimation;
+    export function timing(value: Animated.Value, config: AnimationConfig): CompositeAnimation;
 
-    export function spring(
-      value: Animated.Value,
-      config: AnimationConfig
-    ): CompositeAnimation;
+    export function spring(value: Animated.Value, config: AnimationConfig): CompositeAnimation;
 
-    export function parallel(
-      animations: CompositeAnimation[]
-    ): CompositeAnimation;
+    export function parallel(animations: CompositeAnimation[]): CompositeAnimation;
 
-    export function sequence(
-      animations: CompositeAnimation[]
-    ): CompositeAnimation;
+    export function sequence(animations: CompositeAnimation[]): CompositeAnimation;
 
     export function loop(
       animation: CompositeAnimation,
-      config?: { iterations?: number }
+      config?: { iterations?: number },
     ): CompositeAnimation;
 
     export const View: React.ComponentType<ViewProps>;
@@ -110,11 +107,11 @@ declare module 'react-native' {
     get: (dimension: 'window' | 'screen') => ScaledSize;
     addEventListener: (
       type: 'change',
-      handler: (dims: { window: ScaledSize; screen: ScaledSize }) => void
+      handler: (dims: { window: ScaledSize; screen: ScaledSize }) => void,
     ) => void;
     removeEventListener: (
       type: 'change',
-      handler: (dims: { window: ScaledSize; screen: ScaledSize }) => void
+      handler: (dims: { window: ScaledSize; screen: ScaledSize }) => void,
     ) => void;
   };
 
@@ -129,12 +126,9 @@ declare module 'react-native' {
   export const Keyboard: {
     addListener: (
       eventName: 'keyboardDidShow' | 'keyboardDidHide' | 'keyboardWillShow' | 'keyboardWillHide',
-      handler: (event: KeyboardEvent) => void
+      handler: (event: KeyboardEvent) => void,
     ) => { remove: () => void };
-    removeListener: (
-      eventName: string,
-      handler: (event: KeyboardEvent) => void
-    ) => void;
+    removeListener: (eventName: string, handler: (event: KeyboardEvent) => void) => void;
     dismiss: () => void;
   };
 
@@ -148,5 +142,8 @@ declare module 'react-native' {
   }
 
   // 其他类型
-  export type ImageSourcePropType = number | { uri: string } | { uri: string; width: number; height: number };
-} 
+  export type ImageSourcePropType =
+    | number
+    | { uri: string }
+    | { uri: string; width: number; height: number };
+}

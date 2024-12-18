@@ -1,28 +1,26 @@
 import React, { useState, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Card } from '../Card';
-import { Loading } from '../Loading';
-import { FoodRecognitionResult, foodService } from '../../services/food';
-import { CameraIcon, UploadIcon, RefreshIcon } from '@heroicons/react/outline';
 
-interface Props {
+import { CameraIcon, UploadIcon, RefreshIcon } from '@heroicons/react/outline';
+import { Card } from '../Card';
+import { IFoodRecognitionResult, foodService } from '../../services/food';
+import { Loading } from '../Loading';
+import { useTranslation } from 'react-i18next';
+
+interface IProps {
   /** 识别结果回调 */
-  onResult?: (result: FoodRecognitionResult) => void;
+  onResult?: (result: IFoodRecognitionResult) => void;
   /** 错误回调 */
   onError?: (error: Error) => void;
 }
 
 /** 食物识别组件 */
-export const FoodRecognitionComponent: React.FC<Props> = ({
-  onResult,
-  onError
-}) => {
+export const FoodRecognitionComponent: React.FC<IProps> = ({ onResult, onError }) => {
   const { t } = useTranslation();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [image, setImage] = useState<string>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>();
-  const [result, setResult] = useState<FoodRecognitionResult>();
+  const [result, setResult] = useState<IFoodRecognitionResult>();
 
   /** 处理文件选择 */
   const handleFileSelect = async (file: File) => {
@@ -146,11 +144,7 @@ export const FoodRecognitionComponent: React.FC<Props> = ({
             {/* 食物图片 */}
             {image && (
               <div className="w-1/3">
-                <img
-                  src={image}
-                  alt={result.name}
-                  className="w-full h-auto rounded-lg"
-                />
+                <img src={image} alt={result.name} className="w-full h-auto rounded-lg" />
               </div>
             )}
 
@@ -163,34 +157,21 @@ export const FoodRecognitionComponent: React.FC<Props> = ({
 
               <div className="grid grid-cols-2 gap-4 mb-6">
                 <div>
-                  <div className="text-sm text-gray-500 mb-1">
-                    {t('food.info.type')}
-                  </div>
-                  <div className="font-medium">
-                    {t(`food.types.${result.type}`)}
-                  </div>
+                  <div className="text-sm text-gray-500 mb-1">{t('food.info.type')}</div>
+                  <div className="font-medium">{t(`food.types.${result.type}`)}</div>
                 </div>
                 <div>
-                  <div className="text-sm text-gray-500 mb-1">
-                    {t('food.info.confidence')}
-                  </div>
-                  <div className="font-medium">
-                    {(result.confidence * 100).toFixed(1)}%
-                  </div>
+                  <div className="text-sm text-gray-500 mb-1">{t('food.info.confidence')}</div>
+                  <div className="font-medium">{(result.confidence * 100).toFixed(1)}%</div>
                 </div>
               </div>
 
               {/* 营养成分 */}
               <div>
-                <div className="text-lg font-medium mb-4">
-                  {t('food.info.nutrients')}
-                </div>
+                <div className="text-lg font-medium mb-4">{t('food.info.nutrients')}</div>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {result.nutrients.map((nutrient, index) => (
-                    <div
-                      key={index}
-                      className="p-3 bg-gray-50 rounded-lg"
-                    >
+                    <div key={index} className="p-3 bg-gray-50 rounded-lg">
                       <div className="text-sm text-gray-500 mb-1">
                         {t(`nutrition.nutrients.${nutrient.type}`)}
                       </div>
@@ -227,4 +208,4 @@ export const FoodRecognitionComponent: React.FC<Props> = ({
   );
 };
 
-export default FoodRecognitionComponent; 
+export default FoodRecognitionComponent;

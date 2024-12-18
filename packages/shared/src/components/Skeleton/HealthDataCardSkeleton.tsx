@@ -1,7 +1,8 @@
 import React from 'react';
+
 import { Skeleton } from './index';
 
-export interface HealthDataCardSkeletonProps {
+export interface IHealthDataCardSkeletonProps {
   /** 自定义类名 */
   className?: string;
   /** 自定义样式 */
@@ -11,15 +12,12 @@ export interface HealthDataCardSkeletonProps {
 /**
  * 健康数据卡片骨架屏组件
  */
-export const HealthDataCardSkeleton: React.FC<HealthDataCardSkeletonProps> = ({
+export const HealthDataCardSkeleton: React.FC<IHealthDataCardSkeletonProps> = ({
   className,
-  style
+  style,
 }) => {
   return (
-    <div
-      className={`health-data-card-skeleton ${className || ''}`}
-      style={style}
-    >
+    <div className={`health-data-card-skeleton ${className || ''}`} style={style}>
       {/* 标题区域 */}
       <div className="health-data-card-skeleton__header">
         <Skeleton
@@ -28,11 +26,7 @@ export const HealthDataCardSkeleton: React.FC<HealthDataCardSkeletonProps> = ({
           height={24}
           className="health-data-card-skeleton__title"
         />
-        <Skeleton
-          variant="circular"
-          width={32}
-          className="health-data-card-skeleton__icon"
-        />
+        <Skeleton variant="circular" width={32} className="health-data-card-skeleton__icon" />
       </div>
 
       {/* 数据区域 */}
@@ -61,11 +55,7 @@ export const HealthDataCardSkeleton: React.FC<HealthDataCardSkeletonProps> = ({
 
       {/* 图表区域 */}
       <div className="health-data-card-skeleton__chart">
-        <Skeleton
-          variant="rectangular"
-          height={120}
-          className="health-data-card-skeleton__graph"
-        />
+        <Skeleton variant="rectangular" height={120} className="health-data-card-skeleton__graph" />
       </div>
 
       {/* 底部区域 */}
@@ -128,4 +118,4 @@ style.textContent = `
     align-items: center;
   }
 `;
-document.head.appendChild(style); 
+document.head.appendChild(style);

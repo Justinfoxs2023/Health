@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from 'react';
+
 import { ErrorBoundary } from '../ErrorBoundary';
 import { message } from 'antd';
 import { request } from '../../utils/request';
 
-interface FamilyMember {
+interface IFamilyMember {
+  /** id 的描述 */
   id: string;
+  /** name 的描述 */
   name: string;
+  /** healthStatus 的描述 */
   healthStatus: string;
 }
 
 export const FamilyHealthManager: React.FC = () => {
-  const [members, setMembers] = useState<FamilyMember[]>([]);
+  const [members, setMembers] = useState<IFamilyMember[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -33,13 +37,13 @@ export const FamilyHealthManager: React.FC = () => {
     <ErrorBoundary>
       <div className="family-health-container">
         {loading ? (
-          <div>加载中...</div>
+          <div></div>
         ) : (
           <div className="members-list">
             {members.map(member => (
               <div key={member.id} className="member-card">
-                <h3>{member.name}</h3>
-                <p>健康状态: {member.healthStatus}</p>
+                <h3>{membername}</h3>
+                <p> {memberhealthStatus}</p>
               </div>
             ))}
           </div>
@@ -47,4 +51,4 @@ export const FamilyHealthManager: React.FC = () => {
       </div>
     </ErrorBoundary>
   );
-}; 
+};

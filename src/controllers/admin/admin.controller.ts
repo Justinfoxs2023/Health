@@ -1,7 +1,7 @@
-import { Request, Response } from 'express';
 import { AdminService } from '../../services/admin/admin.service';
+import { IAdminConfig } from '../../types/admin';
 import { Logger } from '../../utils/logger';
-import { AdminConfig } from '../../types/admin';
+import { Request, Response } from 'express';
 
 export class AdminController {
   private adminService: AdminService;
@@ -17,17 +17,17 @@ export class AdminController {
     try {
       const { action, data } = req.body;
       const result = await this.adminService.manageUsers(action, data);
-      
+
       return res.json({
         code: 200,
         data: result,
-        message: '用户管理操作成功'
+        message: '用户管理操作成功',
       });
     } catch (error) {
       this.logger.error('用户管理操作失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
@@ -37,17 +37,17 @@ export class AdminController {
     try {
       const { action, data } = req.body;
       const result = await this.adminService.manageRoles(action, data);
-      
+
       return res.json({
         code: 200,
         data: result,
-        message: '角色管理操作成功'
+        message: '角色管理操作成功',
       });
     } catch (error) {
       this.logger.error('角色管理操作失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
@@ -57,18 +57,18 @@ export class AdminController {
     try {
       const { action, data } = req.body;
       const result = await this.adminService.manageSettings(action, data);
-      
+
       return res.json({
         code: 200,
         data: result,
-        message: '系统配置操作成功'
+        message: '系统配置操作成功',
       });
     } catch (error) {
       this.logger.error('系统配置操作失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
-} 
+}

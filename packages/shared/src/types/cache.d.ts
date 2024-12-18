@@ -1,6 +1,14 @@
+/**
+ * @fileoverview TS 文件 cache.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // 缓存配置类型定义
-export interface CacheConfig {
+export interface ICacheConfig {
   // 本地缓存配置
+  /** local 的描述 */
   local: {
     type: 'caffeine';
     maximumSize: number;
@@ -9,6 +17,7 @@ export interface CacheConfig {
   };
 
   // 分布式缓存配置
+  /** distributed 的描述 */
   distributed: {
     type: 'redis';
     cluster: boolean;
@@ -21,6 +30,7 @@ export interface CacheConfig {
   };
 
   // 缓存策略配置
+  /** strategy 的描述 */
   strategy: {
     reading: {
       pattern: 'read-through' | 'cache-aside';
@@ -33,4 +43,4 @@ export interface CacheConfig {
       delay: number; // milliseconds
     };
   };
-} 
+}

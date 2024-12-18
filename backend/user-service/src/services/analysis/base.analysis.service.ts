@@ -1,7 +1,7 @@
-import { BaseService } from '../base.service';
-import { Logger } from '../../utils/logger';
-import { DatabaseOperations } from '../../database/operations';
 import { AnalysisError } from '../../utils/errors';
+import { BaseService } from '../base.service';
+import { DatabaseOperations } from '../../database/operations';
+import { Logger } from '../../utils/logger';
 
 export abstract class BaseAnalysisService extends BaseService {
   protected dbOps: DatabaseOperations<any>;
@@ -23,7 +23,7 @@ export abstract class BaseAnalysisService extends BaseService {
   protected async calculateMetrics(data: any[], metrics: string[]) {
     try {
       const results: Record<string, number> = {};
-      
+
       for (const metric of metrics) {
         results[metric] = await this.calculateMetric(data, metric);
       }
@@ -36,4 +36,4 @@ export abstract class BaseAnalysisService extends BaseService {
   }
 
   protected abstract calculateMetric(data: any[], metric: string): Promise<number>;
-} 
+}

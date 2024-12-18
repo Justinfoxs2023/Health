@@ -1,5 +1,12 @@
+/**
+ * @fileoverview TS 文件 base.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // 基础类型定义
-export interface Dict {
+export interface IDict {
   [key: string]: any;
 }
 
@@ -31,11 +38,7 @@ declare global {
 
     interface Response {
       status(code: number): this;
-      json(body: {
-        code: number;
-        data?: any;
-        message?: string;
-      }): this;
+      json(body: { code: number; data?: any; message?: string }): this;
     }
   }
-} 
+}

@@ -1,8 +1,8 @@
-import mongoose from 'mongoose';
-import { spawn } from 'child_process';
-import path from 'path';
 import fs from 'fs';
+import mongoose from 'mongoose';
+import path from 'path';
 import { logger } from '../logger';
+import { spawn } from 'child_process';
 
 class DatabaseBackupService {
   private readonly backupDir = path.join(process.cwd(), 'backups');
@@ -26,12 +26,12 @@ class DatabaseBackupService {
       await this.mongoDump(backupPath);
       await this.validateBackup(backupPath);
       await this.cleanOldBackups();
-      
+
       logger.info('数据库备份完成:', backupPath);
       return {
         status: 'success',
         path: backupPath,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     } catch (error) {
       logger.error('数据库备份失败:', error);
@@ -46,15 +46,15 @@ class DatabaseBackupService {
     try {
       // 验证备份文件
       await this.validateBackup(backupPath);
-      
+
       // 执行恢复
       await this.mongoRestore(backupPath);
-      
+
       logger.info('数据库恢复完成:', backupPath);
       return {
         status: 'success',
         path: backupPath,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     } catch (error) {
       logger.error('数据库恢复失败:', error);
@@ -68,12 +68,8 @@ class DatabaseBackupService {
   private async mongoDump(backupPath: string): Promise<void> {
     return new Promise((resolve, reject) => {
       const { MONGODB_URI, MONGODB_USER, MONGODB_PASSWORD } = process.env;
-      
-      const args = [
-        '--uri', MONGODB_URI as string,
-        '--out', backupPath,
-        '--gzip'
-      ];
+
+      const args = ['--uri', MONGODB_URI as string, '--out', backupPath, '--gzip'];
 
       if (MONGODB_USER && MONGODB_PASSWORD) {
         args.push('--username', MONGODB_USER);
@@ -83,15 +79,15 @@ class DatabaseBackupService {
 
       const mongodump = spawn('mongodump', args);
 
-      mongodump.stdout.on('data', (data) => {
+      mongodump.stdout.on('data', data => {
         logger.info('mongodump:', data.toString());
       });
 
-      mongodump.stderr.on('data', (data) => {
+      mongodump.stderr.on('data', data => {
         logger.error('mongodump error:', data.toString());
       });
 
-      mongodump.on('close', (code) => {
+      mongodump.on('close', code => {
         if (code === 0) {
           resolve();
         } else {
@@ -107,12 +103,14 @@ class DatabaseBackupService {
   private async mongoRestore(backupPath: string): Promise<void> {
     return new Promise((resolve, reject) => {
       const { MONGODB_URI, MONGODB_USER, MONGODB_PASSWORD } = process.env;
-      
+
       const args = [
-        '--uri', MONGODB_URI as string,
-        '--dir', backupPath,
+        '--uri',
+        MONGODB_URI as string,
+        '--dir',
+        backupPath,
         '--gzip',
-        '--drop' // 恢复前删除现有数据
+        '--drop', // 恢复前删除现有数据
       ];
 
       if (MONGODB_USER && MONGODB_PASSWORD) {
@@ -123,15 +121,15 @@ class DatabaseBackupService {
 
       const mongorestore = spawn('mongorestore', args);
 
-      mongorestore.stdout.on('data', (data) => {
+      mongorestore.stdout.on('data', data => {
         logger.info('mongorestore:', data.toString());
       });
 
-      mongorestore.stderr.on('data', (data) => {
+      mongorestore.stderr.on('data', data => {
         logger.error('mongorestore error:', data.toString());
       });
 
-      mongorestore.on('close', (code) => {
+      mongorestore.on('close', code => {
         if (code === 0) {
           resolve();
         } else {
@@ -160,7 +158,7 @@ class DatabaseBackupService {
       // 检查关键集合是否存在
       const requiredCollections = ['users', 'health_data', 'settings'];
       const missingCollections = requiredCollections.filter(
-        collection => !files.some(file => file.includes(collection))
+        collection => !files.some(file => file.includes(collection)),
       );
 
       if (missingCollections.length > 0) {
@@ -183,7 +181,7 @@ class DatabaseBackupService {
         .map(file => ({
           name: file,
           path: path.join(this.backupDir, file),
-          time: fs.statSync(path.join(this.backupDir, file)).mtime.getTime()
+          time: fs.statSync(path.join(this.backupDir, file)).mtime.getTime(),
         }))
         .sort((a, b) => b.time - a.time);
 
@@ -213,7 +211,7 @@ class DatabaseBackupService {
           name: file,
           path: path.join(this.backupDir, file),
           size: fs.statSync(path.join(this.backupDir, file)).size,
-          time: fs.statSync(path.join(this.backupDir, file)).mtime
+          time: fs.statSync(path.join(this.backupDir, file)).mtime,
         }))
         .sort((a, b) => b.time.getTime() - a.time.getTime());
 
@@ -225,4 +223,4 @@ class DatabaseBackupService {
   }
 }
 
-export const databaseBackupService = new DatabaseBackupService(); 
+export const databaseBackupService = new DatabaseBackupService();

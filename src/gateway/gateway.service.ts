@@ -1,9 +1,9 @@
+import { ConfigService } from '../infrastructure/config/config.service';
+import { IServiceInstance } from '../types/service';
 import { Injectable } from '@nestjs/common';
 import { LoadBalancerService } from '../infrastructure/load-balancer/load-balancer.service';
-import { ServiceRegistryService } from '../infrastructure/service-registry';
-import { ConfigService } from '../infrastructure/config/config.service';
 import { MetricsService } from '../infrastructure/monitoring';
-import { ServiceInstance } from '../types/service';
+import { ServiceRegistryService } from '../infrastructure/service-registry';
 
 @Injectable()
 export class GatewayService {
@@ -11,11 +11,11 @@ export class GatewayService {
     private readonly loadBalancer: LoadBalancerService,
     private readonly serviceRegistry: ServiceRegistryService,
     private readonly config: ConfigService,
-    private readonly metrics: MetricsService
+    private readonly metrics: MetricsService,
   ) {}
 
   // 发送请求
-  private async sendRequest(instance: ServiceInstance, request: any): Promise<any> {
+  private async sendRequest(instance: IServiceInstance, request: any): Promise<any> {
     // 实现请求发送逻辑
     return {};
   }
@@ -30,9 +30,9 @@ export class GatewayService {
   async routeRequest(serviceName: string, request: any) {
     const instances = await this.serviceRegistry.discover(serviceName);
     const instance = await this.loadBalancer.selectInstance(instances);
-    
+
     this.metrics.recordRequest(serviceName);
-    
+
     try {
       const response = await this.sendRequest(instance, request);
       this.metrics.recordSuccess(serviceName);

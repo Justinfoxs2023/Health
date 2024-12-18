@@ -1,20 +1,24 @@
 import { BehaviorSubject, Observable } from 'rxjs';
+import { IRiskAlert, IRiskRule, IHealthData } from './types';
 import { v4 as uuidv4 } from 'uuid';
-import { RiskAlert, RiskRule, HealthData } from './types';
 
-interface RiskAlertState {
-  alerts: RiskAlert[];
-  rules: RiskRule[];
+interface IRiskAlertState {
+  /** alerts 的描述 */
+  alerts: IRiskAlert[];
+  /** rules 的描述 */
+  rules: IRiskRule[];
+  /** processing 的描述 */
   processing: boolean;
+  /** error 的描述 */
   error: Error | null;
 }
 
 export class RiskAlertService {
-  private state$ = new BehaviorSubject<RiskAlertState>({
+  private state$ = new BehaviorSubject<IRiskAlertState>({
     alerts: [],
     rules: [],
     processing: false,
-    error: null
+    error: null,
   });
 
   private cooldowns: Map<string, number> = new Map();
@@ -26,68 +30,67 @@ export class RiskAlertService {
   }
 
   private initDefaultRules() {
-    const defaultRules: RiskRule[] = [
+    const defaultRules: IRiskRule[] = [
       {
         id: 'high-heart-rate',
         type: 'vital',
-        condition: (data: HealthData) => data.vitals.heartRate > 100,
+        condition: (data: IHealthData) => data.vitals.heartRate > 100,
         level: 'high',
         message: '心率过高',
         threshold: 100,
-        cooldown: 300000
+        cooldown: 300000,
       },
       {
         id: 'low-heart-rate',
         type: 'vital',
-        condition: (data: HealthData) => data.vitals.heartRate < 60,
+        condition: (data: IHealthData) => data.vitals.heartRate < 60,
         level: 'high',
         message: '心率过低',
         threshold: 60,
-        cooldown: 300000
+        cooldown: 300000,
       },
       {
         id: 'high-blood-pressure',
         type: 'vital',
-        condition: (data: HealthData) => 
-          data.vitals.bloodPressure.systolic > 140 || 
-          data.vitals.bloodPressure.diastolic > 90,
+        condition: (data: IHealthData) =>
+          data.vitals.bloodPressure.systolic > 140 || data.vitals.bloodPressure.diastolic > 90,
         level: 'high',
         message: '血压过高',
-        cooldown: 300000
+        cooldown: 300000,
       },
       {
         id: 'low-oxygen',
         type: 'vital',
-        condition: (data: HealthData) => data.vitals.oxygenSaturation < 95,
+        condition: (data: IHealthData) => data.vitals.oxygenSaturation < 95,
         level: 'high',
         message: '血氧饱和度过低',
         threshold: 95,
-        cooldown: 300000
-      }
+        cooldown: 300000,
+      },
     ];
 
     this.state$.next({
       ...this.state$.value,
-      rules: defaultRules
+      rules: defaultRules,
     });
   }
 
   // 获取状态观察对象
-  getState(): Observable<RiskAlertState> {
+  getState(): Observable<IRiskAlertState> {
     return this.state$.asObservable();
   }
 
   // 检查健康数据并生成警报
-  async checkHealthData(data: HealthData): Promise<void> {
+  async checkHealthData(data: IHealthData): Promise<void> {
     try {
       this.state$.next({
         ...this.state$.value,
         processing: true,
-        error: null
+        error: null,
       });
 
       const currentTime = Date.now();
-      const newAlerts: RiskAlert[] = [];
+      const newAlerts: IRiskAlert[] = [];
 
       // 检查每个规则
       for (const rule of this.state$.value.rules) {
@@ -101,14 +104,14 @@ export class RiskAlertService {
 
         // 检查条件
         if (rule.condition(data)) {
-          const alert: RiskAlert = {
+          const alert: IRiskAlert = {
             id: uuidv4(),
             type: rule.type,
             level: rule.level,
             message: rule.message,
             timestamp: currentTime,
             data: this.extractRelevantData(data, rule),
-            handled: false
+            handled: false,
           };
 
           newAlerts.push(alert);
@@ -120,25 +123,25 @@ export class RiskAlertService {
       if (newAlerts.length > 0) {
         this.state$.next({
           ...this.state$.value,
-          alerts: [...newAlerts, ...this.state$.value.alerts]
+          alerts: [...newAlerts, ...this.state$.value.alerts],
         });
       }
     } catch (error) {
       this.state$.next({
         ...this.state$.value,
-        error: error as Error
+        error: error as Error,
       });
       throw error;
     } finally {
       this.state$.next({
         ...this.state$.value,
-        processing: false
+        processing: false,
       });
     }
   }
 
   // 提取相关数据
-  private extractRelevantData(data: HealthData, rule: RiskRule): Record<string, any> {
+  private extractRelevantData(data: IHealthData, rule: IRiskRule): Record<string, any> {
     const relevantData: Record<string, any> = {};
 
     switch (rule.type) {
@@ -178,12 +181,12 @@ export class RiskAlertService {
   // 标记警报为已处理
   async markAlertHandled(alertId: string): Promise<void> {
     const alerts = this.state$.value.alerts.map(alert =>
-      alert.id === alertId ? { ...alert, handled: true } : alert
+      alert.id === alertId ? { ...alert, handled: true } : alert,
     );
 
     this.state$.next({
       ...this.state$.value,
-      alerts
+      alerts,
     });
   }
 
@@ -193,29 +196,29 @@ export class RiskAlertService {
 
     this.state$.next({
       ...this.state$.value,
-      alerts
+      alerts,
     });
   }
 
   // 获取特定类型的警报
-  getAlertsByType(type: string): RiskAlert[] {
+  getAlertsByType(type: string): IRiskAlert[] {
     return this.state$.value.alerts.filter(alert => alert.type === type);
   }
 
   // 获取活跃警报
-  getActiveAlerts(): RiskAlert[] {
+  getActiveAlerts(): IRiskAlert[] {
     return this.state$.value.alerts.filter(alert => !alert.handled);
   }
 
   // 添加自定义规则
-  async addRule(rule: RiskRule): Promise<void> {
+  async addRule(rule: IRiskRule): Promise<void> {
     if (!rule.id) {
       rule.id = uuidv4();
     }
 
     this.state$.next({
       ...this.state$.value,
-      rules: [...this.state$.value.rules, rule]
+      rules: [...this.state$.value.rules, rule],
     });
   }
 
@@ -225,19 +228,19 @@ export class RiskAlertService {
 
     this.state$.next({
       ...this.state$.value,
-      rules
+      rules,
     });
   }
 
   // 更新规则
-  async updateRule(ruleId: string, updates: Partial<RiskRule>): Promise<void> {
+  async updateRule(ruleId: string, updates: Partial<IRiskRule>): Promise<void> {
     const rules = this.state$.value.rules.map(rule =>
-      rule.id === ruleId ? { ...rule, ...updates } : rule
+      rule.id === ruleId ? { ...rule, ...updates } : rule,
     );
 
     this.state$.next({
       ...this.state$.value,
-      rules
+      rules,
     });
   }
 
@@ -245,7 +248,7 @@ export class RiskAlertService {
   async clearAllAlerts(): Promise<void> {
     this.state$.next({
       ...this.state$.value,
-      alerts: []
+      alerts: [],
     });
   }
 
@@ -256,8 +259,8 @@ export class RiskAlertService {
       alerts: [],
       rules: [],
       processing: false,
-      error: null
+      error: null,
     });
     this.initDefaultRules();
   }
-} 
+}

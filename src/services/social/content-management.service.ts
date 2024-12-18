@@ -1,40 +1,37 @@
+import { ElasticsearchService } from '@nestjs/elasticsearch';
+import { ICommunityContent } from './community.types';
 import { Injectable } from '@nestjs/common';
 import { Logger } from '../../infrastructure/logger/logger.service';
-import { ElasticsearchService } from '@nestjs/elasticsearch';
 import { RedisService } from '@nestjs/redis';
-import { CommunityContent } from './community.types';
 
 @Injectable()
 export class ContentManagementService {
   constructor(
     private readonly logger: Logger,
     private readonly elasticsearch: ElasticsearchService,
-    private readonly redis: RedisService
+    private readonly redis: RedisService,
   ) {}
 
   // 内容审核
-  async moderateContent(content: CommunityContent): Promise<boolean> {
+  async moderateContent(content: ICommunityContent): Promise<boolean> {
     try {
       // 文本审核
       const textModeration = await this.moderateText(content.content.body);
-      
+
       // 媒体审核
-      const mediaModeration = content.content.media ? 
-        await this.moderateMedia(content.content.media) : 
-        { passed: true };
+      const mediaModeration = content.content.media
+        ? await this.moderateMedia(content.content.media)
+        : { passed: true };
 
       // 综合判断
       const passed = textModeration.passed && mediaModeration.passed;
-      
+
       // 记录审核结果
       await this.saveModeration({
         contentId: content.id,
         result: passed,
-        reasons: [
-          ...textModeration.reasons || [],
-          ...mediaModeration.reasons || []
-        ],
-        timestamp: new Date()
+        reasons: [...(textModeration.reasons || []), ...(mediaModeration.reasons || [])],
+        timestamp: new Date(),
       });
 
       return passed;
@@ -45,29 +42,19 @@ export class ContentManagementService {
   }
 
   // 智能推荐
-  async getRecommendations(
-    userId: string,
-    context: any
-  ): Promise<CommunityContent[]> {
+  async getRecommendations(userId: string, context: any): Promise<ICommunityContent[]> {
     try {
       // 获取用户兴趣
       const userInterests = await this.getUserInterests(userId);
-      
+
       // 获取热门内容
       const trendingContent = await this.getTrendingContent();
-      
+
       // 个性化推荐
-      const personalizedContent = await this.getPersonalizedContent(
-        userId,
-        userInterests
-      );
+      const personalizedContent = await this.getPersonalizedContent(userId, userInterests);
 
       // 融合推荐结果
-      return this.mergeRecommendations(
-        trendingContent,
-        personalizedContent,
-        context
-      );
+      return this.mergeRecommendations(trendingContent, personalizedContent, context);
     } catch (error) {
       this.logger.error('Recommendations generation failed:', error);
       throw error;
@@ -85,13 +72,13 @@ export class ContentManagementService {
 
       // 计算热门话题
       const topics = await this.calculateTrendingTopics();
-      
+
       // 更新缓存
       await this.redis.set(
         'trending:topics',
         JSON.stringify(topics),
         'EX',
-        3600 // 1小时过期
+        3600, // 1小时过期
       );
 
       return topics;
@@ -146,24 +133,24 @@ export class ContentManagementService {
     return [];
   }
 
-  private async getTrendingContent(): Promise<CommunityContent[]> {
+  private async getTrendingContent(): Promise<ICommunityContent[]> {
     // 实现热门内容获取逻辑
     return [];
   }
 
   private async getPersonalizedContent(
     userId: string,
-    interests: any[]
-  ): Promise<CommunityContent[]> {
+    interests: any[],
+  ): Promise<ICommunityContent[]> {
     // 实现个性化内容获取逻辑
     return [];
   }
 
   private mergeRecommendations(
-    trending: CommunityContent[],
-    personalized: CommunityContent[],
-    context: any
-  ): CommunityContent[] {
+    trending: ICommunityContent[],
+    personalized: ICommunityContent[],
+    context: any,
+  ): ICommunityContent[] {
     // 实现推荐结果融合逻辑
     return [];
   }
@@ -188,4 +175,4 @@ export class ContentManagementService {
   private async deleteTopic(data: any): Promise<void> {
     // 实现话题删除逻辑
   }
-} 
+}

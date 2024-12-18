@@ -1,14 +1,15 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
-import { Statistics } from '../index';
+
 import { HealthData, HealthMetric } from '../../../types';
+import { Statistics } from '../index';
 import { dataStatisticsService } from '../../../services/statistics';
+import { render, screen, waitFor } from '@testing-library/react';
 
 // Mock i18n
 jest.mock('react-i18n', () => ({
   useTranslation: () => ({
-    t: (key: string) => key
-  })
+    t: (key: string) => key,
+  }),
 }));
 
 // Mock recharts
@@ -19,7 +20,7 @@ jest.mock('recharts', () => ({
   YAxis: () => null,
   CartesianGrid: () => null,
   Tooltip: () => null,
-  Legend: () => null
+  Legend: () => null,
 }));
 
 describe('Statistics', () => {
@@ -33,7 +34,7 @@ describe('Statistics', () => {
       bloodSugar: 5.5,
       temperature: 36.5,
       weight: 65,
-      steps: 8000
+      steps: 8000,
     },
     {
       id: '2',
@@ -43,8 +44,8 @@ describe('Statistics', () => {
       bloodSugar: 5.8,
       temperature: 36.6,
       weight: 65.2,
-      steps: 10000
-    }
+      steps: 10000,
+    },
   ];
 
   beforeEach(() => {
@@ -53,11 +54,7 @@ describe('Statistics', () => {
 
   it('应该正确渲染统计数据卡片', async () => {
     render(
-      <Statistics
-        data={mockData}
-        selectedMetrics={[HealthMetric.HEART_RATE]}
-        timeRange="week"
-      />
+      <Statistics data={mockData} selectedMetrics={[HealthMetric.HEART_RATE]} timeRange="week" />,
     );
 
     // 等待加载完成
@@ -78,24 +75,14 @@ describe('Statistics', () => {
 
   it('应该显示加载状态', () => {
     render(
-      <Statistics
-        data={mockData}
-        selectedMetrics={[HealthMetric.HEART_RATE]}
-        timeRange="week"
-      />
+      <Statistics data={mockData} selectedMetrics={[HealthMetric.HEART_RATE]} timeRange="week" />,
     );
 
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
 
   it('应该处理空数据', async () => {
-    render(
-      <Statistics
-        data={[]}
-        selectedMetrics={[HealthMetric.HEART_RATE]}
-        timeRange="week"
-      />
-    );
+    render(<Statistics data={[]} selectedMetrics={[HealthMetric.HEART_RATE]} timeRange="week" />);
 
     await waitFor(() => {
       expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
@@ -119,21 +106,19 @@ describe('Statistics', () => {
           min: 75,
           standardDeviation: 1.5,
           trend: [],
-          anomalies: []
-        }
+          anomalies: [],
+        },
       },
       recommendations: ['测试建议'],
       risks: [
         {
           level: 'low' as const,
-          description: '测试风险'
-        }
-      ]
+          description: '测试风险',
+        },
+      ],
     };
 
-    jest
-      .spyOn(dataStatisticsService, 'generateReport')
-      .mockReturnValue(mockReport);
+    jest.spyOn(dataStatisticsService, 'generateReport').mockReturnValue(mockReport);
 
     render(
       <Statistics
@@ -141,7 +126,7 @@ describe('Statistics', () => {
         selectedMetrics={[HealthMetric.HEART_RATE]}
         timeRange="week"
         showReport={true}
-      />
+      />,
     );
 
     await waitFor(() => {
@@ -150,9 +135,7 @@ describe('Statistics', () => {
 
     // 检查报告内容
     expect(screen.getByText('statistics.report.title')).toBeInTheDocument();
-    expect(
-      screen.getByText('statistics.report.recommendations')
-    ).toBeInTheDocument();
+    expect(screen.getByText('statistics.report.recommendations')).toBeInTheDocument();
     expect(screen.getByText('statistics.report.risks')).toBeInTheDocument();
     expect(screen.getByText('测试建议')).toBeInTheDocument();
     expect(screen.getByText('测试风险')).toBeInTheDocument();
@@ -169,7 +152,7 @@ describe('Statistics', () => {
         timeRange="custom"
         startDate={startDate}
         endDate={endDate}
-      />
+      />,
     );
 
     await waitFor(() => {
@@ -193,9 +176,9 @@ describe('Statistics', () => {
         {
           time: new Date(),
           value: 100,
-          reason: '异常值'
-        }
-      ]
+          reason: '异常值',
+        },
+      ],
     };
 
     jest
@@ -203,11 +186,7 @@ describe('Statistics', () => {
       .mockReturnValue(mockStatsWithAnomalies);
 
     render(
-      <Statistics
-        data={mockData}
-        selectedMetrics={[HealthMetric.HEART_RATE]}
-        timeRange="week"
-      />
+      <Statistics data={mockData} selectedMetrics={[HealthMetric.HEART_RATE]} timeRange="week" />,
     );
 
     await waitFor(() => {
@@ -218,4 +197,4 @@ describe('Statistics', () => {
     expect(screen.getByText('statistics.anomalies')).toBeInTheDocument();
     expect(screen.getByText(/异常值/)).toBeInTheDocument();
   });
-}); 
+});

@@ -1,14 +1,14 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
 import { Activity, IActivity } from '../schemas/Activity';
 import { CacheService } from './CacheService';
+import { InjectModel } from '@nestjs/mongoose';
+import { Injectable } from '@nestjs/common';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class ActivityService {
   constructor(
     @InjectModel(Activity.name) private activityModel: Model<IActivity>,
-    private cacheService: CacheService
+    private cacheService: CacheService,
   ) {}
 
   // 创建活动
@@ -29,7 +29,7 @@ export class ActivityService {
   async getActivity(id: string): Promise<IActivity> {
     const cacheKey = `activity:${id}`;
     const cached = await this.cacheService.get(cacheKey);
-    
+
     if (cached) {
       return JSON.parse(cached);
     }
@@ -43,26 +43,22 @@ export class ActivityService {
   async getActivities(query: any = {}, page = 1, limit = 20) {
     const cacheKey = `activities:${JSON.stringify(query)}:${page}`;
     const cached = await this.cacheService.get(cacheKey);
-    
+
     if (cached) {
       return JSON.parse(cached);
     }
 
     const skip = (page - 1) * limit;
     const [activities, total] = await Promise.all([
-      this.activityModel
-        .find(query)
-        .skip(skip)
-        .limit(limit)
-        .sort({ createdAt: -1 }),
-      this.activityModel.countDocuments(query)
+      this.activityModel.find(query).skip(skip).limit(limit).sort({ createdAt: -1 }),
+      this.activityModel.countDocuments(query),
     ]);
 
     const result = {
       activities,
       total,
       page,
-      totalPages: Math.ceil(total / limit)
+      totalPages: Math.ceil(total / limit),
     };
 
     await this.cacheService.set(cacheKey, JSON.stringify(result), 3600);
@@ -72,7 +68,7 @@ export class ActivityService {
   // 参加活动
   async joinActivity(activityId: string, userId: string): Promise<void> {
     const activity = await this.activityModel.findById(activityId);
-    
+
     if (!activity) {
       throw new Error('Activity not found');
     }
@@ -82,7 +78,7 @@ export class ActivityService {
     }
 
     await this.activityModel.findByIdAndUpdate(activityId, {
-      $inc: { currentParticipants: 1 }
+      $inc: { currentParticipants: 1 },
     });
 
     // 更新缓存
@@ -97,10 +93,10 @@ export class ActivityService {
   }
 
   // 获取活动排行榜
-  async getLeaderboard(activityId: string, metric: string = 'points') {
+  async getLeaderboard(activityId: string, metric = 'points') {
     const cacheKey = `activity:${activityId}:leaderboard:${metric}`;
     const cached = await this.cacheService.get(cacheKey);
-    
+
     if (cached) {
       return JSON.parse(cached);
     }
@@ -117,7 +113,7 @@ export class ActivityService {
   async getUserActivityStats(userId: string) {
     const cacheKey = `user:${userId}:activity-stats`;
     const cached = await this.cacheService.get(cacheKey);
-    
+
     if (cached) {
       return JSON.parse(cached);
     }
@@ -128,10 +124,10 @@ export class ActivityService {
       totalParticipated: 0,
       completedActivities: 0,
       totalPoints: 0,
-      achievements: []
+      achievements: [],
     };
 
     await this.cacheService.set(cacheKey, JSON.stringify(stats), 3600);
     return stats;
   }
-} 
+}

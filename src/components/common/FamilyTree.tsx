@@ -1,17 +1,16 @@
 import React from 'react';
+
 import { Box } from '@mui/material';
 
-interface FamilyTreeProps {
-  data: Family.DiseaseHistory[];
-  onMemberSelect: (memberId: string) => void;
-  highlightRisks?: boolean;
+interface IFamilyTreeProps {
+  /** data 的描述 */
+    data: FamilyDiseaseHistory;
+  /** onMemberSelect 的描述 */
+    onMemberSelect: memberId: string  void;
+  highlightRisks: boolean;
 }
 
-export const FamilyTree: React.FC<FamilyTreeProps> = ({
-  data,
-  onMemberSelect,
-  highlightRisks
-}) => {
+export const FamilyTree: React.FC<IFamilyTreeProps> = ({ data, onMemberSelect, highlightRisks }) => {
   // 实现家族树组件
   return <Box>Family Tree Component</Box>;
-}; 
+};

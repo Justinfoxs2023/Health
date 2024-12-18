@@ -1,11 +1,11 @@
+import Redis from 'ioredis';
+import csrf from 'csurf';
+import jwt from 'jsonwebtoken';
+import rateLimit from 'express-rate-limit';
+import { RateLimiterRedis } from 'rate-limiter-flexible';
 import { Request, Response, NextFunction } from 'express';
 import { createHash, createHmac } from 'crypto';
-import { RateLimiterRedis } from 'rate-limiter-flexible';
-import Redis from 'ioredis';
-import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
-import rateLimit from 'express-rate-limit';
-import csrf from 'csurf';
 
 const redis = new Redis({
   host: process.env.REDIS_HOST || 'localhost',
@@ -32,17 +32,16 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
 
     // 验证当前令牌
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any;
-    
+
     // 检查令牌是否即将过期（比如还有5分钟过期）
     const expiresIn = decoded.exp - Math.floor(Date.now() / 1000);
-    if (expiresIn < 300) { // 5分钟
+    if (expiresIn < 300) {
+      // 5分钟
       // 生成新令牌
-      const newToken = jwt.sign(
-        { userId: decoded.userId },
-        process.env.JWT_SECRET!,
-        { expiresIn: '1h' }
-      );
-      
+      const newToken = jwt.sign({ userId: decoded.userId }, process.env.JWT_SECRET!, {
+        expiresIn: '1h',
+      });
+
       // 将新令牌添加到响应头
       res.setHeader('X-New-Token', newToken);
     }
@@ -130,11 +129,11 @@ export const rateLimitMiddleware = rateLimit({
 export const ipBlacklist = async (req: Request, res: Response, next: NextFunction) => {
   const ip = req.ip;
   const blacklisted = await redis.sismember('ip:blacklist', ip);
-  
+
   if (blacklisted) {
     return res.status(403).json({ error: 'IP已被封禁' });
   }
-  
+
   next();
 };
 
@@ -146,7 +145,7 @@ export const securityHeaders = (_req: Request, res: Response, next: NextFunction
   res.setHeader('X-XSS-Protection', '1; mode=block');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Content-Security-Policy', "default-src 'self'");
-  
+
   next();
 };
 
@@ -187,10 +186,7 @@ export const encryptResponse = (req: Request, res: Response, next: NextFunction)
   res.send = function (body: any): Response {
     if (body && typeof body === 'object') {
       // 生成随机密钥
-      const key = createHash('sha256')
-        .update(Math.random().toString())
-        .digest('hex')
-        .slice(0, 32);
+      const key = createHash('sha256').update(Math.random().toString()).digest('hex').slice(0, 32);
 
       // 加密数据
       const cipher = createHmac('aes-256-gcm', key);
@@ -240,11 +236,7 @@ export const sqlInjectionProtection = (req: Request, res: Response, next: NextFu
     return false;
   };
 
-  if (
-    checkObject(req.query) ||
-    checkObject(req.body) ||
-    checkObject(req.params)
-  ) {
+  if (checkObject(req.query) || checkObject(req.body) || checkObject(req.params)) {
     return res.status(403).json({ error: '检测到潜在的注入攻击' });
   }
 
@@ -264,4 +256,4 @@ export const securityMiddleware = [
   validateRequestSignature,
   accessControl(['admin']),
   securityHeaders,
-]; 
+];

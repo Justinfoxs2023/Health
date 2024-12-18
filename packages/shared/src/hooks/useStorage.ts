@@ -1,5 +1,6 @@
 import React from 'react';
-import { storage, StorageItemConfig } from '../services/storage';
+
+import { storage, IStorageItemConfig } from '../services/storage';
 
 /**
  * 存储Hook
@@ -10,8 +11,14 @@ import { storage, StorageItemConfig } from '../services/storage';
 export function useStorage<T>(
   key: string,
   initialValue: T,
-  config?: StorageItemConfig
-) {
+  config?: IStorageItemConfig,
+): {
+  value: T;
+  setValue: (newValue: T | ((prev: T) => T)) => Promise<void>;
+  remove: () => Promise<void>;
+  loading: boolean;
+  error: Error | null;
+} {
   const [value, setValue] = React.useState<T>(initialValue);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<Error | null>(null);
@@ -36,19 +43,22 @@ export function useStorage<T>(
   }, [key, initialValue]);
 
   // 更新值的函数
-  const updateValue = React.useCallback(async (newValue: T | ((prev: T) => T)) => {
-    try {
-      setLoading(true);
-      const valueToStore = newValue instanceof Function ? newValue(value) : newValue;
-      await storage.setItem(key, valueToStore, config);
-      setValue(valueToStore);
-      setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Failed to save value'));
-    } finally {
-      setLoading(false);
-    }
-  }, [key, value, config]);
+  const updateValue = React.useCallback(
+    async (newValue: T | ((prev: T) => T)) => {
+      try {
+        setLoading(true);
+        const valueToStore = newValue instanceof Function ? newValue(value) : newValue;
+        await storage.setItem(key, valueToStore, config);
+        setValue(valueToStore);
+        setError(null);
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error('Failed to save value'));
+      } finally {
+        setLoading(false);
+      }
+    },
+    [key, value, config],
+  );
 
   // 移除值的函数
   const removeValue = React.useCallback(async () => {
@@ -69,6 +79,6 @@ export function useStorage<T>(
     setValue: updateValue,
     remove: removeValue,
     loading,
-    error
+    error,
   };
-} 
+}

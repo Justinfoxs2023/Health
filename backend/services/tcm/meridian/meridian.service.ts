@@ -2,31 +2,37 @@ import { EventEmitter } from 'events';
 import { Logger } from '../../../utils/logger';
 import { Redis } from '../../../utils/redis';
 
-interface MeridianPoint {
+interface IMeridianPoint {
+  /** id 的描述 */
   id: string;
+  /** name 的描述 */
   name: string;
+  /** location 的描述 */
   location: string;
+  /** functions 的描述 */
   functions: string[];
+  /** indications 的描述 */
   indications: string[];
+  /** techniques 的描述 */
   techniques: string[];
 }
 
 export class MeridianService extends EventEmitter {
   private logger: Logger;
   private redis: Redis;
-  private meridianPoints: Map<string, MeridianPoint>;
+  private meridianPoints: Map<string, IMeridianPoint>;
 
   constructor() {
     super();
     this.logger = new Logger('MeridianService');
     this.redis = new Redis();
     this.meridianPoints = new Map();
-    
+
     this.initializeMeridianData();
   }
 
   // 获取穴位信息
-  async getPointInfo(pointId: string): Promise<MeridianPoint | null> {
+  async getPointInfo(pointId: string): Promise<IMeridianPoint | null> {
     try {
       // 先从缓存获取
       const cached = this.meridianPoints.get(pointId);
@@ -63,10 +69,10 @@ export class MeridianService extends EventEmitter {
     try {
       // 1. 分析症状
       const analysis = await this.analyzeSymptoms(symptoms);
-      
+
       // 2. 匹配穴位
       const points = await this.matchPoints(analysis);
-      
+
       // 3. 生成按摩方案
       return this.generateMassagePlan(points, constitution);
     } catch (error) {
@@ -79,4 +85,4 @@ export class MeridianService extends EventEmitter {
   private async initializeMeridianData(): Promise<void> {
     // 实现数据初始化逻辑
   }
-} 
+}

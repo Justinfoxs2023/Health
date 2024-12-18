@@ -1,12 +1,19 @@
+/**
+ * @fileoverview TS 文件 type-checker.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export class TypeChecker {
   static validateObject<T>(obj: any, schema: Record<keyof T, any>): boolean {
     if (!obj || typeof obj !== 'object') return false;
-    
+
     for (const key in schema) {
       if (!obj.hasOwnProperty(key)) return false;
       if (typeof obj[key] !== typeof schema[key]) return false;
     }
-    
+
     return true;
   }
 
@@ -17,4 +24,4 @@ export class TypeChecker {
   static isValidNumber(num: any): boolean {
     return typeof num === 'number' && !isNaN(num);
   }
-} 
+}

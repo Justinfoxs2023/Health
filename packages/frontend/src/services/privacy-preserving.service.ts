@@ -1,24 +1,31 @@
 import * as tf from '@tensorflow/tfjs';
-import { LocalDatabase, createDatabase } from '../utils/local-database';
+import { ILocalDatabase, createDatabase } from '../utils/local-database';
 
-interface PrivacyConfig {
-  epsilon: number;  // 差分隐私参数
-  delta: number;   // 差分隐私参数
+interface IPrivacyConfig {
+  /** epsilon 的描述 */
+  epsilon: number; // 差分隐私参数
+  /** delta 的描述 */
+  delta: number; // 差分隐私参数
+  /** clipNorm 的描述 */
   clipNorm: number; // 梯度裁剪阈值
+  /** noiseSigma 的描述 */
   noiseSigma: number; // 噪声标准差
+  /** secureMethods 的描述 */
   secureMethods: Array<'differential-privacy' | 'homomorphic-encryption' | 'secure-aggregation'>;
 }
 
-interface EncryptionKeys {
+interface IEncryptionKeys {
+  /** publicKey 的描述 */
   publicKey: string;
+  /** privateKey 的描述 */
   privateKey: string;
 }
 
 export class PrivacyPreservingService {
-  private db: LocalDatabase;
+  private db: ILocalDatabase;
   private model: tf.LayersModel | null = null;
-  private config: PrivacyConfig;
-  private encryptionKeys: EncryptionKeys | null = null;
+  private config: IPrivacyConfig;
+  private encryptionKeys: IEncryptionKeys | null = null;
 
   constructor() {
     this.db = createDatabase('privacy-preserving');
@@ -27,7 +34,7 @@ export class PrivacyPreservingService {
       delta: 1e-5,
       clipNorm: 1.0,
       noiseSigma: 0.5,
-      secureMethods: ['differential-privacy', 'homomorphic-encryption']
+      secureMethods: ['differential-privacy', 'homomorphic-encryption'],
     };
   }
 
@@ -37,10 +44,7 @@ export class PrivacyPreservingService {
   }
 
   // 差分隐私训练
-  async trainWithPrivacy(
-    data: tf.Tensor,
-    labels: tf.Tensor
-  ): Promise<tf.History> {
+  async trainWithPrivacy(data: tf.Tensor, labels: tf.Tensor): Promise<tf.History> {
     if (!this.model) {
       throw new Error('模型未初始化');
     }
@@ -57,7 +61,7 @@ export class PrivacyPreservingService {
       epochs: 10,
       batchSize: 32,
       optimizer: customOptimizer,
-      callbacks: this.createPrivacyCallbacks()
+      callbacks: this.createPrivacyCallbacks(),
     });
   }
 
@@ -79,8 +83,8 @@ export class PrivacyPreservingService {
 
   // 安全聚合
   async secureAggregate(
-    localUpdates: Array<{gradients: tf.Tensor[], weights: tf.Tensor[]}>
-  ): Promise<{gradients: tf.Tensor[], weights: tf.Tensor[]}> {
+    localUpdates: Array<{ gradients: tf.Tensor[]; weights: tf.Tensor[] }>,
+  ): Promise<{ gradients: tf.Tensor[]; weights: tf.Tensor[] }> {
     // 实现安全聚合协议
     const maskedUpdates = await this.applySecretSharing(localUpdates);
     const aggregatedMasks = await this.aggregateMasks(maskedUpdates);
@@ -91,11 +95,7 @@ export class PrivacyPreservingService {
   private async applyDifferentialPrivacy(data: tf.Tensor): Promise<tf.Tensor> {
     return tf.tidy(() => {
       // 添加拉普拉斯噪声
-      const noise = tf.randomLaplace(
-        data.shape,
-        0,
-        this.config.noiseSigma / this.config.epsilon
-      );
+      const noise = tf.randomLaplace(data.shape, 0, this.config.noiseSigma / this.config.epsilon);
       return data.add(noise);
     });
   }
@@ -110,7 +110,7 @@ export class PrivacyPreservingService {
         // 添加噪声
         const privatizedGrads = this.addGradientNoise(clippedGrads);
         return baseOptimizer.applyGradients(privatizedGrads);
-      }
+      },
     };
   }
 
@@ -130,22 +130,18 @@ export class PrivacyPreservingService {
       const noisyGrads: tf.NamedTensorMap = {};
       for (const key in gradients) {
         const grad = gradients[key];
-        const noise = tf.randomNormal(
-          grad.shape,
-          0,
-          this.config.noiseSigma
-        );
+        const noise = tf.randomNormal(grad.shape, 0, this.config.noiseSigma);
         noisyGrads[key] = grad.add(noise);
       }
       return noisyGrads;
     });
   }
 
-  private async generateKeyPair(): Promise<EncryptionKeys> {
+  private async generateKeyPair(): Promise<IEncryptionKeys> {
     // 实现密钥生成
     return {
       publicKey: '',
-      privateKey: ''
+      privateKey: '',
     };
   }
 
@@ -159,23 +155,23 @@ export class PrivacyPreservingService {
     return tensor;
   }
 
-  private async performEncryptedInference(
-    encryptedInput: tf.Tensor
-  ): Promise<tf.Tensor> {
+  private async performEncryptedInference(encryptedInput: tf.Tensor): Promise<tf.Tensor> {
     // 实现加密域推理
     return encryptedInput;
   }
 
   private createPrivacyCallbacks(): tf.CustomCallbackArgs[] {
-    return [{
-      onBatchEnd: async (batch, logs) => {
-        // 监控隐私预算消耗
-        this.updatePrivacyBudget(logs);
-      }
-    }];
+    return [
+      {
+        onBatchEnd: async (batch, logs) => {
+          // 监控隐私预算消耗
+          this.updatePrivacyBudget(logs);
+        },
+      },
+    ];
   }
 
   private updatePrivacyBudget(logs: tf.Logs | undefined): void {
     // 实现隐私预算跟踪
   }
-} 
+}

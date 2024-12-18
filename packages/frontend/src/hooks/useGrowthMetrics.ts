@@ -1,8 +1,14 @@
 import { useState, useEffect } from 'react';
-import { GrowthMetrics } from '@/types/growth.types';
+
 import { message } from 'antd';
 
-export function useGrowthMetrics() {
+import { GrowthMetrics } from '@/types/growth.types';
+
+export function useGrowthMetrics(): {
+  metrics: any;
+  loading: boolean;
+  refetch: () => Promise<void>;
+} {
   const [metrics, setMetrics] = useState<GrowthMetrics | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -17,11 +23,11 @@ export function useGrowthMetrics() {
       setMetrics(data);
     } catch (error) {
       message.error('获取成长数据失败');
-      console.error(error);
+      console.error('Error in useGrowthMetrics.ts:', error);
     } finally {
       setLoading(false);
     }
   }
 
   return { metrics, loading, refetch: fetchMetrics };
-} 
+}

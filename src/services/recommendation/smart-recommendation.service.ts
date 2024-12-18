@@ -1,18 +1,19 @@
-import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { Logger } from '../../infrastructure/logger/logger.service';
-import { MetricsService } from '../../infrastructure/monitoring/metrics.service';
 import * as tf from '@tensorflow/tfjs-node';
 import {
-  UserPreferences,
+  IUserPreferences,
   HealthGoals,
-  EnvironmentContext,
-  SocialContext,
-  Recommendation,
-  RecommendationFeedback
+  IEnvironmentContext,
+  ISocialContext,
+  IRecommendation,
+  IRecommendationFeedback,
 } from './types';
+import { ConfigService } from '@nestjs/config';
+import { Injectable } from '@nestjs/common';
+import { Logger } from '../../infrastructure/logger/logger.service';
+import { MetricsService } from '../../infrastructure/monitoring/metrics.service';
 
-@Injectable()
+@Inject
+able()
 export class SmartRecommendationService {
   private readonly recommendationModel: tf.LayersModel;
   private readonly userEmbeddings: Map<string, tf.Tensor>;
@@ -21,7 +22,7 @@ export class SmartRecommendationService {
   constructor(
     private readonly config: ConfigService,
     private readonly logger: Logger,
-    private readonly metrics: MetricsService
+    private readonly metrics: MetricsService,
   ) {
     this.initializeModels();
   }
@@ -29,7 +30,7 @@ export class SmartRecommendationService {
   private async initializeModels() {
     try {
       this.recommendationModel = await tf.loadLayersModel(
-        this.config.get('RECOMMENDATION_MODEL_PATH')
+        this.config.get('RECOMMENDATION_MODEL_PATH'),
       );
       this.userEmbeddings = new Map();
       this.contextEmbeddings = new Map();
@@ -40,59 +41,45 @@ export class SmartRecommendationService {
 
   async generateRecommendations(
     userId: string,
-    preferences: UserPreferences,
+    preferences: IUserPreferences,
     goals: HealthGoals[],
-    context: EnvironmentContext,
-    socialContext: SocialContext
-  ): Promise<Recommendation[]> {
+    context: IEnvironmentContext,
+    socialContext: ISocialContext,
+  ): Promise<IRecommendation[]> {
     try {
       // 1. 生成用户嵌入向量
-      const userEmbedding = await this.generateUserEmbedding(
-        userId,
-        preferences,
-        goals
-      );
+      const userEmbedding = await this.generateUserEmbedding(userId, preferences, goals);
 
       // 2. 生成上下文嵌入向量
-      const contextEmbedding = this.generateContextEmbedding(
-        context,
-        socialContext
-      );
+      const contextEmbedding = this.generateContextEmbedding(context, socialContext);
 
       // 3. 合并嵌入向量
       const combinedEmbedding = tf.concat([userEmbedding, contextEmbedding]);
 
       // 4. 使用模型生成推荐
-      const predictions = await this.recommendationModel.predict(
-        combinedEmbedding.expandDims(0)
-      ) as tf.Tensor;
+      const predictions = (await this.recommendationModel.predict(
+        combinedEmbedding.expandDims(0),
+      )) as tf.Tensor;
 
       // 5. 解码预测结果
-      const recommendations = await this.decodeRecommendations(
-        predictions,
-        preferences,
-        context
-      );
+      const recommendations = await this.decodeRecommendations(predictions, preferences, context);
 
       // 6. 应用上下文过滤
       const filteredRecommendations = this.applyContextFilters(
         recommendations,
         context,
-        socialContext
+        socialContext,
       );
 
       // 7. 个性化排序
       const rankedRecommendations = this.rankRecommendations(
         filteredRecommendations,
         preferences,
-        goals
+        goals,
       );
 
       // 记录推荐指标
-      this.metrics.recordRecommendationGeneration(
-        userId,
-        rankedRecommendations.length
-      );
+      this.metrics.recordRecommendationGeneration(userId, rankedRecommendations.length);
 
       return rankedRecommendations;
     } catch (error) {
@@ -103,8 +90,8 @@ export class SmartRecommendationService {
 
   private async generateUserEmbedding(
     userId: string,
-    preferences: UserPreferences,
-    goals: HealthGoals[]
+    preferences: IUserPreferences,
+    goals: HealthGoals[],
   ): Promise<tf.Tensor> {
     // 检查缓存
     if (this.userEmbeddings.has(userId)) {
@@ -116,19 +103,21 @@ export class SmartRecommendationService {
       ...this.encodeDietaryRestrictions(preferences.dietaryRestrictions),
       ...this.encodeActivities(preferences.favoriteActivities),
       ...this.encodeSleepSchedule(preferences.sleepSchedule),
-      ...this.encodeExercisePreferences(preferences.exercisePreferences)
+      ...this.encodeExercisePreferences(preferences.exercisePreferences),
     ];
 
     // 转换健康目标为特征向量
-    const goalFeatures = goals.map(goal => [
-      this.encodeGoalType(goal.type),
-      goal.target.value,
-      this.encodeGoalPriority(goal.priority)
-    ]).flat();
+    const goalFeatures = goals
+      .map(goal => [
+        this.encodeGoalType(goal.type),
+        goal.target.value,
+        this.encodeGoalPriority(goal.priority),
+      ])
+      .flat();
 
     // 合并特征
     const embedding = tf.tensor1d([...preferenceFeatures, ...goalFeatures]);
-    
+
     // 缓存嵌入向量
     this.userEmbeddings.set(userId, embedding);
 
@@ -136,8 +125,8 @@ export class SmartRecommendationService {
   }
 
   private generateContextEmbedding(
-    context: EnvironmentContext,
-    socialContext: SocialContext
+    context: IEnvironmentContext,
+    socialContext: ISocialContext,
   ): tf.Tensor {
     // 转换环境上下文为特征向量
     const environmentFeatures = [
@@ -147,7 +136,7 @@ export class SmartRecommendationService {
       context.weather.airQuality / 500,
       this.encodeLocationType(context.location.type),
       this.encodeTimeOfDay(context.timeOfDay),
-      this.encodeSeason(context.season)
+      this.encodeSeason(context.season),
     ];
 
     // 转换社交上下文为特征向量
@@ -156,7 +145,7 @@ export class SmartRecommendationService {
       Number(socialContext.supportNetwork.friendsSupport),
       Number(socialContext.supportNetwork.professionalSupport),
       socialContext.groupActivities.length / 10, // 归一化活动数量
-      this.encodeSocialGoals(socialContext.socialGoals)
+      this.encodeSocialGoals(socialContext.socialGoals),
     ];
 
     return tf.tensor1d([...environmentFeatures, ...socialFeatures]);
@@ -164,19 +153,15 @@ export class SmartRecommendationService {
 
   private async decodeRecommendations(
     predictions: tf.Tensor,
-    preferences: UserPreferences,
-    context: EnvironmentContext
-  ): Promise<Recommendation[]> {
+    preferences: IUserPreferences,
+    context: IEnvironmentContext,
+  ): Promise<IRecommendation[]> {
     const predictionArray = await predictions.array();
-    const recommendations: Recommendation[] = [];
+    const recommendations: IRecommendation[] = [];
 
     // 解码预测结果为具体推荐
     for (const prediction of predictionArray) {
-      const recommendation = this.createRecommendation(
-        prediction,
-        preferences,
-        context
-      );
+      const recommendation = this.createRecommendation(prediction, preferences, context);
       recommendations.push(recommendation);
     }
 
@@ -184,46 +169,36 @@ export class SmartRecommendationService {
   }
 
   private applyContextFilters(
-    recommendations: Recommendation[],
-    context: EnvironmentContext,
-    socialContext: SocialContext
-  ): Recommendation[] {
+    recommendations: IRecommendation[],
+    context: IEnvironmentContext,
+    socialContext: ISocialContext,
+  ): IRecommendation[] {
     return recommendations.filter(recommendation => {
       // 检查时间适用性
-      const isTimeAppropriate = recommendation.context.timeOfDay.includes(
-        context.timeOfDay
-      );
+      const isTimeAppropriate = recommendation.context.timeOfDay.includes(context.timeOfDay);
 
       // 检查位置适用性
-      const isLocationAppropriate = recommendation.context.location.includes(
-        context.location.type
-      );
+      const isLocationAppropriate = recommendation.context.location.includes(context.location.type);
 
       // 检查天气适用性
       const isWeatherAppropriate = recommendation.context.weather.includes(
-        context.weather.condition
+        context.weather.condition,
       );
 
       // 检查社交因素
-      const isSociallyAppropriate = this.checkSocialCompatibility(
-        recommendation,
-        socialContext
-      );
+      const isSociallyAppropriate = this.checkSocialCompatibility(recommendation, socialContext);
 
       return (
-        isTimeAppropriate &&
-        isLocationAppropriate &&
-        isWeatherAppropriate &&
-        isSociallyAppropriate
+        isTimeAppropriate && isLocationAppropriate && isWeatherAppropriate && isSociallyAppropriate
       );
     });
   }
 
   private rankRecommendations(
-    recommendations: Recommendation[],
-    preferences: UserPreferences,
-    goals: HealthGoals[]
-  ): Recommendation[] {
+    recommendations: IRecommendation[],
+    preferences: IUserPreferences,
+    goals: HealthGoals[],
+  ): IRecommendation[] {
     return recommendations.sort((a, b) => {
       // 计算推荐得分
       const scoreA = this.calculateRecommendationScore(a, preferences, goals);
@@ -233,7 +208,7 @@ export class SmartRecommendationService {
   }
 
   // 处理推荐反馈
-  async processRecommendationFeedback(feedback: RecommendationFeedback): Promise<void> {
+  async processRecommendationFeedback(feedback: IRecommendationFeedback): Promise<void> {
     try {
       // 记录反馈
       await this.storeRecommendationFeedback(feedback);
@@ -242,10 +217,7 @@ export class SmartRecommendationService {
       this.updateUserEmbedding(feedback.userId, feedback);
 
       // 记录指标
-      this.metrics.recordRecommendationFeedback(
-        feedback.recommendationId,
-        feedback.rating
-      );
+      this.metrics.recordRecommendationFeedback(feedback.recommendationId, feedback.rating);
     } catch (error) {
       this.logger.error('Failed to process recommendation feedback:', error);
       throw error;
@@ -263,12 +235,12 @@ export class SmartRecommendationService {
     return [];
   }
 
-  private encodeSleepSchedule(schedule: UserPreferences['sleepSchedule']): number[] {
+  private encodeSleepSchedule(schedule: IUserPreferences['sleepSchedule']): number[] {
     // 实现编码逻辑
     return [];
   }
 
-  private encodeExercisePreferences(preferences: UserPreferences['exercisePreferences']): number[] {
+  private encodeExercisePreferences(preferences: IUserPreferences['exercisePreferences']): number[] {
     // 实现编码逻辑
     return [];
   }
@@ -310,40 +282,35 @@ export class SmartRecommendationService {
 
   private createRecommendation(
     prediction: number[],
-    preferences: UserPreferences,
-    context: EnvironmentContext
-  ): Recommendation {
+    preferences: IUserPreferences,
+    context: IEnvironmentContext,
+  ): IRecommendation {
     // 实现推荐创建逻辑
     return null;
   }
 
   private checkSocialCompatibility(
-    recommendation: Recommendation,
-    socialContext: SocialContext
+    recommendation: IRecommendation,
+    socialContext: ISocialContext,
   ): boolean {
     // 实现社交兼容性检查逻辑
     return true;
   }
 
   private calculateRecommendationScore(
-    recommendation: Recommendation,
-    preferences: UserPreferences,
-    goals: HealthGoals[]
+    recommendation: IRecommendation,
+    preferences: IUserPreferences,
+    goals: HealthGoals[],
   ): number {
     // 实现推荐得分计算逻辑
     return 0;
   }
 
-  private async storeRecommendationFeedback(
-    feedback: RecommendationFeedback
-  ): Promise<void> {
+  private async storeRecommendationFeedback(feedback: IRecommendationFeedback): Promise<void> {
     // 实现反馈存储逻辑
   }
 
-  private updateUserEmbedding(
-    userId: string,
-    feedback: RecommendationFeedback
-  ): void {
+  private updateUserEmbedding(userId: string, feedback: IRecommendationFeedback): void {
     // 实现用户嵌入向量更新逻辑
   }
-} 
+}

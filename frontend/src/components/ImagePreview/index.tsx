@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
-import { Modal, Space, Button, Slider } from 'antd';
-import { 
-  ZoomInOutlined, 
-  ZoomOutOutlined, 
-  RotateLeftOutlined, 
+
+import styled from 'styled-components';
+import {
+  ZoomInOutlined,
+  ZoomOutOutlined,
+  RotateLeftOutlined,
   RotateRightOutlined,
   DownloadOutlined,
 } from '@ant-design/icons';
+import { Modal, Space, Button, Slider } from 'antd';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 
-interface ImagePreviewProps {
+interf
+ace ImagePreviewProps {
   url: string;
   visible: boolean;
   onClose: () => void;
@@ -23,7 +25,7 @@ const ImageContainer = styled.div<{ scale: number; rotation: number }>`
   justify-content: center;
   align-items: center;
   min-height: 400px;
-  
+
   img {
     max-width: 100%;
     max-height: 70vh;
@@ -46,15 +48,15 @@ const ControlBar = styled(Space)`
 const ZoomSlider = styled(Slider)`
   width: 100px;
   margin: 0 10px;
-  
+
   .ant-slider-rail {
     background-color: rgba(255, 255, 255, 0.2);
   }
-  
+
   .ant-slider-track {
     background-color: #1890ff;
   }
-  
+
   .ant-slider-handle {
     border-color: #1890ff;
   }
@@ -154,14 +156,10 @@ export const ImagePreview: React.FC<ImagePreviewProps> = ({
             style={{ color: 'white' }}
           />
         )}
-        <Button
-          type="text"
-          onClick={handleReset}
-          style={{ color: 'white' }}
-        >
+        <Button type="text" onClick={handleReset} style={{ color: 'white' }}>
           {t('重置')}
         </Button>
       </ControlBar>
     </Modal>
   );
-}; 
+};

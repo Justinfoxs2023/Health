@@ -17,4 +17,4 @@ export class FamilyMember {
 
   @ManyToOne(() => UserGrowth)
   userGrowth: UserGrowth;
-} 
+}

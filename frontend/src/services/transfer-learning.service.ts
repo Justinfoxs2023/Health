@@ -1,22 +1,31 @@
 import * as tf from '@tensorflow/tfjs';
-import { LocalDatabase } from '../utils/local-database';
+import { ILocalDatabase } from '../utils/local-database';
 
-interface TransferConfig {
+interface ITransferConfig {
+  /** baseModelPath 的描述 */
   baseModelPath: string;
+  /** freezeLayers 的描述 */
   freezeLayers: string[];
+  /** learningRate 的描述 */
   learningRate: number;
+  /** epochs 的描述 */
   epochs: number;
+  /** batchSize 的描述 */
   batchSize: number;
+  /** validationSplit 的描述 */
   validationSplit: number;
 }
 
-interface TransferResult {
+interface ITransferResult {
+  /** model 的描述 */
   model: tf.LayersModel;
+  /** performance 的描述 */
   performance: {
     accuracy: number;
     loss: number;
     transferTime: number;
   };
+  /** adaptationMetrics 的描述 */
   adaptationMetrics: {
     domainShift: number;
     featureAlignment: number;
@@ -24,10 +33,10 @@ interface TransferResult {
 }
 
 export class TransferLearningService {
-  private db: LocalDatabase;
+  private db: ILocalDatabase;
   private baseModel: tf.LayersModel | null = null;
   private transferredModel: tf.LayersModel | null = null;
-  private config: TransferConfig;
+  private config: ITransferConfig;
 
   constructor() {
     this.db = new LocalDatabase('transfer-learning');
@@ -37,7 +46,7 @@ export class TransferLearningService {
       learningRate: 0.0001,
       epochs: 10,
       batchSize: 32,
-      validationSplit: 0.2
+      validationSplit: 0.2,
     };
     this.initialize();
   }
@@ -50,15 +59,12 @@ export class TransferLearningService {
     try {
       this.baseModel = await tf.loadLayersModel(this.config.baseModelPath);
     } catch (error) {
-      console.error('加载基础模型失败:', error);
+      console.error('Error in transfer-learning.service.ts:', '加载基础模型失败:', error);
     }
   }
 
   // 执行迁移学习
-  async transferLearn(
-    targetData: tf.Tensor,
-    targetLabels: tf.Tensor
-  ): Promise<TransferResult> {
+  async transferLearn(targetData: tf.Tensor, targetLabels: tf.Tensor): Promise<ITransferResult> {
     if (!this.baseModel) {
       throw new Error('基础模型未加载');
     }
@@ -66,34 +72,23 @@ export class TransferLearningService {
     try {
       // 准备模型
       const model = await this.prepareTransferModel();
-      
+
       // 特征对齐
       const alignedData = await this.alignFeatures(targetData);
-      
+
       // 域适应
-      const adaptedModel = await this.performDomainAdaptation(
-        model,
-        alignedData
-      );
-      
+      const adaptedModel = await this.performDomainAdaptation(model, alignedData);
+
       // 微调
-      const fineTunedModel = await this.fineTuneModel(
-        adaptedModel,
-        alignedData,
-        targetLabels
-      );
-      
+      const fineTunedModel = await this.fineTuneModel(adaptedModel, alignedData, targetLabels);
+
       // 评估性能
-      const performance = await this.evaluateTransfer(
-        fineTunedModel,
-        targetData,
-        targetLabels
-      );
-      
+      const performance = await this.evaluateTransfer(fineTunedModel, targetData, targetLabels);
+
       // 计算适应性指标
       const adaptationMetrics = await this.calculateAdaptationMetrics(
         fineTunedModel,
-        this.baseModel
+        this.baseModel,
       );
 
       this.transferredModel = fineTunedModel;
@@ -102,10 +97,10 @@ export class TransferLearningService {
       return {
         model: fineTunedModel,
         performance,
-        adaptationMetrics
+        adaptationMetrics,
       };
     } catch (error) {
-      console.error('迁移学习失败:', error);
+      console.error('Error in transfer-learning.service.ts:', '迁移学习失败:', error);
       throw error;
     }
   }
@@ -115,7 +110,7 @@ export class TransferLearningService {
     if (!this.baseModel) throw new Error('基础模型未加载');
 
     const model = tf.sequential();
-    
+
     // 复制并冻结指定层
     for (const layer of this.baseModel.layers) {
       const frozenLayer = layer.clone();
@@ -126,23 +121,29 @@ export class TransferLearningService {
     }
 
     // 添加新的任务特定层
-    model.add(tf.layers.dense({
-      units: 64,
-      activation: 'relu'
-    }));
-    model.add(tf.layers.dense({
-      units: 32,
-      activation: 'relu'
-    }));
-    model.add(tf.layers.dense({
-      units: 10,
-      activation: 'softmax'
-    }));
+    model.add(
+      tf.layers.dense({
+        units: 64,
+        activation: 'relu',
+      }),
+    );
+    model.add(
+      tf.layers.dense({
+        units: 32,
+        activation: 'relu',
+      }),
+    );
+    model.add(
+      tf.layers.dense({
+        units: 10,
+        activation: 'softmax',
+      }),
+    );
 
     model.compile({
       optimizer: tf.train.adam(this.config.learningRate),
       loss: 'categoricalCrossentropy',
-      metrics: ['accuracy']
+      metrics: ['accuracy'],
     });
 
     return model;
@@ -157,7 +158,7 @@ export class TransferLearningService {
   // 域适应
   private async performDomainAdaptation(
     model: tf.LayersModel,
-    data: tf.Tensor
+    data: tf.Tensor,
   ): Promise<tf.LayersModel> {
     // 实现域适应
     return model;
@@ -167,7 +168,7 @@ export class TransferLearningService {
   private async fineTuneModel(
     model: tf.LayersModel,
     data: tf.Tensor,
-    labels: tf.Tensor
+    labels: tf.Tensor,
   ): Promise<tf.LayersModel> {
     await model.fit(data, labels, {
       epochs: this.config.epochs,
@@ -176,8 +177,8 @@ export class TransferLearningService {
       callbacks: {
         onEpochEnd: (epoch, logs) => {
           console.log(`Epoch ${epoch}: loss = ${logs?.loss}`);
-        }
-      }
+        },
+      },
     });
 
     return model;
@@ -187,7 +188,7 @@ export class TransferLearningService {
   private async evaluateTransfer(
     model: tf.LayersModel,
     testData: tf.Tensor,
-    testLabels: tf.Tensor
+    testLabels: tf.Tensor,
   ): Promise<{
     accuracy: number;
     loss: number;
@@ -200,14 +201,14 @@ export class TransferLearningService {
     return {
       accuracy: (evaluation[1] as tf.Scalar).dataSync()[0],
       loss: (evaluation[0] as tf.Scalar).dataSync()[0],
-      transferTime
+      transferTime,
     };
   }
 
   // 计算适应性指标
   private async calculateAdaptationMetrics(
     transferredModel: tf.LayersModel,
-    baseModel: tf.LayersModel
+    baseModel: tf.LayersModel,
   ): Promise<{
     domainShift: number;
     featureAlignment: number;
@@ -215,7 +216,7 @@ export class TransferLearningService {
     // 实现适应性指标计算
     return {
       domainShift: 0,
-      featureAlignment: 0
+      featureAlignment: 0,
     };
   }
 
@@ -231,10 +232,10 @@ export class TransferLearningService {
   }
 
   // 更新配置
-  async updateConfig(config: Partial<TransferConfig>): Promise<void> {
+  async updateConfig(config: Partial<ITransferConfig>): Promise<void> {
     this.config = {
       ...this.config,
-      ...config
+      ...config,
     };
     await this.db.put('transfer-config', this.config);
   }
@@ -248,29 +249,26 @@ export class TransferLearningService {
       throw new Error('模型未完全加载');
     }
 
-    const metrics = await this.calculateAdaptationMetrics(
-      this.transferredModel,
-      this.baseModel
-    );
+    const metrics = await this.calculateAdaptationMetrics(this.transferredModel, this.baseModel);
 
     return {
       metrics,
-      recommendations: this.generateRecommendations(metrics)
+      recommendations: this.generateRecommendations(metrics),
     };
   }
 
   // 生成优化建议
   private generateRecommendations(metrics: any): string[] {
     const recommendations: string[] = [];
-    
+
     if (metrics.domainShift > 0.3) {
       recommendations.push('建议增加域适应训练以减少域偏移');
     }
-    
+
     if (metrics.featureAlignment < 0.7) {
       recommendations.push('考虑使用更强的特征对齐策略');
     }
 
     return recommendations;
   }
-} 
+}

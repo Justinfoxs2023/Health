@@ -1,18 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Tabs,
-  Table,
-  Card,
-  Button,
-  Space,
-  Tag,
-  Modal,
-  Form,
-  Input,
-  Select,
-  message
-} from 'antd';
+
+import { Tabs, Table, Card, Button, Space, Tag, Modal, Form, Input, Select, message } from 'antd';
 import { useTranslation } from 'react-i18next';
+
 import { ModerationService } from '@/services/ModerationService';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -30,12 +20,12 @@ export const ModerationPanel: React.FC = () => {
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 20,
-    total: 0
+    total: 0,
   });
   const [ruleModal, setRuleModal] = useState({
     visible: false,
     type: 'create',
-    data: null
+    data: null,
   });
   const [form] = Form.useForm();
 
@@ -47,7 +37,7 @@ export const ModerationPanel: React.FC = () => {
       setPagination({
         ...pagination,
         current: page,
-        total: response.total
+        total: response.total,
       });
     } catch (error) {
       message.error(t('moderation.loadError'));
@@ -64,7 +54,7 @@ export const ModerationPanel: React.FC = () => {
       setPagination({
         ...pagination,
         current: page,
-        total: response.total
+        total: response.total,
       });
     } catch (error) {
       message.error(t('moderation.rulesLoadError'));
@@ -122,51 +112,43 @@ export const ModerationPanel: React.FC = () => {
     {
       title: t('moderation.content'),
       dataIndex: ['metadata', 'content'],
-      ellipsis: true
+      ellipsis: true,
     },
     {
       title: t('moderation.type'),
       dataIndex: 'target_type',
       render: (type: string) => (
-        <Tag color={type === 'post' ? 'blue' : 'green'}>
-          {t(`moderation.${type}`)}
-        </Tag>
-      )
+        <Tag color={type === 'post' ? 'blue' : 'green'}>{t(`moderation.${type}`)}</Tag>
+      ),
     },
     {
       title: t('moderation.rule'),
-      dataIndex: ['rule_id', 'name']
+      dataIndex: ['rule_id', 'name'],
     },
     {
       title: t('moderation.createdAt'),
       dataIndex: 'created_at',
-      render: (date: string) => new Date(date).toLocaleString()
+      render: (date: string) => new Date(date).toLocaleString(),
     },
     {
       title: t('moderation.actions'),
       render: (record: any) => (
         <Space>
-          <Button
-            type="primary"
-            onClick={() => handleReview(record._id, 'approved')}
-          >
+          <Button type="primary" onClick={() => handleReview(record._id, 'approved')}>
             {t('moderation.approve')}
           </Button>
-          <Button
-            danger
-            onClick={() => handleReview(record._id, 'rejected')}
-          >
+          <Button danger onClick={() => handleReview(record._id, 'rejected')}>
             {t('moderation.reject')}
           </Button>
         </Space>
-      )
-    }
+      ),
+    },
   ];
 
   const ruleColumns = [
     {
       title: t('moderation.ruleName'),
-      dataIndex: 'name'
+      dataIndex: 'name',
     },
     {
       title: t('moderation.ruleType'),
@@ -175,7 +157,7 @@ export const ModerationPanel: React.FC = () => {
         <Tag color={type === 'keyword' ? 'blue' : type === 'regex' ? 'green' : 'purple'}>
           {t(`moderation.${type}`)}
         </Tag>
-      )
+      ),
     },
     {
       title: t('moderation.ruleAction'),
@@ -184,7 +166,7 @@ export const ModerationPanel: React.FC = () => {
         <Tag color={action === 'block' ? 'red' : action === 'flag' ? 'orange' : 'blue'}>
           {t(`moderation.${action}`)}
         </Tag>
-      )
+      ),
     },
     {
       title: t('moderation.status'),
@@ -193,7 +175,7 @@ export const ModerationPanel: React.FC = () => {
         <Tag color={active ? 'green' : 'red'}>
           {active ? t('common.active') : t('common.inactive')}
         </Tag>
-      )
+      ),
     },
     {
       title: t('common.actions'),
@@ -205,21 +187,18 @@ export const ModerationPanel: React.FC = () => {
               setRuleModal({
                 visible: true,
                 type: 'edit',
-                data: record
+                data: record,
               });
             }}
           >
             {t('common.edit')}
           </Button>
-          <Button
-            danger
-            onClick={() => handleDeleteRule(record._id)}
-          >
+          <Button danger onClick={() => handleDeleteRule(record._id)}>
             {t('common.delete')}
           </Button>
         </Space>
-      )
-    }
+      ),
+    },
   ];
 
   return (
@@ -256,11 +235,7 @@ export const ModerationPanel: React.FC = () => {
       </Tabs>
 
       <Modal
-        title={t(
-          ruleModal.type === 'create'
-            ? 'moderation.createRule'
-            : 'moderation.editRule'
-        )}
+        title={t(ruleModal.type === 'create' ? 'moderation.createRule' : 'moderation.editRule')}
         visible={ruleModal.visible}
         onCancel={() => {
           setRuleModal({ visible: false, type: 'create', data: null });
@@ -268,16 +243,8 @@ export const ModerationPanel: React.FC = () => {
         }}
         onOk={() => form.submit()}
       >
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleRuleSubmit}
-        >
-          <Form.Item
-            name="name"
-            label={t('moderation.ruleName')}
-            rules={[{ required: true }]}
-          >
+        <Form form={form} layout="vertical" onFinish={handleRuleSubmit}>
+          <Form.Item name="name" label={t('moderation.ruleName')} rules={[{ required: true }]}>
             <Input />
           </Form.Item>
           <Form.Item
@@ -287,22 +254,14 @@ export const ModerationPanel: React.FC = () => {
           >
             <TextArea rows={3} />
           </Form.Item>
-          <Form.Item
-            name="type"
-            label={t('moderation.ruleType')}
-            rules={[{ required: true }]}
-          >
+          <Form.Item name="type" label={t('moderation.ruleType')} rules={[{ required: true }]}>
             <Select>
               <Option value="keyword">{t('moderation.keyword')}</Option>
               <Option value="regex">{t('moderation.regex')}</Option>
               <Option value="ai">{t('moderation.ai')}</Option>
             </Select>
           </Form.Item>
-          <Form.Item
-            name="action"
-            label={t('moderation.ruleAction')}
-            rules={[{ required: true }]}
-          >
+          <Form.Item name="action" label={t('moderation.ruleAction')} rules={[{ required: true }]}>
             <Select>
               <Option value="block">{t('moderation.block')}</Option>
               <Option value="flag">{t('moderation.flag')}</Option>
@@ -316,11 +275,7 @@ export const ModerationPanel: React.FC = () => {
           >
             <Select mode="tags" />
           </Form.Item>
-          <Form.Item
-            name="is_active"
-            valuePropName="checked"
-            label={t('moderation.isActive')}
-          >
+          <Form.Item name="is_active" valuePropName="checked" label={t('moderation.isActive')}>
             <Select>
               <Option value={true}>{t('common.active')}</Option>
               <Option value={false}>{t('common.inactive')}</Option>
@@ -330,4 +285,4 @@ export const ModerationPanel: React.FC = () => {
       </Modal>
     </Card>
   );
-}; 
+};

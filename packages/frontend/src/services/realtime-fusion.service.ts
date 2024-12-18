@@ -1,20 +1,29 @@
 import * as tf from '@tensorflow/tfjs';
-import { MultimodalFusionService } from './multimodal-fusion.service';
 import { EmotionRecognitionService } from './emotion-recognition.service';
+import { MultimodalFusionService } from './multimodal-fusion.service';
 import { VoiceAntiSpoofingService } from './voice-anti-spoofing.service';
 
-interface RealtimeFusionConfig {
+interface IRealtimeFusionConfig {
+  /** updateInterval 的描述 */
   updateInterval: number;
+  /** bufferSize 的描述 */
   bufferSize: number;
+  /** modalityWeights 的描述 */
   modalityWeights: Record<string, number>;
+  /** fusionStrategy 的描述 */
   fusionStrategy: 'early' | 'late' | 'hybrid';
 }
 
-interface FusionStream {
+interface IFusionStream {
+  /** id 的描述 */
   id: string;
+  /** type 的描述 */
   type: string;
+  /** buffer 的描述 */
   buffer: any[];
+  /** lastUpdate 的描述 */
   lastUpdate: number;
+  /** metadata 的描述 */
   metadata: any;
 }
 
@@ -22,11 +31,11 @@ export class RealtimeFusionService {
   private fusionService: MultimodalFusionService;
   private emotionService: EmotionRecognitionService;
   private antiSpoofingService: VoiceAntiSpoofingService;
-  private streams: Map<string, FusionStream> = new Map();
-  private config: RealtimeFusionConfig;
+  private streams: Map<string, IFusionStream> = new Map();
+  private config: IRealtimeFusionConfig;
   private fusionInterval: NodeJS.Timer | null = null;
 
-  constructor(config?: Partial<RealtimeFusionConfig>) {
+  constructor(config?: Partial<IRealtimeFusionConfig>) {
     this.fusionService = new MultimodalFusionService();
     this.emotionService = new EmotionRecognitionService();
     this.antiSpoofingService = new VoiceAntiSpoofingService();
@@ -36,10 +45,10 @@ export class RealtimeFusionService {
       modalityWeights: {
         audio: 0.4,
         video: 0.4,
-        text: 0.2
+        text: 0.2,
       },
       fusionStrategy: 'hybrid',
-      ...config
+      ...config,
     };
     this.initialize();
   }
@@ -50,10 +59,7 @@ export class RealtimeFusionService {
 
   // 启动融合循环
   private startFusionLoop() {
-    this.fusionInterval = setInterval(
-      () => this.processFusionCycle(),
-      this.config.updateInterval
-    );
+    this.fusionInterval = setInterval(() => this.processFusionCycle(), this.config.updateInterval);
   }
 
   // 停止融合循环
@@ -72,7 +78,7 @@ export class RealtimeFusionService {
       type,
       buffer: [],
       lastUpdate: Date.now(),
-      metadata
+      metadata,
     });
     return streamId;
   }
@@ -101,27 +107,27 @@ export class RealtimeFusionService {
     try {
       // 收集当前数据
       const currentData = this.collectCurrentData();
-      
+
       // 预处理
       const processedData = await this.preprocessData(currentData);
-      
+
       // 执行融合
       const fusionResult = await this.performFusion(processedData);
-      
+
       // 后处理
       const finalResult = await this.postprocessResult(fusionResult);
-      
+
       // 发送结果
       this.emitResult(finalResult);
     } catch (error) {
-      console.error('融合周期处理失败:', error);
+      console.error('Error in realtime-fusion.service.ts:', '融合周期处理失败:', error);
     }
   }
 
   // 收集当前数据
   private collectCurrentData(): Record<string, any[]> {
     const currentData: Record<string, any[]> = {};
-    
+
     for (const [_, stream] of this.streams) {
       if (!currentData[stream.type]) {
         currentData[stream.type] = [];
@@ -201,10 +207,10 @@ export class RealtimeFusionService {
   }
 
   // 更新配置
-  updateConfig(newConfig: Partial<RealtimeFusionConfig>) {
+  updateConfig(newConfig: Partial<IRealtimeFusionConfig>) {
     this.config = {
       ...this.config,
-      ...newConfig
+      ...newConfig,
     };
   }
 
@@ -213,4 +219,4 @@ export class RealtimeFusionService {
     // 实现性能指标收集
     return {};
   }
-} 
+}

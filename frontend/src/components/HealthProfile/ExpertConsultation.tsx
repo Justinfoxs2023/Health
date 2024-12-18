@@ -1,7 +1,8 @@
 import React from 'react';
+
 import { Card, List, Avatar, Button, Modal, Form, Input } from 'antd';
-import { useQuery } from 'react-query';
 import { getExperts, requestConsultation } from '../../services/consultation.service';
+import { useQuery } from 'react-query';
 
 export const ExpertConsultation: React.FC = () => {
   const [visible, setVisible] = React.useState(false);
@@ -13,11 +14,11 @@ export const ExpertConsultation: React.FC = () => {
     try {
       await requestConsultation({
         expertId: selectedExpert.id,
-        ...values
+        ...values,
       });
       setVisible(false);
     } catch (error) {
-      console.error('预约失败:', error);
+      console.error('Error in ExpertConsultation.tsx:', '预约失败:', error);
     }
   };
 
@@ -29,15 +30,15 @@ export const ExpertConsultation: React.FC = () => {
         renderItem={expert => (
           <List.Item
             actions={[
-              <Button 
-                type="primary" 
+              <Button
+                type="primary"
                 onClick={() => {
                   setSelectedExpert(expert);
                   setVisible(true);
                 }}
               >
                 预约咨询
-              </Button>
+              </Button>,
             ]}
           >
             <List.Item.Meta
@@ -49,25 +50,12 @@ export const ExpertConsultation: React.FC = () => {
         )}
       />
 
-      <Modal
-        title="预约咨询"
-        open={visible}
-        onCancel={() => setVisible(false)}
-        footer={null}
-      >
+      <Modal title="预约咨询" open={visible} onCancel={() => setVisible(false)} footer={null}>
         <Form form={form} onFinish={handleConsultation}>
-          <Form.Item
-            name="consultationType"
-            label="咨询类型"
-            rules={[{ required: true }]}
-          >
+          <Form.Item name="consultationType" label="咨询类型" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
-          <Form.Item
-            name="description"
-            label="问题描述"
-            rules={[{ required: true }]}
-          >
+          <Form.Item name="description" label="问题描述" rules={[{ required: true }]}>
             <Input.TextArea />
           </Form.Item>
           <Form.Item>
@@ -79,4 +67,4 @@ export const ExpertConsultation: React.FC = () => {
       </Modal>
     </Card>
   );
-}; 
+};

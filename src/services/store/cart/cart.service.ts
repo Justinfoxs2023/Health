@@ -1,13 +1,13 @@
+import { ICart, IProduct } from '../types';
 import { Injectable } from '@nestjs/common';
-import { Cart, Product } from '../types';
-import { StorageService } from '../../storage/storage.service';
 import { PromotionService } from '../promotion/promotion.service';
+import { StorageService } from '../../storage/storage.service';
 
 @Injectable()
 export class CartService {
   constructor(
     private readonly storage: StorageService,
-    private readonly promotionService: PromotionService
+    private readonly promotionService: PromotionService,
   ) {}
 
   // 购物车操作
@@ -24,7 +24,7 @@ export class CartService {
         selected: true,
         addedAt: new Date(),
         price: 0, // 需要获取实时价格
-        subtotal: 0
+        subtotal: 0,
       });
     }
 
@@ -33,11 +33,9 @@ export class CartService {
   }
 
   // 价格计算
-  private async updateCartPrices(cart: Cart): Promise<void> {
+  private async updateCartPrices(cart: ICart): Promise<void> {
     // 获取商品价格
-    const productPrices = await this.getProductPrices(
-      cart.items.map(item => item.productId)
-    );
+    const productPrices = await this.getProductPrices(cart.items.map(item => item.productId));
 
     // 更新商品价格和小计
     cart.items.forEach(item => {
@@ -55,4 +53,4 @@ export class CartService {
     const promotions = await this.promotionService.calculatePromotions(cart);
     cart.promotions = promotions;
   }
-} 
+}

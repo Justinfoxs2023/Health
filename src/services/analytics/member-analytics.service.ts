@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 member-analytics.service.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export class MemberAnalyticsService {
   private readonly analyticsRepo: AnalyticsRepository;
   private readonly mlService: MLService;
@@ -12,13 +19,13 @@ export class MemberAnalyticsService {
     try {
       // 收集用户行为数据
       const behaviorData = await this.collectBehaviorData(userId);
-      
+
       // 分析功能使用情况
       const featureUsage = await this.analyzeFeatureUtilization(behaviorData);
-      
+
       // 分析服务偏好
       const preferences = await this.analyzeServicePreferences(behaviorData);
-      
+
       // 分析互动频率
       const interactions = await this.analyzeInteractionFrequency(behaviorData);
 
@@ -26,14 +33,14 @@ export class MemberAnalyticsService {
         usagePatterns: {
           featureUsage,
           preferences,
-          interactions
+          interactions,
         },
         insights: await this.generateBehaviorInsights({
           featureUsage,
           preferences,
-          interactions
+          interactions,
         }),
-        recommendations: await this.generatePersonalizedRecommendations(userId)
+        recommendations: await this.generatePersonalizedRecommendations(userId),
       };
     } catch (error) {
       this.logger.error('分析行为模式失败', error);
@@ -46,13 +53,13 @@ export class MemberAnalyticsService {
     try {
       // 获取健康数据
       const healthData = await this.getHealthData(userId);
-      
+
       // 追踪进度
       const progress = await this.trackHealthProgress(healthData);
-      
+
       // 分析目标达成
       const achievements = await this.analyzeGoalAchievements(healthData);
-      
+
       // 评估健康改善
       const improvements = await this.assessHealthImprovements(healthData);
 
@@ -60,7 +67,7 @@ export class MemberAnalyticsService {
         progressTracking: progress,
         goalAchievements: achievements,
         healthImprovements: improvements,
-        projections: await this.generateHealthProjections(healthData)
+        projections: await this.generateHealthProjections(healthData),
       };
     } catch (error) {
       this.logger.error('分析健康趋势失败', error);
@@ -73,13 +80,13 @@ export class MemberAnalyticsService {
     try {
       // 分析会员参与度
       const engagement = await this.analyzeEngagement(userId);
-      
+
       // 生成个性化活动
       const campaigns = await this.generatePersonalizedCampaigns(engagement);
-      
+
       // 创建目标促销
       const promotions = await this.createTargetedPromotions(engagement);
-      
+
       // 设计忠诚度奖励
       const rewards = await this.designLoyaltyRewards(engagement);
 
@@ -87,14 +94,14 @@ export class MemberAnalyticsService {
         engagementPrograms: {
           campaigns,
           promotions,
-          rewards
+          rewards,
         },
         effectiveness: await this.predictStrategyEffectiveness({
           campaigns,
           promotions,
-          rewards
+          rewards,
         }),
-        timeline: await this.generateImplementationTimeline()
+        timeline: await this.generateImplementationTimeline(),
       };
     } catch (error) {
       this.logger.error('生成保留策略失败', error);
@@ -107,10 +114,10 @@ export class MemberAnalyticsService {
     try {
       // 运行预警系统
       const warnings = await this.runEarlyWarningSystem(userId);
-      
+
       // 生成干预计划
       const interventions = await this.generateInterventionPrograms(warnings);
-      
+
       // 创建挽回活动
       const winback = await this.createWinBackCampaigns(warnings);
 
@@ -121,12 +128,12 @@ export class MemberAnalyticsService {
         winbackStrategy: winback,
         predictedOutcomes: await this.predictPreventionOutcomes({
           interventions,
-          winback
-        })
+          winback,
+        }),
       };
     } catch (error) {
       this.logger.error('分析流失预防失败', error);
       throw error;
     }
   }
-} 
+}

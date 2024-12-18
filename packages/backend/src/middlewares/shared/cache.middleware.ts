@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
 import { Logger } from '../../utils/logger';
 import { Redis } from '../../utils/redis';
+import { Request, Response, NextFunction } from 'express';
 
 export class CacheMiddleware {
   private logger: Logger;
@@ -12,7 +12,7 @@ export class CacheMiddleware {
   }
 
   // 缓存响应数据
-  cacheResponse(duration: number = 3600) {
+  cacheResponse(duration = 3600) {
     return async (req: Request, res: Response, next: NextFunction) => {
       try {
         // 生成缓存键
@@ -28,10 +28,10 @@ export class CacheMiddleware {
         const originalJson = res.json;
 
         // 重写json方法
-        res.json = function(data: any): Response {
+        res.json = function (data: any): Response {
           // 存储缓存
           this.redis.setex(cacheKey, duration, JSON.stringify(data));
-          
+
           // 调用原始json方法
           return originalJson.call(this, data);
         };
@@ -50,4 +50,4 @@ export class CacheMiddleware {
   }
 }
 
-export const cache = new CacheMiddleware(); 
+export const cache = new CacheMiddleware();

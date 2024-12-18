@@ -1,8 +1,9 @@
 import React from 'react';
-import { render, screen, act } from '@testing-library/react';
+
 import { LogViewer } from '../index';
-import { logger } from '../../../services/logger';
 import { i18n } from '../../../services/i18n';
+import { logger } from '../../../services/logger';
+import { render, screen, act } from '@testing-library/react';
 
 // 模拟日志数据
 const mockLogs = [
@@ -10,27 +11,27 @@ const mockLogs = [
     timestamp: 1609459200000, // 2021-01-01T00:00:00.000Z
     level: 'info' as const,
     message: 'Info message',
-    source: 'test.ts'
+    source: 'test.ts',
   },
   {
     timestamp: 1609459201000,
     level: 'error' as const,
     message: 'Error message',
     stack: 'Error stack trace',
-    data: { error: true }
+    data: { error: true },
   },
   {
     timestamp: 1609459202000,
     level: 'warn' as const,
     message: 'Warning message',
-    data: { warning: true }
-  }
+    data: { warning: true },
+  },
 ];
 
 jest.mock('../../../services/logger', () => ({
   logger: {
-    getLogs: jest.fn()
-  }
+    getLogs: jest.fn(),
+  },
 }));
 
 describe('LogViewer', () => {
@@ -140,8 +141,8 @@ describe('LogViewer', () => {
       {
         timestamp: 1609459203000,
         level: 'info' as const,
-        message: 'New message'
-      }
+        message: 'New message',
+      },
     ];
     (logger.getLogs as jest.Mock).mockResolvedValue(newLogs);
 
@@ -165,4 +166,4 @@ describe('LogViewer', () => {
     expect(container).toHaveClass(className);
     expect(container).toHaveStyle(style);
   });
-}); 
+});

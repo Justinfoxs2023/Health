@@ -35,7 +35,7 @@ export const Input: React.FC<InputProps> = ({
   const sizeStyles = {
     small: 'px-2 py-1 text-sm',
     medium: 'px-3 py-2',
-    large: 'px-4 py-3 text-lg'
+    large: 'px-4 py-3 text-lg',
   };
   const statusStyles = error
     ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
@@ -45,11 +45,7 @@ export const Input: React.FC<InputProps> = ({
 
   return (
     <div className={`${block ? 'w-full' : 'inline-block'}`}>
-      {label && (
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          {label}
-        </label>
-      )}
+      {label && <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>}
       <div className="relative">
         {prefix && (
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -87,4 +83,4 @@ export const Input: React.FC<InputProps> = ({
       )}
     </div>
   );
-}; 
+};

@@ -1,6 +1,7 @@
 import React from 'react';
-import { render, fireEvent, screen } from '@testing-library/react';
+
 import { ThemeSwitch } from '..';
+import { render, fireEvent, screen } from '@testing-library/react';
 import { themeService } from '../../../services/theme';
 
 // Mock i18next
@@ -18,11 +19,11 @@ describe('ThemeSwitch', () => {
 
   it('应该正确渲染主题切换按钮', () => {
     render(<ThemeSwitch />);
-    
+
     // 检查按钮是否存在
     const button = screen.getByRole('button');
     expect(button).toBeInTheDocument();
-    
+
     // 检查图标和文本是否存在
     expect(screen.getByText('🌞')).toBeInTheDocument();
     expect(screen.getByText('theme.light')).toBeInTheDocument();
@@ -85,4 +86,4 @@ describe('ThemeSwitch', () => {
     fireEvent.keyDown(button, { key: 'Enter' });
     expect(themeService.getMode()).toBe('system');
   });
-}); 
+});

@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 global.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 /// <reference path="./analytics/index.d.ts" />
 /// <reference path="./community/index.d.ts" />
 /// <reference path="./improvement/index.d.ts" />
@@ -74,7 +81,7 @@ declare module '*.json' {
 // 环境变量声明
 declare namespace NodeJS {
   interface ProcessEnv {
-    NODE_ENV: 'development' | 'production' | 'test';
+    NODE_ENV: development  production  test;
     PORT: string;
     DB_HOST: string;
     DB_PORT: string;
@@ -87,19 +94,19 @@ declare namespace NodeJS {
     REDIS_PASSWORD: string;
     REDIS_CLUSTER_ENABLED: string;
     REDIS_NODES: string;
-    
+
     CONSUL_HOST: string;
     CONSUL_PORT: string;
-    
+
     GRPC_HOST: string;
     GRPC_PORT: string;
-    
+
     CACHE_LOCAL_MAX_SIZE: string;
     CACHE_LOCAL_TTL: string;
     CACHE_DISTRIBUTED_TTL: string;
     CACHE_WRITE_PATTERN: string;
-    
+
     SERVICE_NAME: string;
     SERVICE_VERSION: string;
   }
-} 
+}

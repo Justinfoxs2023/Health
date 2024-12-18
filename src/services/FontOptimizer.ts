@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 FontOptimizer.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export class FontOptimizer {
   // 字体配置
   private static fontConfig = {
@@ -5,14 +12,14 @@ export class FontOptimizer {
       family: 'PingFang SC',
       weights: [400, 500, 600],
       display: 'swap',
-      preload: true
+      preload: true,
     },
     secondary: {
       family: 'Microsoft YaHei',
       weights: [400],
       display: 'swap',
-      preload: false
-    }
+      preload: false,
+    },
   };
 
   // 初始化字体优化
@@ -43,18 +50,20 @@ export class FontOptimizer {
   // 字体观察器
   private static setupFontObserver() {
     if ('FontFace' in window) {
-      Object.entries(this.fontConfig).forEach(([key, config]) => {
-        config.weights.forEach(weight => {
+      console.error('Error in FontOptimizer.ts:', ([key, config]) => {
+        console.error('Error in FontOptimizer.ts:', weight => {
           const font = new FontFace(
             config.family,
             `url(/fonts/${config.family}-${weight}.woff2) format('woff2')`,
-            { weight: String(weight), display: config.display }
+            { weight: String(weight), display: config.display },
           );
 
-          font.load().then(() => {
-            document.fonts.add(font);
-          }).catch(error => {
-            console.error(`字体加载失败: ${config.family}-${weight}`, error);
+          console.error('Error in FontOptimizer.ts:', error => {
+            console.error(
+              'Error in FontOptimizer.ts:',
+              `字体加载失败: ${config.family}-${weight}`,
+              error,
+            );
           });
         });
       });
@@ -82,4 +91,4 @@ export class FontOptimizer {
       document.documentElement.classList.add('fonts-loaded');
     });
   }
-} 
+}

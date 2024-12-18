@@ -1,7 +1,7 @@
-import { SyncRecord } from '../models/sync-record.model';
-import { Redis } from '../utils/redis';
-import { Logger } from '../utils/logger';
 import { EventEmitter } from 'events';
+import { Logger } from '../utils/logger';
+import { Redis } from '../utils/redis';
+import { SyncRecord } from '../models/sync-record.model';
 import { WebSocket } from 'ws';
 
 export class SyncService {
@@ -20,19 +20,19 @@ export class SyncService {
   /**
    * 处理数据同步
    */
-  async syncData(userId: string, deviceId: string, data: {
-    type: string;
-    operation: 'create' | 'update' | 'delete';
-    data: any;
-    version: number;
-  }) {
+  async syncData(
+    userId: string,
+    deviceId: string,
+    data: {
+      type: string;
+      operation: 'create' | 'update' | 'delete';
+      data: any;
+      version: number;
+    },
+  ) {
     try {
       // 检查版本冲突
-      const hasConflict = await this.checkVersionConflict(
-        userId,
-        data.type,
-        data.version
-      );
+      const hasConflict = await this.checkVersionConflict(userId, data.type, data.version);
 
       if (hasConflict) {
         return await this.handleConflict(userId, deviceId, data);
@@ -45,7 +45,7 @@ export class SyncService {
         dataType: data.type,
         operation: data.operation,
         data: data.data,
-        version: data.version
+        version: data.version,
       });
 
       await syncRecord.save();
@@ -59,7 +59,7 @@ export class SyncService {
       return {
         success: true,
         syncId: syncRecord._id,
-        version: data.version
+        version: data.version,
       };
     } catch (error) {
       this.logger.error('数据同步失败', error);
@@ -73,7 +73,7 @@ export class SyncService {
   private async checkVersionConflict(
     userId: string,
     dataType: string,
-    version: number
+    version: number,
   ): Promise<boolean> {
     const latestVersion = await this.getLatestVersion(userId, dataType);
     return version < latestVersion;
@@ -100,8 +100,8 @@ export class SyncService {
       conflictResolution: {
         strategy: resolution.strategy,
         resolvedData: resolution.data,
-        resolvedAt: new Date()
-      }
+        resolvedAt: new Date(),
+      },
     });
 
     await syncRecord.save();
@@ -111,7 +111,7 @@ export class SyncService {
       syncId: syncRecord._id,
       version: data.version + 1,
       conflictResolved: true,
-      resolvedData: resolution.data
+      resolvedData: resolution.data,
     };
   }
 
@@ -144,7 +144,7 @@ export class SyncService {
       syncRecord.status = 'failed';
       syncRecord.error = {
         code: error.code || 'SYNC_ERROR',
-        message: error.message
+        message: error.message,
       };
       await syncRecord.save();
       throw error;
@@ -160,7 +160,7 @@ export class SyncService {
       userId,
       dataType: syncRecord.dataType,
       version: syncRecord.version,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
     // 通过WebSocket通知在线设备
@@ -182,4 +182,4 @@ export class SyncService {
     await this.redis.lpush(key, JSON.stringify(notification));
     await this.redis.ltrim(key, 0, 99); // 保留最近100条通知
   }
-} 
+}

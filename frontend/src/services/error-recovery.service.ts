@@ -1,20 +1,26 @@
-import { LocalDatabase } from '../utils/local-database';
+import { ILocalDatabase } from '../utils/local-database';
 import { PerformanceMonitorService } from './performance-monitor.service';
 
-interface ErrorRecord {
+interface IErrorRecord {
+  /** id 的描述 */
   id: string;
+  /** error 的描述 */
   error: Error;
+  /** context 的描述 */
   context: any;
+  /** timestamp 的描述 */
   timestamp: Date;
+  /** retryCount 的描述 */
   retryCount: number;
+  /** resolved 的描述 */
   resolved: boolean;
 }
 
 export class ErrorRecoveryService {
-  private db: LocalDatabase;
+  private db: ILocalDatabase;
   private monitor: PerformanceMonitorService;
-  private maxRetries: number = 3;
-  private retryDelay: number = 1000;
+  private maxRetries = 3;
+  private retryDelay = 1000;
 
   constructor() {
     this.db = new LocalDatabase('error-recovery');
@@ -22,13 +28,13 @@ export class ErrorRecoveryService {
   }
 
   async handleError(error: Error, context: any, operation: () => Promise<any>): Promise<any> {
-    const errorRecord: ErrorRecord = {
+    const errorRecord: IErrorRecord = {
       id: `${Date.now()}-${Math.random()}`,
       error,
       context,
       timestamp: new Date(),
       retryCount: 0,
-      resolved: false
+      resolved: false,
     };
 
     await this.saveErrorRecord(errorRecord);
@@ -36,12 +42,12 @@ export class ErrorRecoveryService {
     return this.retryOperation(errorRecord, operation);
   }
 
-  private async retryOperation(record: ErrorRecord, operation: () => Promise<any>): Promise<any> {
+  private async retryOperation(record: IErrorRecord, operation: () => Promise<any>): Promise<any> {
     while (record.retryCount < this.maxRetries) {
       try {
         // 指数退避重试
-        await new Promise(resolve => 
-          setTimeout(resolve, this.retryDelay * Math.pow(2, record.retryCount))
+        await new Promise(resolve =>
+          setTimeout(resolve, this.retryDelay * Math.pow(2, record.retryCount)),
         );
 
         const result = await operation();
@@ -60,7 +66,7 @@ export class ErrorRecoveryService {
     throw new Error(`操作失败，已重试 ${this.maxRetries} 次`);
   }
 
-  private async rollback(record: ErrorRecord): Promise<void> {
+  private async rollback(record: IErrorRecord): Promise<void> {
     try {
       // 获取回滚点
       const snapshot = await this.db.get(`snapshot:${record.id}`);
@@ -69,20 +75,20 @@ export class ErrorRecoveryService {
         await this.restoreSnapshot(snapshot);
       }
     } catch (error) {
-      console.error('回滚失败:', error);
+      console.error('Error in error-recovery.service.ts:', '回滚失败:', error);
       throw error;
     }
   }
 
-  private async saveErrorRecord(record: ErrorRecord): Promise<void> {
+  private async saveErrorRecord(record: IErrorRecord): Promise<void> {
     await this.db.put(`error:${record.id}`, record);
   }
 
-  private async updateErrorRecord(record: ErrorRecord): Promise<void> {
+  private async updateErrorRecord(record: IErrorRecord): Promise<void> {
     await this.db.put(`error:${record.id}`, record);
   }
 
   private async restoreSnapshot(snapshot: any): Promise<void> {
     // 实现数据恢复逻辑
   }
-} 
+}

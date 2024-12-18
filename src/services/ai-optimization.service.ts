@@ -1,14 +1,14 @@
-import { Injectable } from '@nestjs/common';
-import { aiOptimizationConfig } from '../config/performance.config';
 import * as tf from '@tensorflow/tfjs';
-import { ModelService } from './model.service';
 import { CacheService } from './cache.service';
+import { Injectable } from '@nestjs/common';
+import { ModelService } from './model.service';
+import { aiOptimizationConfig } from '../config/performance.config';
 
 @Injectable()
 export class AIOptimizationService {
   private modelCache: Map<string, any> = new Map();
   private batchQueue: Map<string, any[]> = new Map();
-  private processingBatch: boolean = false;
+  private processingBatch = false;
 
   constructor(
     private readonly modelService: ModelService,
@@ -30,23 +30,23 @@ export class AIOptimizationService {
   async optimizeModel(modelId: string) {
     try {
       const model = await this.modelService.getModel(modelId);
-      
+
       if (aiOptimizationConfig.modelCompression.enabled) {
         // 模型量化
         const quantizedModel = await this.quantizeModel(model);
-        
+
         // 模型剪枝
         const prunedModel = await this.pruneModel(quantizedModel);
-        
+
         // 更新缓存
         await this.updateModelCache(modelId, prunedModel);
-        
+
         return prunedModel;
       }
-      
+
       return model;
     } catch (error) {
-      console.error('Model optimization failed:', error);
+      console.error('Error in ai-optimization.service.ts:', 'Model optimization failed:', error);
       throw error;
     }
   }
@@ -62,12 +62,12 @@ export class AIOptimizationService {
       if (!this.batchQueue.has(modelId)) {
         this.batchQueue.set(modelId, []);
       }
-      
+
       this.batchQueue.get(modelId).push({
         input,
         resolve,
         reject,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
       // 检查是否需要立即处理
@@ -82,7 +82,7 @@ export class AIOptimizationService {
       const prediction = await model.predict(input);
       return prediction;
     } catch (error) {
-      console.error('Prediction failed:', error);
+      console.error('Error in ai-optimization.service.ts:', 'Prediction failed:', error);
       throw error;
     }
   }
@@ -107,7 +107,7 @@ export class AIOptimizationService {
       // 实现模型量化逻辑
       const quantizedModel = await tf.quantization.quantizeModel(model, {
         quantizeWeights: true,
-        quantizationBytes: 1  // int8量化
+        quantizationBytes: 1, // int8量化
       });
       return quantizedModel;
     }
@@ -128,7 +128,7 @@ export class AIOptimizationService {
         // 使用LRU策略清理缓存
         this.cleanModelCache();
       }
-      
+
       this.modelCache.set(modelId, model);
     }
   }
@@ -138,7 +138,7 @@ export class AIOptimizationService {
     // 实现LRU缓存清理逻辑
     const cacheEntries = Array.from(this.modelCache.entries());
     cacheEntries.sort((a, b) => a[1].lastUsed - b[1].lastUsed);
-    
+
     // 删除最早使用的模型直到缓存大小合适
     while (this.modelCache.size > aiOptimizationConfig.modelCaching.maxSize / 2) {
       const [modelId] = cacheEntries.shift();
@@ -176,7 +176,7 @@ export class AIOptimizationService {
         });
       }
     } catch (error) {
-      console.error('Batch processing failed:', error);
+      console.error('Error in ai-optimization.service.ts:', 'Batch processing failed:', error);
     } finally {
       this.processingBatch = false;
     }
@@ -196,4 +196,4 @@ export class AIOptimizationService {
     this.modelCache.clear();
     this.batchQueue.clear();
   }
-} 
+}

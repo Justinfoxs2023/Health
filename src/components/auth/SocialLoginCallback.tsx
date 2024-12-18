@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+
 import { Spin, message } from 'antd';
 import { authService } from '../../services/auth.service';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 export const SocialLoginCallback: React.FC = () => {
   const navigate = useNavigate();
@@ -29,7 +30,7 @@ export const SocialLoginCallback: React.FC = () => {
         const response = await authService.socialLogin({
           platform,
           code,
-          state
+          state,
         });
 
         // 清理 sessionStorage
@@ -52,4 +53,4 @@ export const SocialLoginCallback: React.FC = () => {
       <Spin size="large" tip="登录中..." />
     </div>
   );
-}; 
+};

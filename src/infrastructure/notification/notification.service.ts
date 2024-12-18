@@ -1,9 +1,11 @@
-import { Injectable } from '@nestjs/common';
 import { ConfigService } from '../config/config.service';
+import { Injectable } from '@nestjs/common';
 
-export interface NotificationMessage {
-  type: string;
-  severity?: 'low' | 'medium' | 'high' | 'critical';
+export interface INotificationMessage {
+  /** type 的描述 */
+    type: string;
+  /** severity 的描述 */
+    severity: low  medium  high  critical;
   message: string;
   timestamp: Date;
 }
@@ -12,8 +14,8 @@ export interface NotificationMessage {
 export class NotificationService {
   constructor(private readonly config: ConfigService) {}
 
-  async send(message: NotificationMessage): Promise<void> {
+  async send(message: INotificationMessage): Promise<void> {
     // 实现通知发送逻辑
     console.log('Sending notification:', message);
   }
-} 
+}

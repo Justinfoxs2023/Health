@@ -11,7 +11,7 @@ export enum FoodType {
   NUTS = 'nuts', // 坚果
   BEVERAGE = 'beverage', // 饮品
   SNACK = 'snack', // 零食
-  OTHER = 'other' // 其他
+  OTHER = 'other', // 其他
 }
 
 /** 营养素类型 */
@@ -29,11 +29,11 @@ export enum NutrientType {
   CALCIUM = 'calcium', // 钙
   IRON = 'iron', // 铁
   ZINC = 'zinc', // 锌
-  SODIUM = 'sodium' // 钠
+  SODIUM = 'sodium', // 钠
 }
 
 /** 食物识别结果 */
-export interface FoodRecognitionResult {
+export interface IFoodRecognitionResult {
   /** 食物名称 */
   name: string;
   /** 食物类型 */
@@ -55,7 +55,7 @@ export interface FoodRecognitionResult {
 }
 
 /** 营养分析结果 */
-export interface NutritionAnalysis {
+export interface INutritionAnalysis {
   /** 总热量 */
   totalCalories: number;
   /** 营养素分布 */
@@ -76,7 +76,7 @@ export interface NutritionAnalysis {
 }
 
 /** 饮食计划 */
-export interface DietPlan {
+export interface IDietPlan {
   /** 计划名称 */
   name: string;
   /** 计划目标 */
@@ -122,7 +122,7 @@ export class FoodService {
   }
 
   /** 识别食物 */
-  public async recognizeFood(image: File): Promise<FoodRecognitionResult> {
+  public async recognizeFood(image: File): Promise<IFoodRecognitionResult> {
     try {
       // 调用食物识别API
       const formData = new FormData();
@@ -130,7 +130,7 @@ export class FoodService {
 
       const response = await fetch('/api/food/recognize', {
         method: 'POST',
-        body: formData
+        body: formData,
       });
 
       if (!response.ok) {
@@ -146,17 +146,17 @@ export class FoodService {
   }
 
   /** 分析营养成分 */
-  public async analyzeNutrition(foods: FoodRecognitionResult[]): Promise<NutritionAnalysis> {
+  public async analyzeNutrition(foods: IFoodRecognitionResult[]): Promise<INutritionAnalysis> {
     try {
       // 计算总营养成分
       const totalNutrients = this.calculateTotalNutrients(foods);
-      
+
       // 计算营养素分布
       const distribution = this.calculateNutrientDistribution(totalNutrients);
-      
+
       // 生成营养建议
       const recommendations = this.generateNutritionRecommendations(distribution);
-      
+
       // 计算健康评分
       const healthScore = this.calculateHealthScore(distribution);
 
@@ -164,7 +164,7 @@ export class FoodService {
         totalCalories: totalNutrients.find(n => n.type === NutrientType.CALORIE)?.value || 0,
         nutrientDistribution: distribution,
         recommendations,
-        healthScore
+        healthScore,
       };
     } catch (error) {
       logger.error('Nutrition analysis failed', { error });
@@ -173,22 +173,20 @@ export class FoodService {
   }
 
   /** 生成饮食计划 */
-  public async generateDietPlan(
-    preferences: {
-      goal: DietPlan['goal'];
-      restrictions?: string[];
-      currentWeight?: number;
-      targetWeight?: number;
-      activityLevel?: 'low' | 'moderate' | 'high';
-    }
-  ): Promise<DietPlan> {
+  public async generateDietPlan(preferences: {
+    goal: IDietPlan['goal'];
+    restrictions?: string[];
+    currentWeight?: number;
+    targetWeight?: number;
+    activityLevel?: 'low' | 'moderate' | 'high';
+  }): Promise<IDietPlan> {
     try {
       // 计算每日热量需求
       const dailyCalories = this.calculateDailyCalories(preferences);
-      
+
       // 设置营养素目标
       const nutrientTargets = this.setNutrientTargets(dailyCalories, preferences.goal);
-      
+
       // 生成餐次安排
       const meals = await this.generateMealPlan(dailyCalories, nutrientTargets, preferences);
 
@@ -199,7 +197,7 @@ export class FoodService {
         nutrientTargets,
         meals,
         restrictions: preferences.restrictions,
-        recommendations: this.generateFoodRecommendations(preferences)
+        recommendations: this.generateFoodRecommendations(preferences),
       };
     } catch (error) {
       logger.error('Diet plan generation failed', { error });
@@ -208,11 +206,11 @@ export class FoodService {
   }
 
   /** 补充食物信息 */
-  private async enrichFoodInfo(recognitionResult: any): Promise<FoodRecognitionResult> {
+  private async enrichFoodInfo(recognitionResult: any): Promise<IFoodRecognitionResult> {
     try {
       // 从食物数据库获取详细信息
       const foodInfo = await this.fetchFoodInfo(recognitionResult.name);
-      
+
       return {
         name: foodInfo.name,
         type: foodInfo.type,
@@ -220,7 +218,7 @@ export class FoodService {
         nutrients: foodInfo.nutrients,
         recommendedIntake: foodInfo.recommendedIntake,
         image: recognitionResult.image,
-        description: foodInfo.description
+        description: foodInfo.description,
       };
     } catch (error) {
       logger.error('Food info enrichment failed', { error });
@@ -238,7 +236,7 @@ export class FoodService {
   }
 
   /** 计算总营养成分 */
-  private calculateTotalNutrients(foods: FoodRecognitionResult[]): {
+  private calculateTotalNutrients(foods: IFoodRecognitionResult[]): {
     type: NutrientType;
     value: number;
     unit: string;
@@ -250,7 +248,7 @@ export class FoodService {
         const current = totals.get(nutrient.type) || { value: 0, unit: nutrient.unit };
         totals.set(nutrient.type, {
           value: current.value + nutrient.value,
-          unit: nutrient.unit
+          unit: nutrient.unit,
         });
       });
     });
@@ -258,27 +256,26 @@ export class FoodService {
     return Array.from(totals.entries()).map(([type, { value, unit }]) => ({
       type,
       value,
-      unit
+      unit,
     }));
   }
 
   /** 计算营养素分布 */
-  private calculateNutrientDistribution(totalNutrients: {
-    type: NutrientType;
-    value: number;
-    unit: string;
-  }[]): NutritionAnalysis['nutrientDistribution'] {
+  private calculateNutrientDistribution(
+    totalNutrients: {
+      type: NutrientType;
+      value: number;
+      unit: string;
+    }[],
+  ): INutritionAnalysis['nutrientDistribution'] {
     return totalNutrients.map(nutrient => {
-      const { percentage, status } = this.evaluateNutrientLevel(
-        nutrient.type,
-        nutrient.value
-      );
+      const { percentage, status } = this.evaluateNutrientLevel(nutrient.type, nutrient.value);
 
       return {
         type: nutrient.type,
         value: nutrient.value,
         percentage,
-        status
+        status,
       };
     });
   }
@@ -286,7 +283,7 @@ export class FoodService {
   /** 评估营养素水平 */
   private evaluateNutrientLevel(
     type: NutrientType,
-    value: number
+    value: number,
   ): { percentage: number; status: 'low' | 'normal' | 'high' } {
     // 根据推荐摄入量评估营养素水平
     const rdi = this.getRecommendedDailyIntake(type);
@@ -321,7 +318,7 @@ export class FoodService {
       [NutrientType.CALCIUM]: 800,
       [NutrientType.IRON]: 14,
       [NutrientType.ZINC]: 11,
-      [NutrientType.SODIUM]: 2000
+      [NutrientType.SODIUM]: 2000,
     };
 
     return RDI[type];
@@ -329,16 +326,16 @@ export class FoodService {
 
   /** 生成营养建议 */
   private generateNutritionRecommendations(
-    distribution: NutritionAnalysis['nutrientDistribution']
-  ): NutritionAnalysis['recommendations'] {
-    const recommendations: NutritionAnalysis['recommendations'] = [];
+    distribution: INutritionAnalysis['nutrientDistribution'],
+  ): INutritionAnalysis['recommendations'] {
+    const recommendations: INutritionAnalysis['recommendations'] = [];
 
     distribution.forEach(nutrient => {
       if (nutrient.status !== 'normal') {
         recommendations.push({
           type: nutrient.type,
           suggestion: this.getNutrientSuggestion(nutrient.type, nutrient.status),
-          priority: nutrient.status === 'low' ? 3 : 2
+          priority: nutrient.status === 'low' ? 3 : 2,
         });
       }
     });
@@ -351,11 +348,11 @@ export class FoodService {
     const suggestions: Record<NutrientType, Record<'low' | 'high', string>> = {
       [NutrientType.CALORIE]: {
         low: '建议适当增加食物摄入量',
-        high: '建议控制食物摄入量'
+        high: '建议控制食物摄入量',
       },
       [NutrientType.PROTEIN]: {
         low: '建议多食用瘦肉、鱼类、蛋类等优质蛋白',
-        high: '建议适当减少蛋白质摄入'
+        high: '建议适当减少蛋白质摄入',
       },
       // ... 其他营养素的建议
     };
@@ -364,9 +361,7 @@ export class FoodService {
   }
 
   /** 计算健康评分 */
-  private calculateHealthScore(
-    distribution: NutritionAnalysis['nutrientDistribution']
-  ): number {
+  private calculateHealthScore(distribution: INutritionAnalysis['nutrientDistribution']): number {
     let score = 100;
 
     distribution.forEach(nutrient => {
@@ -382,7 +377,7 @@ export class FoodService {
 
   /** 计算每日热量需求 */
   private calculateDailyCalories(preferences: {
-    goal: DietPlan['goal'];
+    goal: IDietPlan['goal'];
     currentWeight?: number;
     targetWeight?: number;
     activityLevel?: 'low' | 'moderate' | 'high';
@@ -393,7 +388,7 @@ export class FoodService {
     const activityMultiplier = {
       low: 1.2,
       moderate: 1.5,
-      high: 1.8
+      high: 1.8,
     };
 
     baseCalories *= activityMultiplier[preferences.activityLevel || 'moderate'];
@@ -417,22 +412,22 @@ export class FoodService {
   /** 设置营养素目标 */
   private setNutrientTargets(
     dailyCalories: number,
-    goal: DietPlan['goal']
-  ): DietPlan['nutrientTargets'] {
-    const targets: DietPlan['nutrientTargets'] = [];
+    goal: IDietPlan['goal'],
+  ): IDietPlan['nutrientTargets'] {
+    const targets: IDietPlan['nutrientTargets'] = [];
 
     // 设置蛋白质目标
     const proteinTarget = {
       type: NutrientType.PROTEIN,
-      min: Math.round(dailyCalories * 0.15 / 4), // 4卡路里/克蛋白质
-      max: Math.round(dailyCalories * 0.25 / 4),
-      unit: 'g'
+      min: Math.round((dailyCalories * 0.15) / 4), // 4卡路里/克蛋白质
+      max: Math.round((dailyCalories * 0.25) / 4),
+      unit: 'g',
     };
 
     // 根据目标调整蛋白质需求
     if (goal === 'muscle_gain') {
-      proteinTarget.min = Math.round(dailyCalories * 0.25 / 4);
-      proteinTarget.max = Math.round(dailyCalories * 0.35 / 4);
+      proteinTarget.min = Math.round((dailyCalories * 0.25) / 4);
+      proteinTarget.max = Math.round((dailyCalories * 0.35) / 4);
     }
 
     targets.push(proteinTarget);
@@ -441,16 +436,16 @@ export class FoodService {
     targets.push(
       {
         type: NutrientType.FAT,
-        min: Math.round(dailyCalories * 0.2 / 9), // 9卡路里/克脂肪
-        max: Math.round(dailyCalories * 0.3 / 9),
-        unit: 'g'
+        min: Math.round((dailyCalories * 0.2) / 9), // 9卡路里/克脂肪
+        max: Math.round((dailyCalories * 0.3) / 9),
+        unit: 'g',
       },
       {
         type: NutrientType.CARBOHYDRATE,
-        min: Math.round(dailyCalories * 0.45 / 4), // 4卡路里/克碳水
-        max: Math.round(dailyCalories * 0.65 / 4),
-        unit: 'g'
-      }
+        min: Math.round((dailyCalories * 0.45) / 4), // 4卡路里/克碳水
+        max: Math.round((dailyCalories * 0.65) / 4),
+        unit: 'g',
+      },
     );
 
     return targets;
@@ -459,21 +454,21 @@ export class FoodService {
   /** 生成餐次安排 */
   private async generateMealPlan(
     dailyCalories: number,
-    nutrientTargets: DietPlan['nutrientTargets'],
+    nutrientTargets: IDietPlan['nutrientTargets'],
     preferences: {
-      goal: DietPlan['goal'];
+      goal: IDietPlan['goal'];
       restrictions?: string[];
-    }
-  ): Promise<DietPlan['meals']> {
+    },
+  ): Promise<IDietPlan['meals']> {
     // 分配热量到各餐次
     const mealDistribution = {
       breakfast: 0.3,
       lunch: 0.4,
       dinner: 0.25,
-      snack: 0.05
+      snack: 0.05,
     };
 
-    const meals: DietPlan['meals'] = [];
+    const meals: IDietPlan['meals'] = [];
 
     for (const [type, percentage] of Object.entries(mealDistribution)) {
       const mealCalories = Math.round(dailyCalories * percentage);
@@ -481,14 +476,14 @@ export class FoodService {
         type as 'breakfast' | 'lunch' | 'dinner' | 'snack',
         mealCalories,
         nutrientTargets,
-        preferences
+        preferences,
       );
 
       meals.push({
         type: type as 'breakfast' | 'lunch' | 'dinner' | 'snack',
         time: this.getMealTime(type as 'breakfast' | 'lunch' | 'dinner' | 'snack'),
         foods,
-        calories: mealCalories
+        calories: mealCalories,
       });
     }
 
@@ -499,24 +494,24 @@ export class FoodService {
   private async recommendFoodsForMeal(
     mealType: 'breakfast' | 'lunch' | 'dinner' | 'snack',
     targetCalories: number,
-    nutrientTargets: DietPlan['nutrientTargets'],
+    nutrientTargets: IDietPlan['nutrientTargets'],
     preferences: {
-      goal: DietPlan['goal'];
+      goal: IDietPlan['goal'];
       restrictions?: string[];
-    }
-  ): Promise<{ name: string; amount: number; unit: string; }[]> {
+    },
+  ): Promise<{ name: string; amount: number; unit: string }[]> {
     // 从食物数据库中选择合适的食物
     const response = await fetch('/api/food/recommend', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         mealType,
         targetCalories,
         nutrientTargets,
-        restrictions: preferences.restrictions
-      })
+        restrictions: preferences.restrictions,
+      }),
     });
 
     if (!response.ok) {
@@ -532,7 +527,7 @@ export class FoodService {
       breakfast: '07:30',
       lunch: '12:00',
       dinner: '18:30',
-      snack: '15:30'
+      snack: '15:30',
     };
 
     return times[type];
@@ -540,38 +535,24 @@ export class FoodService {
 
   /** 生成食物推荐 */
   private generateFoodRecommendations(preferences: {
-    goal: DietPlan['goal'];
+    goal: IDietPlan['goal'];
     restrictions?: string[];
   }): string[] {
     const recommendations: string[] = [];
 
     switch (preferences.goal) {
       case 'weight_loss':
-        recommendations.push(
-          '富含蛋白质的瘦肉',
-          '低脂乳制品',
-          '全谷物',
-          '新鲜蔬菜',
-          '水果'
-        );
+        recommendations.push('富含蛋白质的瘦肉', '低脂乳制品', '全谷物', '新鲜蔬菜', '水果');
         break;
       case 'muscle_gain':
-        recommendations.push(
-          '优质蛋白质食物',
-          '全谷物',
-          '健康脂肪',
-          '蛋白质粉',
-          '坚果'
-        );
+        recommendations.push('优质蛋白质食物', '全谷物', '健康脂肪', '蛋白质粉', '坚果');
         break;
       // ... 其他目标的推荐
     }
 
     // 排除限制食物
-    return recommendations.filter(
-      food => !preferences.restrictions?.some(r => food.includes(r))
-    );
+    return recommendations.filter(food => !preferences.restrictions?.some(r => food.includes(r)));
   }
 }
 
-export const foodService = FoodService.getInstance(); 
+export const foodService = FoodService.getInstance();

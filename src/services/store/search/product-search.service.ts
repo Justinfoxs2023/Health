@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
-import { Product, HealthProduct } from '../types';
+import { IProduct, IHealthProduct } from '../types';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class ProductSearchService {
@@ -20,7 +20,7 @@ export class ProductSearchService {
     page: number;
     pageSize: number;
   }): Promise<{
-    items: Product[];
+    items: IProduct[];
     total: number;
     suggestions: string[];
   }> {
@@ -28,17 +28,20 @@ export class ProductSearchService {
     return {
       items: [],
       total: 0,
-      suggestions: []
+      suggestions: [],
     };
   }
 
   // 智能推荐
-  async getRecommendations(userId: string, context: {
-    healthProfile?: any;
-    recentViews?: string[];
-    purchaseHistory?: any[];
-  }): Promise<Product[]> {
+  async getRecommendations(
+    userId: string,
+    context: {
+      healthProfile?: any;
+      recentViews?: string[];
+      purchaseHistory?: any[];
+    },
+  ): Promise<IProduct[]> {
     // 实现推荐逻辑
     return [];
   }
-} 
+}

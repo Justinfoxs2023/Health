@@ -1,7 +1,7 @@
-import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
-import { http } from '../index';
+import axios from 'axios';
 import { errorService } from '../../error';
+import { http } from '../index';
 
 describe('HTTP Client', () => {
   let mock: MockAdapter;
@@ -95,12 +95,10 @@ describe('HTTP Client', () => {
     const data = { id: 1, name: '测试' };
     mock.onGet('/api/test').reply(200, data);
 
-    const interceptor = http.interceptors.response.use(
-      response => {
-        response.data.intercepted = true;
-        return response;
-      }
-    );
+    const interceptor = http.interceptors.response.use(response => {
+      response.data.intercepted = true;
+      return response;
+    });
 
     const response = await http.get('/api/test');
     expect(response.data.intercepted).toBe(true);
@@ -113,19 +111,17 @@ describe('HTTP Client', () => {
       return [200, { headers: config.headers }];
     });
 
-    const interceptor = http.interceptors.request.use(
-      config => {
-        config.headers = {
-          ...config.headers,
-          'X-Intercepted': 'true'
-        };
-        return config;
-      }
-    );
+    const interceptor = http.interceptors.request.use(config => {
+      config.headers = {
+        ...config.headers,
+        'X-Intercepted': 'true',
+      };
+      return config;
+    });
 
     const response = await http.get('/api/test');
     expect(response.data.headers['X-Intercepted']).toBe('true');
 
     http.interceptors.request.eject(interceptor);
   });
-}); 
+});

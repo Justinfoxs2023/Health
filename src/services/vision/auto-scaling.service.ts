@@ -19,7 +19,7 @@ export class AutoScalingService {
     try {
       const currentMetrics = await this.collectMetrics();
       this.updateMetricsHistory(currentMetrics);
-      
+
       const scalingDecision = this.makeScalingDecision(currentMetrics);
       if (scalingDecision.shouldScale) {
         await this.executeScaling(scalingDecision);
@@ -35,7 +35,7 @@ export class AutoScalingService {
       cpuUsage: await this.getCPUUsage(),
       memoryUsage: await this.getMemoryUsage(),
       queueLength: await this.getQueueLength(),
-      responseTime: await this.getAverageResponseTime()
+      responseTime: await this.getAverageResponseTime(),
     };
   }
 
@@ -44,13 +44,13 @@ export class AutoScalingService {
     const decisions = {
       cpu: this.evaluateMetric(metrics.cpuUsage, this.thresholds.cpu),
       memory: this.evaluateMetric(metrics.memoryUsage, this.thresholds.memory),
-      queue: this.evaluateMetric(metrics.queueLength, this.thresholds.queue)
+      queue: this.evaluateMetric(metrics.queueLength, this.thresholds.queue),
     };
 
     return {
       shouldScale: Object.values(decisions).some(d => d !== 'none'),
       direction: this.determineScalingDirection(decisions),
-      magnitude: this.calculateScalingMagnitude(decisions)
+      magnitude: this.calculateScalingMagnitude(decisions),
     };
   }
 
@@ -62,11 +62,11 @@ export class AutoScalingService {
       } else {
         await this.scaleDown(decision.magnitude);
       }
-      
+
       this.logger.info(`执行${decision.direction === 'up' ? '扩容' : '缩容'}操作`);
     } catch (error) {
       this.logger.error('扩缩容操作失败:', error);
       throw error;
     }
   }
-} 
+}

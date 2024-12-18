@@ -1,8 +1,9 @@
 import React from 'react';
+
 import { IHealthData, HealthDataType } from '../../types';
 import { formatDate, formatHealthData } from '../../utils';
 
-export interface HealthDataCardProps {
+export interface IHealthDataCardProps {
   /** 健康数据 */
   data: IHealthData;
   /** 点击事件 */
@@ -12,10 +13,10 @@ export interface HealthDataCardProps {
 }
 
 /** 健康数据展示卡片 */
-export const HealthDataCard: React.FC<HealthDataCardProps> = ({
+export const HealthDataCard: React.FC<IHealthDataCardProps> = ({
   data,
   onClick,
-  className = ''
+  className = '',
 }) => {
   const getIcon = (type: HealthDataType) => {
     switch (type) {
@@ -54,9 +55,7 @@ export const HealthDataCard: React.FC<HealthDataCardProps> = ({
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center">
           <span className="text-2xl mr-2">{getIcon(data.type)}</span>
-          <h3 className="text-lg font-medium text-gray-800">
-            {data.type.replace(/_/g, ' ')}
-          </h3>
+          <h3 className="text-lg font-medium text-gray-800">{data.type.replace(/_/g, ' ')}</h3>
         </div>
         <span className={`text-lg font-bold ${getStatusColor(data.type, data.value)}`}>
           {formatHealthData(data)}
@@ -72,4 +71,4 @@ export const HealthDataCard: React.FC<HealthDataCardProps> = ({
       </div>
     </div>
   );
-}; 
+};

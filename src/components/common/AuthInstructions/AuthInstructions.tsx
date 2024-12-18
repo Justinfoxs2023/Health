@@ -1,11 +1,15 @@
 import React from 'react';
-import { Modal } from 'antd';
-import type { Social } from '../../../types/social';
 
-interface AuthInstructionsProps {
-  platform: Social.Platform;
-  visible: boolean;
-  onClose: () => void;
+import type { Social } from '../../../types/social';
+import { Modal } from 'antd';
+
+interface IAuthInstructionsProps {
+  /** platform 的描述 */
+  platform: SocialPlatform;
+  /** visible 的描述 */
+  visible: false | true;
+  /** onClose 的描述 */
+  onClose: void;
 }
 
 const platformInstructions: Record<Social.Platform, string> = {
@@ -17,26 +21,17 @@ const platformInstructions: Record<Social.Platform, string> = {
   google: '请在浏览器中完成授权',
   facebook: '请在浏览器中完成授权',
   apple: '请在浏览器中完成授权',
-  github: '请在浏览器中完成授权'
+  github: '请在浏览器中完成授权',
 };
 
-const AuthInstructions: React.FC<AuthInstructionsProps> = ({
-  platform,
-  visible,
-  onClose
-}) => {
+const AuthInstructions: React.FC<IAuthInstructionsProps> = ({ platform, visible, onClose }) => {
   return (
-    <Modal
-      title={`${platform}登录说明`}
-      open={visible}
-      onCancel={onClose}
-      footer={null}
-    >
+    <Modal title={`${platform}登录说明`} open={visible} onCancel={onClose} footer={null}>
       <div>
-        <p>{platformInstructions[platform]}</p>
+        <p>{platformInstructionsplatform}</p>
       </div>
     </Modal>
   );
 };
 
-export default AuthInstructions; 
+export default AuthInstructions;

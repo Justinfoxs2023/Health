@@ -20,8 +20,8 @@ const dbConfig = {
     retryWrites: true,
     w: 'majority',
     wtimeout: 2500,
-    j: true
-  }
+    j: true,
+  },
 };
 
 // 连接数据库
@@ -35,7 +35,7 @@ export const connectDB = async () => {
       logger.info('Mongoose connected to db');
     });
 
-    mongoose.connection.on('error', (err) => {
+    mongoose.connection.on('error', err => {
       logger.error('Mongoose connection error:', err);
     });
 
@@ -57,7 +57,6 @@ export const connectDB = async () => {
 
     // 配置全局中间件
     mongoose.set('debug', process.env.NODE_ENV !== 'production');
-
   } catch (error) {
     logger.error('Database connection error:', error);
     process.exit(1);
@@ -66,20 +65,12 @@ export const connectDB = async () => {
 
 // 数据库配置验证
 export const validateDBConfig = () => {
-  const requiredEnvVars = [
-    'MONGODB_URI',
-    'MONGODB_USER',
-    'MONGODB_PASSWORD'
-  ];
+  const requiredEnvVars = ['MONGODB_URI', 'MONGODB_USER', 'MONGODB_PASSWORD'];
 
-  const missingVars = requiredEnvVars.filter(
-    varName => !process.env[varName]
-  );
+  const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
 
   if (missingVars.length > 0) {
-    throw new Error(
-      `Missing required environment variables: ${missingVars.join(', ')}`
-    );
+    throw new Error(`Missing required environment variables: ${missingVars.join(', ')}`);
   }
 
   return true;
@@ -94,19 +85,19 @@ export const checkDBHealth = async () => {
 
     const adminDb = mongoose.connection.db.admin();
     const result = await adminDb.ping();
-    
+
     return {
       status: 'healthy',
       ping: result.ok === 1,
       readyState: mongoose.connection.readyState,
-      responseTime: result.ok === 1 ? 'OK' : 'Failed'
+      responseTime: result.ok === 1 ? 'OK' : 'Failed',
     };
   } catch (error) {
     logger.error('Database health check failed:', error);
     return {
       status: 'unhealthy',
       error: error.message,
-      readyState: mongoose.connection.readyState
+      readyState: mongoose.connection.readyState,
     };
   }
 };
@@ -116,7 +107,7 @@ export const getDBStats = async () => {
   try {
     const db = mongoose.connection.db;
     const stats = await db.stats();
-    
+
     return {
       collections: stats.collections,
       objects: stats.objects,
@@ -124,7 +115,7 @@ export const getDBStats = async () => {
       dataSize: stats.dataSize,
       storageSize: stats.storageSize,
       indexes: stats.indexes,
-      indexSize: stats.indexSize
+      indexSize: stats.indexSize,
     };
   } catch (error) {
     logger.error('Failed to get database stats:', error);
@@ -132,4 +123,4 @@ export const getDBStats = async () => {
   }
 };
 
-export default dbConfig; 
+export default dbConfig;

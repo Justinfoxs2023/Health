@@ -1,9 +1,11 @@
 import { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+
 import styled from 'styled-components';
-import { fetchServiceDetail } from '@/store/slices/serviceSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
+
 import { LoadingState } from '@/components/common/LoadingState';
+import { fetchServiceDetail } from '@/store/slices/serviceSlice';
 
 const ServiceContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(3)};
@@ -53,43 +55,24 @@ export const ServiceDetail: React.FC = () => {
   return (
     <ServiceContainer>
       <ServiceHeader>
-        <h1>{currentService?.title}</h1>
-        <ServiceBreadcrumb 
-          category={currentService?.category}
-          title={currentService?.title}
-        />
+        <h1>{currentServicetitle}</h1>
+        <ServiceBreadcrumb category={currentService?.category} title={currentService?.title} />
       </ServiceHeader>
 
       <ServiceContent>
         <ServiceInfo>
-          <ServiceDescription 
-            description={currentService?.description}
-          />
-          <ServiceFeatures 
-            features={currentService?.features}
-          />
-          <ServiceProvider 
-            provider={currentService?.provider}
-          />
-          <ServiceReviews 
-            reviews={currentService?.reviews}
-          />
+          <ServiceDescription description={currentService?.description} />
+          <ServiceFeatures features={currentService?.features} />
+          <ServiceProvider provider={currentService?.provider} />
+          <ServiceReviews reviews={currentService?.reviews} />
         </ServiceInfo>
 
         <BookingPanel>
-          <ServicePrice 
-            price={currentService?.price}
-            discount={currentService?.discount}
-          />
-          <ServiceAvailability 
-            availability={currentService?.availability}
-          />
-          <BookingForm 
-            serviceId={serviceId}
-            onSubmit={handleBooking}
-          />
+          <ServicePrice price={currentService?.price} discount={currentService?.discount} />
+          <ServiceAvailability availability={currentService?.availability} />
+          <BookingForm serviceId={serviceId} onSubmit={handleBooking} />
         </BookingPanel>
       </ServiceContent>
     </ServiceContainer>
   );
-}; 
+};

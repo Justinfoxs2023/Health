@@ -23,7 +23,7 @@ const messages: LocaleMessages = {
     noData: 'No data',
     total: 'Total {total} items',
     selected: '{count} items selected',
-    all: 'All'
+    all: 'All',
   },
   validation: {
     required: '{field} is required',
@@ -35,7 +35,7 @@ const messages: LocaleMessages = {
     minLength: '{field} must be at least {min} characters',
     maxLength: '{field} cannot exceed {max} characters',
     pattern: '{field} format is incorrect',
-    passwordMismatch: 'The passwords do not match'
+    passwordMismatch: 'The passwords do not match',
   },
   auth: {
     login: 'Login',
@@ -57,7 +57,7 @@ const messages: LocaleMessages = {
     registerSuccess: 'Registration successful',
     registerError: 'Registration failed',
     resetSuccess: 'Reset successful',
-    resetError: 'Reset failed'
+    resetError: 'Reset failed',
   },
   healthData: {
     bloodPressure: 'Blood Pressure',
@@ -77,13 +77,13 @@ const messages: LocaleMessages = {
       mmol: 'mmol/L',
       celsius: '°C',
       kg: 'kg',
-      cm: 'cm'
+      cm: 'cm',
     },
     status: {
       normal: 'Normal',
       abnormal: 'Abnormal',
       high: 'High',
-      low: 'Low'
+      low: 'Low',
     },
     time: {
       morning: 'Morning',
@@ -91,8 +91,8 @@ const messages: LocaleMessages = {
       evening: 'Evening',
       beforeMeal: 'Before Meal',
       afterMeal: 'After Meal',
-      beforeSleep: 'Before Sleep'
-    }
+      beforeSleep: 'Before Sleep',
+    },
   },
   analysis: {
     trend: 'Trend Analysis',
@@ -104,14 +104,14 @@ const messages: LocaleMessages = {
       week: 'Week',
       month: 'Month',
       year: 'Year',
-      custom: 'Custom'
+      custom: 'Custom',
     },
     metrics: {
       max: 'Maximum',
       min: 'Minimum',
       avg: 'Average',
       count: 'Measurement Count',
-      abnormal: 'Abnormal Count'
+      abnormal: 'Abnormal Count',
     },
     error: 'Error analyzing data',
     noData: 'No data available for analysis',
@@ -119,14 +119,14 @@ const messages: LocaleMessages = {
     riskLevel: {
       low: 'Low Risk',
       medium: 'Medium Risk',
-      high: 'High Risk'
+      high: 'High Risk',
     },
     riskFactors: 'Risk Factors',
     trendAnalysis: 'Health Trend Analysis',
     trendType: {
       improving: 'Improving',
       stable: 'Stable',
-      worsening: 'Worsening'
+      worsening: 'Worsening',
     },
     changeRate: 'Change Rate',
     confidence: 'Confidence',
@@ -137,7 +137,7 @@ const messages: LocaleMessages = {
     pattern: {
       daily: 'Daily Cycle',
       weekly: 'Weekly Cycle',
-      monthly: 'Monthly Cycle'
+      monthly: 'Monthly Cycle',
     },
     outliers: 'Outliers',
     deviation: 'Deviation',
@@ -145,10 +145,10 @@ const messages: LocaleMessages = {
       trend: 'Trend Chart',
       scatter: 'Scatter Plot',
       distribution: 'Distribution Chart',
-      radar: 'Radar Chart'
+      radar: 'Radar Chart',
     },
     distribution: 'Value Distribution',
-    dimensionScore: 'Dimension Score'
+    dimensionScore: 'Dimension Score',
   },
   settings: {
     title: 'Settings',
@@ -160,30 +160,30 @@ const messages: LocaleMessages = {
       title: 'Theme Settings',
       light: 'Light',
       dark: 'Dark',
-      system: 'System'
+      system: 'System',
     },
     language: {
       title: 'Language Settings',
       zhCN: '简体中文',
-      enUS: 'English'
+      enUS: 'English',
     },
     notification: {
       title: 'Notification Settings',
       push: 'Push Notifications',
       email: 'Email Notifications',
-      sms: 'SMS Notifications'
+      sms: 'SMS Notifications',
     },
     privacy: {
       title: 'Privacy Settings',
       dataSharing: 'Data Sharing',
       analytics: 'Analytics',
-      advertising: 'Personalized Ads'
-    }
+      advertising: 'Personalized Ads',
+    },
   },
   errorBoundary: {
     title: 'Page Error',
     message: 'Sorry, something went wrong',
-    reload: 'Reload Page'
+    reload: 'Reload Page',
   },
   logViewer: {
     title: 'Log Viewer',
@@ -192,41 +192,41 @@ const messages: LocaleMessages = {
     filter: {
       level: 'Log Level',
       search: 'Search Logs',
-      timeRange: 'Time Range'
+      timeRange: 'Time Range',
     },
     level: {
       debug: 'Debug',
       info: 'Info',
       warn: 'Warning',
-      error: 'Error'
+      error: 'Error',
     },
     columns: {
       time: 'Time',
       level: 'Level',
       message: 'Message',
       source: 'Source',
-      details: 'Details'
-    }
+      details: 'Details',
+    },
   },
   modal: {
     confirm: {
       title: 'Confirm',
       delete: 'Are you sure you want to delete?',
       cancel: 'Are you sure you want to cancel?',
-      logout: 'Are you sure you want to log out?'
-    }
+      logout: 'Are you sure you want to log out?',
+    },
   },
   form: {
     required: 'Required',
     optional: 'Optional',
     submit: 'Submit',
-    reset: 'Reset'
+    reset: 'Reset',
   },
   table: {
     loading: 'Loading...',
     noData: 'No data',
     operation: 'Operation',
-    total: 'Total {total} items'
+    total: 'Total {total} items',
   },
   advice: {
     title: 'Personalized Health Advice',
@@ -243,15 +243,15 @@ const messages: LocaleMessages = {
     category: {
       immediate: 'Immediate Action',
       short_term: 'Short-term Improvement',
-      long_term: 'Long-term Maintenance'
+      long_term: 'Long-term Maintenance',
     },
     confidence: 'Advice Confidence',
     impact: 'Impact Level',
     impact: {
       high: 'High',
       medium: 'Medium',
-      low: 'Low'
-    }
+      low: 'Low',
+    },
   },
   healthData: {
     type: {
@@ -263,8 +263,8 @@ const messages: LocaleMessages = {
       HEIGHT: 'Height',
       STEPS: 'Steps',
       SLEEP: 'Sleep',
-      OXYGEN: 'Blood Oxygen'
-    }
+      OXYGEN: 'Blood Oxygen',
+    },
   },
   validation: {
     required: 'This field is required',
@@ -272,7 +272,7 @@ const messages: LocaleMessages = {
     minLength: 'Minimum {min} characters required',
     maxLength: 'Maximum {max} characters allowed',
     min: 'Cannot be less than {min}',
-    max: 'Cannot be greater than {max}'
+    max: 'Cannot be greater than {max}',
   },
   auth: {
     login: 'Login',
@@ -287,7 +287,7 @@ const messages: LocaleMessages = {
     loginError: 'Login failed',
     logoutSuccess: 'Logout successful',
     registerSuccess: 'Registration successful',
-    registerError: 'Registration failed'
+    registerError: 'Registration failed',
   },
   settings: {
     title: 'Settings',
@@ -295,24 +295,24 @@ const messages: LocaleMessages = {
       title: 'Theme Settings',
       light: 'Light',
       dark: 'Dark',
-      system: 'System'
+      system: 'System',
     },
     language: {
       title: 'Language Settings',
       zh: 'Chinese',
-      en: 'English'
+      en: 'English',
     },
     notification: {
       title: 'Notification Settings',
       enable: 'Enable Notifications',
       sound: 'Sound Alerts',
-      vibrate: 'Vibration Alerts'
+      vibrate: 'Vibration Alerts',
     },
     privacy: {
       title: 'Privacy Settings',
       dataSharing: 'Data Sharing',
-      analytics: 'Usage Analytics'
-    }
+      analytics: 'Usage Analytics',
+    },
   },
   error: {
     network: 'Network error',
@@ -321,6 +321,6 @@ const messages: LocaleMessages = {
     forbidden: 'Access forbidden',
     notFound: 'Resource not found',
     timeout: 'Request timeout',
-    unknown: 'Unknown error'
-  }
-}; 
+    unknown: 'Unknown error',
+  },
+};

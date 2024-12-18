@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 quality-management.service.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export class QualityManagementService {
   private readonly qualityRepo: QualityRepository;
   private readonly monitoringService: MonitoringService;
@@ -11,44 +18,44 @@ export class QualityManagementService {
   async manageServiceStandards(providerId: string): Promise<ServiceStandards> {
     try {
       const standardsConfig = await this.getStandardsConfig();
-      
+
       return {
         responseTimeStandards: {
           inquiryResponse: await this.setResponseStandard({
             timeLimit: 10,
             unit: 'minutes',
-            monitoring: await this.setupResponseMonitoring()
+            monitoring: await this.setupResponseMonitoring(),
           }),
           serviceInitiation: await this.setInitiationStandard({
             timeLimit: 24,
             unit: 'hours',
-            tracking: await this.setupInitiationTracking()
+            tracking: await this.setupInitiationTracking(),
           }),
           complaintHandling: await this.setComplaintStandard({
             timeLimit: 2,
             unit: 'hours',
-            alertSystem: await this.setupComplaintAlerts()
-          })
+            alertSystem: await this.setupComplaintAlerts(),
+          }),
         },
         professionalStandards: {
           knowledgeAssessment: await this.setupKnowledgeAssessment({
             frequency: 'quarterly',
             criteria: await this.defineAssessmentCriteria(),
-            evaluation: await this.setupEvaluationSystem()
+            evaluation: await this.setupEvaluationSystem(),
           }),
           skillCertification: await this.setupSkillCertification({
             frequency: 'annual',
             requirements: await this.defineCertificationRequirements(),
-            verification: await this.setupVerificationProcess()
+            verification: await this.setupVerificationProcess(),
           }),
           continuingEducation: await this.setupContinuingEducation({
             frequency: 'monthly',
             curriculum: await this.defineTrainingCurriculum(),
-            tracking: await this.setupTrainingTracking()
-          })
+            tracking: await this.setupTrainingTracking(),
+          }),
         },
         serviceProtocols: await this.defineServiceProtocols(),
-        qualityMetrics: await this.setupQualityMetrics()
+        qualityMetrics: await this.setupQualityMetrics(),
       };
     } catch (error) {
       this.logger.error('管理服务标准失败', error);
@@ -60,32 +67,32 @@ export class QualityManagementService {
   async manageServiceProtocols(providerId: string): Promise<ServiceProtocols> {
     try {
       const protocolData = await this.getProtocolData(providerId);
-      
+
       return {
         preService: {
           requirementConfirmation: await this.setupRequirementProcess({
             verification: await this.setupVerificationSteps(),
-            documentation: await this.setupDocumentationSystem()
+            documentation: await this.setupDocumentationSystem(),
           }),
           solutionPlanning: await this.setupSolutionProcess({
             planning: await this.definePlanningSteps(),
-            review: await this.setupReviewProcess()
+            review: await this.setupReviewProcess(),
           }),
           riskAssessment: await this.setupRiskAssessment({
             evaluation: await this.defineRiskEvaluation(),
-            mitigation: await this.defineMitigationStrategies()
-          })
+            mitigation: await this.defineMitigationStrategies(),
+          }),
         },
         duringService: {
           standardProcedures: await this.defineStandardProcedures(),
           realtimeFeedback: await this.setupFeedbackSystem(),
-          qualityMonitoring: await this.setupQualityMonitoring()
+          qualityMonitoring: await this.setupQualityMonitoring(),
         },
         postService: {
           effectivenessEvaluation: await this.setupEffectivenessEvaluation(),
           satisfactionSurvey: await this.setupSatisfactionSurvey(),
-          continuousFollowup: await this.setupFollowupSystem()
-        }
+          continuousFollowup: await this.setupFollowupSystem(),
+        },
       };
     } catch (error) {
       this.logger.error('管理服务流程失败', error);
@@ -97,32 +104,32 @@ export class QualityManagementService {
   async manageMonitoringSystem(providerId: string): Promise<MonitoringSystem> {
     try {
       const monitoringConfig = await this.getMonitoringConfig();
-      
+
       return {
         realtimeMonitoring: {
           qualityDetection: await this.setupAIQualityDetection({
             algorithms: await this.defineDetectionAlgorithms(),
             metrics: await this.defineQualityMetrics(),
-            alerts: await this.setupAlertSystem()
+            alerts: await this.setupAlertSystem(),
           }),
           userFeedback: await this.setupRealtimeFeedback({
             collection: await this.setupFeedbackCollection(),
             analysis: await this.setupFeedbackAnalysis(),
-            response: await this.setupFeedbackResponse()
+            response: await this.setupFeedbackResponse(),
           }),
           abnormalDetection: await this.setupAbnormalDetection({
             patterns: await this.defineAbnormalPatterns(),
             alerts: await this.setupAbnormalAlerts(),
-            response: await this.defineResponseProtocols()
-          })
+            response: await this.defineResponseProtocols(),
+          }),
         },
         periodicAssessment: {
           performanceReview: await this.setupMonthlyReview(),
           qualityAudit: await this.setupQuarterlyAudit(),
-          comprehensiveEvaluation: await this.setupAnnualEvaluation()
+          comprehensiveEvaluation: await this.setupAnnualEvaluation(),
         },
         analyticsReporting: await this.setupAnalyticsReporting(),
-        improvementTracking: await this.setupImprovementTracking()
+        improvementTracking: await this.setupImprovementTracking(),
       };
     } catch (error) {
       this.logger.error('管理监控系统失败', error);
@@ -134,24 +141,24 @@ export class QualityManagementService {
   async manageQualityImprovement(providerId: string): Promise<QualityImprovement> {
     try {
       const improvementData = await this.getImprovementData(providerId);
-      
+
       return {
         improvementInitiatives: {
           serviceOptimization: await this.planServiceOptimization(),
           processEnhancement: await this.planProcessEnhancement(),
-          qualityInnovation: await this.planQualityInnovation()
+          qualityInnovation: await this.planQualityInnovation(),
         },
         performanceTracking: {
           metricsTracking: await this.setupMetricsTracking(),
           progressMonitoring: await this.setupProgressMonitoring(),
-          outcomeEvaluation: await this.setupOutcomeEvaluation()
+          outcomeEvaluation: await this.setupOutcomeEvaluation(),
         },
         feedbackIntegration: await this.setupFeedbackIntegration(),
-        continuousImprovement: await this.setupContinuousImprovement()
+        continuousImprovement: await this.setupContinuousImprovement(),
       };
     } catch (error) {
       this.logger.error('管理质量改进失败', error);
       throw error;
     }
   }
-} 
+}

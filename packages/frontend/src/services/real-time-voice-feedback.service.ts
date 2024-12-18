@@ -1,9 +1,13 @@
 import { DialectRecognitionService } from './dialect-recognition.service';
 
-interface FeedbackConfig {
+interface IFeedbackConfig {
+  /** enableInstantFeedback 的描述 */
   enableInstantFeedback: boolean;
+  /** confidenceThreshold 的描述 */
   confidenceThreshold: number;
+  /** maxSuggestions 的描述 */
   maxSuggestions: number;
+  /** feedbackDelay 的描述 */
   feedbackDelay: number;
 }
 
@@ -11,10 +15,10 @@ export class RealTimeVoiceFeedbackService {
   private recognition: DialectRecognitionService;
   private audioContext: AudioContext;
   private analyzer: AnalyserNode;
-  private config: FeedbackConfig;
+  private config: IFeedbackConfig;
   private feedbackCallback?: (feedback: any) => void;
 
-  constructor(config?: Partial<FeedbackConfig>) {
+  constructor(config?: Partial<IFeedbackConfig>) {
     this.recognition = new DialectRecognitionService();
     this.audioContext = new AudioContext();
     this.analyzer = this.audioContext.createAnalyser();
@@ -23,22 +27,22 @@ export class RealTimeVoiceFeedbackService {
       confidenceThreshold: 0.8,
       maxSuggestions: 3,
       feedbackDelay: 300,
-      ...config
+      ...config,
     };
   }
 
   // 开始实时反馈
   async startFeedback(onFeedback: (feedback: any) => void) {
     this.feedbackCallback = onFeedback;
-    
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const source = this.audioContext.createMediaStreamSource(stream);
       source.connect(this.analyzer);
-      
+
       this.startAnalysis();
     } catch (error) {
-      console.error('启动实时反馈失败:', error);
+      console.error('Error in real-time-voice-feedback.service.ts:', '启动实时反馈失败:', error);
       throw error;
     }
   }
@@ -47,13 +51,13 @@ export class RealTimeVoiceFeedbackService {
   private startAnalysis() {
     const bufferLength = this.analyzer.frequencyBinCount;
     const dataArray = new Uint8Array(bufferLength);
-    
+
     const analyze = () => {
       this.analyzer.getByteFrequencyData(dataArray);
-      
+
       // 检测是否在说话
       const isSpeaking = this.detectSpeech(dataArray);
-      
+
       if (isSpeaking && this.config.enableInstantFeedback) {
         this.provideFeedback();
       }
@@ -76,13 +80,13 @@ export class RealTimeVoiceFeedbackService {
 
     try {
       const result = await this.recognition.getPartialResult();
-      
+
       if (result.confidence >= this.config.confidenceThreshold) {
         const feedback = await this.generateFeedback(result);
         this.feedbackCallback(feedback);
       }
     } catch (error) {
-      console.error('生成反馈失败:', error);
+      console.error('Error in real-time-voice-feedback.service.ts:', '生成反馈失败:', error);
     }
   }
 
@@ -93,14 +97,14 @@ export class RealTimeVoiceFeedbackService {
       confidence: result.confidence,
       suggestions: await this.generateSuggestions(result),
       corrections: await this.generateCorrections(result),
-      timestamp: new Date()
+      timestamp: new Date(),
     };
   }
 
   // 生成建议
   private async generateSuggestions(result: any) {
     const suggestions = [];
-    
+
     // 检查发音清晰度
     if (result.confidence < 0.9) {
       suggestions.push('请说话更清晰一些');
@@ -118,7 +122,7 @@ export class RealTimeVoiceFeedbackService {
   // 生成纠正
   private async generateCorrections(result: any) {
     const corrections = [];
-    
+
     // 检查语法
     if (result.text) {
       const grammarIssues = await this.checkGrammar(result.text);
@@ -149,4 +153,4 @@ export class RealTimeVoiceFeedbackService {
     this.feedbackCallback = undefined;
     this.audioContext.close();
   }
-} 
+}

@@ -1,36 +1,51 @@
+/**
+ * @fileoverview TS 文件 monitoring.types.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // 监控配置
-export interface MonitoringConfig {
-  sampleRate: number;  // 采样率
-  retentionDays: number;  // 数据保留天数
-  alertThresholds: {
-    error: number;     // 错误率阈值
-    latency: number;   // 延迟阈值(ms)
-    memory: number;    // 内存使用阈值(%)
-    cpu: number;       // CPU使用阈值(%)
+export interface IMonitoringConfig {
+  /** sampleRate 的描述 */
+    sampleRate: number;  
+  /** retentionDays 的描述 */
+    retentionDays: number;  
+  /** alertThresholds 的描述 */
+    alertThresholds: {
+    error: number;  
+    latency: number;  ms
+    memory: number;  
+    cpu: number;  CPU
   };
 }
 
 // 链路追踪
-export interface TraceSpan {
-  id: string;
-  parentId?: string;
-  traceId: string;
-  name: string;
-  kind: 'client' | 'server' | 'producer' | 'consumer';
+export interface ITraceSpan {
+  /** id 的描述 */
+    id: string;
+  /** parentId 的描述 */
+    parentId: string;
+  /** traceId 的描述 */
+    traceId: string;
+  /** name 的描述 */
+    name: string;
+  /** kind 的描述 */
+    kind: client  server  producer  consumer;
   timestamp: number;
   duration: number;
-  
-  // 追踪属性
+
+   
   attributes: {
     service: string;
     operation: string;
     component: string;
-    'http.method'?: string;
-    'http.url'?: string;
-    'http.status_code'?: number;
-    'db.system'?: string;
-    'db.statement'?: string;
-    [key: string]: any;
+    httpmethod: string;
+    httpurl: string;
+    httpstatus_code: number;
+    dbsystem: string;
+    dbstatement: string;
+    key: string: any;
   };
 
   // 事件记录
@@ -48,14 +63,16 @@ export interface TraceSpan {
 }
 
 // 性能指标
-export interface PerformanceMetrics {
-  timestamp: Date;
-  
-  // 系统指标
-  system: {
+export interface IPerformanceMetrics {
+  /** timestamp 的描述 */
+    timestamp: Date;
+
+   
+  /** system 的描述 */
+    system: {
     cpu: {
       usage: number;
-      load: number[];
+      load: number;
       processes: number;
     };
     memory: {
@@ -83,7 +100,8 @@ export interface PerformanceMetrics {
   };
 
   // 应用指标
-  application: {
+  /** application 的描述 */
+    application: {
     requests: {
       total: number;
       active: number;
@@ -126,23 +144,25 @@ export interface PerformanceMetrics {
 }
 
 // 告警定义
-export interface Alert {
-  id: string;
-  type: 'error' | 'performance' | 'resource' | 'security';
-  severity: 'critical' | 'high' | 'medium' | 'low';
-  status: 'active' | 'acknowledged' | 'resolved';
+export interface IAlert {
+  /** id 的描述 */
+    id: string;
+  /** type 的描述 */
+    type: error  performance  resource  security;
+  severity: critical  high  medium  low;
+  status: active  acknowledged  resolved;
   createdAt: Date;
   updatedAt: Date;
-  
-  // 告警内容
+
+   
   content: {
     title: string;
     message: string;
     source: string;
-    metric?: string;
-    threshold?: number;
-    value?: number;
-    metadata?: Record<string, any>;
+    metric: string;
+    threshold: number;
+    value: number;
+    metadata: Recordstring, any;
   };
 
   // 影响范围
@@ -173,25 +193,30 @@ export interface Alert {
 }
 
 // 用户体验监控
-export interface UserExperience {
-  sessionId: string;
-  userId?: string;
-  timestamp: Date;
-  
-  // 页面性能
-  pageMetrics: {
+export interface IUserExperience {
+  /** sessionId 的描述 */
+    sessionId: string;
+  /** userId 的描述 */
+    userId: string;
+  /** timestamp 的描述 */
+    timestamp: Date;
+
+   
+  /** pageMetrics 的描述 */
+    pageMetrics: {
     url: string;
     loadTime: number;
     domReady: number;
     firstPaint: number;
     firstContentfulPaint: number;
-    largestContentfulPaint?: number;
-    firstInputDelay?: number;
-    cumulativeLayoutShift?: number;
+    largestContentfulPaint: number;
+    firstInputDelay: number;
+    cumulativeLayoutShift: number;
   };
 
   // 资源性能
-  resources: Array<{
+  /** resources 的描述 */
+    resources: Array<{
     url: string;
     type: 'script' | 'style' | 'image' | 'font' | 'other';
     duration: number;
@@ -200,7 +225,8 @@ export interface UserExperience {
   }>;
 
   // 错误信息
-  errors: Array<{
+  /** errors 的描述 */
+    errors: Array<{
     type: string;
     message: string;
     stack?: string;
@@ -208,7 +234,8 @@ export interface UserExperience {
   }>;
 
   // 用户行为
-  interactions: Array<{
+  /** interactions 的描述 */
+    interactions: Array<{
     type: string;
     target: string;
     timestamp: number;
@@ -217,7 +244,8 @@ export interface UserExperience {
   }>;
 
   // 网络状况
-  network: {
+  /** network 的描述 */
+    network: {
     effectiveType: string;
     downlink: number;
     rtt: number;
@@ -225,7 +253,8 @@ export interface UserExperience {
   };
 
   // 设备信息
-  device: {
+  /** device 的描述 */
+    device: {
     type: string;
     os: string;
     browser: string;
@@ -237,9 +266,11 @@ export interface UserExperience {
 }
 
 // 监控报告
-export interface MonitoringReport {
-  id: string;
-  type: 'daily' | 'weekly' | 'monthly' | 'incident';
+export interface IMonitoringReport {
+  /** id 的描述 */
+    id: string;
+  /** type 的描述 */
+    type: daily  weekly  monthly  incident;
   period: {
     start: Date;
     end: Date;
@@ -248,10 +279,13 @@ export interface MonitoringReport {
   // 系统健康状况
   healthStatus: {
     overall: 'healthy' | 'degraded' | 'critical';
-    components: Record<string, {
-      status: 'healthy' | 'degraded' | 'critical';
-      metrics: Record<string, number>;
-    }>;
+    components: Record<
+      string,
+      {
+        status: 'healthy' | 'degraded' | 'critical';
+        metrics: Record<string, number>;
+      }
+    >;
   };
 
   // 性能分析
@@ -283,7 +317,7 @@ export interface MonitoringReport {
     total: number;
     bySeverity: Record<string, number>;
     byType: Record<string, number>;
-    mttr: number;  // 平均恢复时间
+    mttr: number; // 平均恢复时间
     topIssues: Array<{
       type: string;
       count: number;
@@ -302,10 +336,10 @@ export interface MonitoringReport {
     costs: {
       total: number;
       byService: Record<string, number>;
-      trend: number;  // 相比上期的变化
+      trend: number; // 相比上期的变化
     };
     optimization: {
-      potential: number;  // 潜在节省
+      potential: number; // 潜在节省
       suggestions: Array<{
         type: string;
         impact: number;
@@ -316,7 +350,7 @@ export interface MonitoringReport {
 
   // 用户体验
   userExperience: {
-    satisfaction: number;  // 0-100
+    satisfaction: number; // 0-100
     metrics: {
       avgPageLoad: number;
       avgFirstInput: number;
@@ -328,4 +362,4 @@ export interface MonitoringReport {
       impact: string;
     }>;
   };
-} 
+}

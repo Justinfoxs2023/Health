@@ -1,39 +1,52 @@
 import React from 'react';
-import { View, ScrollView, StyleSheet, Text, TouchableOpacity, Image } from 'react-native';
-import { useQuery } from '@tanstack/react-query';
-import { getExerciseDetail } from '../../api/exercise';
-import { LoadingSpinner, Icon, VideoPlayer } from '../../components';
 
-interface ExerciseDetail {
+import { LoadingSpinner, Icon, VideoPlayer } from '../../components';
+import { View, ScrollView, StyleSheet, Text, TouchableOpacity, Image } from 'react-native';
+import { getExerciseDetail } from '../../api/exercise';
+import { useQuery } from '@tanstack/react-query';
+
+interface IExerciseDetail {
+  /** id 的描述 */
   id: string;
+  /** name 的描述 */
   name: string;
+  /** type 的描述 */
   type: string;
+  /** description 的描述 */
   description: string;
+  /** duration 的描述 */
   duration: number;
+  /** calories 的描述 */
   calories: number;
+  /** sets 的描述 */
   sets?: number;
+  /** reps 的描述 */
   reps?: number;
+  /** videoUrl 的描述 */
   videoUrl?: string;
+  /** steps 的描述 */
   steps: {
     title: string;
     description: string;
     imageUrl?: string;
   }[];
+  /** tips 的描述 */
   tips: string[];
+  /** targetMuscles 的描述 */
   targetMuscles: string[];
+  /** difficulty 的描述 */
   difficulty: 'easy' | 'medium' | 'hard';
 }
 
 export const ExerciseDetailScreen = ({ route, navigation }) => {
   const { id } = route.params;
-  const { data: exercise, isLoading } = useQuery<ExerciseDetail>(
-    ['exerciseDetail', id],
-    () => getExerciseDetail(id)
+  const { data: exercise, isLoading } = useQuery<IExerciseDetail>(['exerciseDetail', id], () =>
+    getExerciseDetail(id),
   );
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      title: exercise?.name || '运动详情'
+      title: exercise?.name || '运动详情',
     });
   }, [navigation, exercise?.name]);
 
@@ -54,12 +67,7 @@ export const ExerciseDetailScreen = ({ route, navigation }) => {
 
   return (
     <ScrollView style={styles.container}>
-      {exercise?.videoUrl && (
-        <VideoPlayer
-          url={exercise.videoUrl}
-          style={styles.video}
-        />
-      )}
+      {exercise?.videoUrl && <VideoPlayer url={exercise.videoUrl} style={styles.video} />}
 
       <View style={styles.header}>
         <View style={styles.basicInfo}>
@@ -74,14 +82,27 @@ export const ExerciseDetailScreen = ({ route, navigation }) => {
           {exercise?.sets && (
             <View style={styles.infoItem}>
               <Icon name="repeat" size={20} color="#666" />
-              <Text style={styles.infoText}>{exercise.sets}组{exercise.reps}次</Text>
+              <Text style={styles.infoText}>
+                {exercise.sets}组{exercise.reps}次
+              </Text>
             </View>
           )}
         </View>
         <View style={styles.tags}>
-          <View style={[styles.tag, { backgroundColor: getDifficultyColor(exercise?.difficulty || '') + '20' }]}>
-            <Text style={[styles.tagText, { color: getDifficultyColor(exercise?.difficulty || '') }]}>
-              {exercise?.difficulty === 'easy' ? '初级' : exercise?.difficulty === 'medium' ? '中级' : '高级'}
+          <View
+            style={[
+              styles.tag,
+              { backgroundColor: getDifficultyColor(exercise?.difficulty || '') + '20' },
+            ]}
+          >
+            <Text
+              style={[styles.tagText, { color: getDifficultyColor(exercise?.difficulty || '') }]}
+            >
+              {exercise?.difficulty === 'easy'
+                ? '初级'
+                : exercise?.difficulty === 'medium'
+                ? '中级'
+                : '高级'}
             </Text>
           </View>
           {exercise?.targetMuscles.map((muscle, index) => (
@@ -107,9 +128,7 @@ export const ExerciseDetailScreen = ({ route, navigation }) => {
               </View>
               <Text style={styles.stepTitle}>{step.title}</Text>
             </View>
-            {step.imageUrl && (
-              <Image source={{ uri: step.imageUrl }} style={styles.stepImage} />
-            )}
+            {step.imageUrl && <Image source={{ uri: step.imageUrl }} style={styles.stepImage} />}
             <Text style={styles.stepDescription}>{step.description}</Text>
           </View>
         ))}
@@ -131,34 +150,34 @@ export const ExerciseDetailScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   video: {
     width: '100%',
-    aspectRatio: 16 / 9
+    aspectRatio: 16 / 9,
   },
   header: {
     backgroundColor: '#fff',
-    padding: 20
+    padding: 20,
   },
   basicInfo: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginBottom: 15
+    marginBottom: 15,
   },
   infoItem: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   infoText: {
     fontSize: 14,
     color: '#666',
-    marginLeft: 5
+    marginLeft: 5,
   },
   tags: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginTop: 10
+    marginTop: 10,
   },
   tag: {
     backgroundColor: '#E8F5E9',
@@ -166,35 +185,35 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 12,
     marginRight: 8,
-    marginBottom: 8
+    marginBottom: 8,
   },
   tagText: {
     fontSize: 12,
-    color: '#2E7D32'
+    color: '#2E7D32',
   },
   section: {
     backgroundColor: '#fff',
     marginTop: 10,
-    padding: 20
+    padding: 20,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 15
+    marginBottom: 15,
   },
   description: {
     fontSize: 16,
     color: '#666',
-    lineHeight: 24
+    lineHeight: 24,
   },
   step: {
-    marginBottom: 20
+    marginBottom: 20,
   },
   stepHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10
+    marginBottom: 10,
   },
   stepNumber: {
     width: 24,
@@ -203,41 +222,41 @@ const styles = StyleSheet.create({
     backgroundColor: '#2E7D32',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 10
+    marginRight: 10,
   },
   stepNumberText: {
     fontSize: 14,
     color: '#fff',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   stepTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333'
+    color: '#333',
   },
   stepImage: {
     width: '100%',
     height: 200,
     borderRadius: 8,
-    marginVertical: 10
+    marginVertical: 10,
   },
   stepDescription: {
     fontSize: 14,
     color: '#666',
-    lineHeight: 22
+    lineHeight: 22,
   },
   tip: {
     flexDirection: 'row',
-    marginBottom: 10
+    marginBottom: 10,
   },
   tipIcon: {
     marginRight: 10,
-    marginTop: 2
+    marginTop: 2,
   },
   tipText: {
     flex: 1,
     fontSize: 14,
     color: '#666',
-    lineHeight: 20
-  }
-}); 
+    lineHeight: 20,
+  },
+});

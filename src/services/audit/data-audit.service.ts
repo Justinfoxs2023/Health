@@ -1,6 +1,6 @@
+import { AuditConfig } from '../../types/audit';
 import { Logger } from '../../utils/logger';
 import { Storage } from '../../utils/storage';
-import { AuditConfig } from '../../types/audit';
 
 export class DataAuditService {
   private logger: Logger;
@@ -16,19 +16,19 @@ export class DataAuditService {
     try {
       // 1. 收集审计数据
       const auditData = await this.collectAuditData(config);
-      
+
       // 2. 分析审计数据
       const analysis = await this.analyzeAuditData(auditData);
-      
+
       // 3. 检测异常
       const anomalies = await this.detectAnomalies(analysis);
-      
+
       // 4. 生成报告
       return this.generateAuditReport({
         data: auditData,
         analysis,
         anomalies,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
     } catch (error) {
       this.logger.error('数据审计失败', error);
@@ -39,18 +39,16 @@ export class DataAuditService {
   // 处理审计问题
   async handleAuditIssues(issues: AuditIssue[]): Promise<HandlingResult> {
     try {
-      const results = await Promise.all(
-        issues.map(issue => this.handleIssue(issue))
-      );
-      
+      const results = await Promise.all(issues.map(issue => this.handleIssue(issue)));
+
       return {
         handledCount: results.filter(r => r.success).length,
         failedCount: results.filter(r => !r.success).length,
-        details: results
+        details: results,
       };
     } catch (error) {
       this.logger.error('处理审计问题失败', error);
       throw error;
     }
   }
-} 
+}

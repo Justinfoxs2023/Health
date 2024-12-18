@@ -20,8 +20,8 @@ export class AIModelManagementService {
           maxTokens: 2048,
           topP: 1,
           frequencyPenalty: 0,
-          presencePenalty: 0
-        }
+          presencePenalty: 0,
+        },
       },
       service: {
         endpoint: process.env.AI_SERVICE_ENDPOINT,
@@ -30,15 +30,15 @@ export class AIModelManagementService {
         retryAttempts: 3,
         rateLimits: {
           requestsPerMinute: 60,
-          tokensPerMinute: 40000
-        }
+          tokensPerMinute: 40000,
+        },
       },
       features: {
         codeReview: {
           enabled: true,
           maxFileSize: 500000, // 500KB
           excludedFiles: ['.env', '*.log', '*.lock'],
-          priorityRules: ['security', 'performance', 'maintainability']
+          priorityRules: ['security', 'performance', 'maintainability'],
         },
         testGeneration: {
           enabled: true,
@@ -47,16 +47,16 @@ export class AIModelManagementService {
             statements: 80,
             branches: 70,
             functions: 80,
-            lines: 80
-          }
+            lines: 80,
+          },
         },
         assistanceConfig: {
           enabled: true,
           responseFormat: 'markdown',
           contextWindow: 4096,
-          maxResponseTime: 15000
-        }
-      }
+          maxResponseTime: 15000,
+        },
+      },
     };
   }
 
@@ -78,4 +78,4 @@ export class AIModelManagementService {
       return false;
     }
   }
-} 
+}

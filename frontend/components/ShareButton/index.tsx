@@ -1,33 +1,33 @@
 import React from 'react';
-import { TouchableOpacity, Share, StyleSheet } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 
-interface Props {
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import { TouchableOpacity, Share, StyleSheet } from 'react-native';
+
+interface IProps {
+  /** title 的描述 */
   title: string;
+  /** url 的描述 */
   url: string;
+  /** size 的描述 */
   size?: 'small' | 'medium' | 'large';
 }
 
-export const ShareButton: React.FC<Props> = ({
-  title,
-  url,
-  size = 'medium'
-}) => {
+export const ShareButton: React.FC<IProps> = ({ title, url, size = 'medium' }) => {
   const handleShare = async () => {
     try {
       await Share.share({
         title,
-        message: url
+        message: url,
       });
     } catch (error) {
-      console.error('Share failed:', error);
+      console.error('Error in index.tsx:', 'Share failed:', error);
     }
   };
 
   const iconSize = {
     small: 16,
     medium: 20,
-    large: 24
+    large: 24,
   }[size];
 
   return (
@@ -39,6 +39,6 @@ export const ShareButton: React.FC<Props> = ({
 
 const styles = StyleSheet.create({
   container: {
-    padding: 8
-  }
-}); 
+    padding: 8,
+  },
+});

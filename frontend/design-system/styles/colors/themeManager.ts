@@ -2,16 +2,18 @@ import { ColorTokens } from './colorTokens';
 
 export type ThemeType = 'vibrant' | 'soft' | 'professional';
 
-export interface ThemeConfig {
+export interface IThemeConfig {
+  /** type 的描述 */
   type: ThemeType;
+  /** isDark 的描述 */
   isDark: boolean;
 }
 
 export class ThemeManager {
   private static instance: ThemeManager;
-  private currentTheme: ThemeConfig = {
+  private currentTheme: IThemeConfig = {
     type: 'vibrant',
-    isDark: false
+    isDark: false,
   };
 
   private constructor() {}
@@ -32,12 +34,12 @@ export class ThemeManager {
       // 调整暗色模式下的颜色
       primary: {
         ...baseColors.primary,
-        main: this.adjustColorBrightness(baseColors.primary.main, darkModeModifier)
+        main: this.adjustColorBrightness(baseColors.primary.main, darkModeModifier),
       },
       secondary: {
         ...baseColors.secondary,
-        main: this.adjustColorBrightness(baseColors.secondary.main, darkModeModifier)
-      }
+        main: this.adjustColorBrightness(baseColors.secondary.main, darkModeModifier),
+      },
     };
   }
 
@@ -46,10 +48,10 @@ export class ThemeManager {
     return hexColor; // 简化版本
   }
 
-  setTheme(config: Partial<ThemeConfig>) {
+  setTheme(config: Partial<IThemeConfig>) {
     this.currentTheme = {
       ...this.currentTheme,
-      ...config
+      ...config,
     };
   }
-} 
+}

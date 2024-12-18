@@ -1,6 +1,7 @@
 import React from 'react';
-import { render, screen, act } from '@testing-library/react';
+
 import { message } from '../index';
+import { render, screen, act } from '@testing-library/react';
 
 describe('Message', () => {
   beforeEach(() => {
@@ -85,4 +86,4 @@ describe('Message', () => {
 
     expect(screen.queryByText('消息2')).not.toBeInTheDocument();
   });
-}); 
+});

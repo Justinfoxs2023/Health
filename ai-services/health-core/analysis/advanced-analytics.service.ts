@@ -1,8 +1,3 @@
-import { Injectable } from '@nestjs/common';
-import { Logger } from '@utils/logger';
-import { CacheManager } from '@utils/cache-manager';
-import { AIModelManager } from '@models/ai-model-manager';
-import { DataProcessor } from '@utils/data-processor';
 import {
   ITimeSeriesData,
   IAnalysisResult,
@@ -16,9 +11,13 @@ import {
   ICorrelationResult,
   IFactorAnalysis,
   IRankedFactors,
-  IAnalysisContext
+  IAnalysisContext,
 } from '@shared/types/health';
-
+import { AIModelManager } from '@models/ai-model-manager';
+import { CacheManager } from '@utils/cache-manager';
+import { DataProcessor } from '@utils/data-processor';
+import { Injectable } from '@nestjs/common';
+import { Logger } from '@utils/logger';
 @Injectable()
 export class AdvancedAnalyticsService {
   private readonly logger = new Logger(AdvancedAnalyticsService.name);
@@ -26,7 +25,7 @@ export class AdvancedAnalyticsService {
   constructor(
     private readonly aiModelManager: AIModelManager,
     private readonly cacheManager: CacheManager,
-    private readonly dataProcessor: DataProcessor
+    private readonly dataProcessor: DataProcessor,
   ) {}
 
   /**
@@ -38,7 +37,7 @@ export class AdvancedAnalyticsService {
   public async analyzeHealthData(
     userId: string,
     data: any,
-    context: IAnalysisContext
+    context: IAnalysisContext,
   ): Promise<IAnalysisResult> {
     try {
       this.logger.info('开始健康数据分析', { userId, context });
@@ -58,7 +57,7 @@ export class AdvancedAnalyticsService {
       const [timeSeriesAnalysis, patternAnalysis, correlationAnalysis] = await Promise.all([
         this.analyzeTimeSeries(processedData.timeSeries),
         this.analyzePatterns(processedData.patterns),
-        this.analyzeCorrelations(processedData.correlations)
+        this.analyzeCorrelations(processedData.correlations),
       ]);
 
       // 整合分析结果
@@ -72,17 +71,13 @@ export class AdvancedAnalyticsService {
           ...context,
           dataRange: {
             start: processedData.timeRange.start,
-            end: processedData.timeRange.end
-          }
-        }
+            end: processedData.timeRange.end,
+          },
+        },
       };
 
       // 缓存分析结果
-      await this.cacheManager.set(
-        cacheKey,
-        result,
-        Number(process.env.ANALYSIS_CACHE_TTL) || 3600
-      );
+      await this.cacheManager.set(cacheKey, result, Number(process.env.ANALYSIS_CACHE_TTL) || 3600);
 
       this.logger.info('健康数据分析完成', { userId });
       return result;
@@ -114,7 +109,7 @@ export class AdvancedAnalyticsService {
         timeSeries: this.cleanAndNormalizeData(timeSeries),
         patterns: this.cleanAndNormalizeData(patterns),
         correlations: this.cleanAndNormalizeData(correlations),
-        timeRange
+        timeRange,
       };
     } catch (error) {
       this.logger.error('数据预处理失败', error);
@@ -135,8 +130,8 @@ export class AdvancedAnalyticsService {
           metric,
           values: values.map((v: any) => ({
             timestamp: v.timestamp,
-            value: v.value
-          }))
+            value: v.value,
+          })),
         });
       }
     });
@@ -156,7 +151,7 @@ export class AdvancedAnalyticsService {
         patterns.push({
           category,
           data: values,
-          features: this.extractFeatures(values)
+          features: this.extractFeatures(values),
         });
       }
     });
@@ -190,7 +185,7 @@ export class AdvancedAnalyticsService {
         mean: this.calculateMean(values),
         std: this.calculateStd(values),
         min: Math.min(...values),
-        max: Math.max(...values)
+        max: Math.max(...values),
       });
     });
 
@@ -204,8 +199,8 @@ export class AdvancedAnalyticsService {
     const correlations: ICorrelationData[] = [];
 
     // 提取可能存在相关性的指标对
-    const metrics = Object.keys(data).filter(key => 
-      Array.isArray(data[key]) && data[key].length > 0 && data[key][0].value !== undefined
+    const metrics = Object.keys(data).filter(
+      key => Array.isArray(data[key]) && data[key].length > 0 && data[key][0].value !== undefined,
     );
 
     // 计算指标对之间的相关性
@@ -213,7 +208,7 @@ export class AdvancedAnalyticsService {
       for (let j = i + 1; j < metrics.length; j++) {
         correlations.push({
           metrics: [metrics[i], metrics[j]],
-          values: this.alignTimeSeriesData(data[metrics[i]], data[metrics[j]])
+          values: this.alignTimeSeriesData(data[metrics[i]], data[metrics[j]]),
         });
       }
     }
@@ -226,7 +221,8 @@ export class AdvancedAnalyticsService {
    */
   private alignTimeSeriesData(series1: any[], series2: any[]): any[] {
     const aligned = [];
-    let i = 0, j = 0;
+    let i = 0,
+      j = 0;
 
     while (i < series1.length && j < series2.length) {
       const time1 = new Date(series1[i].timestamp).getTime();
@@ -236,7 +232,7 @@ export class AdvancedAnalyticsService {
         aligned.push({
           timestamp: series1[i].timestamp,
           value1: series1[i].value,
-          value2: series2[j].value
+          value2: series2[j].value,
         });
         i++;
         j++;
@@ -345,9 +341,8 @@ export class AdvancedAnalyticsService {
         const max = Math.max(...values);
         return data.map(item => ({
           ...item,
-          normalizedValue: typeof item.value === 'number'
-            ? (item.value - min) / (max - min)
-            : item.value
+          normalizedValue:
+            typeof item.value === 'number' ? (item.value - min) / (max - min) : item.value,
         }));
       }
     }
@@ -369,15 +364,15 @@ export class AdvancedAnalyticsService {
           direction: trend.direction,
           strength: trend.strength,
           period: trend.period,
-          confidence: trend.confidence
+          confidence: trend.confidence,
         })),
         seasonality: modelResult.seasonality.map((season: any) => ({
           metric: season.metric,
           pattern: season.pattern,
           period: season.period,
-          amplitude: season.amplitude
+          amplitude: season.amplitude,
         })),
-        forecasts: this.generateForecasts(data, modelResult.models)
+        forecasts: this.generateForecasts(data, modelResult.models),
       };
     } catch (error) {
       this.logger.error('时间序列分析失败', error);
@@ -392,23 +387,23 @@ export class AdvancedAnalyticsService {
     return data.map(series => {
       const model = models[series.metric];
       const lastTimestamp = new Date(series.values[series.values.length - 1].timestamp);
-      
+
       // 生成未来7天的预测
       const forecasts = [];
       for (let i = 1; i <= 7; i++) {
         const forecastDate = new Date(lastTimestamp);
         forecastDate.setDate(forecastDate.getDate() + i);
-        
+
         forecasts.push({
           timestamp: forecastDate.toISOString(),
           value: model.predict(series.values, i),
-          confidence: model.confidence
+          confidence: model.confidence,
         });
       }
 
       return {
         metric: series.metric,
-        values: forecasts
+        values: forecasts,
       };
     });
   }
@@ -428,8 +423,8 @@ export class AdvancedAnalyticsService {
           type: pattern.type,
           description: pattern.description,
           significance: pattern.significance,
-          support: pattern.support
-        }))
+          support: pattern.support,
+        })),
       };
     } catch (error) {
       this.logger.error('模式分析失败', error);
@@ -440,44 +435,38 @@ export class AdvancedAnalyticsService {
   /**
    * 分析聚类
    */
-  private analyzeClusters(
-    data: IPatternData[],
-    clusterResults: any
-  ): IClusterAnalysis[] {
+  private analyzeClusters(data: IPatternData[], clusterResults: any): IClusterAnalysis[] {
     return data.map(series => ({
       category: series.category,
       clusters: clusterResults[series.category].map((cluster: any) => ({
         centroid: cluster.centroid,
         size: cluster.size,
         variance: cluster.variance,
-        members: cluster.members
+        members: cluster.members,
       })),
       quality: {
         silhouetteScore: this.calculateSilhouetteScore(clusterResults[series.category]),
-        daviesBouldinIndex: this.calculateDaviesBouldinIndex(clusterResults[series.category])
-      }
+        daviesBouldinIndex: this.calculateDaviesBouldinIndex(clusterResults[series.category]),
+      },
     }));
   }
 
   /**
    * 检测异常
    */
-  private detectAnomalies(
-    data: IPatternData[],
-    anomalyResults: any
-  ): IAnomalyDetection[] {
+  private detectAnomalies(data: IPatternData[], anomalyResults: any): IAnomalyDetection[] {
     return data.map(series => ({
       category: series.category,
       anomalies: anomalyResults[series.category].map((anomaly: any) => ({
         timestamp: anomaly.timestamp,
         value: anomaly.value,
         score: anomaly.score,
-        type: anomaly.type
+        type: anomaly.type,
       })),
       statistics: {
         totalAnomalies: anomalyResults[series.category].length,
-        anomalyRate: anomalyResults[series.category].length / series.data.length
-      }
+        anomalyRate: anomalyResults[series.category].length / series.data.length,
+      },
     }));
   }
 
@@ -494,10 +483,10 @@ export class AdvancedAnalyticsService {
           metrics: corr.metrics,
           coefficient: corr.coefficient,
           pValue: corr.pValue,
-          relationship: corr.relationship
+          relationship: corr.relationship,
         })),
         factors: this.analyzeFactors(data, modelResult.factors),
-        rankings: this.rankFactors(modelResult.factors)
+        rankings: this.rankFactors(modelResult.factors),
       };
     } catch (error) {
       this.logger.error('相关性分析失败', error);
@@ -508,22 +497,19 @@ export class AdvancedAnalyticsService {
   /**
    * 分析因素
    */
-  private analyzeFactors(
-    data: ICorrelationData[],
-    factorResults: any
-  ): IFactorAnalysis[] {
+  private analyzeFactors(data: ICorrelationData[], factorResults: any): IFactorAnalysis[] {
     return factorResults.map((factor: any) => ({
       name: factor.name,
       importance: factor.importance,
       contributions: factor.contributions.map((contrib: any) => ({
         metric: contrib.metric,
         weight: contrib.weight,
-        direction: contrib.direction
+        direction: contrib.direction,
       })),
       reliability: {
         cronbachAlpha: this.calculateCronbachAlpha(factor.contributions),
-        compositeReliability: this.calculateCompositeReliability(factor.contributions)
-      }
+        compositeReliability: this.calculateCompositeReliability(factor.contributions),
+      },
     }));
   }
 
@@ -537,12 +523,12 @@ export class AdvancedAnalyticsService {
       primary: ranked.slice(0, 3).map(factor => ({
         name: factor.name,
         importance: factor.importance,
-        recommendations: this.generateFactorRecommendations(factor)
+        recommendations: this.generateFactorRecommendations(factor),
       })),
       secondary: ranked.slice(3).map(factor => ({
         name: factor.name,
-        importance: factor.importance
-      }))
+        importance: factor.importance,
+      })),
     };
   }
 
@@ -621,4 +607,4 @@ export class AdvancedAnalyticsService {
     // 实际实现应该使用完整的组合信度计算算法
     return Math.random(); // 临时返回随机值
   }
-} 
+}

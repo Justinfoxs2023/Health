@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 reward.service.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export class RewardService {
   private readonly pointsRepo: PointsRepository;
   private readonly achievementRepo: AchievementRepository;
@@ -8,13 +15,13 @@ export class RewardService {
     try {
       // 获取积分规则
       const pointRule = this.getPointRule(action);
-      
+
       // 更新积分
       const update = await this.pointsRepo.updatePoints(userId, pointRule.points);
-      
+
       // 检查成就
       await this.checkAchievements(userId, update.totalPoints);
-      
+
       // 发送积分通知
       await this.notifyPointsUpdate(userId, pointRule);
 
@@ -28,7 +35,7 @@ export class RewardService {
   // 检查成就
   private async checkAchievements(userId: string, points: number): Promise<void> {
     const achievements = await this.achievementRepo.findUnlockable(points);
-    
+
     for (const achievement of achievements) {
       await this.unlockAchievement(userId, achievement.id);
     }
@@ -39,4 +46,4 @@ export class RewardService {
     await this.achievementRepo.unlock(userId, achievementId);
     await this.notifyAchievementUnlocked(userId, achievementId);
   }
-} 
+}

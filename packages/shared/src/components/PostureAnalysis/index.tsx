@@ -1,26 +1,23 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Card } from '../Card';
-import { Loading } from '../Loading';
-import {
-  PostureAnalysis,
-  PostureData,
-  KeyPointType,
-  postureService
-} from '../../services/posture';
+
 import {
   CameraIcon,
   RefreshIcon,
   VideoCameraIcon,
   CheckCircleIcon,
-  ExclamationCircleIcon
+  ExclamationCircleIcon,
 } from '@heroicons/react/outline';
+import { Card } from '../Card';
+import { IPostureAnalysis, IPostureData, KeyPointType, postureService } from '../../services/posture';
+import { Loading } from '../Loading';
+import { useTranslation } from 'react-i18next';
 
-interface Props {
+interf
+ace Props {
   /** 运动类型 */
   exerciseType: string;
   /** 分析结果回调 */
-  onAnalysis?: (analysis: PostureAnalysis) => void;
+  onAnalysis?: (analysis: IPostureAnalysis) => void;
   /** 错误回调 */
   onError?: (error: Error) => void;
 }
@@ -29,13 +26,13 @@ interface Props {
 export const PostureAnalysisComponent: React.FC<Props> = ({
   exerciseType,
   onAnalysis,
-  onError
+  onError,
 }) => {
   const { t } = useTranslation();
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isRecording, setIsRecording] = useState(false);
-  const [analysis, setAnalysis] = useState<PostureAnalysis>();
+  const [analysis, setAnalysis] = useState<IPostureAnalysis>();
   const [error, setError] = useState<string>();
   const [stream, setStream] = useState<MediaStream>();
 
@@ -43,7 +40,7 @@ export const PostureAnalysisComponent: React.FC<Props> = ({
   const initCamera = async () => {
     try {
       const mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'user' }
+        video: { facingMode: 'user' },
       });
       setStream(mediaStream);
       if (videoRef.current) {
@@ -103,13 +100,7 @@ export const PostureAnalysisComponent: React.FC<Props> = ({
     if (!context) return;
 
     // 绘制视频帧
-    context.drawImage(
-      videoRef.current,
-      0,
-      0,
-      canvasRef.current.width,
-      canvasRef.current.height
-    );
+    context.drawImage(videoRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height);
 
     try {
       // 获取图像数据
@@ -117,7 +108,7 @@ export const PostureAnalysisComponent: React.FC<Props> = ({
         0,
         0,
         canvasRef.current.width,
-        canvasRef.current.height
+        canvasRef.current.height,
       );
 
       // 分析姿态
@@ -142,10 +133,7 @@ export const PostureAnalysisComponent: React.FC<Props> = ({
   };
 
   /** 绘制关键点 */
-  const drawKeyPoints = (
-    context: CanvasRenderingContext2D,
-    data: PostureData
-  ) => {
+  const drawKeyPoints = (context: CanvasRenderingContext2D, data: IPostureData) => {
     context.fillStyle = '#00ff00';
     data.keyPoints.forEach(point => {
       if (point.confidence > 0.5) {
@@ -157,10 +145,7 @@ export const PostureAnalysisComponent: React.FC<Props> = ({
   };
 
   /** ��制骨架 */
-  const drawSkeleton = (
-    context: CanvasRenderingContext2D,
-    data: PostureData
-  ) => {
+  const drawSkeleton = (context: CanvasRenderingContext2D, data: IPostureData) => {
     const pairs = [
       [KeyPointType.LEFT_SHOULDER, KeyPointType.RIGHT_SHOULDER],
       [KeyPointType.LEFT_SHOULDER, KeyPointType.LEFT_ELBOW],
@@ -173,7 +158,7 @@ export const PostureAnalysisComponent: React.FC<Props> = ({
       [KeyPointType.LEFT_HIP, KeyPointType.LEFT_KNEE],
       [KeyPointType.RIGHT_HIP, KeyPointType.RIGHT_KNEE],
       [KeyPointType.LEFT_KNEE, KeyPointType.LEFT_ANKLE],
-      [KeyPointType.RIGHT_KNEE, KeyPointType.RIGHT_ANKLE]
+      [KeyPointType.RIGHT_KNEE, KeyPointType.RIGHT_ANKLE],
     ];
 
     context.strokeStyle = '#00ff00';
@@ -183,12 +168,7 @@ export const PostureAnalysisComponent: React.FC<Props> = ({
       const startPoint = data.keyPoints.find(p => p.type === start);
       const endPoint = data.keyPoints.find(p => p.type === end);
 
-      if (
-        startPoint &&
-        endPoint &&
-        startPoint.confidence > 0.5 &&
-        endPoint.confidence > 0.5
-      ) {
+      if (startPoint && endPoint && startPoint.confidence > 0.5 && endPoint.confidence > 0.5) {
         context.beginPath();
         context.moveTo(startPoint.x, startPoint.y);
         context.lineTo(endPoint.x, endPoint.y);
@@ -207,11 +187,7 @@ export const PostureAnalysisComponent: React.FC<Props> = ({
   return (
     <Card className="p-6">
       {/* 错误提示 */}
-      {error && (
-        <div className="mb-4 p-4 bg-red-50 text-red-500 rounded-lg">
-          {error}
-        </div>
-      )}
+      {error && <div className="mb-4 p-4 bg-red-50 text-red-500 rounded-lg">{error}</div>}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* 视频预览 */}
@@ -255,12 +231,8 @@ export const PostureAnalysisComponent: React.FC<Props> = ({
 
           {/* 运动类型 */}
           <div className="mt-4 text-center">
-            <div className="text-lg font-medium">
-              {t(`exercise.types.${exerciseType}`)}
-            </div>
-            <div className="text-sm text-gray-500">
-              {t('posture.followInstructions')}
-            </div>
+            <div className="text-lg font-medium">{t(`exercise.types.${exerciseType}`)}</div>
+            <div className="text-sm text-gray-500">{t('posture.followInstructions')}</div>
           </div>
         </div>
 
@@ -273,24 +245,17 @@ export const PostureAnalysisComponent: React.FC<Props> = ({
                 <span className={getScoreColor(analysis.evaluation.score)}>
                   {analysis.evaluation.score}
                 </span>
-                <span className="text-sm font-normal text-gray-500 ml-2">
-                  {t('posture.score')}
-                </span>
+                <span className="text-sm font-normal text-gray-500 ml-2">{t('posture.score')}</span>
               </div>
             </div>
 
             {/* 问题列表 */}
             {analysis.evaluation.issues.length > 0 && (
               <div className="mb-6">
-                <h4 className="text-sm font-medium text-gray-500 mb-2">
-                  {t('posture.issues')}
-                </h4>
+                <h4 className="text-sm font-medium text-gray-500 mb-2">{t('posture.issues')}</h4>
                 <div className="space-y-2">
                   {analysis.evaluation.issues.map((issue, index) => (
-                    <div
-                      key={index}
-                      className="flex items-start p-2 bg-red-50 rounded"
-                    >
+                    <div key={index} className="flex items-start p-2 bg-red-50 rounded">
                       <ExclamationCircleIcon className="w-5 h-5 text-red-500 mr-2 mt-0.5" />
                       <div className="text-red-700">{issue}</div>
                     </div>
@@ -301,15 +266,10 @@ export const PostureAnalysisComponent: React.FC<Props> = ({
 
             {/* 建议列表 */}
             <div className="mb-6">
-              <h4 className="text-sm font-medium text-gray-500 mb-2">
-                {t('posture.suggestions')}
-              </h4>
+              <h4 className="text-sm font-medium text-gray-500 mb-2">{t('posture.suggestions')}</h4>
               <div className="space-y-2">
                 {analysis.evaluation.suggestions.map((suggestion, index) => (
-                  <div
-                    key={index}
-                    className="flex items-start p-2 bg-green-50 rounded"
-                  >
+                  <div key={index} className="flex items-start p-2 bg-green-50 rounded">
                     <CheckCircleIcon className="w-5 h-5 text-green-500 mr-2 mt-0.5" />
                     <div className="text-green-700">{suggestion}</div>
                   </div>
@@ -319,15 +279,10 @@ export const PostureAnalysisComponent: React.FC<Props> = ({
 
             {/* 关键点偏差 */}
             <div>
-              <h4 className="text-sm font-medium text-gray-500 mb-2">
-                {t('posture.deviations')}
-              </h4>
+              <h4 className="text-sm font-medium text-gray-500 mb-2">{t('posture.deviations')}</h4>
               <div className="space-y-2">
                 {analysis.deviations.map((deviation, index) => (
-                  <div
-                    key={index}
-                    className="p-2 border border-gray-200 rounded"
-                  >
+                  <div key={index} className="p-2 border border-gray-200 rounded">
                     <div className="flex items-center justify-between mb-1">
                       <div className="font-medium">
                         {t(`posture.keyPoints.${deviation.keyPoint}`)}
@@ -336,9 +291,7 @@ export const PostureAnalysisComponent: React.FC<Props> = ({
                         {t('posture.deviation')}: {(deviation.deviation * 100).toFixed(1)}%
                       </div>
                     </div>
-                    <div className="text-sm text-gray-600">
-                      {deviation.suggestion}
-                    </div>
+                    <div className="text-sm text-gray-600">{deviation.suggestion}</div>
                   </div>
                 ))}
               </div>
@@ -350,4 +303,4 @@ export const PostureAnalysisComponent: React.FC<Props> = ({
   );
 };
 
-export default PostureAnalysisComponent; 
+export default PostureAnalysisComponent;

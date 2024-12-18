@@ -1,62 +1,95 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
-import { Card, Text, Button, Chip, useTheme } from 'react-native-paper';
 
-interface Exercise {
+import { Card, Text, Button, Chip, useTheme } from 'react-native-paper';
+import { View, StyleSheet, ScrollView } from 'react-native';
+
+interface IExercise {
+  /** id 的描述 */
   id: string;
+  /** name 的描述 */
   name: string;
+  /** type 的描述 */
   type: 'strength' | 'cardio' | 'flexibility';
+  /** difficulty 的描述 */
   difficulty: 'beginner' | 'intermediate' | 'advanced';
+  /** targetMuscles 的描述 */
   targetMuscles: string[];
+  /** equipment 的描述 */
   equipment: string[];
+  /** defaultSets 的描述 */
   defaultSets: number;
+  /** defaultReps 的描述 */
   defaultReps: number;
+  /** duration 的描述 */
   duration?: number; // 单位：分钟
 }
 
-interface WorkoutPlanGeneratorProps {
+interface IWorkoutPlanGeneratorProps {
+  /** userPreferences 的描述 */
   userPreferences: {
     fitnessLevel: 'beginner' | 'intermediate' | 'advanced';
     goals: string[];
     timeAvailable: number; // 单位：分钟
     equipment: string[];
   };
-  onGeneratePlan: (plan: WorkoutPlan) => void;
+  /** onGeneratePlan 的描述 */
+  onGeneratePlan: (plan: IWorkoutPlan) => void;
 }
 
-interface WorkoutPlan {
+interface IWorkoutPlan {
+  /** id 的描述 */
   id: string;
+  /** name 的描述 */
   name: string;
-  exercises: Exercise[];
+  /** exercises 的描述 */
+  exercises: IExercise[];
+  /** duration 的描述 */
   duration: number;
+  /** difficulty 的描述 */
   difficulty: string;
+  /** targetAreas 的描述 */
   targetAreas: string[];
 }
 
-export const WorkoutPlanGenerator = ({ userPreferences, onGeneratePlan }: WorkoutPlanGeneratorProps) => {
+export const WorkoutPlanGenerator = ({
+  userPreferences,
+  onGeneratePlan,
+}: IWorkoutPlanGeneratorProps) => {
   const theme = useTheme();
   const [selectedGoals, setSelectedGoals] = useState<string[]>(userPreferences.goals);
   const [selectedEquipment, setSelectedEquipment] = useState<string[]>(userPreferences.equipment);
 
   const availableGoals = [
-    '增肌', '减脂', '提高耐力', '改善柔韧性', '增强力量',
-    '改善姿势', '康复训练', '提高运动表现'
+    '增肌',
+    '减脂',
+    '提高耐力',
+    '改善柔韧性',
+    '增强力量',
+    '改善姿势',
+    '康复训练',
+    '提高运动表现',
   ];
 
   const availableEquipment = [
-    '哑铃', '弹力带', '瑜伽垫', '跳绳', '健身球',
-    '拉力器', '壶铃', '无器械'
+    '哑铃',
+    '弹力带',
+    '瑜伽垫',
+    '跳绳',
+    '健身球',
+    '拉力器',
+    '壶铃',
+    '无器械',
   ];
 
   const handleGeneratePlan = () => {
     // 这里实现根据用户偏好生成训练计划的逻辑
-    const plan: WorkoutPlan = {
+    const plan: IWorkoutPlan = {
       id: Date.now().toString(),
       name: '个性化训练计划',
       exercises: [], // 根据用户偏好选择合适的运动
       duration: userPreferences.timeAvailable,
       difficulty: userPreferences.fitnessLevel,
-      targetAreas: selectedGoals
+      targetAreas: selectedGoals,
     };
     onGeneratePlan(plan);
   };
@@ -111,11 +144,7 @@ export const WorkoutPlanGenerator = ({ userPreferences, onGeneratePlan }: Workou
         </Card.Content>
       </Card>
 
-      <Button
-        mode="contained"
-        onPress={handleGeneratePlan}
-        style={styles.generateButton}
-      >
+      <Button mode="contained" onPress={handleGeneratePlan} style={styles.generateButton}>
         生成训练计划
       </Button>
     </ScrollView>
@@ -146,4 +175,4 @@ const styles = StyleSheet.create({
   generateButton: {
     marginTop: 8,
   },
-}); 
+});

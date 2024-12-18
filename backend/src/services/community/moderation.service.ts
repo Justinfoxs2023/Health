@@ -1,11 +1,12 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { ModerationRule } from '@/schemas/community/moderation.schema';
-import { ModerationLog } from '@/schemas/community/moderation.schema';
-import { Post } from '@/schemas/community/post.schema';
-import { Comment } from '@/schemas/community/comment.schema';
 import { ConfigService } from '@nestjs/config';
+import { InjectModel } from '@nestjs/mongoose';
+import { Injectable } from '@nestjs/common';
+import { Model } from 'mongoose';
+
+import { Comment } from '@/schemas/community/comment.schema';
+import { ModerationLog } from '@/schemas/community/moderation.schema';
+import { ModerationRule } from '@/schemas/community/moderation.schema';
+import { Post } from '@/schemas/community/post.schema';
 import { RedisService } from '@/services/redis/redis.service';
 
 @Injectable()
@@ -20,21 +21,17 @@ export class ModerationService {
     @InjectModel(Comment.name)
     private commentModel: Model<Comment>,
     private configService: ConfigService,
-    private redisService: RedisService
+    private redisService: RedisService,
   ) {}
 
-  async moderateContent(
-    content: string,
-    type: 'post' | 'comment',
-    targetId: string
-  ) {
+  async moderateContent(content: string, type: 'post' | 'comment', targetId: string) {
     // 获取活跃的审核规则
     const rules = await this.moderationRuleModel.find({ is_active: true });
-    
+
     // 应用每个规则进行检查
     for (const rule of rules) {
       const isViolation = await this.checkRule(content, rule);
-      
+
       if (isViolation) {
         // 创建审核日志
         await this.createModerationLog({
@@ -44,7 +41,7 @@ export class ModerationService {
           trigger_type: 'auto',
           status: rule.action === 'block' ? 'blocked' : 'pending',
           reason: `Violated rule: ${rule.name}`,
-          metadata: { content }
+          metadata: { content },
         });
 
         // 如果规则要求阻止内容
@@ -60,7 +57,7 @@ export class ModerationService {
         return {
           passed: false,
           action: rule.action,
-          rule: rule.name
+          rule: rule.name,
         };
       }
     }
@@ -91,7 +88,7 @@ export class ModerationService {
       const regex = new RegExp(pattern, 'i');
       return regex.test(content);
     } catch (error) {
-      console.error('Invalid regex pattern:', error);
+      console.error('Error in moderation.service.ts:', 'Invalid regex pattern:', error);
       return false;
     }
   }
@@ -107,11 +104,7 @@ export class ModerationService {
     await model.findByIdAndUpdate(targetId, { status: 'blocked' });
   }
 
-  private async notifyModerators(
-    type: 'post' | 'comment',
-    targetId: string,
-    rule: ModerationRule
-  ) {
+  private async notifyModerators(type: 'post' | 'comment', targetId: string, rule: ModerationRule) {
     // 发送通知给管理员
     // TODO: 实现通知逻辑
   }
@@ -134,7 +127,7 @@ export class ModerationService {
       items,
       total,
       page,
-      pageSize
+      pageSize,
     };
   }
 
@@ -142,7 +135,7 @@ export class ModerationService {
     logId: string,
     moderatorId: string,
     decision: 'approved' | 'rejected',
-    reason?: string
+    reason?: string,
   ) {
     const log = await this.moderationLogModel.findById(logId);
     if (!log) {
@@ -159,7 +152,7 @@ export class ModerationService {
     // 更新内容状态
     const model = log.target_type === 'post' ? this.postModel : this.commentModel;
     await model.findByIdAndUpdate(log.target_id, {
-      status: decision === 'approved' ? 'active' : 'blocked'
+      status: decision === 'approved' ? 'active' : 'blocked',
     });
 
     return log;
@@ -177,7 +170,7 @@ export class ModerationService {
       items: rules,
       total,
       page,
-      pageSize
+      pageSize,
     };
   }
 
@@ -192,4 +185,4 @@ export class ModerationService {
   async deleteModerationRule(ruleId: string) {
     return this.moderationRuleModel.findByIdAndDelete(ruleId);
   }
-} 
+}

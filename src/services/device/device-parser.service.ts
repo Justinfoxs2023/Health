@@ -1,6 +1,6 @@
-import { Logger } from '../../utils/logger';
-import { Device, DeviceType } from '../../types/device';
 import { HealthData } from '../../types/health';
+import { IDevice, DeviceType } from '../../types/device';
+import { Logger } from '../../utils/logger';
 
 export class DeviceParserService {
   private logger: Logger;
@@ -12,7 +12,7 @@ export class DeviceParserService {
   }
 
   // 解析设备数据
-  async parseDeviceData(device: Device, rawData: any): Promise<HealthData[]> {
+  async parseDeviceData(device: IDevice, rawData: any): Promise<HealthData[]> {
     try {
       const parser = this.parsers.get(device.type);
       if (!parser) {
@@ -21,13 +21,13 @@ export class DeviceParserService {
 
       // 预处理数据
       const preprocessed = await this.preprocessData(rawData, device);
-      
+
       // 解析数据
       const parsed = await parser.parse(preprocessed);
-      
+
       // 验证数据
       await this.validateParsedData(parsed, device);
-      
+
       return parsed;
     } catch (error) {
       this.logger.error('设备数据解析失败', error);
@@ -50,7 +50,7 @@ export class DeviceParserService {
       ['heartRateMonitor', new HeartRateParser()],
       ['sleepMonitor', new SleepMonitorParser()],
       ['ecgMonitor', new ECGMonitorParser()],
-      ['thermometer', new ThermometerParser()]
+      ['thermometer', new ThermometerParser()],
     ]);
   }
-} 
+}

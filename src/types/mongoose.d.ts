@@ -1,14 +1,21 @@
+/**
+ * @fileoverview TS 文件 mongoose.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 declare module 'mongoose' {
   import { Connection, ConnectOptions } from 'mongodb';
-  
+
   export interface Document {
     _id: any;
-    id?: string;
-    save(): Promise<this>;
+    id: string;
+    save: Promisethis;
   }
 
   export interface Model<T extends Document> {
-    new(doc?: Partial<T>): T;
+    new (doc?: Partial<T>): T;
     create(doc: Partial<T>): Promise<T>;
     findById(id: string): Promise<T | null>;
     findOne(conditions: any): Promise<T | null>;
@@ -20,13 +27,10 @@ declare module 'mongoose' {
   export function model<T extends Document>(
     name: string,
     schema: Schema,
-    collection?: string
+    collection?: string,
   ): Model<T>;
 
-  export function connect(
-    uri: string,
-    options?: ConnectOptions
-  ): Promise<typeof mongoose>;
+  export function connect(uri: string, options?: ConnectOptions): Promise<typeof mongoose>;
 
   export class Schema {
     constructor(definition: any, options?: any);
@@ -35,7 +39,7 @@ declare module 'mongoose' {
 
   export const Types: {
     ObjectId: {
-      new(id?: string | number): any;
+      new (id?: string | number): any;
     };
   };
-} 
+}

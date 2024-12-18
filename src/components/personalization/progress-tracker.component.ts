@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { IExercisePlan, IDietPlan } from '../../services/personalization/types';
+import { ITheme } from '../../design-system/types';
 import { PersonalizationService } from '../../services/personalization/personalization.service';
-import { ExercisePlan, DietPlan } from '../../services/personalization/types';
-import { Theme } from '../../design-system/types';
 
 @Component({
   selector: 'app-progress-tracker',
@@ -9,31 +9,32 @@ import { Theme } from '../../design-system/types';
     <div class="progress-tracker" [class]="theme">
       <!-- 总体进度 -->
       <section class="overall-progress">
-        <h2>计划完成进度</h2>
+        <h2></h2>
         <div class="progress-cards">
           <div class="progress-card exercise">
             <div class="progress-header">
-              <span class="card-title">运动计划</span>
-              <span class="progress-value">{{ exercisePlan?.progress || 0 }}%</span>
+              <span class="cardtitle"></span>
+              <span class="progressvalue">{{ exercisePlanprogress  0 }}</span>
             </div>
             <div class="progress-bar">
-              <div class="progress-fill" 
-                   [style.width.%]="exercisePlan?.progress || 0"
-                   [class]="getProgressClass(exercisePlan?.progress)">
-              </div>
+              <div
+                class="progressfill"
+                stylewidth="exercisePlanprogress  0"
+                class="getProgressClassexercisePlanprogress"
+              ></div>
             </div>
             <div class="progress-stats">
               <div class="stat">
-                <span class="label">本周训练</span>
+                <span class="label"></span>
                 <span class="value">
-                  {{ exercisePlan?.tracking.actualProgress.completedSessions }}/
-                  {{ exercisePlan?.tracking.weeklyTarget.sessions }}
+                  {{ exercisePlantrackingactualProgresscompletedSessions }}/
+                  {{ exercisePlantrackingweeklyTargetsessions }}
                 </span>
               </div>
               <div class="stat">
-                <span class="label">消耗热量</span>
+                <span class="label"></span>
                 <span class="value">
-                  {{ exercisePlan?.tracking.actualProgress.caloriesBurned }}千卡
+                  {{ exercisePlantrackingactualProgresscaloriesBurned }}
                 </span>
               </div>
             </div>
@@ -41,26 +42,27 @@ import { Theme } from '../../design-system/types';
 
           <div class="progress-card diet">
             <div class="progress-header">
-              <span class="card-title">饮食计划</span>
-              <span class="progress-value">{{ dietPlan?.progress || 0 }}%</span>
+              <span class="cardtitle"></span>
+              <span class="progressvalue">{{ dietPlanprogress  0 }}</span>
             </div>
             <div class="progress-bar">
-              <div class="progress-fill" 
-                   [style.width.%]="dietPlan?.progress || 0"
-                   [class]="getProgressClass(dietPlan?.progress)">
-              </div>
+              <div
+                class="progressfill"
+                stylewidth="dietPlanprogress  0"
+                class="getProgressClassdietPlanprogress"
+              ></div>
             </div>
             <div class="progress-stats">
               <div class="stat">
-                <span class="label">今日摄入</span>
+                <span class="label"></span>
                 <span class="value">
-                  {{ getCurrentCalories() }}/{{ dietPlan?.nutritionTargets.calories }}千卡
+                  {{ getCurrentCalories }}/{{ dietPlannutritionTargetscalories }}
                 </span>
               </div>
               <div class="stat">
-                <span class="label">水分摄入</span>
+                <span class="label"></span>
                 <span class="value">
-                  {{ getCurrentHydration() }}/{{ dietPlan?.hydration.dailyTarget }}ml
+                  {{ getCurrentHydration }}/{{ dietPlanhydrationdailyTarget }}ml
                 </span>
               </div>
             </div>
@@ -70,23 +72,19 @@ import { Theme } from '../../design-system/types';
 
       <!-- 目标完成情况 -->
       <section class="goals-progress">
-        <h3>目标达成情况</h3>
+        <h3></h3>
         <div class="goals-grid">
-          <div *ngFor="let goal of getAllGoals()" 
-               class="goal-card"
-               [class]="goal.priority">
+          <div *ngFor="let goal of getAllGoals()" class="goal-card" [class]="goal.priority">
             <div class="goal-info">
-              <span class="goal-type">{{ goal.type }}</span>
-              <span class="goal-priority">{{ getPriorityText(goal.priority) }}</span>
+              <span class="goaltype">{{ goaltype }}</span>
+              <span class="goalpriority">{{ getPriorityTextgoalpriority }}</span>
             </div>
             <div class="goal-progress">
-              <div class="current-value">{{ goal.currentValue }}{{ goal.unit }}</div>
+              <div class="currentvalue">{{ goalcurrentValue }}{{ goalunit }}</div>
               <div class="progress-bar">
-                <div class="progress-fill" 
-                     [style.width.%]="calculateGoalProgress(goal)">
-                </div>
+                <div class="progressfill" stylewidth="calculateGoalProgressgoal"></div>
               </div>
-              <div class="target-value">目标: {{ goal.target }}{{ goal.unit }}</div>
+              <div class="targetvalue">{{ goaltarget }}{{ goalunit }}</div>
             </div>
           </div>
         </div>
@@ -94,18 +92,16 @@ import { Theme } from '../../design-system/types';
 
       <!-- 调整历史 -->
       <section class="adjustments-history">
-        <h3>计划调整历史</h3>
+        <h3></h3>
         <div class="history-timeline">
-          <div *ngFor="let adjustment of getRecentAdjustments()" 
-               class="adjustment-item">
-            <div class="adjustment-date">
-              {{ formatDate(adjustment.date) }}
+          <div *ngFor="let adjustment of getRecentAdjustments()" class="adjustment-item">
+            <div class="adjustmentdate">
+              {{ formatDateadjustmentdate }}
             </div>
             <div class="adjustment-content">
-              <div class="reason">{{ adjustment.reason }}</div>
+              <div class="reason">{{ adjustmentreason }}</div>
               <div class="changes">
-                <div *ngFor="let change of getChangeDetails(adjustment.changes)" 
-                     class="change-item">
+                <div ngFor="let change of getChangeDetailsadjustmentchanges" class="changeitem">
                   {{ change }}
                 </div>
               </div>
@@ -115,18 +111,16 @@ import { Theme } from '../../design-system/types';
       </section>
     </div>
   `,
-  styleUrls: ['./progress-tracker.component.scss']
+  styleUrls: ['./progress-tracker.component.scss'],
 })
 export class ProgressTrackerComponent implements OnInit {
-  exercisePlan: ExercisePlan;
-  dietPlan: DietPlan;
-  theme: Theme;
+  exercisePlan: IExercisePlan;
+  dietPlan: IDietPlan;
+  theme: ITheme;
   loading = false;
   error: string;
 
-  constructor(
-    private personalizationService: PersonalizationService
-  ) {}
+  constructor(private personalizationService: PersonalizationService) {}
 
   async ngOnInit() {
     try {
@@ -134,7 +128,7 @@ export class ProgressTrackerComponent implements OnInit {
       await this.loadPlans();
     } catch (error) {
       this.error = '无法加载进度数据';
-      console.error('Progress loading error:', error);
+      console.error('Error in progress-tracker.component.ts:', 'Progress loading error:', error);
     } finally {
       this.loading = false;
     }
@@ -143,9 +137,9 @@ export class ProgressTrackerComponent implements OnInit {
   private async loadPlans() {
     const [exercisePlan, dietPlan] = await Promise.all([
       this.personalizationService.createExercisePlan('current-user-id'),
-      this.personalizationService.createDietPlan('current-user-id')
+      this.personalizationService.createDietPlan('current-user-id'),
     ]);
-    
+
     this.exercisePlan = exercisePlan;
     this.dietPlan = dietPlan;
   }
@@ -161,16 +155,13 @@ export class ProgressTrackerComponent implements OnInit {
     const texts = {
       high: '优先',
       medium: '一般',
-      low: '次要'
+      low: '次要',
     };
     return texts[priority] || priority;
   }
 
   getAllGoals() {
-    return [
-      ...(this.exercisePlan?.goals || []),
-      ...(this.dietPlan?.goals || [])
-    ];
+    return [...(this.exercisePlan?.goals || []), ...(this.dietPlan?.goals || [])];
   }
 
   calculateGoalProgress(goal: any): number {
@@ -188,10 +179,9 @@ export class ProgressTrackerComponent implements OnInit {
   }
 
   getRecentAdjustments() {
-    return [
-      ...(this.exercisePlan?.adjustments || []),
-      ...(this.dietPlan?.adjustments || [])
-    ].sort((a, b) => b.date.getTime() - a.date.getTime());
+    return [...(this.exercisePlan?.adjustments || []), ...(this.dietPlan?.adjustments || [])].sort(
+      (a, b) => b.date.getTime() - a.date.getTime(),
+    );
   }
 
   getChangeDetails(changes: Record<string, any>): string[] {
@@ -204,7 +194,7 @@ export class ProgressTrackerComponent implements OnInit {
       month: 'short',
       day: 'numeric',
       hour: 'numeric',
-      minute: 'numeric'
+      minute: 'numeric',
     }).format(date);
   }
-} 
+}

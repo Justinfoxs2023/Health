@@ -1,6 +1,7 @@
 import React from 'react';
-import { StaticRouter } from 'react-router-dom/server';
+
 import { Provider } from 'react-redux';
+import { StaticRouter } from 'react-router-dom/server';
 import { renderToString } from 'react-dom/server';
 
 export class PreRenderService {
@@ -10,8 +11,8 @@ export class PreRenderService {
         <Provider store={store}>
           <Component.default />
         </Provider>
-      </StaticRouter>
+      </StaticRouter>,
     );
     return html;
   }
-} 
+}

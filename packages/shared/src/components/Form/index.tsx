@@ -1,9 +1,10 @@
 import React from 'react';
+
+import type { z } from 'zod';
 import { useForm, FormProvider, UseFormProps, FieldValues } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import type { z } from 'zod';
 
-export interface FormProps<T extends FieldValues> {
+export interface IFormProps<T extends FieldValues> {
   /** 表单默认值 */
   defaultValues?: UseFormProps<T>['defaultValues'];
   /** 表单验证Schema */
@@ -25,11 +26,11 @@ export function Form<T extends FieldValues>({
   onSubmit,
   onError,
   children,
-  className = ''
-}: FormProps<T>) {
+  className = '',
+}: IFormProps<T>): import('D:/Health/node_modules/@types/react/jsx-runtime').JSX.Element {
   const methods = useForm<T>({
     defaultValues,
-    resolver: schema ? zodResolver(schema) : undefined
+    resolver: schema ? zodResolver(schema) : undefined,
   });
 
   const handleSubmit = async (data: T) => {
@@ -42,11 +43,7 @@ export function Form<T extends FieldValues>({
 
   return (
     <FormProvider {...methods}>
-      <form
-        className={className}
-        onSubmit={methods.handleSubmit(handleSubmit)}
-        noValidate
-      >
+      <form className={className} onSubmit={methods.handleSubmit(handleSubmit)} noValidate>
         {children}
       </form>
     </FormProvider>
@@ -54,7 +51,7 @@ export function Form<T extends FieldValues>({
 }
 
 /** 表单项组件Props */
-export interface FormItemProps {
+export interface IFormItemProps {
   /** 标签文本 */
   label?: string;
   /** 是否必填 */
@@ -70,13 +67,13 @@ export interface FormItemProps {
 }
 
 /** 表单项组件 */
-export const FormItem: React.FC<FormItemProps> = ({
+export const FormItem: React.FC<IFormItemProps> = ({
   label,
   required,
   error,
   helpText,
   children,
-  className = ''
+  className = '',
 }) => {
   return (
     <div className={`mb-4 ${className}`}>
@@ -101,7 +98,7 @@ export const FormItem: React.FC<FormItemProps> = ({
 };
 
 /** 表单错误信息组件Props */
-export interface FormErrorProps {
+export interface IFormErrorProps {
   /** 错误信息 */
   error?: string;
   /** 自定义类名 */
@@ -109,12 +106,8 @@ export interface FormErrorProps {
 }
 
 /** 表单错误信息组件 */
-export const FormError: React.FC<FormErrorProps> = ({ error, className = '' }) => {
+export const FormError: React.FC<IFormErrorProps> = ({ error, className = '' }) => {
   if (!error) return null;
 
-  return (
-    <div className={`text-red-500 text-sm mt-1 ${className}`}>
-      {error}
-    </div>
-  );
-}; 
+  return <div className={`text-red-500 text-sm mt-1 ${className}`}>{error}</div>;
+};

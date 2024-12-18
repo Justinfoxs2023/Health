@@ -1,8 +1,11 @@
-import { HealthData } from './health.types';
+import { IHealthData } from './health.types';
 
-export interface ProcessedData {
+export interface IProcessedData {
+  /** features 的描述 */
   features: number[][];
+  /** labels 的描述 */
   labels?: number[][];
+  /** metadata 的描述 */
   metadata: {
     featureNames: string[];
     normalizedRanges: {
@@ -14,18 +17,24 @@ export interface ProcessedData {
   };
 }
 
-export interface ValidationResult {
+export interface IValidationResult {
+  /** isValid 的描述 */
   isValid: boolean;
-  errors: ValidationError[];
+  /** errors 的描述 */
+  errors: IValidationError[];
 }
 
-export interface ValidationError {
+export interface IValidationError {
+  /** field 的描述 */
   field: string;
+  /** message 的描述 */
   message: string;
+  /** code 的描述 */
   code: string;
 }
 
-export interface DataProcessorConfig {
+export interface IDataProcessorConfig {
+  /** normalization 的描述 */
   normalization?: {
     method: 'min-max' | 'z-score';
     customRanges?: {
@@ -35,6 +44,7 @@ export interface DataProcessorConfig {
       };
     };
   };
+  /** validation 的描述 */
   validation?: {
     requiredFields: string[];
     ranges?: {
@@ -44,6 +54,7 @@ export interface DataProcessorConfig {
       };
     };
   };
+  /** featureEngineering 的描述 */
   featureEngineering?: {
     derivedFeatures?: {
       [key: string]: (data: any) => number;
@@ -53,4 +64,4 @@ export interface DataProcessorConfig {
       threshold: number;
     };
   };
-} 
+}

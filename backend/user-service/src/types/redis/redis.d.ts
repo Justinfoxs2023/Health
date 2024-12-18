@@ -1,6 +1,6 @@
 import { Redis as IORedis } from 'ioredis';
 
-export interface Redis extends IORedis {
+export interface IRedis extends IORedis {
   lpush(key: string, value: string): Promise<number>;
   ltrim(key: string, start: number, stop: number): Promise<'OK'>;
   sadd(key: string, ...members: string[]): Promise<number>;
@@ -11,9 +11,13 @@ export interface Redis extends IORedis {
 }
 
 // 扩展 RedisClient 类型
-export interface RedisClient extends Redis {
+export interface IRedisClient extends IRedis {
+  /** options 的描述 */
   options: any;
+  /** status 的描述 */
   status: string;
+  /** stream 的描述 */
   stream: any;
+  /** isCluster 的描述 */
   isCluster: boolean;
-} 
+}

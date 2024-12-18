@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+
 import { SwipeableCard } from '@/components/mobile/common/SwipeableCard';
 
 const Card = styled(SwipeableCard)`
@@ -24,40 +25,36 @@ const ServiceActions = styled.div`
   border-top: 1px solid ${({ theme }) => theme.colors.background.default};
 `;
 
-interface MobileServiceCardProps {
-  service: Service;
-  onBook: (serviceId: string) => void;
-  onShare: (serviceId: string) => void;
+interface IMobileServiceCardProps {
+  /** service 的描述 */
+    service: Service;
+  /** onBook 的描述 */
+    onBook: serviceId: string  void;
+  onShare: serviceId: string  void;
 }
 
-export const MobileServiceCard: React.FC<MobileServiceCardProps> = ({
+export const MobileServiceCard: React.FC<IMobileServiceCardProps> = ({
   service,
   onBook,
-  onShare
+  onShare,
 }) => {
   return (
-    <Card onSwipe={(direction) => handleSwipe(direction, service.id)}>
+    <Card onSwipe={direction => handleSwipe(direction, service.id)}>
       <ServiceImage src={service.image} alt={service.title} />
       <ServiceContent>
-        <h3>{service.title}</h3>
-        <p>{service.description}</p>
+        <h3>{servicetitle}</h3>
+        <p>{servicedescription}</p>
         <ServiceRating rating={service.rating} />
         <ServicePrice price={service.price} />
       </ServiceContent>
       <ServiceActions>
-        <Button 
-          variant="outlined" 
-          onClick={() => onShare(service.id)}
-        >
-          分享
+        <Button variant="outlined" onClick={ => onShareserviceid}>
+          
         </Button>
-        <Button 
-          variant="contained" 
-          onClick={() => onBook(service.id)}
-        >
-          立即预约
+        <Button variant="contained" onClick={ => onBookserviceid}>
+          
         </Button>
       </ServiceActions>
     </Card>
   );
-}; 
+};

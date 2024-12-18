@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 advanced-recommendation.service.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export class AdvancedRecommendationService {
   private readonly mlService: MLService;
   private readonly userBehaviorService: UserBehaviorService;
@@ -12,22 +19,22 @@ export class AdvancedRecommendationService {
     try {
       // 获取用户行为数据
       const userBehavior = await this.userBehaviorService.getUserBehavior(userId);
-      
+
       // 寻找相似用户
       const similarUsers = await this.findSimilarUsers(userBehavior);
-      
+
       // 生成推荐
       const recommendations = await this.mlService.runCollaborativeModel({
         userBehavior,
         similarUsers,
-        weightingFactors: await this.calculateWeightingFactors(userId)
+        weightingFactors: await this.calculateWeightingFactors(userId),
       });
 
       return {
         recommendations: recommendations.items,
         similarityScores: recommendations.scores,
         confidence: recommendations.confidence,
-        explanations: await this.generateRecommendationExplanations(recommendations)
+        explanations: await this.generateRecommendationExplanations(recommendations),
       };
     } catch (error) {
       this.logger.error('协同过滤推荐失败', error);
@@ -40,22 +47,22 @@ export class AdvancedRecommendationService {
     try {
       // 分析用户偏好
       const preferences = await this.analyzeUserPreferences(userId);
-      
+
       // 特征匹配
       const featureMatches = await this.matchFeatures(preferences);
-      
+
       // 生成推荐
       const recommendations = await this.mlService.runContentBasedModel({
         preferences,
         featureMatches,
-        contextFactors: await this.getContextFactors(userId)
+        contextFactors: await this.getContextFactors(userId),
       });
 
       return {
         recommendations: recommendations.items,
         matchScores: recommendations.scores,
         relevance: recommendations.relevance,
-        features: await this.extractKeyFeatures(recommendations)
+        features: await this.extractKeyFeatures(recommendations),
       };
     } catch (error) {
       this.logger.error('基于内容推荐失败', error);
@@ -69,25 +76,25 @@ export class AdvancedRecommendationService {
       // 获取多源推荐
       const [collaborative, contentBased] = await Promise.all([
         this.collaborativeFiltering(userId),
-        this.contentBasedRecommendation(userId)
+        this.contentBasedRecommendation(userId),
       ]);
-      
+
       // 融合推荐结果
       const fusedResults = await this.fuseRecommendations({
         collaborative,
         contentBased,
-        weights: await this.calculateFusionWeights(userId)
+        weights: await this.calculateFusionWeights(userId),
       });
 
       return {
         recommendations: fusedResults.items,
         confidence: fusedResults.confidence,
         diversity: fusedResults.diversity,
-        personalization: await this.calculatePersonalizationScore(fusedResults)
+        personalization: await this.calculatePersonalizationScore(fusedResults),
       };
     } catch (error) {
       this.logger.error('混合推荐失败', error);
       throw error;
     }
   }
-} 
+}

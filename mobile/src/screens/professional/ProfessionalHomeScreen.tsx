@@ -1,10 +1,11 @@
 import React from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
-import { Card, Text, useTheme, Button } from 'react-native-paper';
+
 import { AppLayout } from '../../components/layout/AppLayout';
-import { ClientList } from '../../components/professional/ClientList';
 import { AppointmentCalendar } from '../../components/professional/AppointmentCalendar';
+import { Card, Text, useTheme, Button } from 'react-native-paper';
+import { ClientList } from '../../components/professional/ClientList';
 import { MetricsOverview } from '../../components/professional/MetricsOverview';
+import { ScrollView, StyleSheet, View } from 'react-native';
 
 export const ProfessionalHomeScreen = () => {
   const theme = useTheme();
@@ -58,4 +59,4 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 12,
   },
-}); 
+});

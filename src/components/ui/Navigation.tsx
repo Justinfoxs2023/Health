@@ -1,26 +1,37 @@
 import React from 'react';
+
 import { theme } from '../../styles/theme';
 
-interface NavItem {
-  id: string;
-  label: string;
-  icon?: React.ReactNode;
-  badge?: number | string;
-  disabled?: boolean;
+interface INavItem {
+  /** id 的描述 */
+    id: string;
+  /** label 的描述 */
+    label: string;
+  /** icon 的描述 */
+    icon: ReactReactNode;
+  /** badge 的描述 */
+    badge: number  /** string 的描述 */
+    /** string 的描述 */
+    string;
+  /** disabled 的描述 */
+    disabled: false | true;
 }
 
-interface NavigationProps {
-  items: NavItem[];
-  activeId: string;
-  onChange: (id: string) => void;
-  variant?: 'vertical' | 'horizontal';
+interface INavigationProps {
+  /** items 的描述 */
+    items: INavItem;
+  /** activeId 的描述 */
+    activeId: string;
+  /** onChange 的描述 */
+    onChange: id: string  void;
+  variant: vertical  horizontal;
 }
 
-export const Navigation: React.FC<NavigationProps> = ({
+export const Navigation: React.FC<INavigationProps> = ({
   items,
   activeId,
   onChange,
-  variant = 'vertical'
+  variant = 'vertical',
 }) => {
   return (
     <nav className={`navigation ${variant}`}>
@@ -33,74 +44,74 @@ export const Navigation: React.FC<NavigationProps> = ({
           onClick={() => !item.disabled && onChange(item.id)}
           disabled={item.disabled}
         >
-          {item.icon && <span className="item-icon">{item.icon}</span>}
-          <span className="item-label">{item.label}</span>
-          {item.badge && <span className="item-badge">{item.badge}</span>}
+          {item.icon && <span className="itemicon">{itemicon}</span>}
+          <span className="itemlabel">{itemlabel}</span>
+          {item.badge && <span className="itembadge">{itembadge}</span>}
         </button>
       ))}
 
-      <style jsx>{`
-        .navigation {
-          display: flex;
-          background: ${theme.colors.background.paper};
-          border-radius: ${theme.borderRadius.medium};
-          overflow: hidden;
+      <style jsx>{
+        navigation {
+          display flex
+          background {themecolorsbackgroundpaper}
+          borderradius {themeborderRadiusmedium}
+          overflow hidden
         }
 
-        .navigation.vertical {
-          flex-direction: column;
-          width: 240px;
+        navigationvertical {
+          flexdirection column
+          width 240px
         }
 
-        .navigation.horizontal {
-          flex-direction: row;
+        navigationhorizontal {
+          flexdirection row
         }
 
-        .nav-item {
-          display: flex;
-          align-items: center;
-          gap: ${theme.spacing(2)};
-          padding: ${theme.spacing(2)};
-          border: none;
-          background: none;
-          width: 100%;
-          text-align: left;
-          cursor: pointer;
-          color: ${theme.colors.text.primary};
-          transition: all ${theme.transitions.short};
+        navitem {
+          display flex
+          alignitems center
+          gap {themespacing2}
+          padding {themespacing2}
+          border none
+          background none
+          width 100
+          textalign left
+          cursor pointer
+          color {themecolorstextprimary}
+          transition all {themetransitionsshort}
         }
 
-        .nav-item:hover:not(.disabled) {
-          background: rgba(0, 0, 0, 0.04);
+        navitemhovernotdisabled {
+          background rgba0 0 0 004
         }
 
-        .nav-item.active {
-          background: ${theme.colors.primary.main};
-          color: ${theme.colors.primary.contrastText};
+        navitemactive {
+          background {themecolorsprimarymain}
+          color {themecolorsprimarycontrastText}
         }
 
-        .nav-item.disabled {
-          color: ${theme.colors.text.disabled};
-          cursor: not-allowed;
+        navitemdisabled {
+          color {themecolorstextdisabled}
+          cursor notallowed
         }
 
-        .item-icon {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 24px;
-          height: 24px;
+        itemicon {
+          display flex
+          alignitems center
+          justifycontent center
+          width 24px
+          height 24px
         }
 
-        .item-badge {
-          margin-left: auto;
-          padding: ${theme.spacing(0.5)} ${theme.spacing(1)};
-          background: ${theme.colors.secondary.main};
-          color: ${theme.colors.secondary.contrastText};
-          border-radius: ${theme.borderRadius.round};
-          font-size: 0.75rem;
+        itembadge {
+          marginleft auto
+          padding {themespacing05} {themespacing1}
+          background {themecolorssecondarymain}
+          color {themecolorssecondarycontrastText}
+          borderradius {themeborderRadiusround}
+          fontsize 075rem
         }
-      `}</style>
+      }</style>
     </nav>
   );
-}; 
+};

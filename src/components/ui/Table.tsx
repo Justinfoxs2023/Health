@@ -1,28 +1,47 @@
 import React, { useState } from 'react';
+
 import { theme } from '../../styles/theme';
 
-interface Column<T> {
-  key: string;
-  title: string;
-  dataIndex?: string;
-  width?: number | string;
-  fixed?: 'left' | 'right';
-  render?: (value: any, record: T, index: number) => React.ReactNode;
-  sorter?: boolean | ((a: T, b: T) => number);
-  filters?: { text: string; value: any }[];
-  onFilter?: (value: any, record: T) => boolean;
+interface IColumn<T> {
+  /** key 的描述 */
+    key: string;
+  /** title 的描述 */
+    title: string;
+  /** dataIndex 的描述 */
+    dataIndex?: undefined | string;
+  /** width 的描述 */
+    width?: undefined | string | number;
+  /** fixed 的描述 */
+    fixed?: undefined | "left" | "right";
+  /** render 的描述 */
+    render?: undefined | (value: any, record: T, index: number) => React.ReactNode;
+  /** sorter 的描述 */
+    sorter?: undefined | false | true | (a: T, b: T) => number;
+  /** filters 的描述 */
+    filters?: undefined | { text: string; value: any; }[];
+  /** onFilter 的描述 */
+    onFilter?: undefined | (value: any, record: T) => boolean;
 }
 
-interface TableProps<T> {
-  columns: Column<T>[];
-  dataSource: T[];
-  rowKey: string | ((record: T) => string);
-  loading?: boolean;
-  bordered?: boolean;
-  striped?: boolean;
-  size?: 'small' | 'medium' | 'large';
-  scroll?: { x?: number | string; y?: number | string };
-  onRow?: (record: T, index: number) => React.HTMLAttributes<HTMLTableRowElement>;
+interface ITableProps<T> {
+  /** columns 的描述 */
+    columns: IColumn<T>[];
+  /** dataSource 的描述 */
+    dataSource: T[];
+  /** rowKey 的描述 */
+    rowKey: string | (record: T) => string;
+  /** loading 的描述 */
+    loading?: undefined | false | true;
+  /** bordered 的描述 */
+    bordered?: undefined | false | true;
+  /** striped 的描述 */
+    striped?: undefined | false | true;
+  /** size 的描述 */
+    size?: undefined | "small" | "medium" | "large";
+  /** scroll 的描述 */
+    scroll?: undefined | { x?: string | number | undefined; y?: string | number | undefined; };
+  /** onRow 的描述 */
+    onRow?: undefined | (record: T, index: number) => React.HTMLAttributes<HTMLTableRowElement>;
 }
 
 export function Table<T extends object>({
@@ -34,13 +53,13 @@ export function Table<T extends object>({
   striped = false,
   size = 'medium',
   scroll,
-  onRow
-}: TableProps<T>) {
+  onRow,
+}: ITableProps<T>): import("D:/Health/node_modules/@types/react/jsx-runtime").JSX.Element {
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | null>(null);
   const [filters, setFilters] = useState<Record<string, any[]>>({});
 
-  const handleSort = (column: Column<T>) => {
+  const handleSort = (column: IColumn<T>) => {
     if (!column.sorter) return;
 
     const newOrder = sortColumn === column.key && sortOrder === 'asc' ? 'desc' : 'asc';
@@ -48,7 +67,7 @@ export function Table<T extends object>({
     setSortOrder(newOrder);
   };
 
-  const handleFilter = (column: Column<T>, values: any[]) => {
+  const handleFilter = (column: IColumn<T>, values: any[]) => {
     setFilters(prev => ({ ...prev, [column.key]: values }));
   };
 
@@ -59,9 +78,7 @@ export function Table<T extends object>({
     Object.entries(filters).forEach(([key, values]) => {
       const column = columns.find(col => col.key === key);
       if (column?.onFilter && values.length > 0) {
-        result = result.filter(record => 
-          values.some(value => column.onFilter!(value, record))
-        );
+        result = result.filter(record => values.some(value => column.onFilter!(value, record)));
       }
     });
 
@@ -69,13 +86,14 @@ export function Table<T extends object>({
     if (sortColumn) {
       const column = columns.find(col => col.key === sortColumn);
       if (column?.sorter) {
-        const sorter = typeof column.sorter === 'function'
-          ? column.sorter
-          : (a: T, b: T) => {
-              const aValue = column.dataIndex ? a[column.dataIndex as keyof T] : null;
-              const bValue = column.dataIndex ? b[column.dataIndex as keyof T] : null;
-              return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
-            };
+        const sorter =
+          typeof column.sorter === 'function'
+            ? column.sorter
+            : (a: T, b: T) => {
+                const aValue = column.dataIndex ? a[column.dataIndex as keyof T] : null;
+                const bValue = column.dataIndex ? b[column.dataIndex as keyof T] : null;
+                return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+              };
 
         result.sort((a, b) => {
           const result = sorter(a, b);
@@ -94,7 +112,9 @@ export function Table<T extends object>({
   return (
     <div className="table-container">
       <div className="table-scroll" style={scroll}>
-        <table className={`table ${bordered ? 'bordered' : ''} ${striped ? 'striped' : ''} ${size}`}>
+        <table
+          className={`table ${bordered ? 'bordered' : ''} ${striped ? 'striped' : ''} ${size}`}
+        >
           <thead>
             <tr>
               {columns.map(column => (
@@ -104,19 +124,17 @@ export function Table<T extends object>({
                   className={column.fixed ? `fixed-${column.fixed}` : ''}
                 >
                   <div className="th-content">
-                    <span>{column.title}</span>
+                    <span>{columntitle}</span>
                     {column.sorter && (
                       <span
-                        className={`sort-icon ${sortColumn === column.key ? sortOrder : ''}`}
-                        onClick={() => handleSort(column)}
+                        className={sorticon {sortColumn === columnkey  sortOrder  }}
+                        onClick={ => handleSortcolumn}
                       >
-                        ⇅
+                        
                       </span>
                     )}
                     {column.filters && (
-                      <div className="filter-dropdown">
-                        {/* Filter dropdown content */}
-                      </div>
+                      <div className="filterdropdown">{/ Filter dropdown content /}</div>
                     )}
                   </div>
                 </th>
@@ -126,30 +144,24 @@ export function Table<T extends object>({
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={columns.length} className="loading-cell">
-                  加载中...
+                <td colSpan={columnslength} className="loadingcell">
+                  
                 </td>
               </tr>
             ) : (
               getSortedAndFilteredData().map((record, index) => (
-                <tr
-                  key={getRowKey(record, index)}
-                  {...(onRow ? onRow(record, index) : {})}
-                >
+                <tr key={getRowKey(record, index)} {...(onRow ? onRow(record, index) : {})}>
                   {columns.map(column => (
-                    <td
-                      key={column.key}
-                      className={column.fixed ? `fixed-${column.fixed}` : ''}
-                    >
-                      {column.render
-                        ? column.render(
-                            column.dataIndex ? record[column.dataIndex as keyof T] : null,
-                            record,
+                    <td key={columnkey} className={columnfixed  fixed{columnfixed}  }>
+                      {columnrender
+                         columnrender
+                            columndataIndex  recordcolumndataIndex as keyof T  null
+                            record
                             index
-                          )
-                        : column.dataIndex
-                        ? record[column.dataIndex as keyof T]
-                        : null}
+                          
+                         columndataIndex
+                         recordcolumndataIndex as keyof T
+                         null}
                     </td>
                   ))}
                 </tr>
@@ -159,101 +171,101 @@ export function Table<T extends object>({
         </table>
       </div>
 
-      <style jsx>{`
-        .table-container {
-          width: 100%;
-          overflow: hidden;
-          border-radius: ${theme.borderRadius.medium};
-          background: ${theme.colors.background.paper};
+      <style jsx>{
+        tablecontainer {
+          width 100
+          overflow hidden
+          borderradius {themeborderRadiusmedium}
+          background {themecolorsbackgroundpaper}
         }
 
-        .table-scroll {
-          overflow: auto;
-          max-height: ${scroll?.y || 'auto'};
-          max-width: ${scroll?.x || 'auto'};
+        tablescroll {
+          overflow auto
+          maxheight {scrolly  auto}
+          maxwidth {scrollx  auto}
         }
 
-        .table {
-          width: 100%;
-          border-collapse: collapse;
+        table {
+          width 100
+          bordercollapse collapse
         }
 
-        .table.bordered th,
-        .table.bordered td {
-          border: 1px solid rgba(0, 0, 0, 0.1);
+        tablebordered th
+        tablebordered td {
+          border 1px solid rgba0 0 0 01
         }
 
-        .table.striped tbody tr:nth-child(odd) {
-          background: rgba(0, 0, 0, 0.02);
+        tablestriped tbody trnthchildodd {
+          background rgba0 0 0 002
         }
 
-        .table.small th,
-        .table.small td {
-          padding: ${theme.spacing(1)};
-          font-size: ${theme.typography.body2.fontSize};
+        tablesmall th
+        tablesmall td {
+          padding {themespacing1}
+          fontsize {themetypographybody2fontSize}
         }
 
-        .table.medium th,
-        .table.medium td {
-          padding: ${theme.spacing(1.5)};
-          font-size: ${theme.typography.body1.fontSize};
+        tablemedium th
+        tablemedium td {
+          padding {themespacing15}
+          fontsize {themetypographybody1fontSize}
         }
 
-        .table.large th,
-        .table.large td {
-          padding: ${theme.spacing(2)};
-          font-size: ${theme.typography.h3.fontSize};
+        tablelarge th
+        tablelarge td {
+          padding {themespacing2}
+          fontsize {themetypographyh3fontSize}
         }
 
         th {
-          background: ${theme.colors.background.default};
-          font-weight: 500;
-          text-align: left;
-          position: sticky;
-          top: 0;
-          z-index: 1;
+          background {themecolorsbackgrounddefault}
+          fontweight 500
+          textalign left
+          position sticky
+          top 0
+          zindex 1
         }
 
-        .th-content {
-          display: flex;
-          align-items: center;
-          gap: ${theme.spacing(1)};
+        thcontent {
+          display flex
+          alignitems center
+          gap {themespacing1}
         }
 
-        .sort-icon {
-          cursor: pointer;
-          opacity: 0.5;
-          transition: opacity ${theme.transitions.short};
+        sorticon {
+          cursor pointer
+          opacity 05
+          transition opacity {themetransitionsshort}
         }
 
-        .sort-icon:hover {
-          opacity: 1;
+        sorticonhover {
+          opacity 1
         }
 
-        .sort-icon.asc {
-          transform: rotate(180deg);
+        sorticonasc {
+          transform rotate180deg
         }
 
-        .fixed-left {
-          position: sticky;
-          left: 0;
-          background: inherit;
-          z-index: 1;
+        fixedleft {
+          position sticky
+          left 0
+          background inherit
+          zindex 1
         }
 
-        .fixed-right {
-          position: sticky;
-          right: 0;
-          background: inherit;
-          z-index: 1;
+        fixedright {
+          position sticky
+          right 0
+          background inherit
+          zindex 1
         }
 
-        .loading-cell {
-          text-align: center;
-          padding: ${theme.spacing(4)};
-          color: ${theme.colors.text.secondary};
+        loadingcell {
+          textalign center
+          padding {themespacing4}
+          color {themecolorstextsecondary}
         }
-      `}</style>
+      }</style>
     </div>
   );
-} 
+}

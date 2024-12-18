@@ -1,6 +1,6 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
-import { ConfigService } from '../config/config.service';
 import Redis, { Cluster } from 'ioredis';
+import { ConfigService } from '../config/config.service';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Logger } from '../logger/logger.service';
 
 @Injectable()
@@ -26,25 +26,25 @@ export class DistributedCacheService implements OnModuleInit {
         this.redis = new Redis.Cluster(nodes, {
           redisOptions: {
             password: this.config.get('REDIS_PASSWORD'),
-            retryStrategy: (times) => {
+            retryStrategy: times => {
               if (times > this.retryTimes) return null;
               return Math.min(times * this.retryDelay, 3000);
-            }
+            },
           },
-          clusterRetryStrategy: (times) => {
+          clusterRetryStrategy: times => {
             if (times > this.retryTimes) return null;
             return Math.min(times * this.retryDelay, 3000);
-          }
+          },
         });
       } else {
         this.redis = new Redis({
           host: nodes[0].host,
           port: nodes[0].port,
           password: this.config.get('REDIS_PASSWORD'),
-          retryStrategy: (times) => {
+          retryStrategy: times => {
             if (times > this.retryTimes) return null;
             return Math.min(times * this.retryDelay, 3000);
-          }
+          },
         });
       }
 
@@ -76,7 +76,7 @@ export class DistributedCacheService implements OnModuleInit {
   }
 
   private setupRedisEventHandlers() {
-    this.redis.on('error', (error) => {
+    this.redis.on('error', error => {
       this.logger.error('Redis error:', error);
     });
 
@@ -142,7 +142,7 @@ export class DistributedCacheService implements OnModuleInit {
   async getMulti(keys: string[]): Promise<Array<any | null>> {
     try {
       const values = await this.redis.mget(keys);
-      return values.map(value => value ? JSON.parse(value) : null);
+      return values.map(value => (value ? JSON.parse(value) : null));
     } catch (error) {
       this.logger.error('Error getting multiple keys:', error);
       return keys.map(() => null);
@@ -180,10 +180,10 @@ export class DistributedCacheService implements OnModuleInit {
 
   async expire(key: string, ttl: number): Promise<boolean> {
     try {
-      return await this.redis.expire(key, ttl) === 1;
+      return (await this.redis.expire(key, ttl)) === 1;
     } catch (error) {
       this.logger.error(`Error setting expiry for key ${key}:`, error);
       throw error;
     }
   }
-} 
+}

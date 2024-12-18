@@ -1,17 +1,21 @@
 import React from 'react';
-import { useGestureInteractions } from '@/hooks/useGestureInteractions';
-import { OfflineManager } from '@/services/OfflineManager';
-import { DeviceIntegrationManager } from '@/services/DeviceIntegrationManager';
 
-interface MobileOptimizationProps {
-  enableGestures?: boolean;
-  enableOffline?: boolean;
-  enableDeviceIntegration?: boolean;
+import { DeviceIntegrationManager } from '@/services/DeviceIntegrationManager';
+import { OfflineManager } from '@/services/OfflineManager';
+import { useGestureInteractions } from '@/hooks/useGestureInteractions';
+
+interface IMobileOptimizationProps {
+  /** enableGestures 的描述 */
+  enableGestures: false | true;
+  /** enableOffline 的描述 */
+  enableOffline: false | true;
+  /** enableDeviceIntegration 的描述 */
+  enableDeviceIntegration: false | true;
 }
 
 export const withMobileOptimization = <P extends object>(
   WrappedComponent: React.ComponentType<P>,
-  options: MobileOptimizationProps
+  options: IMobileOptimizationProps,
 ) => {
   return function WithMobileOptimization(props: P) {
     const offlineManager = new OfflineManager();
@@ -23,7 +27,7 @@ export const withMobileOptimization = <P extends object>(
       enablePull: options.enableGestures,
       onSwipe: handleSwipe,
       onPinch: handlePinch,
-      onPull: handlePull
+      onPull: handlePull,
     });
 
     useEffect(() => {
@@ -42,4 +46,4 @@ export const withMobileOptimization = <P extends object>(
       </div>
     );
   };
-}; 
+};

@@ -1,5 +1,5 @@
-import { Redis } from '../../utils/redis';
 import { Logger } from '../../utils/logger';
+import { Redis } from '../../utils/redis';
 
 export class HealthCacheService {
   private redis: Redis;
@@ -10,7 +10,7 @@ export class HealthCacheService {
     this.logger = new Logger('HealthCache');
   }
 
-  async cacheAnalysisResult(key: string, data: any, ttl: number = 3600) {
+  async cacheAnalysisResult(key: string, data: any, ttl = 3600) {
     try {
       const cacheKey = `analysis:${key}`;
       await this.redis.setex(cacheKey, ttl, JSON.stringify(data));
@@ -30,4 +30,4 @@ export class HealthCacheService {
       return null;
     }
   }
-} 
+}

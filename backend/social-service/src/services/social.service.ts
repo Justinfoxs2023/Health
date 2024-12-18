@@ -1,7 +1,7 @@
-import { Post, Relationship, Community } from '../models/social.model';
-import { Redis } from '../utils/redis';
 import { Logger } from '../utils/logger';
 import { NotificationService } from './notification.service';
+import { Post, Relationship, Community } from '../models/social.model';
+import { Redis } from '../utils/redis';
 
 export class SocialService {
   private redis: Redis;
@@ -17,19 +17,22 @@ export class SocialService {
   /**
    * 创建帖子
    */
-  async createPost(userId: string, postData: {
-    content: string;
-    type: string;
-    mediaUrls?: string[];
-    healthData?: any;
-    tags?: string[];
-    location?: any;
-    visibility?: string;
-  }) {
+  async createPost(
+    userId: string,
+    postData: {
+      content: string;
+      type: string;
+      mediaUrls?: string[];
+      healthData?: any;
+      tags?: string[];
+      location?: any;
+      visibility?: string;
+    },
+  ) {
     try {
       const post = new Post({
         userId,
-        ...postData
+        ...postData,
       });
 
       await post.save();
@@ -57,13 +60,13 @@ export class SocialService {
       const relationship = await Relationship.findOneAndUpdate(
         { followerId, followingId },
         { status: 'accepted' },
-        { upsert: true, new: true }
+        { upsert: true, new: true },
       );
 
       // 通知被关注用户
       await this.notificationService.sendNotification(followingId, {
         type: 'new_follower',
-        data: { userId: followerId }
+        data: { userId: followerId },
       });
 
       // 更新关注者缓存
@@ -79,26 +82,31 @@ export class SocialService {
   /**
    * 创建社区
    */
-  async createCommunity(userId: string, communityData: {
-    name: string;
-    description: string;
-    category: string;
-    avatar?: string;
-    cover?: string;
-    rules?: string[];
-    isPrivate?: boolean;
-  }) {
+  async createCommunity(
+    userId: string,
+    communityData: {
+      name: string;
+      description: string;
+      category: string;
+      avatar?: string;
+      cover?: string;
+      rules?: string[];
+      isPrivate?: boolean;
+    },
+  ) {
     try {
       const community = new Community({
         ...communityData,
         creator: userId,
         admins: [userId],
-        members: [{
-          userId,
-          role: 'admin',
-          joinedAt: new Date()
-        }],
-        memberCount: 1
+        members: [
+          {
+            userId,
+            role: 'admin',
+            joinedAt: new Date(),
+          },
+        ],
+        memberCount: 1,
       });
 
       await community.save();
@@ -116,25 +124,22 @@ export class SocialService {
   /**
    * 获取用户动态流
    */
-  async getUserFeed(userId: string, page: number = 1, limit: number = 20) {
+  async getUserFeed(userId: string, page = 1, limit = 20) {
     try {
       const following = await Relationship.find({
         followerId: userId,
-        status: 'accepted'
+        status: 'accepted',
       }).select('followingId');
 
       const followingIds = following.map(f => f.followingId);
 
       const posts = await Post.find({
-        $or: [
-          { userId: { $in: followingIds }, visibility: 'public' },
-          { userId }
-        ]
+        $or: [{ userId: { $in: followingIds }, visibility: 'public' }, { userId }],
       })
-      .sort({ createdAt: -1 })
-      .skip((page - 1) * limit)
-      .limit(limit)
-      .populate('userId', 'username avatar');
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .populate('userId', 'username avatar');
 
       return posts;
     } catch (error) {
@@ -158,13 +163,13 @@ export class SocialService {
   private async notifyFollowers(userId: string, type: string, data: any) {
     const followers = await Relationship.find({
       followingId: userId,
-      status: 'accepted'
+      status: 'accepted',
     });
 
     for (const follower of followers) {
       await this.notificationService.sendNotification(follower.followerId, {
         type,
-        data
+        data,
       });
     }
   }
@@ -175,14 +180,10 @@ export class SocialService {
   private async updateFollowersCache(userId: string) {
     const followers = await Relationship.find({
       followingId: userId,
-      status: 'accepted'
+      status: 'accepted',
     });
 
-    await this.redis.setex(
-      `followers:${userId}`,
-      3600,
-      JSON.stringify(followers)
-    );
+    await this.redis.setex(`followers:${userId}`, 3600, JSON.stringify(followers));
   }
 
   /**
@@ -190,10 +191,6 @@ export class SocialService {
    */
   private async updateCommunityCache(communityId: string) {
     const community = await Community.findById(communityId);
-    await this.redis.setex(
-      `community:${communityId}`,
-      3600,
-      JSON.stringify(community)
-    );
+    await this.redis.setex(`community:${communityId}`, 3600, JSON.stringify(community));
   }
-} 
+}

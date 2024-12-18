@@ -1,19 +1,26 @@
+import { AI } from '../../utils/ai';
 import { EventEmitter } from 'events';
 import { Logger } from '../../utils/logger';
-import { AI } from '../../utils/ai';
 
-interface RehabProgram {
+interface IRehabProgram {
+  /** id 的描述 */
   id: string;
+  /** userId 的描述 */
   userId: string;
+  /** injury 的描述 */
   injury: {
     type: string;
     severity: 'mild' | 'moderate' | 'severe';
     location: string;
     onset: Date;
   };
+  /** phase 的描述 */
   phase: 'acute' | 'rehabilitation' | 'return_to_activity';
+  /** exercises 的描述 */
   exercises: RehabExercise[];
+  /** restrictions 的描述 */
   restrictions: string[];
+  /** progress 的描述 */
   progress: ProgressRecord[];
 }
 
@@ -28,17 +35,17 @@ export class RehabilitationService extends EventEmitter {
   }
 
   // 创建康复计划
-  async createRehabProgram(userId: string, injury: any): Promise<RehabProgram> {
+  async createRehabProgram(userId: string, injury: any): Promise<IRehabProgram> {
     try {
       // 1. 评估伤情
       const assessment = await this.assessInjury(injury);
-      
+
       // 2. 确定康复阶段
       const phase = this.determinePhase(assessment);
-      
+
       // 3. 生成康复计划
       const program = await this.generateProgram(assessment, phase);
-      
+
       // 4. 添加监测指标
       const finalProgram = await this.addMonitoring(program);
 
@@ -53,14 +60,14 @@ export class RehabilitationService extends EventEmitter {
   }
 
   // 更新康复进度
-  async updateProgress(programId: string, progress: any): Promise<RehabProgram> {
+  async updateProgress(programId: string, progress: any): Promise<IRehabProgram> {
     try {
       // 1. 获取当前计划
       const program = await this.getProgram(programId);
-      
+
       // 2. 评估恢复情况
       const recovery = await this.assessRecovery(progress);
-      
+
       // 3. 调整计划
       const updatedProgram = await this.adjustProgram(program, recovery);
 
@@ -75,12 +82,12 @@ export class RehabilitationService extends EventEmitter {
   }
 
   // 生成康复指导
-  async generateGuidance(program: RehabProgram): Promise<any> {
+  async generateGuidance(program: IRehabProgram): Promise<any> {
     try {
       const guidance = await this.ai.analyze('rehabilitation', {
         program,
         phase: program.phase,
-        progress: program.progress
+        progress: program.progress,
       });
 
       return this.formatGuidance(guidance);
@@ -89,4 +96,4 @@ export class RehabilitationService extends EventEmitter {
       throw error;
     }
   }
-} 
+}

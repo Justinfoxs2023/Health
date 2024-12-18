@@ -1,65 +1,64 @@
+import {
+  IGestureConfig,
+  IGestureState,
+  IAnimationConfig,
+  ITransitionConfig,
+  IPerformanceMetrics,
+} from './gesture.types';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { 
-  GestureConfig,
-  GestureState,
-  AnimationConfig,
-  TransitionConfig,
-  PerformanceMetrics 
-} from './gesture.types';
 
-@Injectable({
-  providedIn: 'root'
+@Injec
+table({
+  providedIn: 'root',
 })
 export class GestureService {
-  private readonly defaultConfig: GestureConfig = {
+  private readonly defaultConfig: IGestureConfig = {
     base: {
       tapDelay: 300,
       doubleTapDelay: 300,
       longPressDelay: 500,
       panThreshold: 10,
-      velocityThreshold: 0.3
+      velocityThreshold: 0.3,
     },
     recognition: {
       minPointers: 1,
       maxPointers: 2,
       minDistance: 10,
       minVelocity: 0.5,
-      direction: 'both'
+      direction: 'both',
     },
     feedback: {
       haptic: true,
       visual: true,
-      sound: false
-    }
+      sound: false,
+    },
   };
 
-  private gestureState = new BehaviorSubject<GestureState>(null);
-  private performanceMetrics = new BehaviorSubject<PerformanceMetrics>(null);
+  private gestureState = new BehaviorSubject<IGestureState>(null);
+  private performanceMetrics = new BehaviorSubject<IPerformanceMetrics>(null);
 
   constructor(private platform: Platform) {
     this.initializeGestureSystem();
   }
 
   // 手势配置
-  configureGestures(config: Partial<GestureConfig>): void {
+  configureGestures(config: Partial<IGestureConfig>): void {
     this.config = {
       ...this.defaultConfig,
-      ...config
+      ...config,
     };
     this.updateGestureRecognizers();
   }
 
   // 手势监听
-  onGesture(type: GestureState['type']): Observable<GestureState> {
-    return this.gestureState.asObservable().pipe(
-      filter(state => state?.type === type)
-    );
+  onGesture(type: IGestureState['type']): Observable<IGestureState> {
+    return this.gestureState.asObservable().pipe(filter(state => state?.type === type));
   }
 
   // 动画创建
-  createAnimation(config: AnimationConfig): any {
+  createAnimation(config: IAnimationConfig): any {
     switch (config.type) {
       case 'spring':
         return this.createSpringAnimation(config);
@@ -73,7 +72,7 @@ export class GestureService {
   }
 
   // 转场动画
-  createTransition(config: TransitionConfig): any {
+  createTransition(config: ITransitionConfig): any {
     const { type, animation, direction, custom } = config;
 
     if (type === 'custom' && custom) {
@@ -84,7 +83,7 @@ export class GestureService {
   }
 
   // 性能监控
-  getPerformanceMetrics(): Observable<PerformanceMetrics> {
+  getPerformanceMetrics(): Observable<IPerformanceMetrics> {
     return this.performanceMetrics.asObservable();
   }
 
@@ -110,30 +109,30 @@ export class GestureService {
     this.monitorGestureResponse();
   }
 
-  private createSpringAnimation(config: AnimationConfig): any {
+  private createSpringAnimation(config: IAnimationConfig): any {
     // 实现弹簧动画
     return null;
   }
 
-  private createTimingAnimation(config: AnimationConfig): any {
+  private createTimingAnimation(config: IAnimationConfig): any {
     // 实现定时动画
     return null;
   }
 
-  private createDecayAnimation(config: AnimationConfig): any {
+  private createDecayAnimation(config: IAnimationConfig): any {
     // 实现衰减动画
     return null;
   }
 
-  private createCustomTransition(config: TransitionConfig['custom']): any {
+  private createCustomTransition(config: ITransitionConfig['custom']): any {
     // 实现自定义转场
     return null;
   }
 
   private createStandardTransition(
-    type: TransitionConfig['type'],
-    animation: AnimationConfig,
-    direction?: TransitionConfig['direction']
+    type: ITransitionConfig['type'],
+    animation: IAnimationConfig,
+    direction?: ITransitionConfig['direction'],
   ): any {
     // 实现标准转场
     return null;
@@ -150,4 +149,4 @@ export class GestureService {
   private monitorGestureResponse(): void {
     // 实现手势响应监控
   }
-} 
+}

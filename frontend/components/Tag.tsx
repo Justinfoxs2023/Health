@@ -1,17 +1,17 @@
 import React from 'react';
+
 import { View, Text, StyleSheet } from 'react-native';
 
-interface Props {
+interface IProps {
+  /** text 的描述 */
   text: string;
+  /** type 的描述 */
   type?: 'default' | 'primary' | 'success' | 'warning' | 'danger';
+  /** size 的描述 */
   size?: 'small' | 'medium' | 'large';
 }
 
-export const Tag: React.FC<Props> = ({
-  text,
-  type = 'default',
-  size = 'medium'
-}) => {
+export const Tag: React.FC<IProps> = ({ text, type = 'default', size = 'medium' }) => {
   const getBackgroundColor = () => {
     switch (type) {
       case 'primary':
@@ -65,26 +65,17 @@ export const Tag: React.FC<Props> = ({
   };
 
   return (
-    <View style={[
-      styles.container,
-      { backgroundColor: getBackgroundColor() },
-      getPadding()
-    ]}>
-      <Text style={[
-        styles.text,
-        { color: getTextColor(), fontSize: getFontSize() }
-      ]}>
-        {text}
-      </Text>
+    <View style={[styles.container, { backgroundColor: getBackgroundColor() }, getPadding()]}>
+      <Text style={[styles.text, { color: getTextColor(), fontSize: getFontSize() }]}>{text}</Text>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 4
+    borderRadius: 4,
   },
   text: {
-    fontWeight: '500'
-  }
-}); 
+    fontWeight: '500',
+  },
+});

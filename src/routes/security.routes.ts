@@ -11,7 +11,7 @@ router.post(
   '/threats',
   auth.verifyToken,
   rateLimit.standard,
-  securityController.detectThreats.bind(securityController)
+  securityController.detectThreats.bind(securityController),
 );
 
 // 分析用户行为
@@ -19,7 +19,7 @@ router.post(
   '/behavior/:userId',
   auth.verifyToken,
   rateLimit.standard,
-  securityController.analyzeBehavior.bind(securityController)
+  securityController.analyzeBehavior.bind(securityController),
 );
 
 // 评估风险
@@ -27,7 +27,7 @@ router.post(
   '/risk',
   auth.verifyToken,
   rateLimit.standard,
-  securityController.assessRisk.bind(securityController)
+  securityController.assessRisk.bind(securityController),
 );
 
-export default router; 
+export default router;

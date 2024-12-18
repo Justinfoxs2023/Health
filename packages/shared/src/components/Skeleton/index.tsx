@@ -1,6 +1,6 @@
 import React from 'react';
 
-export interface SkeletonProps {
+export interface ISkeletonProps {
   /** 自定义类名 */
   className?: string;
   /** 自定义样式 */
@@ -26,7 +26,7 @@ export interface SkeletonProps {
 /**
  * 骨架屏组件
  */
-export const Skeleton: React.FC<SkeletonProps> = ({
+export const Skeleton: React.FC<ISkeletonProps> = ({
   className,
   style,
   variant = 'rectangular',
@@ -36,7 +36,7 @@ export const Skeleton: React.FC<SkeletonProps> = ({
   effect = 'wave',
   borderRadius,
   backgroundColor,
-  animationColor
+  animationColor,
 }) => {
   const getVariantStyles = (): React.CSSProperties => {
     switch (variant) {
@@ -44,21 +44,21 @@ export const Skeleton: React.FC<SkeletonProps> = ({
         return {
           width: width ?? '100%',
           height: height ?? '1em',
-          borderRadius: borderRadius ?? '4px'
+          borderRadius: borderRadius ?? '4px',
         };
       case 'circular':
         const size = width ?? height ?? '40px';
         return {
           width: size,
           height: size,
-          borderRadius: '50%'
+          borderRadius: '50%',
         };
       case 'rectangular':
       default:
         return {
           width: width ?? '100%',
           height: height ?? '100px',
-          borderRadius: borderRadius ?? '4px'
+          borderRadius: borderRadius ?? '4px',
         };
     }
   };
@@ -70,7 +70,7 @@ export const Skeleton: React.FC<SkeletonProps> = ({
         ...getVariantStyles(),
         backgroundColor: backgroundColor ?? 'var(--theme-skeleton-background)',
         '--skeleton-animation-color': animationColor ?? 'var(--theme-skeleton-animation)',
-        ...style
+        ...style,
       }}
     />
   );
@@ -129,4 +129,4 @@ style.textContent = `
     }
   }
 `;
-document.head.appendChild(style); 
+document.head.appendChild(style);

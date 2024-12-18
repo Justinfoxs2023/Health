@@ -11,18 +11,18 @@ export enum ExerciseType {
   HIIT = 'hiit', // 高强度间歇训练
   STRETCHING = 'stretching', // 拉伸
   DANCE = 'dance', // 舞蹈
-  OTHER = 'other' // 其他
+  OTHER = 'other', // 其他
 }
 
 /** 运动强度 */
 export enum IntensityLevel {
   LOW = 'low', // 低强度
   MODERATE = 'moderate', // 中等强度
-  HIGH = 'high' // 高强度
+  HIGH = 'high', // 高强度
 }
 
 /** 运动数据 */
-export interface ExerciseData {
+export interface IExerciseData {
   /** 运动类型 */
   type: ExerciseType;
   /** 开始时间 */
@@ -102,7 +102,7 @@ export interface ExerciseData {
 }
 
 /** 运动分析结果 */
-export interface ExerciseAnalysis {
+export interface IExerciseAnalysis {
   /** 运动总时长(分钟) */
   totalDuration: number;
   /** 总卡路里消耗 */
@@ -144,26 +144,23 @@ export class ExerciseService {
   }
 
   /** 采集运动数据 */
-  public async collectExerciseData(
-    type: ExerciseType,
-    deviceData: any
-  ): Promise<ExerciseData> {
+  public async collectExerciseData(type: ExerciseType, deviceData: any): Promise<IExerciseData> {
     try {
       // 处理设备数据
       const processedData = await this.processDeviceData(type, deviceData);
-      
+
       // 计算运动指标
       const exerciseMetrics = this.calculateExerciseMetrics(processedData);
-      
+
       // 构建运动数据
-      const exerciseData: ExerciseData = {
+      const exerciseData: IExerciseData = {
         type,
         startTime: processedData.startTime,
         endTime: processedData.endTime,
         duration: this.calculateDuration(processedData.startTime, processedData.endTime),
         intensity: this.determineIntensity(exerciseMetrics),
         caloriesBurned: this.calculateCaloriesBurned(exerciseMetrics),
-        ...exerciseMetrics
+        ...exerciseMetrics,
       };
 
       return exerciseData;
@@ -174,7 +171,7 @@ export class ExerciseService {
   }
 
   /** 分析运动数据 */
-  public analyzeExerciseData(data: ExerciseData[]): ExerciseAnalysis {
+  public analyzeExerciseData(data: IExerciseData[]): IExerciseAnalysis {
     try {
       // 计算总时长和卡路里
       const totalDuration = data.reduce((sum, d) => sum + d.duration, 0);
@@ -198,7 +195,7 @@ export class ExerciseService {
         intensityDistribution,
         heartRateAnalysis,
         performanceScore,
-        recommendations
+        recommendations,
       };
     } catch (error) {
       logger.error('Failed to analyze exercise data', { error });
@@ -214,8 +211,8 @@ export class ExerciseService {
   }
 
   /** 计算运动指标 */
-  private calculateExerciseMetrics(processedData: any): Partial<ExerciseData> {
-    const metrics: Partial<ExerciseData> = {};
+  private calculateExerciseMetrics(processedData: any): Partial<IExerciseData> {
+    const metrics: Partial<IExerciseData> = {};
 
     // 计算心率数据
     if (processedData.heartRate) {
@@ -223,7 +220,7 @@ export class ExerciseService {
         average: this.calculateAverage(processedData.heartRate),
         max: Math.max(...processedData.heartRate),
         min: Math.min(...processedData.heartRate),
-        zones: this.calculateHeartRateZones(processedData.heartRate)
+        zones: this.calculateHeartRateZones(processedData.heartRate),
       };
     }
 
@@ -232,7 +229,7 @@ export class ExerciseService {
       metrics.speed = {
         average: this.calculateAverage(processedData.speed),
         max: Math.max(...processedData.speed),
-        min: Math.min(...processedData.speed)
+        min: Math.min(...processedData.speed),
       };
     }
 
@@ -240,7 +237,7 @@ export class ExerciseService {
     if (processedData.distance && processedData.duration) {
       metrics.pace = {
         average: this.calculatePace(processedData.distance, processedData.duration),
-        best: this.calculateBestPace(processedData.speed || [])
+        best: this.calculateBestPace(processedData.speed || []),
       };
     }
 
@@ -259,7 +256,7 @@ export class ExerciseService {
   }
 
   /** 确定运动强度 */
-  private determineIntensity(metrics: Partial<ExerciseData>): IntensityLevel {
+  private determineIntensity(metrics: Partial<IExerciseData>): IntensityLevel {
     if (!metrics.heartRate) {
       return IntensityLevel.MODERATE;
     }
@@ -277,7 +274,7 @@ export class ExerciseService {
   }
 
   /** 计算卡路里消耗 */
-  private calculateCaloriesBurned(metrics: Partial<ExerciseData>): number {
+  private calculateCaloriesBurned(metrics: Partial<IExerciseData>): number {
     // 这里需要根据不同运动类型和个人信息使用专业公式计算
     // 当前使用简化计算方式
     const MET = {
@@ -290,7 +287,7 @@ export class ExerciseService {
       [ExerciseType.HIIT]: 8,
       [ExerciseType.STRETCHING]: 2.5,
       [ExerciseType.DANCE]: 4.5,
-      [ExerciseType.OTHER]: 4
+      [ExerciseType.OTHER]: 4,
     };
 
     const weight = 70; // 假设体重70kg
@@ -306,7 +303,7 @@ export class ExerciseService {
   }
 
   /** 计算心率区间 */
-  private calculateHeartRateZones(heartRates: number[]): ExerciseData['heartRate']['zones'] {
+  private calculateHeartRateZones(heartRates: number[]): IExerciseData['heartRate']['zones'] {
     const maxHeartRate = 220 - 30; // 假设年龄30岁
     const total = heartRates.length;
 
@@ -314,7 +311,7 @@ export class ExerciseService {
       easy: 0,
       fatBurn: 0,
       cardio: 0,
-      peak: 0
+      peak: 0,
     };
 
     heartRates.forEach(hr => {
@@ -335,14 +332,14 @@ export class ExerciseService {
       easy: (zones.easy / total) * 100,
       fatBurn: (zones.fatBurn / total) * 100,
       cardio: (zones.cardio / total) * 100,
-      peak: (zones.peak / total) * 100
+      peak: (zones.peak / total) * 100,
     };
   }
 
   /** 计算配速 */
   private calculatePace(distance: number, duration: number): number {
     // 转换为分钟/公里
-    return (duration / (distance / 1000));
+    return duration / (distance / 1000);
   }
 
   /** 计算最佳配速 */
@@ -350,16 +347,18 @@ export class ExerciseService {
     if (speeds.length === 0) return 0;
     const maxSpeed = Math.max(...speeds);
     // 转换最大速度(米/秒)为配速(分钟/公里)
-    return (1000 / (maxSpeed * 60));
+    return 1000 / (maxSpeed * 60);
   }
 
   /** 计算强度分布 */
-  private calculateIntensityDistribution(data: ExerciseData[]): ExerciseAnalysis['intensityDistribution'] {
+  private calculateIntensityDistribution(
+    data: IExerciseData[],
+  ): IExerciseAnalysis['intensityDistribution'] {
     const total = data.length;
     const distribution = {
       low: 0,
       moderate: 0,
-      high: 0
+      high: 0,
     };
 
     data.forEach(d => {
@@ -369,24 +368,22 @@ export class ExerciseService {
     return {
       low: (distribution.low / total) * 100,
       moderate: (distribution.moderate / total) * 100,
-      high: (distribution.high / total) * 100
+      high: (distribution.high / total) * 100,
     };
   }
 
   /** 分析心率数据 */
-  private analyzeHeartRate(data: ExerciseData[]): ExerciseAnalysis['heartRateAnalysis'] {
+  private analyzeHeartRate(data: IExerciseData[]): IExerciseAnalysis['heartRateAnalysis'] {
     const heartRateData = data.filter(d => d.heartRate);
     if (heartRateData.length === 0) return undefined;
 
-    const averageHeartRate = this.calculateAverage(
-      heartRateData.map(d => d.heartRate!.average)
-    );
+    const averageHeartRate = this.calculateAverage(heartRateData.map(d => d.heartRate!.average));
 
     const timeInZones = {
       easy: 0,
       fatBurn: 0,
       cardio: 0,
-      peak: 0
+      peak: 0,
     };
 
     heartRateData.forEach(d => {
@@ -399,18 +396,16 @@ export class ExerciseService {
 
     return {
       averageHeartRate,
-      timeInZones
+      timeInZones,
     };
   }
 
   /** 计算运动表现评分 */
-  private calculatePerformanceScore(data: ExerciseData[]): number {
+  private calculatePerformanceScore(data: IExerciseData[]): number {
     let score = 100;
 
     // 评估运动频率
-    const daysWithExercise = new Set(
-      data.map(d => d.startTime.toDateString())
-    ).size;
+    const daysWithExercise = new Set(data.map(d => d.startTime.toDateString())).size;
     score += Math.min(daysWithExercise * 5, 20); // 最多加20分
 
     // 评估运动时长
@@ -444,13 +439,11 @@ export class ExerciseService {
   }
 
   /** 生成改进建议 */
-  private generateRecommendations(data: ExerciseData[]): string[] {
+  private generateRecommendations(data: IExerciseData[]): string[] {
     const recommendations: string[] = [];
 
     // 分析运动频率
-    const daysWithExercise = new Set(
-      data.map(d => d.startTime.toDateString())
-    ).size;
+    const daysWithExercise = new Set(data.map(d => d.startTime.toDateString())).size;
     if (daysWithExercise < 3) {
       recommendations.push('建议增加运动频率，每周至少运动3-4次');
     }
@@ -490,4 +483,4 @@ export class ExerciseService {
   }
 }
 
-export const exerciseService = ExerciseService.getInstance(); 
+export const exerciseService = ExerciseService.getInstance();

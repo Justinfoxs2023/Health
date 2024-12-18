@@ -1,13 +1,7 @@
 import React from 'react';
+
 import { Card, Row, Col } from 'antd';
-import {
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
-  Radar,
-  Tooltip
-} from 'recharts';
+import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Tooltip } from 'recharts';
 
 export const HealthDataVisualization: React.FC<{ data: any }> = ({ data }) => {
   return (
@@ -42,4 +36,4 @@ export const HealthDataVisualization: React.FC<{ data: any }> = ({ data }) => {
       </Row>
     </Card>
   );
-}; 
+};

@@ -1,12 +1,12 @@
-import { ESLint } from 'eslint';
-import * as prettier from 'prettier';
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import * as prettier from 'prettier';
+import { ESLint } from 'eslint';
 
 export class CodeStandards {
   private static readonly eslint = new ESLint({
     fix: true,
-    extensions: ['.js', '.jsx', '.ts', '.tsx']
+    extensions: ['.js', '.jsx', '.ts', '.tsx'],
   });
 
   static async lint(files: string[]) {
@@ -18,10 +18,10 @@ export class CodeStandards {
   static async format(filePath: string) {
     const content = await fs.readFile(filePath, 'utf8');
     const options = await prettier.resolveConfig(filePath);
-    
+
     const formatted = await prettier.format(content, {
       ...options,
-      filepath: filePath
+      filepath: filePath,
     });
 
     await fs.writeFile(filePath, formatted);
@@ -36,10 +36,10 @@ export class CodeStandards {
       const importPath = match[1];
       if (importPath.startsWith('.')) {
         const absolutePath = path.resolve(path.dirname(filePath), importPath);
-        if (!await fs.pathExists(absolutePath)) {
+        if (!(await fs.pathExists(absolutePath))) {
           throw new Error(`Invalid import path: ${importPath} in ${filePath}`);
         }
       }
     }
   }
-} 
+}

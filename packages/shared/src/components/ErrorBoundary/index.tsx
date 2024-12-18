@@ -1,8 +1,9 @@
 import React from 'react';
+
 import { logger } from '../../services/logger';
 import { useI18n } from '../../services/i18n';
 
-export interface ErrorBoundaryProps {
+export interface IErrorBoundaryProps {
   /** 子组件 */
   children: React.ReactNode;
   /** 自定义错误渲染 */
@@ -11,27 +12,29 @@ export interface ErrorBoundaryProps {
   onError?: (error: Error, errorInfo: React.ErrorInfo) => void;
 }
 
-interface ErrorBoundaryState {
+interface IErrorBoundaryState {
+  /** hasError 的描述 */
   hasError: boolean;
+  /** error 的描述 */
   error: Error | null;
 }
 
 /**
  * 错误边界组件
  */
-export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  constructor(props: ErrorBoundaryProps) {
+export class ErrorBoundary extends React.Component<IErrorBoundaryProps, IErrorBoundaryState> {
+  constructor(props: IErrorBoundaryProps) {
     super(props);
     this.state = {
       hasError: false,
-      error: null
+      error: null,
     };
   }
 
-  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+  static getDerivedStateFromError(error: Error): IErrorBoundaryState {
     return {
       hasError: true,
-      error
+      error,
     };
   }
 
@@ -39,7 +42,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
     // 记录错误日志
     logger.error('React error boundary caught error', {
       error,
-      errorInfo
+      errorInfo,
     });
 
     // 调用错误回调
@@ -63,12 +66,14 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
   }
 }
 
-interface ErrorFallbackProps {
+interface IErrorFallbackProps {
+  /** error 的描述 */
   error: Error | null;
+  /** onReload 的描述 */
   onReload: () => void;
 }
 
-const ErrorFallback: React.FC<ErrorFallbackProps> = ({ error, onReload }) => {
+const ErrorFallback: React.FC<IErrorFallbackProps> = ({ error, onReload }) => {
   const { t } = useI18n();
 
   return (
@@ -142,4 +147,4 @@ style.textContent = `
     background-color: var(--theme-primary-color-dark);
   }
 `;
-document.head.appendChild(style); 
+document.head.appendChild(style);

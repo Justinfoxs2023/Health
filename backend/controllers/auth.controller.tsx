@@ -1,7 +1,7 @@
-import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import { User } from '../models/user.model';
 import { IAuthRequest, IUser } from '../types/models';
+import { Request, Response } from 'express';
+import { User } from '../models/user.model';
 import { sendVerificationEmail, sendPasswordResetEmail } from '../utils/email';
 
 export class AuthController {
@@ -17,7 +17,7 @@ export class AuthController {
       if (existingUser) {
         res.status(400).json({
           success: false,
-          message: '该邮箱已被注册'
+          message: '该邮箱已被注册',
         });
         return;
       }
@@ -28,7 +28,7 @@ export class AuthController {
         password,
         name,
         role,
-        verificationToken: Math.random().toString(36).substring(2)
+        verificationToken: Math.random().toString(36).substring(2),
       });
 
       await user.save();
@@ -38,12 +38,12 @@ export class AuthController {
 
       res.status(201).json({
         success: true,
-        message: '注册成功,请查收验证邮件'
+        message: '注册成功,请查收验证邮件',
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -60,7 +60,7 @@ export class AuthController {
       if (!user) {
         res.status(401).json({
           success: false,
-          message: '用户不存在'
+          message: '用户不存在',
         });
         return;
       }
@@ -70,7 +70,7 @@ export class AuthController {
       if (!isMatch) {
         res.status(401).json({
           success: false,
-          message: '密码错误'
+          message: '密码错误',
         });
         return;
       }
@@ -79,17 +79,15 @@ export class AuthController {
       if (!user.isActive) {
         res.status(401).json({
           success: false,
-          message: '请先验证邮箱'
+          message: '请先验证邮箱',
         });
         return;
       }
 
       // 生成JWT token
-      const token = jwt.sign(
-        { id: user._id, role: user.role },
-        process.env.JWT_SECRET as string,
-        { expiresIn: '7d' }
-      );
+      const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET as string, {
+        expiresIn: '7d',
+      });
 
       // 更新最后登录时间
       user.lastLogin = new Date();
@@ -103,13 +101,13 @@ export class AuthController {
           name: user.name,
           email: user.email,
           role: user.role,
-          avatar: user.avatar
-        }
+          avatar: user.avatar,
+        },
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -125,7 +123,7 @@ export class AuthController {
       if (!user) {
         res.status(400).json({
           success: false,
-          message: '无效的验证链接'
+          message: '无效的验证链接',
         });
         return;
       }
@@ -136,12 +134,12 @@ export class AuthController {
 
       res.json({
         success: true,
-        message: '邮箱验证成功'
+        message: '邮箱验证成功',
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -157,7 +155,7 @@ export class AuthController {
       if (!user) {
         res.status(404).json({
           success: false,
-          message: '用户不存在'
+          message: '用户不存在',
         });
         return;
       }
@@ -173,12 +171,12 @@ export class AuthController {
 
       res.json({
         success: true,
-        message: '重置密码邮件已发送'
+        message: '重置密码邮件已发送',
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -193,13 +191,13 @@ export class AuthController {
 
       const user = await User.findOne({
         resetPasswordToken: token,
-        resetPasswordExpires: { $gt: Date.now() }
+        resetPasswordExpires: { $gt: Date.now() },
       });
 
       if (!user) {
         res.status(400).json({
           success: false,
-          message: '重置链接无效或已过期'
+          message: '重置链接无效或已过期',
         });
         return;
       }
@@ -211,12 +209,12 @@ export class AuthController {
 
       res.json({
         success: true,
-        message: '密码重置成功'
+        message: '密码重置成功',
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -233,7 +231,7 @@ export class AuthController {
       if (!user) {
         res.status(404).json({
           success: false,
-          message: '用户不存在'
+          message: '用户不存在',
         });
         return;
       }
@@ -243,7 +241,7 @@ export class AuthController {
       if (!isMatch) {
         res.status(401).json({
           success: false,
-          message: '当前密码错误'
+          message: '当前密码错误',
         });
         return;
       }
@@ -253,15 +251,15 @@ export class AuthController {
 
       res.json({
         success: true,
-        message: '密码修改成功'
+        message: '密码修改成功',
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
 }
 
-export const authController = new AuthController(); 
+export const authController = new AuthController();

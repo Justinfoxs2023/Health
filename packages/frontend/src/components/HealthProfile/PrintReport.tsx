@@ -1,13 +1,15 @@
 import React from 'react';
+
 import { Button } from 'antd';
 import { PrinterOutlined } from '@ant-design/icons';
 import { useReactToPrint } from 'react-to-print';
 
-interface PrintReportProps {
+interface IPrintReportProps {
+  /** reportRef 的描述 */
   reportRef: React.RefObject<HTMLDivElement>;
 }
 
-export const PrintReport: React.FC<PrintReportProps> = ({ reportRef }) => {
+export const PrintReport: React.FC<IPrintReportProps> = ({ reportRef }) => {
   const handlePrint = useReactToPrint({
     content: () => reportRef.current,
     documentTitle: `健康报告_${new Date().toLocaleDateString()}`,
@@ -16,15 +18,12 @@ export const PrintReport: React.FC<PrintReportProps> = ({ reportRef }) => {
     },
     onAfterPrint: () => {
       // 打印后的清理工作
-    }
+    },
   });
 
   return (
-    <Button 
-      icon={<PrinterOutlined />} 
-      onClick={handlePrint}
-    >
+    <Button icon={<PrinterOutlined />} onClick={handlePrint}>
       打印报告
     </Button>
   );
-}; 
+};

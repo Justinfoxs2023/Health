@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
-import { IndexedDB } from '../utils/indexeddb';
-import { LocalStorage } from '../utils/localStorage';
-import { SyncService } from './sync.service';
-import { NetworkService } from './network.service';
 import { HealthMetrics, Activity, Nutrition, Sleep, MentalHealth } from '../models/health.model';
+import { IndexedDB } from '../utils/indexeddb';
+import { Injectable } from '@nestjs/common';
+import { LocalStorage } from '../utils/localStorage';
+import { NetworkService } from './network.service';
+import { SyncService } from './sync.service';
 
 @Injectable()
 export class OfflineService {
@@ -33,12 +33,12 @@ export class OfflineService {
       'nutrition',
       'sleep',
       'mentalHealth',
-      'syncQueue'
+      'syncQueue',
     ]);
 
     // 初始化 LocalStorage
     this.storage = new LocalStorage();
-    
+
     // 恢复同步队列
     const savedQueue = await this.db.getAll('syncQueue');
     this.syncQueue = savedQueue || [];
@@ -46,7 +46,7 @@ export class OfflineService {
 
   private startSyncMonitoring() {
     // 监听网络状态
-    this.networkService.onNetworkStatusChange(async (isOnline) => {
+    this.networkService.onNetworkStatusChange(async isOnline => {
       if (isOnline) {
         await this.synchronizeData();
       }
@@ -71,7 +71,7 @@ export class OfflineService {
         model,
         operation: 'create',
         data,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
       this.syncQueue.push(syncItem);
       await this.db.add('syncQueue', syncItem);
@@ -83,7 +83,7 @@ export class OfflineService {
 
       return true;
     } catch (error) {
-      console.error('Error saving offline data:', error);
+      console.error('Error in offline.service.ts:', 'Error saving offline data:', error);
       return false;
     }
   }
@@ -93,7 +93,7 @@ export class OfflineService {
     try {
       return await this.db.getAll(model.toLowerCase(), query);
     } catch (error) {
-      console.error('Error getting offline data:', error);
+      console.error('Error in offline.service.ts:', 'Error getting offline data:', error);
       return [];
     }
   }
@@ -108,7 +108,7 @@ export class OfflineService {
       try {
         // 根据模型类型选择相应的服务
         const result = await this.syncService.syncItem(item);
-        
+
         if (result.success) {
           // 同步成功，从队列中移除
           const index = this.syncQueue.indexOf(item);
@@ -118,7 +118,7 @@ export class OfflineService {
           failedItems.push(item);
         }
       } catch (error) {
-        console.error('Error syncing item:', error);
+        console.error('Error in offline.service.ts:', 'Error syncing item:', error);
         failedItems.push(item);
       }
     }
@@ -129,8 +129,8 @@ export class OfflineService {
 
   // 清理过期数据
   async cleanupExpiredData() {
-    const expirationTime = Date.now() - (30 * 24 * 60 * 60 * 1000); // 30天
-    
+    const expirationTime = Date.now() - 30 * 24 * 60 * 60 * 1000; // 30天
+
     const stores = ['healthMetrics', 'activities', 'nutrition', 'sleep', 'mentalHealth'];
     for (const store of stores) {
       await this.db.deleteOlderThan(store, expirationTime);
@@ -142,7 +142,7 @@ export class OfflineService {
     const usage = {
       indexedDB: await this.db.getSize(),
       localStorage: this.storage.getSize(),
-      syncQueueSize: this.syncQueue.length
+      syncQueueSize: this.syncQueue.length,
     };
     return usage;
   }
@@ -158,4 +158,4 @@ export class OfflineService {
     // 实现数据解压逻辑
     return data;
   }
-} 
+}

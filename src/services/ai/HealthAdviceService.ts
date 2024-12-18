@@ -1,10 +1,11 @@
-import { Logger } from '@/utils/Logger';
-import { AIError } from '@/utils/errors';
-import { HealthData } from '../models/HealthData';
 import { HealthAdvice, AdviceCategory } from '../models/HealthAdvice';
-import { OpenAI } from 'openai';
+import { HealthData } from '../models/HealthData';
 import { HealthRiskService } from '../health/HealthRiskService';
+import { OpenAI } from 'openai';
 import { UserPreferenceService } from '../user/UserPreferenceService';
+
+import { AIError } from '@/utils/errors';
+import { Logger } from '@/utils/Logger';
 
 export class HealthAdviceService {
   private logger: Logger;
@@ -15,7 +16,7 @@ export class HealthAdviceService {
   constructor() {
     this.logger = new Logger('HealthAdvice');
     this.openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY
+      apiKey: process.env.OPENAI_API_KEY,
     });
     this.riskService = new HealthRiskService();
     this.preferenceService = new UserPreferenceService();
@@ -52,7 +53,7 @@ export class HealthAdviceService {
   private async generateAdviceContent(
     healthData: HealthData,
     risks: any[],
-    preferences: any
+    preferences: any,
   ): Promise<any> {
     try {
       // 1. 准备提示信息
@@ -60,19 +61,19 @@ export class HealthAdviceService {
 
       // 2. 调用OpenAI API
       const response = await this.openai.chat.completions.create({
-        model: "gpt-4",
+        model: 'gpt-4',
         messages: [
           {
-            role: "system",
-            content: "你是一个专业的健康顾问，基于用户的健康数据提供个性化的建议。"
+            role: 'system',
+            content: '你是一个专业的健康顾问，基于用户的健康数据提供个性化的建议。',
           },
           {
-            role: "user",
-            content: prompt
-          }
+            role: 'user',
+            content: prompt,
+          },
         ],
         temperature: 0.7,
-        max_tokens: 1000
+        max_tokens: 1000,
       });
 
       // 3. 解析响应
@@ -88,15 +89,15 @@ export class HealthAdviceService {
   private async personalizeAdvice(advice: any, preferences: any): Promise<HealthAdvice> {
     // 根据用户偏好调整建议
     const categories: AdviceCategory[] = ['diet', 'exercise', 'lifestyle', 'medical'];
-    
+
     return {
       categories: categories.map(category => ({
         type: category,
-        recommendations: this.filterRecommendations(advice[category], preferences)
+        recommendations: this.filterRecommendations(advice[category], preferences),
       })),
       priority: this.calculatePriority(advice),
       timeframe: this.determineTimeframe(advice),
-      goals: this.setHealthGoals(advice, preferences)
+      goals: this.setHealthGoals(advice, preferences),
     };
   }
 
@@ -110,7 +111,7 @@ export class HealthAdviceService {
         const priorityScore = {
           high: 3,
           medium: 2,
-          low: 1
+          low: 1,
         };
         return priorityScore[b.priority] - priorityScore[a.priority];
       });
@@ -156,4 +157,4 @@ ${JSON.stringify(preferences, null, 2)}
     // 实现响应解析逻辑
     return JSON.parse(response);
   }
-} 
+}

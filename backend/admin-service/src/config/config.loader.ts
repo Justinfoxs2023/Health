@@ -18,13 +18,9 @@ export class ConfigLoader {
 
   private loadConfig() {
     const env = process.env.NODE_ENV || 'development';
-    const envFiles = [
-      '.env',
-      `.env.${env}`,
-      `.env.${env}.local`
-    ];
+    const envFiles = ['.env', `.env.${env}`, `.env.${env}.local`];
 
-    envFiles.forEach(file => {
+    console.error('Error in config.loader.ts:', file => {
       try {
         const envPath = path.resolve(process.cwd(), file);
         const result = dotenv.config({ path: envPath });
@@ -34,7 +30,7 @@ export class ConfigLoader {
           Object.assign(this.config, result.parsed);
         }
       } catch (error) {
-        console.error(`Error loading ${file}:`, error);
+        console.error('Error in config.loader.ts:', `Error loading ${file}:`, error);
       }
     });
   }
@@ -45,7 +41,7 @@ export class ConfigLoader {
 
   getNumber(key: string, defaultValue?: number): number {
     const value = this.get(key);
-    return value ? Number(value) : (defaultValue ?? 0);
+    return value ? Number(value) : defaultValue ?? 0;
   }
 
   getBoolean(key: string, defaultValue?: boolean): boolean {
@@ -58,4 +54,4 @@ export class ConfigLoader {
     const value = this.get(key);
     return value ? value.split(',').map(item => item.trim()) : defaultValue;
   }
-} 
+}

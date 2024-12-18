@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { validate, ValidationError } from 'class-validator';
 import { plainToClass } from 'class-transformer';
+import { validate, ValidationError } from 'class-validator';
 
 // 定义类型
-export interface ArgumentMetadata {
-  type: 'body' | 'query' | 'param' | 'custom';
-  metatype?: any;
-  data?: string;
+export interface IArgumentMetadata {
+  /** type 的描述 */
+    type: body  query  param  custom;
+  metatype: any;
+  data: string;
 }
 
 export class BadRequestException extends Error {
@@ -20,13 +21,13 @@ export class BadRequestException extends Error {
   }
 }
 
-export interface PipeTransform<T = any, R = any> {
-  transform(value: T, metadata: ArgumentMetadata): R | Promise<R>;
+export interface IPipeTransform<T = any, R = any> {
+  transform(value: T, metadata: IArgumentMetadata): R | Promise<R>;
 }
 
 @Injectable()
-export class ValidationPipe implements PipeTransform<any> {
-  async transform(value: any, { metatype }: ArgumentMetadata) {
+export class ValidationPipe implements IPipeTransform<any> {
+  async transform(value: any, { metatype }: IArgumentMetadata) {
     if (!metatype || !this.toValidate(metatype)) {
       return value;
     }
@@ -35,7 +36,7 @@ export class ValidationPipe implements PipeTransform<any> {
     if (typeof value !== 'object' || value === null) {
       throw new BadRequestException({
         message: '无效的输入数据',
-        details: ['输入必须是一个对象']
+        details: ['输入必须是一个对象'],
       });
     }
 
@@ -47,13 +48,13 @@ export class ValidationPipe implements PipeTransform<any> {
       const messages = errors.map(err => {
         return `${err.property}: ${Object.values(err.constraints || {}).join(', ')}`;
       });
-      
+
       throw new BadRequestException({
         message: '数据验证失败',
-        details: messages
+        details: messages,
       });
     }
-    
+
     return value;
   }
 

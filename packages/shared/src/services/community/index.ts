@@ -6,7 +6,7 @@ export enum PostType {
   QUESTION = 'question', // 问题咨询
   ACHIEVEMENT = 'achievement', // 成就展示
   ACTIVITY = 'activity', // 活动组织
-  ARTICLE = 'article' // 专业文章
+  ARTICLE = 'article', // 专业文章
 }
 
 /** 帖子标签 */
@@ -16,11 +16,11 @@ export enum PostTag {
   HEALTH = 'health', // 健康
   MEDICAL = 'medical', // 医疗
   MENTAL = 'mental', // 心理
-  LIFESTYLE = 'lifestyle' // 生活方式
+  LIFESTYLE = 'lifestyle', // 生活方式
 }
 
 /** 帖子内容 */
-export interface Post {
+export interface IPost {
   /** ID */
   id: string;
   /** 作者ID */
@@ -50,7 +50,7 @@ export interface Post {
 }
 
 /** 评论内容 */
-export interface Comment {
+export interface IComment {
   /** ID */
   id: string;
   /** 帖子ID */
@@ -84,7 +84,7 @@ export interface Interaction {
 }
 
 /** 帖子查询选项 */
-export interface PostQueryOptions {
+export interface IPostQueryOptions {
   /** 类型 */
   type?: PostType;
   /** 标签 */
@@ -123,20 +123,20 @@ export class CommunityService {
       tags: PostTag[];
       images?: string[];
       video?: string;
-    }
-  ): Promise<Post> {
+    },
+  ): Promise<IPost> {
     try {
       const response = await fetch('/api/community/posts', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           authorId,
           ...data,
           createdAt: new Date(),
-          updatedAt: new Date()
-        })
+          updatedAt: new Date(),
+        }),
       });
 
       if (!response.ok) {
@@ -151,8 +151,8 @@ export class CommunityService {
   }
 
   /** 获取帖子列表 */
-  public async getPosts(options: PostQueryOptions = {}): Promise<{
-    posts: Post[];
+  public async getPosts(options: IPostQueryOptions = {}): Promise<{
+    posts: IPost[];
     total: number;
   }> {
     try {
@@ -177,7 +177,7 @@ export class CommunityService {
   }
 
   /** 获取帖子详情 */
-  public async getPost(postId: string): Promise<Post> {
+  public async getPost(postId: string): Promise<IPost> {
     try {
       const response = await fetch(`/api/community/posts/${postId}`);
       if (!response.ok) {
@@ -201,18 +201,18 @@ export class CommunityService {
       tags: PostTag[];
       images: string[];
       video: string;
-    }>
-  ): Promise<Post> {
+    }>,
+  ): Promise<IPost> {
     try {
       const response = await fetch(`/api/community/posts/${postId}`, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           ...data,
-          updatedAt: new Date()
-        })
+          updatedAt: new Date(),
+        }),
       });
 
       if (!response.ok) {
@@ -230,7 +230,7 @@ export class CommunityService {
   public async deletePost(postId: string): Promise<void> {
     try {
       const response = await fetch(`/api/community/posts/${postId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
       });
 
       if (!response.ok) {
@@ -249,20 +249,20 @@ export class CommunityService {
       postId: string;
       content: string;
       replyTo?: string;
-    }
-  ): Promise<Comment> {
+    },
+  ): Promise<IComment> {
     try {
       const response = await fetch('/api/community/comments', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           authorId,
           ...data,
           createdAt: new Date(),
-          updatedAt: new Date()
-        })
+          updatedAt: new Date(),
+        }),
       });
 
       if (!response.ok) {
@@ -282,9 +282,9 @@ export class CommunityService {
     options: {
       page?: number;
       pageSize?: number;
-    } = {}
+    } = {},
   ): Promise<{
-    comments: Comment[];
+    comments: IComment[];
     total: number;
   }> {
     try {
@@ -309,18 +309,18 @@ export class CommunityService {
     commentId: string,
     data: {
       content: string;
-    }
-  ): Promise<Comment> {
+    },
+  ): Promise<IComment> {
     try {
       const response = await fetch(`/api/community/comments/${commentId}`, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           ...data,
-          updatedAt: new Date()
-        })
+          updatedAt: new Date(),
+        }),
       });
 
       if (!response.ok) {
@@ -338,7 +338,7 @@ export class CommunityService {
   public async deleteComment(commentId: string): Promise<void> {
     try {
       const response = await fetch(`/api/community/comments/${commentId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
       });
 
       if (!response.ok) {
@@ -357,19 +357,19 @@ export class CommunityService {
       postId?: string;
       commentId?: string;
       type: 'like' | 'favorite' | 'share';
-    }
+    },
   ): Promise<Interaction> {
     try {
       const response = await fetch('/api/community/interactions', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           userId,
           ...data,
-          createdAt: new Date()
-        })
+          createdAt: new Date(),
+        }),
       });
 
       if (!response.ok) {
@@ -390,7 +390,7 @@ export class CommunityService {
       postId?: string;
       commentId?: string;
       type: 'like' | 'favorite' | 'share';
-    }
+    },
   ): Promise<void> {
     try {
       const queryParams = new URLSearchParams();
@@ -400,7 +400,7 @@ export class CommunityService {
       queryParams.append('type', data.type);
 
       const response = await fetch(`/api/community/interactions?${queryParams}`, {
-        method: 'DELETE'
+        method: 'DELETE',
       });
 
       if (!response.ok) {
@@ -415,10 +415,10 @@ export class CommunityService {
   /** 获取用户互动列表 */
   public async getUserInteractions(
     userId: string,
-    type: 'like' | 'favorite' | 'share'
+    type: 'like' | 'favorite' | 'share',
   ): Promise<{
-    posts: Post[];
-    comments: Comment[];
+    posts: IPost[];
+    comments: IComment[];
   }> {
     try {
       const response = await fetch(`/api/community/users/${userId}/interactions/${type}`);
@@ -436,9 +436,9 @@ export class CommunityService {
   /** 搜索帖子 */
   public async searchPosts(
     keyword: string,
-    options: PostQueryOptions = {}
+    options: IPostQueryOptions = {},
   ): Promise<{
-    posts: Post[];
+    posts: IPost[];
     total: number;
   }> {
     try {
@@ -463,4 +463,4 @@ export class CommunityService {
   }
 }
 
-export const communityService = CommunityService.getInstance(); 
+export const communityService = CommunityService.getInstance();

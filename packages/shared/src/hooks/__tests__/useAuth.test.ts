@@ -1,5 +1,5 @@
-import { renderHook, act } from '@testing-library/react-hooks';
 import { authService } from '../../services/auth';
+import { renderHook, act } from '@testing-library/react-hooks';
 import { useAuth } from '../useAuth';
 
 jest.mock('../../services/auth', () => ({
@@ -8,8 +8,8 @@ jest.mock('../../services/auth', () => ({
     isAuthenticated: jest.fn(),
     login: jest.fn(),
     register: jest.fn(),
-    logout: jest.fn()
-  }
+    logout: jest.fn(),
+  },
 }));
 
 describe('useAuth', () => {
@@ -19,7 +19,7 @@ describe('useAuth', () => {
     email: 'test@example.com',
     role: 'user',
     createdAt: new Date(),
-    updatedAt: new Date()
+    updatedAt: new Date(),
   };
 
   beforeEach(() => {
@@ -64,8 +64,8 @@ describe('useAuth', () => {
       const loginPromise = act(() =>
         result.current.login({
           username: 'test',
-          password: 'password'
-        })
+          password: 'password',
+        }),
       );
 
       expect(result.current.loading).toBe(true);
@@ -74,7 +74,7 @@ describe('useAuth', () => {
 
       expect(authService.login).toHaveBeenCalledWith({
         username: 'test',
-        password: 'password'
+        password: 'password',
       });
       expect(result.current.user).toEqual(mockUser);
       expect(result.current.loading).toBe(false);
@@ -93,8 +93,8 @@ describe('useAuth', () => {
         await act(() =>
           result.current.login({
             username: 'test',
-            password: 'wrong'
-          })
+            password: 'wrong',
+          }),
         );
       } catch (err) {
         thrownError = err;
@@ -124,14 +124,14 @@ describe('useAuth', () => {
         result.current.register({
           username: 'test',
           password: 'password',
-          email: 'test@example.com'
-        })
+          email: 'test@example.com',
+        }),
       );
 
       expect(authService.register).toHaveBeenCalledWith({
         username: 'test',
         password: 'password',
-        email: 'test@example.com'
+        email: 'test@example.com',
       });
       expect(result.current.user).toEqual(mockUser);
       expect(result.current.loading).toBe(false);
@@ -151,8 +151,8 @@ describe('useAuth', () => {
           result.current.register({
             username: 'test',
             password: 'password',
-            email: 'test@example.com'
-          })
+            email: 'test@example.com',
+          }),
         );
       } catch (err) {
         thrownError = err;
@@ -213,11 +213,11 @@ describe('useAuth', () => {
     act(() => {
       window.dispatchEvent(
         new CustomEvent('authChange', {
-          detail: { user: mockUser }
-        })
+          detail: { user: mockUser },
+        }),
       );
     });
 
     expect(result.current.user).toEqual(mockUser);
   });
-}); 
+});

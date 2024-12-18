@@ -1,16 +1,15 @@
 import { Response } from 'express';
 
-export interface TypedResponse<T = any> extends Response {
+export interface ITypedResponse<T = any> extends Response {
   status(code: number): this;
-  json(body: {
-    code: number;
-    data?: T;
-    message?: string;
-  }): this;
+  json(body: { code: number; data?: T; message?: string }): this;
 }
 
-export interface ApiResponse<T = any> {
+export interface IApiResponse<T = any> {
+  /** code 的描述 */
   code: number;
+  /** data 的描述 */
   data?: T;
+  /** message 的描述 */
   message?: string;
-} 
+}

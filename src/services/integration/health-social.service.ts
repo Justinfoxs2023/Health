@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { AdvancedHealthAnalysis } from '../health-analysis/advanced-analysis.service';
 import { ConfigService } from '@nestjs/config';
+import { Injectable } from '@nestjs/common';
+import { IntegratedExperience, IntegrationContext } from './types';
 import { Logger } from '../../infrastructure/logger/logger.service';
 import { MetricsService } from '../../infrastructure/monitoring/metrics.service';
-import { AdvancedHealthAnalysis } from '../health-analysis/advanced-analysis.service';
 import { PersonalizedRecommendationService } from '../recommendation/smart-recommendation.service';
 import { SocialService } from '../social/social.service';
-import { IntegratedExperience, IntegrationContext } from './types';
 
 @Injectable()
 export class HealthSocialIntegrationService {
@@ -15,12 +15,12 @@ export class HealthSocialIntegrationService {
     private readonly socialService: SocialService,
     private readonly config: ConfigService,
     private readonly logger: Logger,
-    private readonly metrics: MetricsService
+    private readonly metrics: MetricsService,
   ) {}
 
   async createIntegratedHealthExperience(
     userId: string,
-    context?: Partial<IntegrationContext>
+    context?: Partial<IntegrationContext>,
   ): Promise<IntegratedExperience> {
     try {
       // 1. 获取集成上下文
@@ -30,7 +30,7 @@ export class HealthSocialIntegrationService {
       const [healthAnalysis, recommendations, socialActivities] = await Promise.all([
         this.performHealthAnalysis(userId, integrationContext),
         this.generateRecommendations(userId, integrationContext),
-        this.findSocialActivities(userId, integrationContext)
+        this.findSocialActivities(userId, integrationContext),
       ]);
 
       // 3. 生成整合洞察
@@ -39,7 +39,7 @@ export class HealthSocialIntegrationService {
         context: integrationContext,
         healthAnalysis,
         recommendations,
-        socialActivities
+        socialActivities,
       });
 
       // 4. 记录集成指标
@@ -47,14 +47,14 @@ export class HealthSocialIntegrationService {
         healthAnalysis,
         recommendations,
         socialActivities,
-        integratedInsights
+        integratedInsights,
       });
 
       return {
         analysis: healthAnalysis,
         recommendations,
         socialActivities,
-        integratedInsights
+        integratedInsights,
       };
     } catch (error) {
       this.logger.error(`Failed to create integrated experience for user ${userId}:`, error);
@@ -64,7 +64,7 @@ export class HealthSocialIntegrationService {
 
   private async buildIntegrationContext(
     userId: string,
-    partialContext?: Partial<IntegrationContext>
+    partialContext?: Partial<IntegrationContext>,
   ): Promise<IntegrationContext> {
     // 1. 获取用户健康档案
     const healthProfile = await this.analysisService.getHealthProfile(userId);
@@ -81,47 +81,38 @@ export class HealthSocialIntegrationService {
       healthProfile,
       socialContext,
       goals,
-      ...partialContext
+      ...partialContext,
     };
   }
 
-  private async performHealthAnalysis(
-    userId: string,
-    context: IntegrationContext
-  ) {
+  private async performHealthAnalysis(userId: string, context: IntegrationContext) {
     const analysis = await this.analysisService.analyzePredictiveHealth(userId, {
       includeHistory: true,
       includeSocialFactors: true,
-      context: context.healthProfile
+      context: context.healthProfile,
     });
 
     return this.enrichHealthAnalysis(analysis, context);
   }
 
-  private async generateRecommendations(
-    userId: string,
-    context: IntegrationContext
-  ) {
+  private async generateRecommendations(userId: string, context: IntegrationContext) {
     const recommendations = await this.recommendationService.generatePersonalizedRecommendation(
       userId,
       {
         healthContext: context.healthProfile,
         socialContext: context.socialContext,
-        goals: context.goals
-      }
+        goals: context.goals,
+      },
     );
 
     return this.prioritizeRecommendations(recommendations, context);
   }
 
-  private async findSocialActivities(
-    userId: string,
-    context: IntegrationContext
-  ) {
+  private async findSocialActivities(userId: string, context: IntegrationContext) {
     const activities = await this.socialService.getRelevantActivities(userId, {
       healthProfile: context.healthProfile,
       preferences: context.socialContext.preferences,
-      activityLevel: context.socialContext.activityLevel
+      activityLevel: context.socialContext.activityLevel,
     });
 
     return this.filterAndRankActivities(activities, context);
@@ -132,47 +123,33 @@ export class HealthSocialIntegrationService {
     context,
     healthAnalysis,
     recommendations,
-    socialActivities
+    socialActivities,
   }) {
     // 1. 确定主要关注点
-    const primaryFocus = this.determinePrimaryFocus(
-      healthAnalysis,
-      recommendations
-    );
+    const primaryFocus = this.determinePrimaryFocus(healthAnalysis, recommendations);
 
     // 2. 评估支持网络
-    const supportNetwork = await this.evaluateSupportNetwork(
-      userId,
-      context,
-      socialActivities
-    );
+    const supportNetwork = await this.evaluateSupportNetwork(userId, context, socialActivities);
 
     // 3. 生成进度指标
     const progressMetrics = this.generateProgressMetrics(
       context.goals,
       healthAnalysis,
-      socialActivities
+      socialActivities,
     );
 
     // 4. 创建行动计划
-    const actionPlan = this.createActionPlan(
-      recommendations,
-      socialActivities,
-      context
-    );
+    const actionPlan = this.createActionPlan(recommendations, socialActivities, context);
 
     return {
       primaryFocus,
       supportNetwork,
       progressMetrics,
-      actionPlan
+      actionPlan,
     };
   }
 
-  private determinePrimaryFocus(
-    healthAnalysis: any,
-    recommendations: any
-  ): string[] {
+  private determinePrimaryFocus(healthAnalysis: any, recommendations: any): string[] {
     // 实现主要关注点确定逻辑
     return [];
   }
@@ -180,35 +157,27 @@ export class HealthSocialIntegrationService {
   private async evaluateSupportNetwork(
     userId: string,
     context: IntegrationContext,
-    activities: any
+    activities: any,
   ) {
     // 实现支持网络评估逻辑
     return {
       type: '',
       strength: 0,
-      recommendations: []
+      recommendations: [],
     };
   }
 
-  private generateProgressMetrics(
-    goals: any[],
-    healthAnalysis: any,
-    activities: any
-  ) {
+  private generateProgressMetrics(goals: any[], healthAnalysis: any, activities: any) {
     // 实现进度指标生成逻辑
     return [];
   }
 
-  private createActionPlan(
-    recommendations: any,
-    activities: any,
-    context: IntegrationContext
-  ) {
+  private createActionPlan(recommendations: any, activities: any, context: IntegrationContext) {
     // 实现行动计划创建逻辑
     return {
       personal: [],
       social: [],
-      medical: []
+      medical: [],
     };
   }
 
@@ -219,13 +188,13 @@ export class HealthSocialIntegrationService {
       recommendations: any;
       socialActivities: any;
       integratedInsights: any;
-    }
+    },
   ): void {
     this.metrics.recordIntegrationMetrics(userId, {
       analysisCount: Object.keys(data.healthAnalysis).length,
       recommendationCount: data.recommendations.length,
       socialActivityCount: data.socialActivities.length,
-      insightCount: Object.keys(data.integratedInsights).length
+      insightCount: Object.keys(data.integratedInsights).length,
     });
   }
 
@@ -243,4 +212,4 @@ export class HealthSocialIntegrationService {
     // 实现活动过滤和排序逻辑
     return activities;
   }
-} 
+}

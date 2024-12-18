@@ -1,8 +1,8 @@
-import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
-import { UserGrowth } from '../entities/user-growth.entity';
 import { FamilyMember } from '../entities/family-member.entity';
 import { Reward } from '../entities/reward.entity';
+import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { UserGrowth } from '../entities/user-growth.entity';
 
 export const getTypeOrmConfig = (configService: ConfigService): TypeOrmModuleOptions => ({
   type: 'postgres',
@@ -13,4 +13,4 @@ export const getTypeOrmConfig = (configService: ConfigService): TypeOrmModuleOpt
   database: configService.get('DB_NAME', 'health_platform'),
   entities: [UserGrowth, FamilyMember, Reward],
   synchronize: configService.get('NODE_ENV') !== 'production',
-}); 
+});

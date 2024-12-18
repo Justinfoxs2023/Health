@@ -1,7 +1,7 @@
+import { IAuthRequest } from '../types/models';
 import { Response } from 'express';
 import { User } from '../models/user.model';
-import { IAuthRequest } from '../types/models';
-import { uploadImage, UploadedFile } from '../utils/upload/upload';
+import { uploadImage, IUploadedFile } from '../utils/upload/upload';
 
 export class ProfileController {
   /**
@@ -11,25 +11,26 @@ export class ProfileController {
     try {
       const userId = req.user?.id;
 
-      const user = await User.findById(userId)
-        .select('-password -verificationToken -resetPasswordToken -resetPasswordExpires');
+      const user = await User.findById(userId).select(
+        '-password -verificationToken -resetPasswordToken -resetPasswordExpires',
+      );
 
       if (!user) {
         res.status(404).json({
           success: false,
-          message: '用户不存在'
+          message: '用户不存在',
         });
         return;
       }
 
       res.json({
         success: true,
-        data: user
+        data: user,
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -46,7 +47,7 @@ export class ProfileController {
       if (!user) {
         res.status(404).json({
           success: false,
-          message: '用户不存在'
+          message: '用户不存在',
         });
         return;
       }
@@ -56,7 +57,7 @@ export class ProfileController {
       if (profile) {
         user.profile = {
           ...user.profile,
-          ...profile
+          ...profile,
         };
       }
 
@@ -72,12 +73,12 @@ export class ProfileController {
 
       res.json({
         success: true,
-        data: user
+        data: user,
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -88,12 +89,12 @@ export class ProfileController {
   public async updateAvatar(req: IAuthRequest, res: Response): Promise<void> {
     try {
       const userId = req.user?.id;
-      const file = req.file as UploadedFile;
+      const file = req.file as IUploadedFile;
 
       if (!file) {
         res.status(400).json({
           success: false,
-          message: '未上传文件'
+          message: '未上传文件',
         });
         return;
       }
@@ -102,7 +103,7 @@ export class ProfileController {
       if (!user) {
         res.status(404).json({
           success: false,
-          message: '用户不存在'
+          message: '用户不存在',
         });
         return;
       }
@@ -115,13 +116,13 @@ export class ProfileController {
       res.json({
         success: true,
         data: {
-          avatar: avatarUrl
-        }
+          avatar: avatarUrl,
+        },
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -138,26 +139,26 @@ export class ProfileController {
       if (!user) {
         res.status(404).json({
           success: false,
-          message: '用户不存在'
+          message: '用户不存在',
         });
         return;
       }
 
       user.healthData = {
         ...user.healthData,
-        ...healthData
+        ...healthData,
       };
 
       await user.save();
 
       res.json({
         success: true,
-        data: user.healthData
+        data: user.healthData,
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -174,29 +175,29 @@ export class ProfileController {
       if (!user) {
         res.status(404).json({
           success: false,
-          message: '用户不存在'
+          message: '用户不存在',
         });
         return;
       }
 
       user.settings = {
         ...user.settings,
-        ...settings
+        ...settings,
       };
 
       await user.save();
 
       res.json({
         success: true,
-        data: user.settings
+        data: user.settings,
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
 }
 
-export const profileController = new ProfileController(); 
+export const profileController = new ProfileController();

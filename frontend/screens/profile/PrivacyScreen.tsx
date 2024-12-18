@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 export const PrivacyScreen = () => {
@@ -11,7 +12,7 @@ export const PrivacyScreen = () => {
 • 饮食习惯和偏好
 • 设备信息和使用数据
 
-这些信息用于为您提供个性化的健康和营养建议服务。`
+这些信息用于为您提供个性化的健康和营养建议服务。`,
     },
     {
       title: '信息使用',
@@ -20,7 +21,7 @@ export const PrivacyScreen = () => {
 • 个性化您的使用体验
 • 发送服务通知和更新
 • 进行数据分析和研究
-• 遵守法律法规要求`
+• 遵守法律法规要求`,
     },
     {
       title: '信息保护',
@@ -29,7 +30,7 @@ export const PrivacyScreen = () => {
 • 访问权限控制
 • 定期安全审计
 • 员工保密培训
-• 第三方合作伙伴审查`
+• 第三方合作伙伴审查`,
     },
     {
       title: '信息共享',
@@ -37,7 +38,7 @@ export const PrivacyScreen = () => {
 • 法律法规要求
 • 保护用户或公众安全
 • 防止欺诈或滥用行为
-• 保护我们的合法权益`
+• 保护我们的合法权益`,
     },
     {
       title: '您的权利',
@@ -47,17 +48,15 @@ export const PrivacyScreen = () => {
 • 删除
 • 撤回同意
 • 导出数据
-• 投诉和建议`
-    }
+• 投诉和建议`,
+    },
   ];
 
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>隐私政策</Text>
-        <Text style={styles.updateDate}>
-          更新日期：{new Date().toLocaleDateString()}
-        </Text>
+        <Text style={styles.updateDate}>更新日期：{new Date().toLocaleDateString()}</Text>
       </View>
 
       <View style={styles.introduction}>
@@ -74,9 +73,7 @@ export const PrivacyScreen = () => {
       ))}
 
       <View style={styles.footer}>
-        <Text style={styles.footerText}>
-          如果您对本隐私政策有任何疑问，请联系我们的客服团队。
-        </Text>
+        <Text style={styles.footerText}>如果您对本隐私政策有任何疑问，请联系我们的客服团队。</Text>
         <Text style={styles.footerContact}>
           邮箱：privacy@healthapp.com{'\n'}
           电话：400-123-4567
@@ -89,60 +86,60 @@ export const PrivacyScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   header: {
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0'
+    borderBottomColor: '#f0f0f0',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 10
+    marginBottom: 10,
   },
   updateDate: {
     fontSize: 14,
-    color: '#666'
+    color: '#666',
   },
   introduction: {
     padding: 20,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   introText: {
     fontSize: 16,
     color: '#333',
-    lineHeight: 24
+    lineHeight: 24,
   },
   section: {
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0'
+    borderBottomColor: '#f0f0f0',
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 15
+    marginBottom: 15,
   },
   sectionContent: {
     fontSize: 16,
     color: '#666',
-    lineHeight: 24
+    lineHeight: 24,
   },
   footer: {
     padding: 20,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   footerText: {
     fontSize: 16,
     color: '#333',
-    marginBottom: 10
+    marginBottom: 10,
   },
   footerContact: {
     fontSize: 14,
     color: '#666',
-    lineHeight: 20
-  }
-}); 
+    lineHeight: 20,
+  },
+});

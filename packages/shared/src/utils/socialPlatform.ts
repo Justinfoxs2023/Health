@@ -1,6 +1,6 @@
+import * as Social from '../types/social';
 import { message } from 'antd';
 import { request } from './request';
-import * as Social from '../types/social';
 
 const configs: Record<Social.Platform, Social.PlatformConfig> = {
   wechat: {
@@ -9,7 +9,7 @@ const configs: Record<Social.Platform, Social.PlatformConfig> = {
     authUrl: 'https://open.weixin.qq.com/connect/qrconnect',
     region: 'domestic',
     scopes: ['snsapi_userinfo'],
-    color: '#07C160'
+    color: '#07C160',
   },
   weibo: {
     name: '微博',
@@ -17,7 +17,7 @@ const configs: Record<Social.Platform, Social.PlatformConfig> = {
     authUrl: 'https://api.weibo.com/oauth2/authorize',
     region: 'domestic',
     scopes: ['email'],
-    color: '#E6162D'
+    color: '#E6162D',
   },
   qq: {
     name: 'QQ',
@@ -25,7 +25,7 @@ const configs: Record<Social.Platform, Social.PlatformConfig> = {
     authUrl: 'https://graph.qq.com/oauth2.0/authorize',
     region: 'domestic',
     scopes: ['get_user_info'],
-    color: '#12B7F5'
+    color: '#12B7F5',
   },
   alipay: {
     name: '支付宝',
@@ -33,7 +33,7 @@ const configs: Record<Social.Platform, Social.PlatformConfig> = {
     authUrl: 'https://openauth.alipay.com/oauth2/publicAppAuthorize.htm',
     region: 'domestic',
     scopes: ['auth_user'],
-    color: '#1677FF'
+    color: '#1677FF',
   },
   dingtalk: {
     name: '钉钉',
@@ -41,7 +41,7 @@ const configs: Record<Social.Platform, Social.PlatformConfig> = {
     authUrl: 'https://oapi.dingtalk.com/connect/qrconnect',
     region: 'domestic',
     scopes: ['openid'],
-    color: '#1890FF'
+    color: '#1890FF',
   },
   google: {
     name: 'Google',
@@ -49,7 +49,7 @@ const configs: Record<Social.Platform, Social.PlatformConfig> = {
     authUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
     region: 'international',
     scopes: ['profile', 'email'],
-    color: '#4285F4'
+    color: '#4285F4',
   },
   facebook: {
     name: 'Facebook',
@@ -57,7 +57,7 @@ const configs: Record<Social.Platform, Social.PlatformConfig> = {
     authUrl: 'https://www.facebook.com/v12.0/dialog/oauth',
     region: 'international',
     scopes: ['public_profile', 'email'],
-    color: '#1877F2'
+    color: '#1877F2',
   },
   apple: {
     name: 'Apple',
@@ -65,7 +65,7 @@ const configs: Record<Social.Platform, Social.PlatformConfig> = {
     authUrl: 'https://appleid.apple.com/auth/authorize',
     region: 'international',
     scopes: ['name', 'email'],
-    color: '#000000'
+    color: '#000000',
   },
   github: {
     name: 'GitHub',
@@ -73,8 +73,8 @@ const configs: Record<Social.Platform, Social.PlatformConfig> = {
     authUrl: 'https://github.com/login/oauth/authorize',
     region: 'international',
     scopes: ['user', 'email'],
-    color: '#24292F'
-  }
+    color: '#24292F',
+  },
 };
 
 export const getPlatformName = (platform: Social.Platform): string => {
@@ -91,5 +91,5 @@ export const SocialPlatform = {
   getQrCode: async (platform: Social.Platform): Promise<string> => {
     // 实现获取二维码逻辑
     return '';
-  }
-}; 
+  },
+};

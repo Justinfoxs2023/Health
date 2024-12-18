@@ -1,22 +1,20 @@
-import { Injectable } from '@nestjs/common';
-import { HealthBaseService } from '../health/base/health-base.service';
-import { StorageService } from '../storage/storage.service';
-import { AIService } from '../ai/ai.service';
 import {
-  EducationContent,
-  LearningProgress,
-  LearningPlan,
-  EducationCategory,
+  IEducationContent,
+  ILearningProgress,
+  ILearningPlan,
+  EducationCategoryType,
   ContentType,
-  ContentLevel
+  ContentLevelType,
 } from './types/education.types';
+import { AIService } from '../ai/ai.service';
+import { HealthBaseService } from '../health/base/health-base.service';
+import { Injectable } from '@nestjs/common';
+import { StorageService } from '../storage/storage.service';
 
-@Injectable()
+@Inject
+able()
 export class HealthEducationService extends HealthBaseService {
-  constructor(
-    storage: StorageService,
-    ai: AIService
-  ) {
+  constructor(storage: StorageService, ai: AIService) {
     super(storage, ai);
   }
 
@@ -24,11 +22,11 @@ export class HealthEducationService extends HealthBaseService {
   async getRecommendedContent(
     userId: string,
     preferences?: {
-      categories?: EducationCategory[];
-      level?: ContentLevel;
+      categories?: EducationCategoryType[];
+      level?: ContentLevelType;
       duration?: number;
-    }
-  ): Promise<EducationContent[]> {
+    },
+  ): Promise<IEducationContent[]> {
     // 实现推荐内容获取逻辑
     return [];
   }
@@ -37,16 +35,13 @@ export class HealthEducationService extends HealthBaseService {
   async updateProgress(
     userId: string,
     contentId: string,
-    progress: Partial<LearningProgress>
+    progress: Partial<ILearningProgress>,
   ): Promise<void> {
     // 实现进度更新逻辑
   }
 
   // 生成学习计划
-  async createLearningPlan(
-    userId: string,
-    goals: string[]
-  ): Promise<LearningPlan> {
+  async createLearningPlan(userId: string, goals: string[]): Promise<ILearningPlan> {
     // 实现学习计划生成逻辑
     return null;
   }
@@ -58,4 +53,4 @@ export class HealthEducationService extends HealthBaseService {
   }
 
   // 私有方法...
-} 
+}

@@ -1,10 +1,10 @@
+import { IUser } from './interfaces/user.interface';
 import { Request as ExpressRequest, Response as ExpressResponse, NextFunction } from 'express';
-import { User } from './interfaces/user.interface';
 
 declare global {
   namespace Express {
     interface Request extends ExpressRequest {
-      user?: User;
+      user?: IUser;
       headers: {
         authorization?: string;
         [key: string]: string | string[] | undefined;
@@ -15,17 +15,13 @@ declare global {
 
     interface Response extends ExpressResponse {
       status(code: number): this;
-      json(body: {
-        code: number;
-        data?: any;
-        message?: string;
-      }): this;
+      json(body: { code: number; data?: any; message?: string }): this;
     }
   }
 }
 
-export type RequestHandler = (
+export type RequestHandlerType = (
   req: Express.Request,
   res: Express.Response,
-  next: NextFunction
-) => Promise<void> | void; 
+  next: NextFunction,
+) => Promise<void> | void;

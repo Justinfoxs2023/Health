@@ -1,21 +1,30 @@
 import * as tf from '@tensorflow/tfjs';
-import { LocalDatabase, createDatabase } from '../utils/local-database';
+import { ILocalDatabase, createDatabase } from '../utils/local-database';
 
-interface OnlineConfig {
+interface IOnlineConfig {
+  /** learningRate 的描述 */
   learningRate: number;
+  /** batchSize 的描述 */
   batchSize: number;
+  /** bufferSize 的描述 */
   bufferSize: number;
+  /** updateFrequency 的描述 */
   updateFrequency: number;
+  /** regularization 的描述 */
   regularization: {
     type: 'l1' | 'l2';
     lambda: number;
   };
 }
 
-interface OnlineMetrics {
+interface IOnlineMetrics {
+  /** accuracy 的描述 */
   accuracy: number;
+  /** loss 的描述 */
   loss: number;
+  /** updateTime 的描述 */
   updateTime: number;
+  /** driftDetection 的描述 */
   driftDetection: {
     detected: boolean;
     severity: number;
@@ -23,11 +32,11 @@ interface OnlineMetrics {
 }
 
 export class OnlineLearningService {
-  private db: LocalDatabase;
+  private db: ILocalDatabase;
   private model: tf.LayersModel | null = null;
-  private buffer: Array<{x: tf.Tensor, y: tf.Tensor}> = [];
-  private config: OnlineConfig;
-  private metrics: OnlineMetrics[] = [];
+  private buffer: Array<{ x: tf.Tensor; y: tf.Tensor }> = [];
+  private config: IOnlineConfig;
+  private metrics: IOnlineMetrics[] = [];
 
   constructor() {
     this.db = createDatabase('online-learning');
@@ -38,8 +47,8 @@ export class OnlineLearningService {
       updateFrequency: 10,
       regularization: {
         type: 'l2',
-        lambda: 0.01
-      }
+        lambda: 0.01,
+      },
     };
     this.initialize();
   }
@@ -49,13 +58,13 @@ export class OnlineLearningService {
   }
 
   // 在线更新
-  async update(x: tf.Tensor, y: tf.Tensor): Promise<OnlineMetrics> {
+  async update(x: tf.Tensor, y: tf.Tensor): Promise<IOnlineMetrics> {
     if (!this.model) {
       this.model = await this.buildModel();
     }
 
     // 添加到缓冲区
-    this.buffer.push({x: x.clone(), y: y.clone()});
+    this.buffer.push({ x: x.clone(), y: y.clone() });
     if (this.buffer.length > this.config.bufferSize) {
       const removed = this.buffer.shift();
       removed?.x.dispose();
@@ -68,17 +77,17 @@ export class OnlineLearningService {
     // 如果检测到漂移或缓冲区达到更新频率
     if (drift.detected || this.buffer.length % this.config.updateFrequency === 0) {
       const startTime = Date.now();
-      
+
       // 执行增量更新
       const metrics = await this.incrementalUpdate();
-      
+
       const updateTime = Date.now() - startTime;
 
       const result = {
         accuracy: metrics.accuracy,
         loss: metrics.loss,
         updateTime,
-        driftDetection: drift
+        driftDetection: drift,
       };
 
       this.metrics.push(result);
@@ -91,37 +100,37 @@ export class OnlineLearningService {
       accuracy: 0,
       loss: 0,
       updateTime: 0,
-      driftDetection: drift
+      driftDetection: drift,
     };
   }
 
   // 增量更新
-  private async incrementalUpdate(): Promise<{accuracy: number, loss: number}> {
+  private async incrementalUpdate(): Promise<{ accuracy: number; loss: number }> {
     const batchIndices = tf.util.createShuffledIndices(this.buffer.length);
     const batchSize = Math.min(this.config.batchSize, this.buffer.length);
-    
+
     const batch = {
       x: tf.concat(batchIndices.slice(0, batchSize).map(i => this.buffer[i].x)),
-      y: tf.concat(batchIndices.slice(0, batchSize).map(i => this.buffer[i].y))
+      y: tf.concat(batchIndices.slice(0, batchSize).map(i => this.buffer[i].y)),
     };
 
     const history = await this.model!.fit(batch.x, batch.y, {
       epochs: 1,
       batchSize: this.config.batchSize,
-      validationSplit: 0.2
+      validationSplit: 0.2,
     });
 
     return {
       accuracy: history.history.accuracy[0],
-      loss: history.history.loss[0]
+      loss: history.history.loss[0],
     };
   }
 
   // 检测概念漂移
   private async detectConceptDrift(
     x: tf.Tensor,
-    y: tf.Tensor
-  ): Promise<{detected: boolean, severity: number}> {
+    y: tf.Tensor,
+  ): Promise<{ detected: boolean; severity: number }> {
     if (this.metrics.length < 2) {
       return { detected: false, severity: 0 };
     }
@@ -140,9 +149,9 @@ export class OnlineLearningService {
   }
 
   // 计算性能下降
-  private calculatePerformanceDrop(metrics: OnlineMetrics[]): number {
+  private calculatePerformanceDrop(metrics: IOnlineMetrics[]): number {
     if (metrics.length < 2) return 0;
-    
+
     const recent = metrics.slice(-5);
     const previous = metrics.slice(-10, -5);
 
@@ -161,7 +170,7 @@ export class OnlineLearningService {
 
     // 使用KL散度或其他统计方法计算分布差异
     const shift = await this.calculateKLDivergence(previousData, recentData);
-    
+
     return shift;
   }
 
@@ -170,7 +179,10 @@ export class OnlineLearningService {
     return tf.tidy(() => {
       const pDist = tf.softmax(p);
       const qDist = tf.softmax(q);
-      const kl = pDist.mul(tf.log(pDist.div(qDist))).sum().dataSync()[0];
+      const kl = pDist
+        .mul(tf.log(pDist.div(qDist)))
+        .sum()
+        .dataSync()[0];
       return Math.max(0, kl);
     });
   }
@@ -178,27 +190,33 @@ export class OnlineLearningService {
   // 构建模型
   private async buildModel(): Promise<tf.LayersModel> {
     const model = tf.sequential();
-    
-    model.add(tf.layers.dense({
-      units: 64,
-      activation: 'relu',
-      inputShape: [this.getInputShape()]
-    }));
 
-    model.add(tf.layers.dense({
-      units: 32,
-      activation: 'relu'
-    }));
+    model.add(
+      tf.layers.dense({
+        units: 64,
+        activation: 'relu',
+        inputShape: [this.getInputShape()],
+      }),
+    );
 
-    model.add(tf.layers.dense({
-      units: this.getOutputShape(),
-      activation: 'softmax'
-    }));
+    model.add(
+      tf.layers.dense({
+        units: 32,
+        activation: 'relu',
+      }),
+    );
+
+    model.add(
+      tf.layers.dense({
+        units: this.getOutputShape(),
+        activation: 'softmax',
+      }),
+    );
 
     model.compile({
       optimizer: tf.train.adam(this.config.learningRate),
       loss: 'categoricalCrossentropy',
-      metrics: ['accuracy']
+      metrics: ['accuracy'],
     });
 
     return model;
@@ -228,7 +246,7 @@ export class OnlineLearningService {
         this.metrics = metrics;
       }
     } catch (error) {
-      console.error('加载在线学习模型失败:', error);
+      console.error('Error in online-learning.service.ts:', '加载在线学习模型失败:', error);
     }
   }
 
@@ -243,7 +261,7 @@ export class OnlineLearningService {
       accuracy: this.metrics.map(m => m.accuracy),
       loss: this.metrics.map(m => m.loss),
       driftEvents: this.metrics.filter(m => m.driftDetection.detected).length,
-      updateTimes: this.metrics.map(m => m.updateTime)
+      updateTimes: this.metrics.map(m => m.updateTime),
     };
   }
-} 
+}

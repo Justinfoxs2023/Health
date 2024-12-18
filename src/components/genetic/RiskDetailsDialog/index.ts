@@ -1,2 +1,3 @@
 import { RiskDetailsDialog } from './RiskDetailsDialog';
-export { RiskDetailsDialog }; 
+
+export { RiskDetailsDialog };

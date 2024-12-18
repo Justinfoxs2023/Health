@@ -1,7 +1,7 @@
+import { FoodNutritionAnalysisService, INutritionInfo } from './food-nutrition-analysis.service';
 import { api } from '../utils';
-import { FoodNutritionAnalysisService, NutritionInfo } from './food-nutrition-analysis.service';
 
-interface TranslationCache {
+interface ITranslationCache {
   [key: string]: {
     [targetLang: string]: string;
   };
@@ -9,8 +9,8 @@ interface TranslationCache {
 
 export class MultilingualFoodAnalysisService extends FoodNutritionAnalysisService {
   private supportedLanguages = ['zh-CN', 'en-US', 'ja-JP', 'ko-KR'];
-  private translationCache: TranslationCache = {};
-  private currentLanguage: string = 'zh-CN';
+  private translationCache: ITranslationCache = {};
+  private currentLanguage = 'zh-CN';
 
   // 设置语言
   setLanguage(lang: string) {
@@ -31,7 +31,7 @@ export class MultilingualFoodAnalysisService extends FoodNutritionAnalysisServic
     try {
       const response = await api.post('/api/translate/food', {
         text: name,
-        targetLang
+        targetLang,
       });
 
       // 更新缓存
@@ -42,26 +42,28 @@ export class MultilingualFoodAnalysisService extends FoodNutritionAnalysisServic
 
       return response.data.translation;
     } catch (error) {
-      console.error('翻译失败:', error);
+      console.error('Error in multilingual-food-analysis.service.ts:', '翻译失败:', error);
       return name;
     }
   }
 
   // 重写分析方法以支持多语言
-  async analyzeFoodNutrition(foodItems: Array<{
-    name: string;
-    quantity: number;
-    unit: string;
-  }>): Promise<any> {
+  async analyzeFoodNutrition(
+    foodItems: Array<{
+      name: string;
+      quantity: number;
+      unit: string;
+    }>,
+  ): Promise<any> {
     // 如果不是中文，先翻译成中文进行分析
     if (this.currentLanguage !== 'zh-CN') {
       const translatedItems = await Promise.all(
         foodItems.map(async item => ({
           ...item,
-          name: await this.translateFoodName(item.name, 'zh-CN')
-        }))
+          name: await this.translateFoodName(item.name, 'zh-CN'),
+        })),
       );
-      
+
       // 获取中文分析结果
       const result = await super.analyzeFoodNutrition(translatedItems);
 
@@ -77,14 +79,14 @@ export class MultilingualFoodAnalysisService extends FoodNutritionAnalysisServic
     const translatedItems = await Promise.all(
       result.items.map(async (item: any) => ({
         ...item,
-        name: await this.translateFoodName(item.name, targetLang)
-      }))
+        name: await this.translateFoodName(item.name, targetLang),
+      })),
     );
 
     return {
       ...result,
       items: translatedItems,
-      aiSuggestions: await this.translateSuggestions(result.aiSuggestions, targetLang)
+      aiSuggestions: await this.translateSuggestions(result.aiSuggestions, targetLang),
     };
   }
 
@@ -93,12 +95,12 @@ export class MultilingualFoodAnalysisService extends FoodNutritionAnalysisServic
     try {
       const response = await api.post('/api/translate/batch', {
         texts: suggestions,
-        targetLang
+        targetLang,
       });
       return response.data.translations;
     } catch (error) {
-      console.error('翻译建议失败:', error);
+      console.error('Error in multilingual-food-analysis.service.ts:', '翻译建议失败:', error);
       return suggestions;
     }
   }
-} 
+}

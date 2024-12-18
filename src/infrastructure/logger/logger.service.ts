@@ -9,7 +9,7 @@ export class Logger {
   }
 
   error(message: string, error?: any) {
-    console.error(`[${this.context}] ${message}`, error);
+    console.error('Error in logger.service.ts:', `[${this.context}] ${message}`, error);
   }
 
   warn(message: string, ...args: any[]) {
@@ -19,4 +19,4 @@ export class Logger {
   debug(message: string, ...args: any[]) {
     console.debug(`[${this.context}] ${message}`, ...args);
   }
-} 
+}

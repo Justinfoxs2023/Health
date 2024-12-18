@@ -1,9 +1,10 @@
 import React from 'react';
-import { Table, TableColumn } from '../Table';
+
 import { IHealthData } from '../../types';
+import { Table, ITableColumn } from '../Table';
 import { formatDate, formatHealthData } from '../../utils';
 
-export interface HealthDataTableProps {
+export interface IHealthDataTableProps {
   /** 数据源 */
   dataSource: IHealthData[];
   /** 加载状态 */
@@ -21,38 +22,38 @@ export interface HealthDataTableProps {
 }
 
 /** 健康数据表格 */
-export const HealthDataTable: React.FC<HealthDataTableProps> = ({
+export const HealthDataTable: React.FC<IHealthDataTableProps> = ({
   dataSource,
   loading = false,
   selectedData = [],
   onSelectChange,
   onEdit,
   onDelete,
-  className
+  className,
 }) => {
-  const columns: TableColumn<IHealthData>[] = [
+  const columns: ITableColumn<IHealthData>[] = [
     {
       title: '类型',
       dataIndex: 'type',
-      render: (value) => value.replace(/_/g, ' '),
-      sortable: true
+      render: value => value.replace(/_/g, ' '),
+      sortable: true,
     },
     {
       title: '数值',
       dataIndex: 'value',
       render: (value, record) => formatHealthData(record),
-      sortable: true
+      sortable: true,
     },
     {
       title: '时间',
       dataIndex: 'timestamp',
-      render: (value) => formatDate(value),
-      sortable: true
+      render: value => formatDate(value),
+      sortable: true,
     },
     {
       title: '备注',
       dataIndex: 'note',
-      render: (value) => value || '-'
+      render: value => value || '-',
     },
     {
       title: '操作',
@@ -69,16 +70,13 @@ export const HealthDataTable: React.FC<HealthDataTableProps> = ({
             </button>
           )}
           {onDelete && (
-            <button
-              className="text-red-600 hover:text-red-700"
-              onClick={() => onDelete(record)}
-            >
+            <button className="text-red-600 hover:text-red-700" onClick={() => onDelete(record)}>
               删除
             </button>
           )}
         </div>
-      )
-    }
+      ),
+    },
   ];
 
   return (
@@ -88,14 +86,12 @@ export const HealthDataTable: React.FC<HealthDataTableProps> = ({
       rowKey="id"
       loading={loading}
       selectable={!!onSelectChange}
-      selectedRowKeys={selectedData?.map((item) => item.id)}
-      onSelectChange={(keys) => {
-        const selected = dataSource.filter((item) =>
-          keys.includes(item.id)
-        );
+      selectedRowKeys={selectedData?.map(item => item.id)}
+      onSelectChange={keys => {
+        const selected = dataSource.filter(item => keys.includes(item.id));
         onSelectChange?.(selected);
       }}
       className={className}
     />
   );
-}; 
+};

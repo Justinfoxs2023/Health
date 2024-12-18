@@ -1,11 +1,16 @@
 import AWS from 'aws-sdk';
-import { visionConfig } from '../../config/vision.config';
-import { Logger } from '../../utils/logger';
+import {
+  RekognitionClient,
+  DetectLabelsCommand,
+  DetectTextCommand,
+  DetectFacesCommand,
+  RecognizeCelebritiesCommand,
+} from '@aws-sdk/client-rekognition';
 import { DeepseekService } from '../ai/deepseek.service';
-import { RedisConfig } from '../../config/redis.config';
-import { RekognitionClient, DetectLabelsCommand, DetectTextCommand, DetectFacesCommand, RecognizeCelebritiesCommand } from '@aws-sdk/client-rekognition';
 import { ImageProcessorService } from './image-processor.service';
-
+import { Logger } from '../../utils/logger';
+import { RedisConfig } from '../../config/redis.config';
+import { visionConfig } from '../../config/vision.config';
 export class RekognitionService {
   private rekognition: RekognitionClient;
   private s3: AWS.S3;
@@ -16,14 +21,14 @@ export class RekognitionService {
 
   constructor() {
     this.logger = new Logger('Rekognition');
-    
+
     // 配置AWS服务
     AWS.config.update({
       region: visionConfig.aws.region,
       credentials: new AWS.Credentials(
         visionConfig.aws.credentials.accessKeyId,
-        visionConfig.aws.credentials.secretAccessKey
-      )
+        visionConfig.aws.credentials.secretAccessKey,
+      ),
     });
 
     this.rekognition = new RekognitionClient({});
@@ -38,7 +43,7 @@ export class RekognitionService {
         Bucket: visionConfig.aws.s3.bucket,
         Key: `images/${fileName}`,
         Body: imageBuffer,
-        ACL: visionConfig.aws.s3.acl
+        ACL: visionConfig.aws.s3.acl,
       };
 
       const result = await this.s3.upload(params).promise();
@@ -56,11 +61,11 @@ export class RekognitionService {
         Image: {
           S3Object: {
             Bucket: visionConfig.aws.s3.bucket,
-            Name: imageKey
-          }
+            Name: imageKey,
+          },
         },
         MaxLabels: visionConfig.rekognition.maxLabels,
-        MinConfidence: visionConfig.rekognition.minConfidence
+        MinConfidence: visionConfig.rekognition.minConfidence,
       };
 
       return await this.rekognition.send(new DetectLabelsCommand(params));
@@ -75,18 +80,19 @@ export class RekognitionService {
     try {
       const cacheKey = `food_analysis:${imageKey}`;
       const cached = await this.redis.get(cacheKey);
-      
+
       if (cached) {
         return JSON.parse(cached);
       }
 
       // 获取图片标签
       const labels = await this.detectLabels(imageKey);
-      
+
       // 判断是否为食物图片
-      const foodLabels = labels.Labels.filter(label => 
-        visionConfig.analysis.food.requiredLabels.includes(label.Name) &&
-        label.Confidence >= visionConfig.analysis.food.minConfidence
+      const foodLabels = labels.Labels.filter(
+        label =>
+          visionConfig.analysis.food.requiredLabels.includes(label.Name) &&
+          label.Confidence >= visionConfig.analysis.food.minConfidence,
       );
 
       if (foodLabels.length === 0) {
@@ -97,7 +103,7 @@ export class RekognitionService {
       const analysis = await this.deepseek.generateFoodAnalysis({
         labels: foodLabels,
         userId,
-        imageKey
+        imageKey,
       });
 
       // 缓存结果
@@ -115,7 +121,7 @@ export class RekognitionService {
     try {
       const cacheKey = `exercise_analysis:${imageKey}`;
       const cached = await this.redis.get(cacheKey);
-      
+
       if (cached) {
         return JSON.parse(cached);
       }
@@ -123,16 +129,20 @@ export class RekognitionService {
       // 获取图片标签和姿势信息
       const [labels, poses] = await Promise.all([
         this.detectLabels(imageKey),
-        this.rekognition.send(new DetectCustomLabelsCommand({
-          Image: {
-            S3Object: {
-              Bucket: visionConfig.aws.s3.bucket,
-              Name: imageKey
-            }
-          },
-          MinConfidence: visionConfig.analysis.exercise.minConfidence,
-          ProjectVersionArn: process.env.AWS_REKOGNITION_EXERCISE_MODEL
-        })).promise()
+        this.rekognition
+          .send(
+            new DetectCustomLabelsCommand({
+              Image: {
+                S3Object: {
+                  Bucket: visionConfig.aws.s3.bucket,
+                  Name: imageKey,
+                },
+              },
+              MinConfidence: visionConfig.analysis.exercise.minConfidence,
+              ProjectVersionArn: process.env.AWS_REKOGNITION_EXERCISE_MODEL,
+            }),
+          )
+          .promise(),
       ]);
 
       // 使用DeepSeek分析运动姿势
@@ -140,7 +150,7 @@ export class RekognitionService {
         labels: labels.Labels,
         poses: poses.CustomLabels,
         userId,
-        imageKey
+        imageKey,
       });
 
       // 缓存结果
@@ -158,10 +168,10 @@ export class RekognitionService {
     try {
       const frames = await this.extractFrames(videoStream);
       let lastAnalysis = null;
-      
+
       for (const frame of frames) {
         const analysis = await this.analyzeExercisePose(frame, 'stream');
-        
+
         // 对比前后帧分析结果
         if (lastAnalysis) {
           const postureDiff = this.comparePostures(lastAnalysis, analysis);
@@ -169,7 +179,7 @@ export class RekognitionService {
             await this.notifyPostureChange(postureDiff);
           }
         }
-        
+
         lastAnalysis = analysis;
       }
     } catch (error) {
@@ -183,7 +193,7 @@ export class RekognitionService {
     try {
       const [labels, text] = await Promise.all([
         this.detectLabels(imageKey),
-        this.detectText(imageKey)
+        this.detectText(imageKey),
       ]);
 
       // 使用DeepSeek分析营养成分
@@ -192,15 +202,15 @@ export class RekognitionService {
         text: text.TextDetections,
         imageContext: {
           type: 'food',
-          confidence: visionConfig.analysis.food.minConfidence
-        }
+          confidence: visionConfig.analysis.food.minConfidence,
+        },
       });
 
       return {
         nutrition: nutritionInfo,
         ingredients: this.extractIngredients(text.TextDetections),
         allergens: this.detectAllergens(labels.Labels),
-        portionSize: this.estimatePortionSize(labels.Labels)
+        portionSize: this.estimatePortionSize(labels.Labels),
       };
     } catch (error) {
       this.logger.error('营养成分分析失败:', error);
@@ -212,10 +222,11 @@ export class RekognitionService {
   async analyzeGymEquipment(imageKey: string) {
     try {
       const labels = await this.detectLabels(imageKey);
-      
-      const equipmentLabels = labels.Labels.filter(label => 
-        visionConfig.analysis.equipment.requiredLabels.includes(label.Name) &&
-        label.Confidence >= visionConfig.analysis.equipment.minConfidence
+
+      const equipmentLabels = labels.Labels.filter(
+        label =>
+          visionConfig.analysis.equipment.requiredLabels.includes(label.Name) &&
+          label.Confidence >= visionConfig.analysis.equipment.minConfidence,
       );
 
       if (equipmentLabels.length === 0) {
@@ -227,15 +238,15 @@ export class RekognitionService {
         labels: equipmentLabels,
         context: {
           type: 'gym_equipment',
-          purpose: 'usage_guide'
-        }
+          purpose: 'usage_guide',
+        },
       });
 
       return {
         equipment: equipmentLabels,
         usageGuide: equipmentAnalysis.usage,
         safetyTips: equipmentAnalysis.safety,
-        targetMuscles: equipmentAnalysis.muscles
+        targetMuscles: equipmentAnalysis.muscles,
       };
     } catch (error) {
       this.logger.error('健身器材分析失败:', error);
@@ -248,14 +259,14 @@ export class RekognitionService {
     try {
       const [labels, faces] = await Promise.all([
         this.detectLabels(imageKey),
-        this.detectFaces(imageKey)
+        this.detectFaces(imageKey),
       ]);
 
       // 分析运动强度指标
       const intensityFactors = {
         movement: this.analyzeMovementIntensity(labels.Labels),
         posture: this.analyzePostureComplexity(labels.Labels),
-        expression: this.analyzeExpressionIntensity(faces.FaceDetails)
+        expression: this.analyzeExpressionIntensity(faces.FaceDetails),
       };
 
       // 使用DeepSeek生成强度评估
@@ -264,15 +275,15 @@ export class RekognitionService {
         userId,
         context: {
           type: 'exercise_intensity',
-          userProfile: await this.getUserFitnessProfile(userId)
-        }
+          userProfile: await this.getUserFitnessProfile(userId),
+        },
       });
 
       return {
         intensity: intensityAnalysis.level,
         metrics: intensityAnalysis.metrics,
         recommendations: intensityAnalysis.recommendations,
-        cautions: intensityAnalysis.cautions
+        cautions: intensityAnalysis.cautions,
       };
     } catch (error) {
       this.logger.error('运动强度评估失败:', error);
@@ -281,7 +292,7 @@ export class RekognitionService {
   }
 
   // 批量分析图片
-  async batchAnalyze(images: Array<{key: string, type: string, userId: string}>) {
+  async batchAnalyze(images: Array<{ key: string; type: string; userId: string }>) {
     try {
       return await Promise.all(
         images.map(async img => {
@@ -297,11 +308,11 @@ export class RekognitionService {
             default:
               throw new Error(`不支持的分析类型: ${img.type}`);
           }
-        })
+        }),
       );
     } catch (error) {
       this.logger.error('批量分析失败:', error);
       throw error;
     }
   }
-} 
+}

@@ -1,17 +1,28 @@
+/**
+ * @fileoverview TS 文件 marketing.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // 营销工具
-export interface MarketingTool {
-  id: string;
-  name: string;
-  type: MarketingType;
-  status: 'draft' | 'active' | 'ended' | 'paused';
-  
-  // 基本配置
+export interface IMarketingTool {
+  /** id 的描述 */
+    id: string;
+  /** name 的描述 */
+    name: string;
+  /** type 的描述 */
+    type: "coupon" | "groupBuy" | "flashSale" | "bundleSale" | "pointsPromotion" | "giftWithPurchase";
+  /** status 的描述 */
+    status: draft  active  ended  paused;
+
+   
   config: {
     startTime: Date;
     endTime: Date;
-    platforms: string[];
-    userGroups: string[];
-    budget?: number;
+    platforms: string;
+    userGroups: string;
+    budget: number;
   };
 
   // 规则设置
@@ -33,29 +44,27 @@ export interface MarketingTool {
 }
 
 // 营销类型
-export type MarketingType = 
-  | 'coupon'
-  | 'groupBuy'
-  | 'flashSale'
-  | 'bundleSale'
-  | 'pointsPromotion'
-  | 'giftWithPurchase';
+export type MarketingType =
+  any;
 
 // 优惠券
-export interface Coupon {
-  id: string;
-  code: string;
-  type: 'fixed' | 'percentage' | 'shipping' | 'gift';
+export interface ICoupon {
+  /** id 的描述 */
+    id: string;
+  /** code 的描述 */
+    code: string;
+  /** type 的描述 */
+    type: fixed  percentage  shipping  gift;
   value: number;
   minPurchase: number;
-  maxDiscount?: number;
-  
-  // 使用范围
+  maxDiscount: number;
+
+   
   applicability: {
-    products?: string[];
-    categories?: string[];
-    brands?: string[];
-    services?: string[];
+    products: string;
+    categories: string;
+    brands: string;
+    services: string;
   };
 
   // ���放配置
@@ -83,18 +92,21 @@ export interface Coupon {
 }
 
 // 积分活动
-export interface PointsPromotion {
-  id: string;
-  name: string;
-  type: 'earn' | 'redeem' | 'multiply';
-  
-  // 积分规则
+export interface IPointsPromotion {
+  /** id 的描述 */
+    id: string;
+  /** name 的描述 */
+    name: string;
+  /** type 的描述 */
+    type: earn  redeem  multiply;
+
+   
   rules: {
-    earnRate?: number;
-    redeemRate?: number;
-    multiplier?: number;
-    maxPoints?: number;
-    minPurchase?: number;
+    earnRate: number;
+    redeemRate: number;
+    multiplier: number;
+    maxPoints: number;
+    minPurchase: number;
   };
 
   // 活动商品
@@ -114,12 +126,15 @@ export interface PointsPromotion {
 }
 
 // 赠品活动
-export interface GiftPromotion {
-  id: string;
-  name: string;
-  
-  // 赠品配置
-  gifts: Array<{
+export interface IGiftPromotion {
+  /** id 的描述 */
+    id: string;
+  /** name 的描述 */
+    name: string;
+
+   
+  /** gifts 的描述 */
+    gifts: Array{
     productId: string;
     quantity: number;
     threshold: number;
@@ -141,4 +156,4 @@ export interface GiftPromotion {
     averageOrderValue: number;
     costPerGift: number;
   };
-} 
+}

@@ -1,34 +1,41 @@
-import { BehaviorSubject } from 'rxjs';
 import CryptoJS from 'crypto-js';
+import { BehaviorSubject } from 'rxjs';
 
-interface SecurityConfig {
+interface ISecurityConfig {
+  /** encryptionKey 的描述 */
   encryptionKey: string;
+  /** signatureKey 的描述 */
   signatureKey: string;
+  /** allowedTypes 的描述 */
   allowedTypes: string[];
+  /** maxSize 的描述 */
   maxSize: number; // MB
+  /** expirationTime 的描述 */
   expirationTime: number; // 毫秒
 }
 
-interface SecurityState {
+interface ISecurityState {
+  /** processing 的描述 */
   processing: boolean;
+  /** error 的描述 */
   error: Error | null;
 }
 
 export class ImageSecurityService {
-  private config: SecurityConfig;
-  private state$ = new BehaviorSubject<SecurityState>({
+  private config: ISecurityConfig;
+  private state$ = new BehaviorSubject<ISecurityState>({
     processing: false,
-    error: null
+    error: null,
   });
 
-  constructor(config: Partial<SecurityConfig> = {}) {
+  constructor(config: Partial<ISecurityConfig> = {}) {
     this.config = {
       encryptionKey: process.env.IMAGE_ENCRYPTION_KEY || 'default-key',
       signatureKey: process.env.IMAGE_SIGNATURE_KEY || 'default-signature-key',
       allowedTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
       maxSize: 10, // 默认10MB
       expirationTime: 24 * 60 * 60 * 1000, // 默认24小时
-      ...config
+      ...config,
     };
   }
 
@@ -110,7 +117,7 @@ export class ImageSecurityService {
       const encrypted = CryptoJS.AES.encrypt(wordArray, this.config.encryptionKey);
 
       const encryptedBlob = new Blob([encrypted.toString()], {
-        type: 'application/octet-stream'
+        type: 'application/octet-stream',
       });
 
       this.updateState({ processing: false });
@@ -159,10 +166,10 @@ export class ImageSecurityService {
   }
 
   // 私有方法：更新状态
-  private updateState(partial: Partial<SecurityState>) {
+  private updateState(partial: Partial<ISecurityState>) {
     this.state$.next({
       ...this.state$.value,
-      ...partial
+      ...partial,
     });
   }
 
@@ -174,7 +181,7 @@ export class ImageSecurityService {
 
   // 私有方法：验证图片内容
   private async validateImageContent(file: File): Promise<boolean> {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       const img = new Image();
       const url = URL.createObjectURL(file);
 
@@ -210,4 +217,4 @@ export class ImageSecurityService {
   destroy() {
     this.state$.complete();
   }
-} 
+}

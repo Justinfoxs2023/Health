@@ -30,4 +30,4 @@ export const LoadingState: React.FC<{ message?: string }> = ({ message = '加载
       <span>{message}</span>
     </LoadingWrapper>
   );
-}; 
+};

@@ -1,6 +1,6 @@
-import { injectable } from 'inversify';
 import { BaseService } from '../base/base.service';
 import { ExercisePlan, WorkoutSession } from '../../types';
+import { injectable } from 'inversify';
 
 @injectable()
 export class ExerciseService extends BaseService {
@@ -15,4 +15,4 @@ export class ExerciseService extends BaseService {
   }
 
   // 实现其他方法...
-} 
+}

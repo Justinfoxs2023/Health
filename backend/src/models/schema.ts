@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 schema.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // MongoDB Schema 更新
 const SchemaUpdates = {
   // 社区数据集合
@@ -9,12 +16,12 @@ const SchemaUpdates = {
       interactions: {
         likes: Number,
         comments: Array,
-        shares: Number
+        shares: Number,
       },
-      createdAt: Date
-    }
+      createdAt: Date,
+    },
   },
-  
+
   // 设备数据集合
   devices: {
     configurations: {
@@ -22,32 +29,32 @@ const SchemaUpdates = {
       deviceId: String,
       type: String,
       settings: Mixed,
-      lastSync: Date
+      lastSync: Date,
     },
     healthData: {
       deviceId: String,
       userId: ObjectId,
       metrics: Mixed,
-      timestamp: Date
-    }
+      timestamp: Date,
+    },
   },
-  
+
   // 紧急救助集合
   emergency: {
     contacts: {
       userId: ObjectId,
       contacts: Array,
-      lastUpdated: Date
+      lastUpdated: Date,
     },
     events: {
       userId: ObjectId,
       type: String,
       location: {
         coordinates: [Number],
-        address: String
+        address: String,
       },
       status: String,
-      timestamp: Date
-    }
-  }
-}; 
+      timestamp: Date,
+    },
+  },
+};

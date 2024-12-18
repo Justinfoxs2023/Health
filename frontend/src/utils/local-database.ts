@@ -1,4 +1,11 @@
-export interface LocalDatabase {
+/**
+ * @fileoverview TS 文件 local-database.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
+export interface ILocalDatabase {
   get(key: string): Promise<any>;
   put(key: string, value: any): Promise<void>;
   delete(key: string): Promise<void>;
@@ -6,7 +13,7 @@ export interface LocalDatabase {
   has(key: string): Promise<boolean>;
 }
 
-export class IndexedDBDatabase implements LocalDatabase {
+export class IndexedDBDatabase implements ILocalDatabase {
   private dbName: string;
   private db: IDBDatabase | null = null;
 
@@ -24,7 +31,7 @@ export class IndexedDBDatabase implements LocalDatabase {
         this.db = request.result;
         resolve();
       };
-      request.onupgradeneeded = (event) => {
+      request.onupgradeneeded = event => {
         const db = (event.target as IDBOpenDBRequest).result;
         db.createObjectStore('keyvaluepairs');
       };
@@ -99,6 +106,6 @@ export class IndexedDBDatabase implements LocalDatabase {
 }
 
 // 创建数据库实例工厂
-export const createDatabase = (name: string): LocalDatabase => {
+export const createDatabase = (name: string): ILocalDatabase => {
   return new IndexedDBDatabase(name);
-}; 
+};

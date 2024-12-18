@@ -1,20 +1,19 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
-import { Text, Card, useTheme } from 'react-native-paper';
-import { useUser } from '../../hooks/useUser';
+
 import { HealthStatus } from '../../components/HealthStatus';
+import { Text, Card, useTheme } from 'react-native-paper';
 import { UserStats } from '../../components/UserStats';
+import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
+import { useUser } from '../../hooks/useUser';
 
 export const HomeScreen = () => {
   const { user, loading, refresh } = useUser();
   const theme = useTheme();
 
   return (
-    <ScrollView 
+    <ScrollView
       style={styles.container}
-      refreshControl={
-        <RefreshControl refreshing={loading} onRefresh={refresh} />
-      }
+      refreshControl={<RefreshControl refreshing={loading} onRefresh={refresh} />}
     >
       <View style={styles.header}>
         <Text style={styles.welcome}>欢迎回来, {user?.username}</Text>
@@ -60,4 +59,4 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 12,
   },
-}); 
+});

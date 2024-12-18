@@ -1,20 +1,22 @@
 import React, { useState, useEffect } from 'react';
+
 import { theme } from '../../styles/theme';
 
-interface NotificationProps {
-  type: 'success' | 'error' | 'warning' | 'info';
+interface INotificationProps {
+  /** type 的描述 */
+    type: success  error  warning  info;
   message: string;
-  description?: string;
-  duration?: number;
-  onClose?: () => void;
+  description: string;
+  duration: number;
+  onClose:   void;
 }
 
-export const Notification: React.FC<NotificationProps> = ({
+export const Notification: React.FC<INotificationProps> = ({
   type,
   message,
   description,
   duration = 4500,
-  onClose
+  onClose,
 }) => {
   const [visible, setVisible] = useState(true);
 
@@ -47,118 +49,121 @@ export const Notification: React.FC<NotificationProps> = ({
 
   return (
     <div className={`notification ${type}`}>
-      <div className="icon">{getIcon()}</div>
+      <div className="icon">{getIcon}</div>
       <div className="content">
         <div className="message">{message}</div>
         {description && <div className="description">{description}</div>}
       </div>
-      <button className="close" onClick={() => {
-        setVisible(false);
-        onClose?.();
-      }}>
-        ✕
+      <button
+        className="close"
+        onClick={ => {
+          setVisiblefalse
+          onClose
+        }}
+      >
+        
       </button>
 
-      <style jsx>{`
-        .notification {
-          display: flex;
-          align-items: flex-start;
-          padding: ${theme.spacing(2)};
-          border-radius: ${theme.borderRadius.medium};
-          background: ${theme.colors.background.paper};
-          box-shadow: ${theme.shadows.medium};
-          margin-bottom: ${theme.spacing(2)};
-          animation: slideIn 0.3s ease-out;
+      <style jsx>{
+        notification {
+          display flex
+          alignitems flexstart
+          padding {themespacing2}
+          borderradius {themeborderRadiusmedium}
+          background {themecolorsbackgroundpaper}
+          boxshadow {themeshadowsmedium}
+          marginbottom {themespacing2}
+          animation slideIn 03s easeout
         }
 
-        .notification.success {
-          border-left: 4px solid ${theme.colors.success};
+        notificationsuccess {
+          borderleft 4px solid {themecolorssuccess}
         }
 
-        .notification.error {
-          border-left: 4px solid ${theme.colors.error};
+        notificationerror {
+          borderleft 4px solid {themecolorserror}
         }
 
-        .notification.warning {
-          border-left: 4px solid ${theme.colors.warning};
+        notificationwarning {
+          borderleft 4px solid {themecolorswarning}
         }
 
-        .notification.info {
-          border-left: 4px solid ${theme.colors.info};
+        notificationinfo {
+          borderleft 4px solid {themecolorsinfo}
         }
 
-        .icon {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 24px;
-          height: 24px;
-          border-radius: 50%;
-          margin-right: ${theme.spacing(2)};
-          font-size: 14px;
-          font-weight: bold;
+        icon {
+          display flex
+          alignitems center
+          justifycontent center
+          width 24px
+          height 24px
+          borderradius 50
+          marginright {themespacing2}
+          fontsize 14px
+          fontweight bold
         }
 
-        .success .icon {
-          background: ${theme.colors.success}20;
-          color: ${theme.colors.success};
+        success icon {
+          background {themecolorssuccess}20
+          color {themecolorssuccess}
         }
 
-        .error .icon {
-          background: ${theme.colors.error}20;
-          color: ${theme.colors.error};
+        error icon {
+          background {themecolorserror}20
+          color {themecolorserror}
         }
 
-        .warning .icon {
-          background: ${theme.colors.warning}20;
-          color: ${theme.colors.warning};
+        warning icon {
+          background {themecolorswarning}20
+          color {themecolorswarning}
         }
 
-        .info .icon {
-          background: ${theme.colors.info}20;
-          color: ${theme.colors.info};
+        info icon {
+          background {themecolorsinfo}20
+          color {themecolorsinfo}
         }
 
-        .content {
-          flex: 1;
+        content {
+          flex 1
         }
 
-        .message {
-          font-weight: 500;
-          color: ${theme.colors.text.primary};
+        message {
+          fontweight 500
+          color {themecolorstextprimary}
         }
 
-        .description {
-          margin-top: ${theme.spacing(0.5)};
-          color: ${theme.colors.text.secondary};
-          font-size: ${theme.typography.body2.fontSize};
+        description {
+          margintop {themespacing05}
+          color {themecolorstextsecondary}
+          fontsize {themetypographybody2fontSize}
         }
 
-        .close {
-          background: none;
-          border: none;
-          padding: ${theme.spacing(0.5)};
-          cursor: pointer;
-          color: ${theme.colors.text.secondary};
-          opacity: 0.5;
-          transition: opacity ${theme.transitions.short};
+        close {
+          background none
+          border none
+          padding {themespacing05}
+          cursor pointer
+          color {themecolorstextsecondary}
+          opacity 05
+          transition opacity {themetransitionsshort}
         }
 
-        .close:hover {
-          opacity: 1;
+        closehover {
+          opacity 1
         }
 
-        @keyframes slideIn {
+        keyframes slideIn {
           from {
-            transform: translateX(100%);
-            opacity: 0;
+            transform translateX100
+            opacity 0
           }
           to {
-            transform: translateX(0);
-            opacity: 1;
+            transform translateX0
+            opacity 1
           }
         }
-      `}</style>
+      }</style>
     </div>
   );
-}; 
+};

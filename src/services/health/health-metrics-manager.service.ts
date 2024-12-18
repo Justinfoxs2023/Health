@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 health-metrics-manager.service.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export class HealthMetricsManagerService {
   private readonly metricsRepo: HealthMetricsRepository;
   private readonly encryptionService: EncryptionService;
@@ -19,7 +26,7 @@ export class HealthMetricsManagerService {
         this.analyzeVitalSigns(healthData),
         this.analyzeBiochemicalMarkers(healthData),
         this.analyzePhysicalCapacity(healthData),
-        this.analyzeCognitiveFunction(healthData)
+        this.analyzeCognitiveFunction(healthData),
       ]);
 
       return {
@@ -28,9 +35,12 @@ export class HealthMetricsManagerService {
         physicalMetrics: physical,
         cognitiveMetrics: cognitive,
         overallHealth: await this.calculateOverallHealthScore({
-          vital, biochemical, physical, cognitive
+          vital,
+          biochemical,
+          physical,
+          cognitive,
         }),
-        trends: await this.analyzeHealthTrends(userId)
+        trends: await this.analyzeHealthTrends(userId),
       };
     } catch (error) {
       this.logger.error('分析综合健康指标失败', error);
@@ -43,12 +53,12 @@ export class HealthMetricsManagerService {
     try {
       const userProfile = await this.getUserHealthProfile(userId);
       const healthMetrics = await this.analyzeComprehensiveMetrics(userId);
-      
+
       // 生成个性化建议
       const advice = await this.mlService.generateHealthAdvice({
         profile: userProfile,
         metrics: healthMetrics,
-        preferences: await this.getUserPreferences(userId)
+        preferences: await this.getUserPreferences(userId),
       });
 
       return {
@@ -56,7 +66,7 @@ export class HealthMetricsManagerService {
         weeklyGoals: advice.weekly,
         longTermObjectives: advice.longTerm,
         customizedPlans: await this.createCustomizedPlans(advice),
-        adaptiveGuidance: await this.generateAdaptiveGuidance(advice)
+        adaptiveGuidance: await this.generateAdaptiveGuidance(advice),
       };
     } catch (error) {
       this.logger.error('生成个性化建议失败', error);
@@ -69,13 +79,13 @@ export class HealthMetricsManagerService {
     try {
       const historicalData = await this.getHistoricalHealthData(userId);
       const currentMetrics = await this.analyzeComprehensiveMetrics(userId);
-      
+
       // 运行高级预测模型
       const predictions = await this.mlService.runAdvancedPredictionModel({
         historical: historicalData,
         current: currentMetrics,
         environmentalFactors: await this.getEnvironmentalData(userId),
-        geneticFactors: await this.getGeneticData(userId)
+        geneticFactors: await this.getGeneticData(userId),
       });
 
       return {
@@ -83,7 +93,7 @@ export class HealthMetricsManagerService {
         mediumTermPredictions: predictions.mediumTerm,
         longTermPredictions: predictions.longTerm,
         confidenceScores: predictions.confidence,
-        preventiveActions: await this.generatePreventiveActions(predictions)
+        preventiveActions: await this.generatePreventiveActions(predictions),
       };
     } catch (error) {
       this.logger.error('运行高级预测失败', error);
@@ -95,13 +105,13 @@ export class HealthMetricsManagerService {
   async processSecureHealthData(userId: string): Promise<SecureHealthData> {
     try {
       const rawData = await this.metricsRepo.getHealthData(userId);
-      
+
       // 数据匿名化
       const anonymizedData = await this.encryptionService.anonymizeData(rawData);
-      
+
       // 加密处理
       const encryptedData = await this.encryptionService.encryptSensitiveData(anonymizedData);
-      
+
       // 访问控制
       await this.implementAccessControl(userId, encryptedData);
 
@@ -109,11 +119,11 @@ export class HealthMetricsManagerService {
         secureData: encryptedData,
         accessPolicies: await this.generateAccessPolicies(userId),
         auditTrail: await this.createAuditTrail(userId),
-        privacyMetrics: await this.calculatePrivacyMetrics(encryptedData)
+        privacyMetrics: await this.calculatePrivacyMetrics(encryptedData),
       };
     } catch (error) {
       this.logger.error('处理安全健康数据失败', error);
       throw error;
     }
   }
-} 
+}

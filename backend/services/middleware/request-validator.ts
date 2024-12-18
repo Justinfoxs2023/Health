@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from 'express';
-import { validate, ValidationError } from 'class-validator';
-import { plainToClass } from 'class-transformer';
 import { Logger } from '../../utils/logger';
+import { Request, Response, NextFunction } from 'express';
+import { plainToClass } from 'class-transformer';
+import { validate, ValidationError } from 'class-validator';
 
 export class RequestValidator {
   private logger: Logger;
@@ -17,13 +17,13 @@ export class RequestValidator {
         const dtoObject = plainToClass(dto, {
           ...req.body,
           ...req.query,
-          ...req.params
+          ...req.params,
         });
 
         // 验证DTO对象
         const errors = await validate(dtoObject, {
           whitelist: true,
-          forbidNonWhitelisted: true
+          forbidNonWhitelisted: true,
         });
 
         if (errors.length > 0) {
@@ -33,8 +33,8 @@ export class RequestValidator {
             errors: this.formatErrors(errors),
             meta: {
               timestamp: Date.now(),
-              path: req.path
-            }
+              path: req.path,
+            },
           });
         }
 
@@ -52,7 +52,7 @@ export class RequestValidator {
     return errors.map(error => ({
       field: error.property,
       constraints: error.constraints,
-      children: error.children?.length ? this.formatErrors(error.children) : undefined
+      children: error.children?.length ? this.formatErrors(error.children) : undefined,
     }));
   }
-} 
+}

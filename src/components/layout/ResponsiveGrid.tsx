@@ -1,11 +1,13 @@
 import styled from 'styled-components';
 
-interface GridProps {
-  columns?: { xs?: number; sm?: number; md?: number; lg?: number; xl?: number };
-  spacing?: number;
+interface IGridProps {
+  /** columns 的描述 */
+  columns: { xs: number; sm: number; md: number; lg: number; xl: number };
+  /** spacing 的描述 */
+  spacing?: undefined | number;
 }
 
-export const ResponsiveGrid = styled.div<GridProps>`
+export const ResponsiveGrid = styled.div<IGridProps>`
   display: grid;
   gap: ${({ theme, spacing = 2 }) => theme.spacing(spacing)};
   width: 100%;
@@ -42,4 +44,4 @@ export const ResponsiveGrid = styled.div<GridProps>`
       1fr
     );
   }
-`; 
+`;

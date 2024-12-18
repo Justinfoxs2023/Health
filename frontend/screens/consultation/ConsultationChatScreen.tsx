@@ -1,12 +1,24 @@
 import React from 'react';
-import { View, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, Image, KeyboardAvoidingView, Platform } from 'react-native';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getConsultationMessages, sendMessage } from '../../api/consultation';
+
+import {
+  View,
+  FlatList,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import { LoadingSpinner, Icon, ImagePicker } from '../../components';
 import { format } from 'date-fns';
+import { getConsultationMessages, sendMessage } from '../../api/consultation';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { zhCN } from 'date-fns/locale';
 
-interface Message {
+interface 
+Message {
   id: string;
   senderId: string;
   senderType: 'user' | 'expert';
@@ -25,15 +37,15 @@ export const ConsultationChatScreen = ({ route, navigation }) => {
     ['consultationMessages', id],
     () => getConsultationMessages(id),
     {
-      refetchInterval: 5000 // 每5秒刷新一次消息
-    }
+      refetchInterval: 5000, // 每5秒刷新一次消息
+    },
   );
 
   const sendMutation = useMutation(sendMessage, {
     onSuccess: () => {
       setMessage('');
       queryClient.invalidateQueries(['consultationMessages', id]);
-    }
+    },
   });
 
   const handleSend = () => {
@@ -41,7 +53,7 @@ export const ConsultationChatScreen = ({ route, navigation }) => {
     sendMutation.mutate({
       consultationId: id,
       content: message.trim(),
-      type: 'text'
+      type: 'text',
     });
   };
 
@@ -57,7 +69,7 @@ export const ConsultationChatScreen = ({ route, navigation }) => {
       sendMutation.mutate({
         consultationId: id,
         content: result.assets[0].uri,
-        type: 'image'
+        type: 'image',
       });
     }
   };
@@ -67,9 +79,7 @@ export const ConsultationChatScreen = ({ route, navigation }) => {
 
     return (
       <View style={[styles.messageRow, isUser && styles.userMessageRow]}>
-        {!isUser && (
-          <Image source={{ uri: message.senderAvatar }} style={styles.avatar} />
-        )}
+        {!isUser && <Image source={{ uri: message.senderAvatar }} style={styles.avatar} />}
         <View style={[styles.messageBubble, isUser && styles.userMessageBubble]}>
           {message.type === 'text' ? (
             <Text style={[styles.messageText, isUser && styles.userMessageText]}>
@@ -86,9 +96,7 @@ export const ConsultationChatScreen = ({ route, navigation }) => {
             {format(new Date(message.createdAt), 'HH:mm', { locale: zhCN })}
           </Text>
         </View>
-        {isUser && (
-          <Image source={{ uri: message.senderAvatar }} style={styles.avatar} />
-        )}
+        {isUser && <Image source={{ uri: message.senderAvatar }} style={styles.avatar} />}
       </View>
     );
   };
@@ -137,58 +145,58 @@ export const ConsultationChatScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   messageList: {
-    padding: 15
+    padding: 15,
   },
   messageRow: {
     flexDirection: 'row',
     marginBottom: 15,
-    alignItems: 'flex-end'
+    alignItems: 'flex-end',
   },
   userMessageRow: {
-    flexDirection: 'row-reverse'
+    flexDirection: 'row-reverse',
   },
   avatar: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    marginHorizontal: 8
+    marginHorizontal: 8,
   },
   messageBubble: {
     maxWidth: '70%',
     backgroundColor: '#fff',
     borderRadius: 16,
     padding: 12,
-    borderTopLeftRadius: 4
+    borderTopLeftRadius: 4,
   },
   userMessageBubble: {
     backgroundColor: '#E8F5E9',
     borderTopLeftRadius: 16,
-    borderTopRightRadius: 4
+    borderTopRightRadius: 4,
   },
   messageText: {
     fontSize: 16,
     color: '#333',
-    lineHeight: 22
+    lineHeight: 22,
   },
   userMessageText: {
-    color: '#2E7D32'
+    color: '#2E7D32',
   },
   messageImage: {
     width: 200,
     height: 150,
-    borderRadius: 8
+    borderRadius: 8,
   },
   messageTime: {
     fontSize: 12,
     color: '#999',
     marginTop: 4,
-    alignSelf: 'flex-end'
+    alignSelf: 'flex-end',
   },
   userMessageTime: {
-    color: '#81C784'
+    color: '#81C784',
   },
   inputContainer: {
     flexDirection: 'row',
@@ -196,10 +204,10 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: '#fff',
     borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: '#f0f0f0'
+    borderTopColor: '#f0f0f0',
   },
   imageButton: {
-    padding: 8
+    padding: 8,
   },
   input: {
     flex: 1,
@@ -209,7 +217,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     marginHorizontal: 8,
     fontSize: 16,
-    maxHeight: 100
+    maxHeight: 100,
   },
   sendButton: {
     width: 40,
@@ -217,9 +225,9 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: '#2E7D32',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   sendButtonDisabled: {
-    backgroundColor: '#f5f5f5'
-  }
-}); 
+    backgroundColor: '#f5f5f5',
+  },
+});

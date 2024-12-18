@@ -1,18 +1,19 @@
 import { PerformanceOptimizer } from '@/utils/PerformanceOptimizer';
 
-interface CriticalResource {
-  type: 'script' | 'style' | 'image' | 'font';
+interface ICriticalResource {
+  /** type 的描述 */
+    type: script  style  image  font;
   path: string;
-  priority?: 'high' | 'medium' | 'low';
+  priority: high  medium  low;
 }
 
 export class FirstScreenOptimizer {
   // 关键资源配置
-  private static criticalResources: CriticalResource[] = [
+  private static criticalResources: ICriticalResource[] = [
     { type: 'script', path: '/js/main.chunk.js', priority: 'high' },
     { type: 'style', path: '/css/main.chunk.css', priority: 'high' },
     { type: 'image', path: '/images/logo.png', priority: 'high' },
-    { type: 'font', path: '/fonts/main.woff2', priority: 'medium' }
+    { type: 'font', path: '/fonts/main.woff2', priority: 'medium' },
   ];
 
   // 初始化优化
@@ -26,7 +27,7 @@ export class FirstScreenOptimizer {
   // 预加载关键资源
   private static preloadCriticalResources() {
     const head = document.head;
-    
+
     this.criticalResources
       .filter(resource => resource.priority === 'high')
       .forEach(resource => {
@@ -50,12 +51,12 @@ export class FirstScreenOptimizer {
         const webpUrl = img.src.replace(/\.(png|jpg|jpeg)$/, '.webp');
         img.src = webpUrl;
       }
-      
+
       // 懒加载
       if ('loading' in HTMLImageElement.prototype) {
         img.loading = 'lazy';
       }
-      
+
       // 响应式图片
       if (!img.srcset && img.dataset.srcset) {
         img.srcset = img.dataset.srcset;
@@ -85,7 +86,9 @@ export class FirstScreenOptimizer {
     const nonCriticalStyles = document.querySelectorAll('link[data-defer]');
     nonCriticalStyles.forEach(link => {
       link.media = 'print';
-      link.onload = () => { link.media = 'all'; };
+      link.onload = () => {
+        link.media = 'all';
+      };
     });
   }
 
@@ -111,7 +114,7 @@ export class FirstScreenOptimizer {
 
   // 路由预加载
   static preloadRoutes(routes: string[]) {
-    const observer = new IntersectionObserver((entries) => {
+    const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           const route = entry.target.getAttribute('data-route');
@@ -137,7 +140,7 @@ export class FirstScreenOptimizer {
         await module.prefetch();
       }
     } catch (error) {
-      console.error('路由预取失败:', error);
+      console.error('Error in FirstScreenOptimizer.ts:', '路由预取失败:', error);
     }
   }
 
@@ -153,10 +156,10 @@ export class FirstScreenOptimizer {
           preRenderedComponents.set(component, html);
         }
       } catch (error) {
-        console.error(`组件预渲染失败: ${component}`, error);
+        console.error('Error in FirstScreenOptimizer.ts:', `组件预渲染失败: ${component}`, error);
       }
     }
 
     return preRenderedComponents;
   }
-} 
+}

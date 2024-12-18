@@ -1,17 +1,20 @@
-import { EventEmitter } from 'events';
-import { Logger } from '../../utils/logger';
 import * as jest from 'jest';
 import * as k6 from 'k6';
+import { EventEmitter } from 'events';
+import { Logger } from '../../utils/logger';
 import { TestReport, TestCase, PerformanceMetrics } from './types';
 
-interface TestConfig {
+interface ITestConfig {
+  /** timeout 的描述 */
   timeout: number;
+  /** coverage 的描述 */
   coverage: {
     statements: number;
     branches: number;
     functions: number;
     lines: number;
   };
+  /** performance 的描述 */
   performance: {
     maxResponseTime: number;
     maxErrorRate: number;
@@ -21,9 +24,9 @@ interface TestConfig {
 
 export class TestService extends EventEmitter {
   private logger: Logger;
-  private config: TestConfig;
+  private config: ITestConfig;
 
-  constructor(config: TestConfig) {
+  constructor(config: ITestConfig) {
     super();
     this.logger = new Logger('TestService');
     this.config = config;
@@ -32,12 +35,15 @@ export class TestService extends EventEmitter {
   // 运行单元测试
   async runUnitTests(testFiles: string[]): Promise<TestReport> {
     try {
-      const results = await jest.runCLI({
-        coverage: true,
-        coverageThreshold: this.config.coverage,
-        testTimeout: this.config.timeout,
-        testFiles
-      }, [process.cwd()]);
+      const results = await jest.runCLI(
+        {
+          coverage: true,
+          coverageThreshold: this.config.coverage,
+          testTimeout: this.config.timeout,
+          testFiles,
+        },
+        [process.cwd()],
+      );
 
       return this.formatTestResults(results);
     } catch (error) {
@@ -51,12 +57,15 @@ export class TestService extends EventEmitter {
     try {
       // 启动测试环境
       await this.setupTestEnvironment();
-      
-      const results = await jest.runCLI({
-        testRegex: testSuite,
-        testEnvironment: 'node',
-        setupFiles: ['./test/setup.ts']
-      }, [process.cwd()]);
+
+      const results = await jest.runCLI(
+        {
+          testRegex: testSuite,
+          testEnvironment: 'node',
+          setupFiles: ['./test/setup.ts'],
+        },
+        [process.cwd()],
+      );
 
       return this.formatTestResults(results);
     } finally {
@@ -73,8 +82,8 @@ export class TestService extends EventEmitter {
         duration: '30s',
         thresholds: {
           http_req_duration: [`p(95)<${this.config.performance.maxResponseTime}`],
-          http_req_failed: [`rate<${this.config.performance.maxErrorRate}`]
-        }
+          http_req_failed: [`rate<${this.config.performance.maxErrorRate}`],
+        },
       };
 
       const results = await k6.run(scenarios, options);
@@ -93,7 +102,7 @@ export class TestService extends EventEmitter {
       numFailedTests: results.numFailedTests,
       coverage: results.coverage,
       timestamp: new Date(),
-      duration: results.testResults[0].perfStats.runtime
+      duration: results.testResults[0].perfStats.runtime,
     };
   }
-} 
+}

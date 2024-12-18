@@ -1,5 +1,5 @@
-import { createLogger, format, transports } from 'winston';
 import DailyRotateFile from 'winston-daily-rotate-file';
+import { createLogger, format, transports } from 'winston';
 import { join } from 'path';
 
 /** 日志工具类 */
@@ -24,7 +24,7 @@ export class Logger {
     // 创建格式化器
     const customFormat = format.combine(
       format.timestamp({
-        format: 'YYYY-MM-DD HH:mm:ss.SSS'
+        format: 'YYYY-MM-DD HH:mm:ss.SSS',
       }),
       format.errors({ stack: true }),
       format.splat(),
@@ -37,7 +37,7 @@ export class Logger {
           log += ` ${JSON.stringify(meta)}`;
         }
         return log;
-      })
+      }),
     );
 
     // 创建日志传输器
@@ -45,10 +45,7 @@ export class Logger {
       // 控制台输出
       new transports.Console({
         level: logLevel,
-        format: format.combine(
-          format.colorize(),
-          customFormat
-        )
+        format: format.combine(format.colorize(), customFormat),
       }),
 
       // 错误日志文件
@@ -58,7 +55,7 @@ export class Logger {
         datePattern: 'YYYY-MM-DD',
         maxSize,
         maxFiles,
-        format: customFormat
+        format: customFormat,
       }),
 
       // 组合日志文件
@@ -67,8 +64,8 @@ export class Logger {
         datePattern: 'YYYY-MM-DD',
         maxSize,
         maxFiles,
-        format: customFormat
-      })
+        format: customFormat,
+      }),
     ];
 
     // 创建日志记录器
@@ -76,11 +73,11 @@ export class Logger {
       level: logLevel,
       format: customFormat,
       transports: logTransports,
-      exitOnError: false
+      exitOnError: false,
     });
 
     // 处理未捕获的异常
-    process.on('uncaughtException', (error) => {
+    process.on('uncaughtException', error => {
       this.error('未捕获的异常', error);
       process.exit(1);
     });
@@ -129,13 +126,13 @@ export class Logger {
       this.logger.error(message, {
         context: this.context,
         stack: error.stack,
-        ...meta
+        ...meta,
       });
     } else {
       this.logger.error(message, {
         context: this.context,
         error,
-        ...meta
+        ...meta,
       });
     }
   }
@@ -156,7 +153,7 @@ export class Logger {
       statusCode,
       duration,
       ip,
-      userAgent: headers['user-agent']
+      userAgent: headers['user-agent'],
     });
   }
 
@@ -171,13 +168,13 @@ export class Logger {
     operation: string,
     collection: string,
     duration: number,
-    meta?: any
+    meta?: any,
   ): void {
     this.debug('数据库操作', {
       operation,
       collection,
       duration,
-      ...meta
+      ...meta,
     });
   }
 
@@ -188,17 +185,12 @@ export class Logger {
    * @param duration 执行时间
    * @param meta 元数据
    */
-  public logCacheOperation(
-    operation: string,
-    key: string,
-    duration: number,
-    meta?: any
-  ): void {
+  public logCacheOperation(operation: string, key: string, duration: number, meta?: any): void {
     this.debug('缓存操作', {
       operation,
       key,
       duration,
-      ...meta
+      ...meta,
     });
   }
 
@@ -209,17 +201,12 @@ export class Logger {
    * @param duration 执行时间
    * @param meta 元数据
    */
-  public logModelOperation(
-    model: string,
-    operation: string,
-    duration: number,
-    meta?: any
-  ): void {
+  public logModelOperation(model: string, operation: string, duration: number, meta?: any): void {
     this.debug('AI模型操作', {
       model,
       operation,
       duration,
-      ...meta
+      ...meta,
     });
   }
 
@@ -233,7 +220,7 @@ export class Logger {
     this.info('性能指标', {
       metric,
       value,
-      ...meta
+      ...meta,
     });
   }
 
@@ -246,12 +233,12 @@ export class Logger {
   public logSecurityEvent(
     event: string,
     severity: 'low' | 'medium' | 'high' | 'critical',
-    meta?: any
+    meta?: any,
   ): void {
     this.warn('安全事件', {
       event,
       severity,
-      ...meta
+      ...meta,
     });
   }
 
@@ -264,12 +251,12 @@ export class Logger {
   public logBusinessEvent(
     event: string,
     status: 'success' | 'failure' | 'pending',
-    meta?: any
+    meta?: any,
   ): void {
     this.info('业务事件', {
       event,
       status,
-      ...meta
+      ...meta,
     });
   }
 
@@ -281,7 +268,7 @@ export class Logger {
   public logSystemEvent(event: string, meta?: any): void {
     this.info('系统事件', {
       event,
-      ...meta
+      ...meta,
     });
   }
 
@@ -296,14 +283,14 @@ export class Logger {
     user: { id: string; name: string },
     action: string,
     resource: { type: string; id: string },
-    meta?: any
+    meta?: any,
   ): void {
     this.info('审计日志', {
       user,
       action,
       resource,
       timestamp: new Date().toISOString(),
-      ...meta
+      ...meta,
     });
   }
 
@@ -317,7 +304,7 @@ export class Logger {
       context,
       timestamp: new Date().toISOString(),
       environment: process.env.NODE_ENV,
-      version: process.env.npm_package_version
+      version: process.env.npm_package_version,
     });
   }
-} 
+}

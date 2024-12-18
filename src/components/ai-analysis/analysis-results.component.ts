@@ -1,30 +1,31 @@
-import { Component, Input } from '@angular/core';
-import { 
-  ImageRecognitionResult, 
-  RealTimeAnalysis,
-  MultiModalAnalysis 
+import {
+  ImageRecognitionResult,
+  IRealTimeAnalysis,
+  IMultiModalAnalysis,
 } from '../../services/ai-service/types';
+import { Component, Input } from '@angular/core';
 
-@Component({
+@Com
+ponent({
   selector: 'app-analysis-results',
   template: `
     <div class="analysis-results" [class]="theme">
       <!-- AI分析总览 -->
       <section class="analysis-overview">
-        <h2>AI健康分析报告</h2>
+        <h2>AI</h2>
         <div class="overview-cards">
           <div class="overview-card health">
             <div class="card-header">
-              <span class="card-title">健康状况</span>
-              <span class="status-indicator" [class]="getHealthStatus()">
-                {{ getHealthStatusText() }}
+              <span class="cardtitle"></span>
+              <span class="statusindicator" class="getHealthStatus">
+                {{ getHealthStatusText }}
               </span>
             </div>
             <div class="metrics-summary">
               <div class="metric" *ngFor="let metric of healthMetrics">
-                <span class="label">{{ metric.label }}</span>
-                <span class="value" [class]="metric.status">
-                  {{ metric.value }}{{ metric.unit }}
+                <span class="label">{{ metriclabel }}</span>
+                <span class="value" class="metricstatus">
+                  {{ metricvalue }}{{ metricunit }}
                 </span>
               </div>
             </div>
@@ -32,20 +33,22 @@ import {
 
           <div class="overview-card lifestyle">
             <div class="card-header">
-              <span class="card-title">生活方式分析</span>
+              <span class="cardtitle"></span>
             </div>
             <div class="lifestyle-insights">
               <div class="insight" *ngFor="let insight of lifestyleInsights">
                 <div class="insight-header">
-                  <span class="insight-type">{{ insight.type }}</span>
-                  <span class="insight-score">{{ insight.score }}/10</span>
+                  <span class="insighttype">{{ insighttype }}</span>
+                  <span class="insightscore">{{ insightscore }}/10</span>
                 </div>
-                <p class="insight-description">{{ insight.description }}</p>
+                <p class="insightdescription">{{ insightdescription }}</p>
                 <div class="recommendations">
-                  <div *ngFor="let rec of insight.recommendations" 
-                       class="recommendation"
-                       [class]="rec.priority">
-                    {{ rec.content }}
+                  <div
+                    ngFor="let rec of insightrecommendations"
+                    class="recommendation"
+                    class="recpriority"
+                  >
+                    {{ reccontent }}
                   </div>
                 </div>
               </div>
@@ -57,11 +60,13 @@ import {
       <!-- 详细分析结果 -->
       <section class="detailed-analysis">
         <div class="analysis-tabs">
-          <button *ngFor="let tab of analysisTabs"
-                  class="tab-button"
-                  [class.active]="activeTab === tab.id"
-                  (click)="setActiveTab(tab.id)">
-            {{ tab.label }}
+          <button
+            ngFor="let tab of analysisTabs"
+            class="tabbutton"
+            classactive="activeTab === tabid"
+            click="setActiveTabtabid"
+          >
+            {{ tablabel }}
           </button>
         </div>
 
@@ -69,24 +74,24 @@ import {
           <!-- 运动分析 -->
           <div *ngSwitchCase="'exercise'" class="exercise-analysis">
             <div class="pose-analysis">
-              <h3>姿态分析</h3>
+              <h3></h3>
               <div class="pose-details">
                 <div class="pose-metrics">
                   <div class="metric accuracy">
-                    <span class="label">准确度</span>
-                    <span class="value">{{ poseAnalysis?.accuracy }}%</span>
+                    <span class="label"></span>
+                    <span class="value">{{ poseAnalysisaccuracy }}</span>
                   </div>
                   <div class="metric risk">
-                    <span class="label">风险等级</span>
-                    <span class="value" [class]="poseAnalysis?.riskLevel">
-                      {{ getRiskLevelText(poseAnalysis?.riskLevel) }}
+                    <span class="label"></span>
+                    <span class="value" class="poseAnalysisriskLevel">
+                      {{ getRiskLevelTextposeAnalysisriskLevel }}
                     </span>
                   </div>
                 </div>
                 <div class="corrections-list" *ngIf="poseAnalysis?.corrections.length">
-                  <h4>改进建议</h4>
+                  <h4></h4>
                   <ul>
-                    <li *ngFor="let correction of poseAnalysis?.corrections">
+                    <li ngFor="let correction of poseAnalysiscorrections">
                       {{ correction }}
                     </li>
                   </ul>
@@ -98,14 +103,14 @@ import {
           <!-- 营养分析 -->
           <div *ngSwitchCase="'nutrition'" class="nutrition-analysis">
             <div class="meal-analysis" *ngIf="foodRecognition">
-              <h3>膳食分析</h3>
+              <h3></h3>
               <div class="nutrition-chart">
                 <!-- 这里可以添加营养成分图表 -->
               </div>
               <div class="nutrition-recommendations">
-                <h4>营养建议</h4>
+                <h4></h4>
                 <ul>
-                  <li *ngFor="let suggestion of foodRecognition.suggestions">
+                  <li ngFor="let suggestion of foodRecognitionsuggestions">
                     {{ suggestion }}
                   </li>
                 </ul>
@@ -116,23 +121,21 @@ import {
           <!-- 情绪分析 -->
           <div *ngSwitchCase="'emotion'" class="emotion-analysis">
             <div class="emotion-tracking" *ngIf="emotionAnalysis">
-              <h3>情绪追踪</h3>
+              <h3></h3>
               <div class="emotion-timeline">
                 <!-- 这里可以添加情绪变化时间线 -->
               </div>
               <div class="emotion-insights">
-                <h4>情绪洞察</h4>
+                <h4></h4>
                 <div class="insight-cards">
-                  <div *ngFor="let insight of emotionInsights" 
-                       class="insight-card">
+                  <div *ngFor="let insight of emotionInsights" class="insight-card">
                     <div class="insight-header">
-                      <span class="emotion-type">{{ insight.emotion }}</span>
-                      <span class="intensity">强度: {{ insight.intensity }}/10</span>
+                      <span class="emotiontype">{{ insightemotion }}</span>
+                      <span class="intensity"> {{ insightintensity }}/10</span>
                     </div>
-                    <p class="insight-content">{{ insight.analysis }}</p>
+                    <p class="insightcontent">{{ insightanalysis }}</p>
                     <div class="suggested-actions">
-                      <div *ngFor="let action of insight.actions" 
-                           class="action-item">
+                      <div ngFor="let action of insightactions" class="actionitem">
                         {{ action }}
                       </div>
                     </div>
@@ -145,24 +148,24 @@ import {
       </section>
     </div>
   `,
-  styleUrls: ['./analysis-results.component.scss']
+  styleUrls: ['./analysis-results.component.scss'],
 })
 export class AnalysisResultsComponent {
-  @Input() poseAnalysis: RealTimeAnalysis['poseAnalysis'];
+  @Input() poseAnalysis: IRealTimeAnalysis['poseAnalysis'];
   @Input() foodRecognition: ImageRecognitionResult['foodRecognition'];
-  @Input() emotionAnalysis: MultiModalAnalysis['emotion'];
+  @Input() emotionAnalysis: IMultiModalAnalysis['emotion'];
 
   activeTab = 'exercise';
   analysisTabs = [
     { id: 'exercise', label: '运动分析' },
     { id: 'nutrition', label: '营养分析' },
-    { id: 'emotion', label: '情绪分析' }
+    { id: 'emotion', label: '情绪分析' },
   ];
 
   healthMetrics = [
     { label: '心率', value: 75, unit: 'bpm', status: 'normal' },
     { label: '血压', value: '120/80', unit: 'mmHg', status: 'normal' },
-    { label: '血氧', value: 98, unit: '%', status: 'good' }
+    { label: '血氧', value: 98, unit: '%', status: 'good' },
   ];
 
   lifestyleInsights = [
@@ -172,8 +175,8 @@ export class AnalysisResultsComponent {
       description: '保持良好的运动频率，但可以适当增加强度',
       recommendations: [
         { content: '增加每周高强度训练次数', priority: 'medium' },
-        { content: '加入力量训练', priority: 'high' }
-      ]
+        { content: '加入力量训练', priority: 'high' },
+      ],
     },
     {
       type: '饮食习惯',
@@ -181,9 +184,9 @@ export class AnalysisResultsComponent {
       description: '营养均衡，但蛋白质摄入略低',
       recommendations: [
         { content: '增加优质蛋白摄入', priority: 'high' },
-        { content: '控制精制碳水摄入', priority: 'medium' }
-      ]
-    }
+        { content: '控制精制碳水摄入', priority: 'medium' },
+      ],
+    },
   ];
 
   emotionInsights = [
@@ -191,11 +194,8 @@ export class AnalysisResultsComponent {
       emotion: '积极',
       intensity: 8,
       analysis: '整体情绪状态良好，保持稳定',
-      actions: [
-        '继续保持当前的生活节奏',
-        '适当增加社交活动'
-      ]
-    }
+      actions: ['继续保持当前的生活节奏', '适当增加社交活动'],
+    },
   ];
 
   setActiveTab(tabId: string) {
@@ -211,7 +211,7 @@ export class AnalysisResultsComponent {
     const statusTexts = {
       good: '状态良好',
       warning: '需要注意',
-      alert: '需要改善'
+      alert: '需要改善',
     };
     return statusTexts[this.getHealthStatus()];
   }
@@ -220,8 +220,8 @@ export class AnalysisResultsComponent {
     const levelTexts = {
       low: '低风险',
       medium: '中等风险',
-      high: '高风险'
+      high: '高风险',
     };
     return levelTexts[level] || level;
   }
-} 
+}

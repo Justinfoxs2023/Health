@@ -26,39 +26,38 @@ export class LoggingService {
         node: process.env.ELASTICSEARCH_URL,
         auth: {
           username: process.env.ELASTICSEARCH_USER,
-          password: process.env.ELASTICSEARCH_PASS
-        }
+          password: process.env.ELASTICSEARCH_PASS,
+        },
       },
-      indexPrefix: 'health-app-logs'
+      indexPrefix: 'health-app-logs',
     });
 
     this.logger = winston.createLogger({
       level: 'info',
-      format: winston.format.combine(
-        winston.format.timestamp(),
-        winston.format.json()
-      ),
+      format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
       defaultMeta: { service: 'health-app' },
       transports: [
-        new winston.transports.File({ 
-          filename: 'logs/error.log', 
+        new winston.transports.File({
+          filename: 'logs/error.log',
           level: 'error',
           maxsize: 5242880, // 5MB
-          maxFiles: 5
+          maxFiles: 5,
         }),
-        new winston.transports.File({ 
+        new winston.transports.File({
           filename: 'logs/combined.log',
           maxsize: 5242880,
-          maxFiles: 5
+          maxFiles: 5,
         }),
-        esTransport
-      ]
+        esTransport,
+      ],
     });
 
     if (process.env.NODE_ENV !== 'production') {
-      this.logger.add(new winston.transports.Console({
-        format: winston.format.simple()
-      }));
+      this.logger.add(
+        new winston.transports.Console({
+          format: winston.format.simple(),
+        }),
+      );
     }
   }
 
@@ -73,7 +72,7 @@ export class LoggingService {
   }) {
     this.logger.info('API Access', {
       type: 'api_access',
-      ...data
+      ...data,
     });
 
     // 缓存最近的API访问记录
@@ -88,22 +87,17 @@ export class LoggingService {
       type: 'error',
       error: {
         message: error.message,
-        stack: error.stack
+        stack: error.stack,
       },
-      context
+      context,
     });
   }
 
   // 记录业务事件
-  async logBusinessEvent(event: {
-    type: string;
-    action: string;
-    userId?: string;
-    data: any;
-  }) {
+  async logBusinessEvent(event: { type: string; action: string; userId?: string; data: any }) {
     this.logger.info('Business Event', {
       type: 'business_event',
-      ...event
+      ...event,
     });
   }
 
@@ -116,7 +110,7 @@ export class LoggingService {
   }) {
     this.logger.log(event.severity, 'System Event', {
       type: 'system_event',
-      ...event
+      ...event,
     });
   }
 
@@ -125,4 +119,4 @@ export class LoggingService {
     // 实现日志统计逻辑
     return {};
   }
-} 
+}

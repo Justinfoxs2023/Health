@@ -1,10 +1,10 @@
 import * as Sentry from '@sentry/node';
-import { ProfilingIntegration } from '@sentry/profiling-node';
 import { Integrations } from '@sentry/tracing';
-import { performance } from 'perf_hooks';
+import { Metrics } from '../schemas/Metrics';
+import { ProfilingIntegration } from '@sentry/profiling-node';
 import { createClient } from 'redis';
 import { logger } from './logger';
-import { Metrics } from '../schemas/Metrics';
+import { performance } from 'perf_hooks';
 
 // 初始化Sentry
 Sentry.init({
@@ -25,19 +25,24 @@ const redis = createClient({
   url: process.env.REDIS_URL,
 });
 
-redis.on('error', (err) => logger.error('Redis错误:', err));
+redis.on('error', err => logger.error('Redis错误:', err));
 
 // 性能指标收集
-interface PerformanceMetrics {
+interface IPerformanceMetrics {
+  /** requestCount 的描述 */
   requestCount: number;
+  /** responseTime 的描述 */
   responseTime: number;
+  /** errorCount 的描述 */
   errorCount: number;
+  /** memoryUsage 的描述 */
   memoryUsage: number;
+  /** cpuUsage 的描述 */
   cpuUsage: number;
 }
 
 class MonitoringService {
-  private metrics: PerformanceMetrics = {
+  private metrics: IPerformanceMetrics = {
     requestCount: 0,
     responseTime: 0,
     errorCount: 0,
@@ -137,7 +142,7 @@ class MonitoringService {
     res.once('finish', async () => {
       const duration = performance.now() - start;
       await this.recordRequest(path, duration);
-      
+
       // 结束transaction
       transaction.setHttpStatus(res.statusCode);
       transaction.finish();
@@ -199,7 +204,7 @@ class MonitoringService {
       const currentMetrics = await this.getRealTimeMetrics();
 
       for (const [metric, threshold] of Object.entries(thresholds)) {
-        const value = currentMetrics.currentMetrics[metric as keyof PerformanceMetrics];
+        const value = currentMetrics.currentMetrics[metric as keyof IPerformanceMetrics];
         if (value > Number(threshold)) {
           logger.warn(`告警: ${metric} (${value}) 超过阈值 ${threshold}`);
           // 发送告警通知
@@ -232,4 +237,4 @@ class MonitoringService {
   }
 }
 
-export const monitoringService = new MonitoringService(); 
+export const monitoringService = new MonitoringService();

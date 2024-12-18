@@ -1,5 +1,5 @@
-import { Redis } from '../utils/redis';
 import { Logger } from '../utils/logger';
+import { Redis } from '../utils/redis';
 import { SecurityError } from '../utils/errors';
 import { config } from '../config';
 
@@ -19,7 +19,7 @@ export class SecurityService {
     try {
       const key = `login_attempts:${userId}`;
       const attempts = await this.redis.get(key);
-      
+
       if (attempts && parseInt(attempts) >= config.security.maxLoginAttempts) {
         // 锁定账户
         await this.lockAccount(userId);
@@ -37,7 +37,7 @@ export class SecurityService {
   public async recordLoginAttempt(userId: string, success: boolean): Promise<void> {
     try {
       const key = `login_attempts:${userId}`;
-      
+
       if (success) {
         // 登录成功，清除尝试记录
         await this.redis.del(key);
@@ -59,7 +59,7 @@ export class SecurityService {
     try {
       // 更新用户状态为锁定
       await this.userService.updateUser(userId, { status: 'locked' });
-      
+
       // 设置锁定时间
       const key = `account_locked:${userId}`;
       await this.redis.setex(key, config.security.accountLockDuration, '1');
@@ -76,11 +76,11 @@ export class SecurityService {
     try {
       const key = `ip_requests:${ip}`;
       const requests = await this.redis.get(key);
-      
+
       if (requests && parseInt(requests) >= config.security.maxIPRequests) {
         throw new SecurityError('请求频率过高，请稍后再试');
       }
-      
+
       await this.redis.incr(key);
       await this.redis.expire(key, config.security.ipLimitTTL);
     } catch (error) {
@@ -96,18 +96,18 @@ export class SecurityService {
     try {
       const key = `device_fingerprint:${userId}`;
       const knownFingerprints = await this.redis.smembers(key);
-      
+
       if (!knownFingerprints.includes(fingerprint)) {
         // 记录新设备登录
         await this.redis.sadd(key, fingerprint);
         // 发送新设备登录通知
         await this.notificationService.sendNewDeviceAlert(userId, fingerprint);
       }
-      
+
       return true;
     } catch (error) {
       this.logger.error('验证设备指纹失败', error);
       throw error;
     }
   }
-} 
+}

@@ -1,23 +1,31 @@
+/**
+ * @fileoverview TS 文件 service-management.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // 服务管理
-export interface ServiceManagement {
-  // 服务项目
-  serviceItem: {
+export interface IServiceManagement {
+   
+  /** serviceItem 的描述 */
+    serviceItem: {
     id: string;
     providerId: string;
     name: string;
-    category: ServiceCategory;
+    category: ServiceCategoryType;
     description: string;
-    duration: number; // 分钟
+    duration: number;  
     price: number;
-    
-    // 服务详情
+
+     
     details: {
-      process: string[];
-      requirements: string[];
-      contraindications?: string[];
-      preparations?: string[];
+      process: string;
+      requirements: string;
+      contraindications: string;
+      preparations: string;
     };
-    
+
     // 服务人员
     staff: Array<{
       id: string;
@@ -26,7 +34,7 @@ export interface ServiceManagement {
       specialties: string[];
       availability: boolean;
     }>;
-    
+
     // 服务时段
     timeSlots: Array<{
       dayOfWeek: number;
@@ -37,13 +45,14 @@ export interface ServiceManagement {
   };
 
   // 预约管理
-  appointment: {
+  /** appointment 的描述 */
+    appointment: {
     id: string;
     serviceId: string;
     userId: string;
     staffId: string;
-    status: AppointmentStatus;
-    
+    status: AppointmentStatusType;
+
     // 预约时间
     schedule: {
       date: Date;
@@ -51,7 +60,7 @@ export interface ServiceManagement {
       endTime: string;
       duration: number;
     };
-    
+
     // 用户信息
     userInfo: {
       name: string;
@@ -59,7 +68,7 @@ export interface ServiceManagement {
       medicalHistory?: string[];
       specialRequirements?: string;
     };
-    
+
     // 支付信息
     payment: {
       amount: number;
@@ -70,13 +79,14 @@ export interface ServiceManagement {
   };
 
   // 服务评价
-  serviceReview: {
+  /** serviceReview 的描述 */
+    serviceReview: {
     id: string;
     appointmentId: string;
     userId: string;
     staffId: string;
     rating: number;
-    
+
     // 评价内容
     content: {
       overall: string;
@@ -85,7 +95,7 @@ export interface ServiceManagement {
       environment: number;
       tags: string[];
     };
-    
+
     // 回复
     reply?: {
       content: string;
@@ -96,37 +106,30 @@ export interface ServiceManagement {
 }
 
 // 服务类别
-export type ServiceCategory = 
-  | 'medical_consultation'    // 医疗咨询
-  | 'health_examination'      // 健康体检
-  | 'rehabilitation'          // 康复理疗
-  | 'traditional_therapy'     // 传统疗法
-  | 'psychological_counsel'   // 心理咨询
-  | 'nutrition_guidance'      // 营养指导
-  | 'fitness_training';       // 健身训练
+export type ServiceCategoryType =
+  any; // 健身训练
 
 // 预约状态
-export type AppointmentStatus = 
-  | 'pending'      // 待确认
-  | 'confirmed'    // 已确认
-  | 'in_service'   // 服务中
-  | 'completed'    // 已完成
-  | 'cancelled'    // 已取消
-  | 'rescheduled'; // 已改期
+export type AppointmentStatusType =
+  any; // 已改期
 
 // 服务包管理
-export interface ServicePackage {
-  id: string;
-  name: string;
-  providerId: string;
-  
-  // 包含服务
-  services: Array<{
+export interface IServicePackage {
+  /** id 的描述 */
+    id: string;
+  /** name 的描述 */
+    name: string;
+  /** providerId 的描述 */
+    providerId: string;
+
+   
+  /** services 的描述 */
+    services: Array{
     serviceId: string;
     sessions: number;
-    validPeriod: number; // 天数
+    validPeriod: number;  
   }>;
-  
+
   // 价格信息
   pricing: {
     originalPrice: number;
@@ -134,7 +137,7 @@ export interface ServicePackage {
     savingAmount: number;
     perSessionPrice: number;
   };
-  
+
   // 使用规则
   rules: {
     transferable: boolean;
@@ -142,7 +145,7 @@ export interface ServicePackage {
     extensible: boolean;
     shareableMembers?: number;
   };
-  
+
   // 销售信息
   sales: {
     soldCount: number;
@@ -153,32 +156,35 @@ export interface ServicePackage {
 }
 
 // 服务预约配置
-export interface AppointmentConfig {
-  // 时间配置
-  timeConfig: {
-    minAdvanceTime: number;     // 最少提前预约时间(小时)
-    maxAdvanceTime: number;     // 最多提前预约时间(天)
-    serviceInterval: number;     // 服务间隔时间(分钟)
-    defaultDuration: number;     // 默认服务时长(分钟)
+export interface IAppointmentConfig {
+   
+  /** timeConfig 的描述 */
+    timeConfig: {
+    minAdvanceTime: number;  
+    maxAdvanceTime: number;  
+    serviceInterval: number;  
+    defaultDuration: number;  
   };
-  
+
   // 预约规则
-  rules: {
-    maxActiveBookings: number;  // 最大活跃预约数
+  /** rules 的描述 */
+    rules: {
+    maxActiveBookings: number; // 最大活跃预约数
     cancellationPolicy: {
-      deadline: number;         // 取消截止时间(小时)
-      refundRate: number;       // 退款比例
+      deadline: number; // 取消截止时间(小时)
+      refundRate: number; // 退款比例
     };
     noShowPolicy: {
-      penalty: number;          // 违约金
-      restrictionDays: number;  // 限制预约天数
+      penalty: number; // 违约金
+      restrictionDays: number; // 限制预约天数
     };
   };
-  
+
   // 提醒设置
-  notifications: {
+  /** notifications 的描述 */
+    notifications: {
     confirmationRequired: boolean;
-    reminderTiming: number[];   // 提前提醒时间(小时)
-    channels: string[];         // 提醒渠道
+    reminderTiming: number[]; // 提前提醒时间(小时)
+    channels: string[]; // 提醒渠道
   };
-} 
+}

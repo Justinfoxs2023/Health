@@ -2,7 +2,7 @@ import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } f
 import { API_CONFIG } from '../../constants';
 
 /** 请求配置 */
-export interface RequestConfig extends AxiosRequestConfig {
+export interface IRequestConfig extends AxiosRequestConfig {
   /** 是否显示错误提示 */
   showError?: boolean;
   /** 是否显示加载状态 */
@@ -12,17 +12,21 @@ export interface RequestConfig extends AxiosRequestConfig {
 }
 
 /** 响应数据 */
-export interface ResponseData<T = any> {
+export interface IResponseData<T = any> {
+  /** success 的描述 */
   success: boolean;
+  /** data 的描述 */
   data: T;
+  /** message 的描述 */
   message?: string;
+  /** code 的描述 */
   code: number;
 }
 
 /** HTTP客户端类 */
 export class HttpClient {
   private instance: AxiosInstance;
-  private loadingCount: number = 0;
+  private loadingCount = 0;
 
   constructor(config: AxiosRequestConfig = {}) {
     this.instance = axios.create({
@@ -38,7 +42,7 @@ export class HttpClient {
   private setupInterceptors() {
     // 请求拦截器
     this.instance.interceptors.request.use(
-      (config: RequestConfig) => {
+      (config: IRequestConfig) => {
         // 添加token
         const token = localStorage.getItem('token');
         if (token) {
@@ -56,14 +60,14 @@ export class HttpClient {
       },
       (error: AxiosError) => {
         return Promise.reject(error);
-      }
+      },
     );
 
     // 响应拦截器
     this.instance.interceptors.response.use(
       (response: AxiosResponse) => {
         // 隐藏加载状态
-        if ((response.config as RequestConfig).showLoading !== false) {
+        if ((response.config as IRequestConfig).showLoading !== false) {
           this.loadingCount--;
           this.updateLoadingState();
         }
@@ -78,19 +82,19 @@ export class HttpClient {
       },
       (error: AxiosError) => {
         // 隐藏加载状态
-        if ((error.config as RequestConfig)?.showLoading !== false) {
+        if ((error.config as IRequestConfig)?.showLoading !== false) {
           this.loadingCount--;
           this.updateLoadingState();
         }
 
         // 处理错误
-        const config = error.config as RequestConfig;
+        const config = error.config as IRequestConfig;
         if (config?.showError !== false) {
           this.handleError(error, config?.handleError);
         }
 
         return Promise.reject(error);
-      }
+      },
     );
   }
 
@@ -142,39 +146,39 @@ export class HttpClient {
     }
 
     // 这里可以集成全局消息提示组件
-    console.error(message);
+    console.error('Error in index.ts:', message);
   }
 
   /** 发送请求 */
-  public async request<T = any>(config: RequestConfig): Promise<ResponseData<T>> {
+  public async request<T = any>(config: IRequestConfig): Promise<IResponseData<T>> {
     try {
-      const response = await this.instance.request<ResponseData<T>>(config);
-      return response as ResponseData<T>;
+      const response = await this.instance.request<IResponseData<T>>(config);
+      return response as IResponseData<T>;
     } catch (error) {
       throw error;
     }
   }
 
   /** GET请求 */
-  public get<T = any>(url: string, config?: RequestConfig) {
+  public get<T = any>(url: string, config?: IRequestConfig) {
     return this.request<T>({ ...config, method: 'GET', url });
   }
 
   /** POST请求 */
-  public post<T = any>(url: string, data?: any, config?: RequestConfig) {
+  public post<T = any>(url: string, data?: any, config?: IRequestConfig) {
     return this.request<T>({ ...config, method: 'POST', url, data });
   }
 
   /** PUT请求 */
-  public put<T = any>(url: string, data?: any, config?: RequestConfig) {
+  public put<T = any>(url: string, data?: any, config?: IRequestConfig) {
     return this.request<T>({ ...config, method: 'PUT', url, data });
   }
 
   /** DELETE请求 */
-  public delete<T = any>(url: string, config?: RequestConfig) {
+  public delete<T = any>(url: string, config?: IRequestConfig) {
     return this.request<T>({ ...config, method: 'DELETE', url });
   }
 }
 
 // 导出默认实例
-export const http = new HttpClient(); 
+export const http = new HttpClient();

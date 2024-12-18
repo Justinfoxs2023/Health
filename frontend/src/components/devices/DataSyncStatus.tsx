@@ -1,19 +1,23 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Text, Icon } from '../common';
 
-interface Props {
+import { Text, Icon } from '../common';
+import { View, StyleSheet } from 'react-native';
+
+interface IProps {
+  /** status 的描述 */
   status: 'syncing' | 'synced' | 'error';
+  /** lastSyncTime 的描述 */
   lastSyncTime?: string;
+  /** progress 的描述 */
   progress?: number;
 }
 
-export const DataSyncStatus: React.FC<Props> = ({ status, lastSyncTime, progress }) => {
+export const DataSyncStatus: React.FC<IProps> = ({ status, lastSyncTime, progress }) => {
   return (
     <View style={styles.container}>
       <View style={styles.statusRow}>
         <Icon
-          name={status === 'synced' ? 'check-circle' : 'sync'} 
+          name={status === 'synced' ? 'check-circle' : 'sync'}
           color={status === 'synced' ? '#4CAF50' : status === 'syncing' ? '#2196F3' : '#F44336'}
           size={18}
         />
@@ -21,16 +25,14 @@ export const DataSyncStatus: React.FC<Props> = ({ status, lastSyncTime, progress
           {status === 'synced' ? '已同步' : status === 'syncing' ? '正在同步...' : '同步错误'}
         </Text>
       </View>
-      
+
       {progress !== undefined && status === 'syncing' && (
         <View style={styles.progressBar}>
           <View style={[styles.progress, { width: `${progress}%` }]} />
         </View>
       )}
 
-      {lastSyncTime && (
-        <Text style={styles.timeText}>上次同步: {lastSyncTime}</Text>
-      )}
+      {lastSyncTime && <Text style={styles.timeText}>上次同步: {lastSyncTime}</Text>}
     </View>
   );
 };
@@ -65,5 +67,5 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: '#2196F3',
     borderRadius: 2,
-  }
-}); 
+  },
+});

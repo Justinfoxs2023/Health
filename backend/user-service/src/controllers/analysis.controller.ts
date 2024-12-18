@@ -1,6 +1,6 @@
-import { Request, Response } from 'express';
 import { BaseProfessionalController } from './base.professional.controller';
 import { HealthDataAnalysisService } from '../services/analysis/health-data.analysis.service';
+import { Request, Response } from 'express';
 
 export class AnalysisController extends BaseProfessionalController {
   private healthDataAnalysisService: HealthDataAnalysisService;
@@ -17,7 +17,7 @@ export class AnalysisController extends BaseProfessionalController {
 
       const trends = await this.healthDataAnalysisService.analyzeHealthTrends(
         userId,
-        timeRange as string
+        timeRange as string,
       );
 
       return this.success(res, trends);
@@ -31,14 +31,11 @@ export class AnalysisController extends BaseProfessionalController {
       const userId = this.validateUser(req);
       const { metrics = [] } = req.body;
 
-      const data = await this.healthDataAnalysisService.calculateMetrics(
-        [userId],
-        metrics
-      );
+      const data = await this.healthDataAnalysisService.calculateMetrics([userId], metrics);
 
       return this.success(res, data);
     } catch (error) {
       return this.handleError(res, error, '获取健康指标失败');
     }
   }
-} 
+}

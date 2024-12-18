@@ -1,32 +1,50 @@
 import React, { useState } from 'react';
+
 import { theme } from '../../styles/theme';
 
-interface TreeNode {
-  key: string;
-  title: string;
-  children?: TreeNode[];
-  icon?: React.ReactNode;
-  disabled?: boolean;
-  isLeaf?: boolean;
+interface ITreeNode {
+  /** key 的描述 */
+    key: string;
+  /** title 的描述 */
+    title: string;
+  /** children 的描述 */
+    children: ITreeNode;
+  /** icon 的描述 */
+    icon: ReactReactNode;
+  /** disabled 的描述 */
+    disabled: false | true;
+  /** isLeaf 的描述 */
+    isLeaf: false | true;
 }
 
-interface TreeProps {
-  data: TreeNode[];
-  defaultExpandedKeys?: string[];
-  defaultSelectedKeys?: string[];
-  onSelect?: (selectedKeys: string[], info: { selected: boolean; node: TreeNode }) => void;
-  onExpand?: (expandedKeys: string[], info: { expanded: boolean; node: TreeNode }) => void;
-  showIcon?: boolean;
-  showLine?: boolean;
-  draggable?: boolean;
-  onDrop?: (info: {
-    dragNode: TreeNode;
-    dropNode: TreeNode;
-    dropPosition: number;
-  }) => void;
+interface ITreeProps {
+  /** data 的描述 */
+    data: ITreeNode;
+  /** defaultExpandedKeys 的描述 */
+    defaultExpandedKeys: string;
+  /** defaultSelectedKeys 的描述 */
+    defaultSelectedKeys: string;
+  /** onSelect 的描述 */
+    onSelect: selectedKeys: /** string 的描述 */
+    /** string 的描述 */
+    string, /** info 的描述 */
+    /** info 的描述 */
+    info: { selected: boolean; node: ITreeNode }) => /** void 的描述 */
+    /** void 的描述 */
+    void;
+  /** onExpand 的描述 */
+    onExpand?: undefined | (expandedKeys: string[], info: { expanded: boolean; node: ITreeNode; }) => void;
+  /** showIcon 的描述 */
+    showIcon?: undefined | false | true;
+  /** showLine 的描述 */
+    showLine?: undefined | false | true;
+  /** draggable 的描述 */
+    draggable?: undefined | false | true;
+  /** onDrop 的描述 */
+    onDrop?: undefined | (info: { dragNode: ITreeNode; dropNode: ITreeNode; dropPosition: number; }) => void;
 }
 
-export const Tree: React.FC<TreeProps> = ({
+export const Tree: React.FC<ITreeProps> = ({
   data,
   defaultExpandedKeys = [],
   defaultSelectedKeys = [],
@@ -35,14 +53,14 @@ export const Tree: React.FC<TreeProps> = ({
   showIcon = false,
   showLine = false,
   draggable = false,
-  onDrop
+  onDrop,
 }) => {
   const [expandedKeys, setExpandedKeys] = useState<string[]>(defaultExpandedKeys);
   const [selectedKeys, setSelectedKeys] = useState<string[]>(defaultSelectedKeys);
-  const [dragNode, setDragNode] = useState<TreeNode | null>(null);
+  const [dragNode, setDragNode] = useState<ITreeNode | null>(null);
   const [dropPosition, setDropPosition] = useState<number>(0);
 
-  const renderTreeNode = (node: TreeNode, level: number = 0) => {
+  const renderTreeNode = (node: ITreeNode, level = 0) => {
     const isExpanded = expandedKeys.includes(node.key);
     const isSelected = selectedKeys.includes(node.key);
     const hasChildren = node.children && node.children.length > 0;
@@ -85,7 +103,7 @@ export const Tree: React.FC<TreeProps> = ({
               onDrop({
                 dragNode,
                 dropNode: node,
-                dropPosition
+                dropPosition,
               });
             }
             setDragNode(null);
@@ -93,16 +111,16 @@ export const Tree: React.FC<TreeProps> = ({
           }}
         >
           {hasChildren && (
-            <span className="expand-icon" onClick={handleExpand}>
-              {isExpanded ? '▼' : '▶'}
+            <span className="expandicon" onClick={handleExpand}>
+              {isExpanded    }
             </span>
           )}
-          {showIcon && node.icon && <span className="node-icon">{node.icon}</span>}
-          <span className="node-title">{node.title}</span>
+          {showIcon && node.icon && <span className="nodeicon">{nodeicon}</span>}
+          <span className="nodetitle">{nodetitle}</span>
         </div>
         {hasChildren && isExpanded && (
-          <div className="node-children">
-            {node.children!.map(child => renderTreeNode(child, level + 1))}
+          <div className="nodechildren">
+            {nodechildrenmapchild => renderTreeNodechild level  1}
           </div>
         )}
       </div>
@@ -113,69 +131,69 @@ export const Tree: React.FC<TreeProps> = ({
     <div className="tree">
       {data.map(node => renderTreeNode(node))}
 
-      <style jsx>{`
-        .tree {
-          padding: ${theme.spacing(1)};
+      <style jsx>{
+        tree {
+          padding {themespacing1}
         }
 
-        .tree-node {
-          position: relative;
+        treenode {
+          position relative
         }
 
-        .node-content {
-          display: flex;
-          align-items: center;
-          padding: ${theme.spacing(1)};
-          cursor: pointer;
-          transition: all ${theme.transitions.short};
-          border-radius: ${theme.borderRadius.small};
+        nodecontent {
+          display flex
+          alignitems center
+          padding {themespacing1}
+          cursor pointer
+          transition all {themetransitionsshort}
+          borderradius {themeborderRadiussmall}
         }
 
-        .node-content:hover:not(.disabled) {
-          background: rgba(0, 0, 0, 0.04);
+        nodecontenthovernotdisabled {
+          background rgba0 0 0 004
         }
 
-        .node-content.selected {
-          background: ${theme.colors.primary.main}20;
-          color: ${theme.colors.primary.main};
+        nodecontentselected {
+          background {themecolorsprimarymain}20
+          color {themecolorsprimarymain}
         }
 
-        .node-content.disabled {
-          color: ${theme.colors.text.disabled};
-          cursor: not-allowed;
+        nodecontentdisabled {
+          color {themecolorstextdisabled}
+          cursor notallowed
         }
 
-        .expand-icon {
-          margin-right: ${theme.spacing(1)};
-          font-size: 12px;
-          color: ${theme.colors.text.secondary};
+        expandicon {
+          marginright {themespacing1}
+          fontsize 12px
+          color {themecolorstextsecondary}
         }
 
-        .node-icon {
-          margin-right: ${theme.spacing(1)};
+        nodeicon {
+          marginright {themespacing1}
         }
 
-        .node-title {
-          flex: 1;
+        nodetitle {
+          flex 1
         }
 
-        .node-children {
-          margin-left: ${theme.spacing(3)};
+        nodechildren {
+          marginleft {themespacing3}
         }
 
-        ${showLine &&
-        `
-          .tree-node::before {
-            content: '';
-            position: absolute;
-            left: 12px;
-            top: 0;
-            bottom: 0;
-            width: 1px;
-            background: rgba(0, 0, 0, 0.1);
+        {showLine 
+        
+          treenodebefore {
+            content 
+            position absolute
+            left 12px
+            top 0
+            bottom 0
+            width 1px
+            background rgba0 0 0 01
           }
-        `}
-      `}</style>
+        }
+      }</style>
     </div>
   );
-}; 
+};

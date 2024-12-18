@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 schedule.service.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export class ScheduleService {
   private readonly scheduleRepo: ScheduleRepository;
   private readonly calendarService: CalendarService;
@@ -12,7 +19,7 @@ export class ScheduleService {
   async createActivitySchedule(activityId: string): Promise<Schedule> {
     try {
       const activity = await this.activityRepo.findById(activityId);
-      
+
       // 创建日程
       const schedule = await this.scheduleRepo.create({
         activityId,
@@ -20,12 +27,12 @@ export class ScheduleService {
         startTime: activity.startTime,
         endTime: activity.endTime,
         location: activity.location,
-        reminders: this.generateDefaultReminders(activity.startTime)
+        reminders: this.generateDefaultReminders(activity.startTime),
       });
 
       // 同步到用户日历
       await this.syncToCalendar(schedule);
-      
+
       // 设置提醒
       await this.setupReminders(schedule);
 
@@ -41,7 +48,7 @@ export class ScheduleService {
     return [
       { time: subHours(startTime, 24), type: 'day_before' },
       { time: subHours(startTime, 1), type: 'hour_before' },
-      { time: subMinutes(startTime, 15), type: 'soon' }
+      { time: subMinutes(startTime, 15), type: 'soon' },
     ];
   }
 
@@ -53,7 +60,7 @@ export class ScheduleService {
       endDate: schedule.endTime,
       location: schedule.location,
       description: schedule.description,
-      reminders: schedule.reminders
+      reminders: schedule.reminders,
     });
   }
-} 
+}

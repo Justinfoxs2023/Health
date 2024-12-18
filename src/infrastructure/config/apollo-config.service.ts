@@ -7,13 +7,13 @@ export class CustomApolloConfigService extends ApolloConfigService {
       formatError: (error: any) => ({
         message: error.message,
         code: error.extensions?.code || 'INTERNAL_SERVER_ERROR',
-        path: error.path
+        path: error.path,
       }),
       context: ({ req, res }) => ({
         req,
         res,
-        user: req.user
-      })
+        user: req.user,
+      }),
     };
   }
-} 
+}

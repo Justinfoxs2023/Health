@@ -1,23 +1,31 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+
 import { CustomIcon } from '../../icons';
 import { DesignTokens } from '../../tokens';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 
-interface TimelineItem {
+interface ITimelineItem {
+  /** id 的描述 */
   id: string;
+  /** time 的描述 */
   time: string;
+  /** title 的描述 */
   title: string;
+  /** description 的描述 */
   description: string;
+  /** type 的描述 */
   type: 'exercise' | 'meal' | 'medication' | 'vitals';
+  /** status 的描述 */
   status?: 'completed' | 'pending' | 'missed';
 }
 
-interface HealthTimelineProps {
-  items: TimelineItem[];
+interface IHealthTimelineProps {
+  /** items 的描述 */
+  items: ITimelineItem[];
 }
 
-export const HealthTimeline: React.FC<HealthTimelineProps> = ({ items }) => {
-  const getIconByType = (type: TimelineItem['type']) => {
+export const HealthTimeline: React.FC<IHealthTimelineProps> = ({ items }) => {
+  const getIconByType = (type: ITimelineItem['type']) => {
     switch (type) {
       case 'exercise':
         return 'fitness';
@@ -32,7 +40,7 @@ export const HealthTimeline: React.FC<HealthTimelineProps> = ({ items }) => {
     }
   };
 
-  const getStatusColor = (status: TimelineItem['status']) => {
+  const getStatusColor = (status: ITimelineItem['status']) => {
     switch (status) {
       case 'completed':
         return DesignTokens.colors.functional.success;
@@ -54,10 +62,10 @@ export const HealthTimeline: React.FC<HealthTimelineProps> = ({ items }) => {
 
           <View style={styles.contentContainer}>
             <View style={[styles.iconContainer, { backgroundColor: getStatusColor(item.status) }]}>
-              <CustomIcon 
-                name={getIconByType(item.type)} 
-                size={20} 
-                color={DesignTokens.colors.neutral.white} 
+              <CustomIcon
+                name={getIconByType(item.type)}
+                size={20}
+                color={DesignTokens.colors.neutral.white}
               />
             </View>
 
@@ -74,30 +82,30 @@ export const HealthTimeline: React.FC<HealthTimelineProps> = ({ items }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
   itemContainer: {
     flexDirection: 'row',
-    marginBottom: DesignTokens.spacing.lg
+    marginBottom: DesignTokens.spacing.lg,
   },
   timeColumn: {
     width: 60,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   time: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.text.secondary
+    color: DesignTokens.colors.text.secondary,
   },
   timeLine: {
     width: 2,
     flex: 1,
     backgroundColor: DesignTokens.colors.background.secondary,
-    marginVertical: DesignTokens.spacing.sm
+    marginVertical: DesignTokens.spacing.sm,
   },
   contentContainer: {
     flex: 1,
     flexDirection: 'row',
-    alignItems: 'flex-start'
+    alignItems: 'flex-start',
   },
   iconContainer: {
     width: 40,
@@ -105,19 +113,19 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: DesignTokens.spacing.md
+    marginRight: DesignTokens.spacing.md,
   },
   textContainer: {
-    flex: 1
+    flex: 1,
   },
   title: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: String(DesignTokens.typography.weights.semibold),
     color: DesignTokens.colors.text.primary,
-    marginBottom: DesignTokens.spacing.xs
+    marginBottom: DesignTokens.spacing.xs,
   },
   description: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.text.secondary
-  }
-}); 
+    color: DesignTokens.colors.text.secondary,
+  },
+});

@@ -1,16 +1,14 @@
 import React from 'react';
-import { View, ScrollView, Text, StyleSheet } from 'react-native';
-import { useQuery } from 'react-query';
-import { getHelpDetail } from '../../api/help';
+
 import { LoadingSpinner } from '../../components';
+import { View, ScrollView, Text, StyleSheet } from 'react-native';
+import { getHelpDetail } from '../../api/help';
+import { useQuery } from 'react-query';
 
 export const HelpDetailScreen = ({ route }) => {
   const { id } = route.params;
-  
-  const { data, isLoading } = useQuery(
-    ['helpDetail', id],
-    () => getHelpDetail(id)
-  );
+
+  const { data, isLoading } = useQuery(['helpDetail', id], () => getHelpDetail(id));
 
   if (isLoading) return <LoadingSpinner />;
 
@@ -44,39 +42,39 @@ export const HelpDetailScreen = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     padding: 15,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee'
+    borderBottomColor: '#eee',
   },
   content: {
-    padding: 15
+    padding: 15,
   },
   section: {
-    marginBottom: 20
+    marginBottom: 20,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: '#2E7D32'
+    color: '#2E7D32',
   },
   sectionContent: {
     fontSize: 16,
     lineHeight: 24,
-    color: '#333'
+    color: '#333',
   },
   steps: {
-    marginTop: 15
+    marginTop: 15,
   },
   step: {
     flexDirection: 'row',
     marginBottom: 10,
-    alignItems: 'flex-start'
+    alignItems: 'flex-start',
   },
   stepNumber: {
     width: 24,
@@ -87,11 +85,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 24,
     marginRight: 10,
-    marginTop: 2
+    marginTop: 2,
   },
   stepContent: {
     flex: 1,
     fontSize: 16,
-    lineHeight: 24
-  }
-}); 
+    lineHeight: 24,
+  },
+});

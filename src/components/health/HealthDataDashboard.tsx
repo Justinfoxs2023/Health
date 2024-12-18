@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+
 import {
   Box,
   Grid,
@@ -7,14 +8,8 @@ import {
   IconButton,
   Menu,
   MenuItem,
-  LinearProgress
+  LinearProgress,
 } from '@mui/material';
-import {
-  Timeline,
-  TrendingUp,
-  Warning,
-  Share
-} from '@mui/icons-material';
 import {
   LineChart,
   Line,
@@ -22,26 +17,28 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  ResponsiveContainer
+  ResponsiveContainer,
 } from 'recharts';
-import { HealthRecord, HealthMetricType } from '../../types/health-devices';
+import { IHealthRecord, HealthMetricType } from '../../types/health-devices';
+import { Timeline, TrendingUp, Warning, Share } from '@mui/icons-material';
 
-interface HealthDataDashboardProps {
+interface IHealthD
+ataDashboardProps {
   userId: string;
-  familyView?: boolean;
-  onShare?: (recordType: HealthMetricType) => void;
+  familyView: boolean;
+  onShare: recordType: HealthMetricType  void;
 }
 
 export const HealthDataDashboard: React.FC<HealthDataDashboardProps> = ({
   userId,
   familyView,
-  onShare
+  onShare,
 }) => {
   const [selectedMetric, setSelectedMetric] = useState<HealthMetricType>(
-    HealthMetricType.BLOOD_PRESSURE
+    HealthMetricType.BLOOD_PRESSURE,
   );
   const [timeRange, setTimeRange] = useState('week');
-  const [healthData, setHealthData] = useState<HealthRecord[]>([]);
+  const [healthData, setHealthData] = useState<IHealthRecord[]>([]);
 
   return (
     <Box className="health-dashboard">
@@ -50,34 +47,10 @@ export const HealthDataDashboard: React.FC<HealthDataDashboardProps> = ({
         <Grid item xs={12}>
           <Card className="metrics-overview">
             <Box className="metric-cards">
-              <MetricCard
-                title="血压"
-                value="120/80"
-                unit="mmHg"
-                trend="+2%"
-                status="normal"
-              />
-              <MetricCard
-                title="血糖"
-                value="5.6"
-                unit="mmol/L"
-                trend="-1%"
-                status="warning"
-              />
-              <MetricCard
-                title="体重"
-                value="65.5"
-                unit="kg"
-                trend="-0.5%"
-                status="normal"
-              />
-              <MetricCard
-                title="步数"
-                value="8,456"
-                unit="步"
-                trend="+12%"
-                status="good"
-              />
+              <MetricCard title="血压" value="120/80" unit="mmHg" trend="+2%" status="normal" />
+              <MetricCard title="血糖" value="5.6" unit="mmol/L" trend="-1%" status="warning" />
+              <MetricCard title="体重" value="65.5" unit="kg" trend="-0.5%" status="normal" />
+              <MetricCard title="步数" value="8,456" unit="步" trend="+12%" status="good" />
             </Box>
           </Card>
         </Grid>
@@ -86,14 +59,9 @@ export const HealthDataDashboard: React.FC<HealthDataDashboardProps> = ({
         <Grid item xs={12} md={8}>
           <Card className="data-chart">
             <Box className="chart-header">
-              <Typography variant="h6">
-                {getMetricTitle(selectedMetric)}趋势
-              </Typography>
+              <Typography variant="h6">{getMetricTitleselectedMetric}</Typography>
               <Box className="chart-actions">
-                <TimeRangeSelector
-                  value={timeRange}
-                  onChange={setTimeRange}
-                />
+                <TimeRangeSelector value={timeRange} onChange={setTimeRange} />
                 {onShare && (
                   <IconButton onClick={() => onShare(selectedMetric)}>
                     <Share />
@@ -101,19 +69,14 @@ export const HealthDataDashboard: React.FC<HealthDataDashboardProps> = ({
                 )}
               </Box>
             </Box>
-            
+
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={healthData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="timestamp" />
                 <YAxis />
                 <Tooltip />
-                <Line
-                  type="monotone"
-                  dataKey="value"
-                  stroke="#8884d8"
-                  activeDot={{ r: 8 }}
-                />
+                <Line type="monotone" dataKey="value" stroke="#8884d8" activeDot={{ r: 8 }} />
               </LineChart>
             </ResponsiveContainer>
           </Card>
@@ -122,12 +85,12 @@ export const HealthDataDashboard: React.FC<HealthDataDashboardProps> = ({
         {/* 设备状态和提醒 */}
         <Grid item xs={12} md={4}>
           <Card className="device-status">
-            <Typography variant="h6">设备状态</Typography>
+            <Typography variant="h6"></Typography>
             <DeviceStatusList userId={userId} />
           </Card>
-          
+
           <Card className="health-alerts" sx={{ mt: 2 }}>
-            <Typography variant="h6">健康提醒</Typography>
+            <Typography variant="h6"></Typography>
             <HealthAlertsList userId={userId} />
           </Card>
         </Grid>
@@ -157,4 +120,4 @@ const MetricCard: React.FC<{
       </Box>
     </Card>
   );
-}; 
+};

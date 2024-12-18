@@ -1,5 +1,5 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 @Schema()
 export class Post extends Document {
@@ -18,14 +18,16 @@ export class Post extends Document {
   @Prop([String])
   tags: string[];
 
-  @Prop([{
-    type: {
-      type: String,
-      enum: ['image', 'video', 'document']
+  @Prop([
+    {
+      type: {
+        type: String,
+        enum: ['image', 'video', 'document'],
+      },
+      url: String,
+      thumbnail_url: String,
     },
-    url: String,
-    thumbnail_url: String
-  }])
+  ])
   media: Array<{
     type: 'image' | 'video' | 'document';
     url: string;
@@ -35,14 +37,14 @@ export class Post extends Document {
   @Prop({
     type: String,
     enum: ['public', 'private', 'followers'],
-    default: 'public'
+    default: 'public',
   })
   visibility: string;
 
   @Prop({
     type: String,
     enum: ['draft', 'published', 'archived'],
-    default: 'published'
+    default: 'published',
   })
   status: string;
 
@@ -52,8 +54,8 @@ export class Post extends Document {
       likes: { type: Number, default: 0 },
       comments: { type: Number, default: 0 },
       shares: { type: Number, default: 0 },
-      favorites: { type: Number, default: 0 }
-    }
+      favorites: { type: Number, default: 0 },
+    },
   })
   metrics: {
     views: number;
@@ -70,4 +72,4 @@ export class Post extends Document {
   updated_at: Date;
 }
 
-export const PostSchema = SchemaFactory.createForClass(Post); 
+export const PostSchema = SchemaFactory.createForClass(Post);

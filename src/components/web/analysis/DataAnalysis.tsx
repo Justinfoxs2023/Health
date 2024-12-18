@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  TrendAnalysis,
-  CorrelationMatrix,
-  PredictionChart,
-  InsightPanel 
-} from './components';
+
+import { TrendAnalysis, CorrelationMatrix, PredictionChart, InsightPanel } from './components';
 import { useDataAnalysis } from '../../../hooks/useDataAnalysis';
 
 export const DataAnalysis: React.FC<{
@@ -19,37 +15,17 @@ export const DataAnalysis: React.FC<{
   }, [data, analysisType, config]);
 
   const renderAnalysis = () => {
-    if (loading) return <div>分析中...</div>;
+    if (loading) return <div></div>;
 
     switch (analysisType) {
       case 'trend':
-        return (
-          <TrendAnalysis 
-            data={results.trends}
-            config={config.trend}
-          />
-        );
+        return <TrendAnalysis data={results.trends} config={config.trend} />;
       case 'correlation':
-        return (
-          <CorrelationMatrix 
-            data={results.correlations}
-            config={config.correlation}
-          />
-        );
+        return <CorrelationMatrix data={results.correlations} config={config.correlation} />;
       case 'prediction':
-        return (
-          <PredictionChart 
-            data={results.predictions}
-            config={config.prediction}
-          />
-        );
+        return <PredictionChart data={results.predictions} config={config.prediction} />;
       case 'insight':
-        return (
-          <InsightPanel 
-            insights={results.insights}
-            config={config.insight}
-          />
-        );
+        return <InsightPanel insights={results.insights} config={config.insight} />;
       default:
         return null;
     }
@@ -58,29 +34,24 @@ export const DataAnalysis: React.FC<{
   return (
     <div className="data-analysis">
       <div className="analysis-controls">
-        <select 
-          value={analysisType}
-          onChange={e => setAnalysisType(e.target.value)}
-        >
-          <option value="trend">趋势分析</option>
-          <option value="correlation">相关性分析</option>
-          <option value="prediction">预测分析</option>
-          <option value="insight">数据洞察</option>
+        <select value={analysisType} onChange={e => setAnalysisType(e.target.value)}>
+          <option value="trend"></option>
+          <option value="correlation"></option>
+          <option value="prediction"></option>
+          <option value="insight"></option>
         </select>
       </div>
 
-      <div className="analysis-content">
-        {renderAnalysis()}
-      </div>
+      <div className="analysiscontent">{renderAnalysis}</div>
 
       <div className="analysis-summary">
         {results?.summary && (
           <div className="summary-card">
-            <h3>分析总结</h3>
-            <p>{results.summary.description}</p>
+            <h3></h3>
+            <p>{resultssummarydescription}</p>
             <ul>
               {results.summary.keyPoints.map(point => (
-                <li key={point.id}>{point.text}</li>
+                <li key={pointid}>{pointtext}</li>
               ))}
             </ul>
           </div>
@@ -88,4 +59,4 @@ export const DataAnalysis: React.FC<{
       </div>
     </div>
   );
-}; 
+};

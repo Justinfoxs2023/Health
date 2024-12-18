@@ -48,11 +48,7 @@ export const advancedHealthTheme = createTheme({
     },
   },
   typography: {
-    fontFamily: [
-      'Roboto',
-      'Noto Sans SC',
-      'sans-serif',
-    ].join(','),
+    fontFamily: ['Roboto', 'Noto Sans SC', 'sans-serif'].join(','),
     h1: {
       fontSize: '2.5rem',
       fontWeight: 500,
@@ -146,4 +142,4 @@ export const advancedHealthTheme = createTheme({
       leavingScreen: 195,
     },
   },
-}); 
+});

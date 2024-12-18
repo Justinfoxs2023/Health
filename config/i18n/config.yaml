@@ -1,0 +1,60 @@
+# 多语言配置
+
+# 基础配置
+default:
+  defaultLanguage: 'zh-CN'
+  fallbackLanguage: 'en'
+  supportedLanguages:
+    - 'zh-CN'
+    - 'en'
+    - 'ja'
+    - 'ko'
+  loadPath: 'locales'
+  savePath: 'locales'
+
+# 翻译命名空间
+namespaces:
+  - common
+  - error
+  - validation
+  - health
+  - tcm
+  - nutrition
+  - exercise
+  - user
+  - professional
+  - mall
+
+# 缓存配置
+cache:
+  enabled: true
+  ttl: 3600 # 1小时
+  prefix: 'i18n:'
+
+# 加载配置
+loading:
+  fallbackEmptyString: true
+  deepLookup: true
+  skipOnVariables: ['interpolation', 'formatters']
+
+# 插值配置
+interpolation:
+  escapeValue: false
+  format:
+    date: 'YYYY-MM-DD'
+    time: 'HH:mm:ss'
+    number: '0,0.00'
+
+# 格式化配置
+formatting:
+  currency:
+    style: 'currency'
+    currency: 'CNY'
+  number:
+    minimumFractionDigits: 2
+    maximumFractionDigits: 2
+
+# 调试配置
+debug:
+  enabled: false
+  level: 'warn'

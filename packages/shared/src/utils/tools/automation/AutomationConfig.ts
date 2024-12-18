@@ -1,7 +1,7 @@
+import * as fs from 'fs-extra';
+import * as path from 'path';
 import { exec } from 'child_process';
 import { promisify } from 'util';
-import * as path from 'path';
-import * as fs from 'fs-extra';
 
 const execAsync = promisify(exec);
 
@@ -11,33 +11,29 @@ export class AutomationConfig {
 
   static async init() {
     const configPath = path.join(this.ROOT_DIR, this.CONFIG_FILE);
-    
-    if (!await fs.pathExists(configPath)) {
-      await fs.writeJson(configPath, {
-        scripts: {
-          precommit: [
-            "lint-staged",
-            "npm test"
-          ],
-          build: [
-            "tsc",
-            "react-native bundle"
-          ],
-          deploy: [
-            "fastlane beta"
-          ]
+
+    if (!(await fs.pathExists(configPath))) {
+      await fs.writeJson(
+        configPath,
+        {
+          scripts: {
+            precommit: ['lint-staged', 'npm test'],
+            build: ['tsc', 'react-native bundle'],
+            deploy: ['fastlane beta'],
+          },
+          paths: {
+            source: 'src',
+            build: 'build',
+            docs: 'docs',
+            tests: 'tests',
+          },
+          hooks: {
+            'pre-commit': 'npm run precommit',
+            'pre-push': 'npm test',
+          },
         },
-        paths: {
-          source: "src",
-          build: "build",
-          docs: "docs",
-          tests: "tests"
-        },
-        hooks: {
-          "pre-commit": "npm run precommit",
-          "pre-push": "npm test"
-        }
-      }, { spaces: 2 });
+        { spaces: 2 },
+      );
     }
   }
 
@@ -53,4 +49,4 @@ export class AutomationConfig {
       await execAsync(script);
     }
   }
-} 
+}

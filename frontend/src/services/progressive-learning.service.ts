@@ -1,21 +1,30 @@
 import * as tf from '@tensorflow/tfjs';
-import { LocalDatabase, createDatabase } from '../utils/local-database';
+import { ILocalDatabase, createDatabase } from '../utils/local-database';
 
-interface ProgressiveConfig {
+interface IProgressiveConfig {
+  /** initialModelSize 的描述 */
   initialModelSize: number;
+  /** growthRate 的描述 */
   growthRate: number;
+  /** maxModelSize 的描述 */
   maxModelSize: number;
+  /** learningRate 的描述 */
   learningRate: number;
+  /** evaluationMetric 的描述 */
   evaluationMetric: string;
+  /** growthThreshold 的描述 */
   growthThreshold: number;
 }
 
-interface GrowthResult {
+interface IGrowthResult {
+  /** newSize 的描述 */
   newSize: number;
+  /** performance 的描述 */
   performance: {
     accuracy: number;
     loss: number;
   };
+  /** growthMetrics 的描述 */
   growthMetrics: {
     complexityIncrease: number;
     performanceGain: number;
@@ -23,9 +32,9 @@ interface GrowthResult {
 }
 
 export class ProgressiveLearningService {
-  private db: LocalDatabase;
+  private db: ILocalDatabase;
   private model: tf.LayersModel | null = null;
-  private config: ProgressiveConfig;
+  private config: IProgressiveConfig;
   private currentSize: number;
 
   constructor() {
@@ -36,7 +45,7 @@ export class ProgressiveLearningService {
       maxModelSize: 1024,
       learningRate: 0.001,
       evaluationMetric: 'accuracy',
-      growthThreshold: 0.8
+      growthThreshold: 0.8,
     };
     this.currentSize = this.config.initialModelSize;
     this.initialize();
@@ -50,8 +59,8 @@ export class ProgressiveLearningService {
   async train(
     data: tf.Tensor,
     labels: tf.Tensor,
-    validationData?: { x: tf.Tensor; y: tf.Tensor }
-  ): Promise<GrowthResult> {
+    validationData?: { x: tf.Tensor; y: tf.Tensor },
+  ): Promise<IGrowthResult> {
     if (!this.model) {
       this.model = await this.buildInitialModel();
     }
@@ -60,7 +69,7 @@ export class ProgressiveLearningService {
     const history = await this.model.fit(data, labels, {
       epochs: 10,
       validationData: validationData ? [validationData.x, validationData.y] : undefined,
-      callbacks: this.createTrainingCallbacks()
+      callbacks: this.createTrainingCallbacks(),
     });
 
     // 评估性能
@@ -76,30 +85,34 @@ export class ProgressiveLearningService {
       performance,
       growthMetrics: {
         complexityIncrease: 0,
-        performanceGain: 0
-      }
+        performanceGain: 0,
+      },
     };
   }
 
   // 构建初始模型
   private async buildInitialModel(): Promise<tf.LayersModel> {
     const model = tf.sequential();
-    
-    model.add(tf.layers.dense({
-      units: this.currentSize,
-      activation: 'relu',
-      inputShape: [this.getInputShape()]
-    }));
 
-    model.add(tf.layers.dense({
-      units: this.getOutputShape(),
-      activation: 'softmax'
-    }));
+    model.add(
+      tf.layers.dense({
+        units: this.currentSize,
+        activation: 'relu',
+        inputShape: [this.getInputShape()],
+      }),
+    );
+
+    model.add(
+      tf.layers.dense({
+        units: this.getOutputShape(),
+        activation: 'softmax',
+      }),
+    );
 
     model.compile({
       optimizer: tf.train.adam(this.config.learningRate),
       loss: 'categoricalCrossentropy',
-      metrics: [this.config.evaluationMetric]
+      metrics: [this.config.evaluationMetric],
     });
 
     return model;
@@ -110,23 +123,25 @@ export class ProgressiveLearningService {
     return [
       {
         onEpochEnd: async (epoch, logs) => {
-          console.log(`Epoch ${epoch}: ${this.config.evaluationMetric} = ${logs[this.config.evaluationMetric]}`);
-        }
-      }
+          console.log(
+            `Epoch ${epoch}: ${this.config.evaluationMetric} = ${
+              logs[this.config.evaluationMetric]
+            }`,
+          );
+        },
+      },
     ];
   }
 
   // 评估模型
-  private async evaluateModel(
-    data: { x: tf.Tensor; y: tf.Tensor }
-  ): Promise<{
+  private async evaluateModel(data: { x: tf.Tensor; y: tf.Tensor }): Promise<{
     accuracy: number;
     loss: number;
   }> {
     const evaluation = await this.model!.evaluate(data.x, data.y);
     return {
       accuracy: (evaluation[1] as tf.Scalar).dataSync()[0],
-      loss: (evaluation[0] as tf.Scalar).dataSync()[0]
+      loss: (evaluation[0] as tf.Scalar).dataSync()[0],
     };
   }
 
@@ -139,17 +154,14 @@ export class ProgressiveLearningService {
   }
 
   // 增长模型
-  private async growModel(
-    data: tf.Tensor,
-    labels: tf.Tensor
-  ): Promise<GrowthResult> {
+  private async growModel(data: tf.Tensor, labels: tf.Tensor): Promise<IGrowthResult> {
     const oldPerformance = await this.evaluateModel({ x: data, y: labels });
     const oldSize = this.currentSize;
 
     // 计算新大小
     this.currentSize = Math.min(
       Math.floor(this.currentSize * this.config.growthRate),
-      this.config.maxModelSize
+      this.config.maxModelSize,
     );
 
     // 保存旧模型的权重
@@ -161,7 +173,7 @@ export class ProgressiveLearningService {
     // 训练新模型
     await this.model.fit(data, labels, {
       epochs: 5,
-      callbacks: this.createTrainingCallbacks()
+      callbacks: this.createTrainingCallbacks(),
     });
 
     // 评估新模型
@@ -172,15 +184,15 @@ export class ProgressiveLearningService {
       performance: newPerformance,
       growthMetrics: {
         complexityIncrease: (this.currentSize - oldSize) / oldSize,
-        performanceGain: newPerformance.accuracy - oldPerformance.accuracy
-      }
+        performanceGain: newPerformance.accuracy - oldPerformance.accuracy,
+      },
     };
   }
 
   // 构建增长的模型
   private async buildGrowingModel(oldWeights: tf.Tensor[]): Promise<tf.LayersModel> {
     const model = await this.buildInitialModel();
-    
+
     // 迁移旧权重
     const newWeights = model.getWeights().map((weight, i) => {
       if (i < oldWeights.length) {
@@ -199,10 +211,10 @@ export class ProgressiveLearningService {
     return tf.tidy(() => {
       const oldData = oldWeight.dataSync();
       const newData = new Float32Array(tf.util.sizeFromShape(newShape));
-      
+
       // 复制旧权重
       newData.set(oldData.slice(0, Math.min(oldData.length, newData.length)));
-      
+
       // 随机初始化新权重
       for (let i = oldData.length; i < newData.length; i++) {
         newData[i] = Math.random() * 0.1;
@@ -238,7 +250,7 @@ export class ProgressiveLearningService {
       const size = await this.db.get('model-size');
       if (size) this.currentSize = size;
     } catch (error) {
-      console.error('加载模型失败:', error);
+      console.error('Error in progressive-learning.service.ts:', '加载模型失败:', error);
     }
   }
-} 
+}

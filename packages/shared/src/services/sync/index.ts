@@ -1,34 +1,42 @@
-import { openDB, IDBPDatabase } from 'idb';
 import { BehaviorSubject } from 'rxjs';
+import { openDB, IDBPDatabase } from 'idb';
 
-interface SyncConfig {
+interface ISyncConfig {
+  /** dbName 的描述 */
   dbName: string;
+  /** version 的描述 */
   version: number;
+  /** stores 的描述 */
   stores: string[];
+  /** syncInterval 的描述 */
   syncInterval?: number;
 }
 
-interface SyncStatus {
+interface ISyncStatus {
+  /** lastSync 的描述 */
   lastSync: Date | null;
+  /** isSyncing 的描述 */
   isSyncing: boolean;
+  /** error 的描述 */
   error: Error | null;
+  /** pendingChanges 的描述 */
   pendingChanges: number;
 }
 
 export class SyncService {
   private db: IDBPDatabase;
-  private config: SyncConfig;
-  private syncStatus$ = new BehaviorSubject<SyncStatus>({
+  private config: ISyncConfig;
+  private syncStatus$ = new BehaviorSubject<ISyncStatus>({
     lastSync: null,
     isSyncing: false,
     error: null,
-    pendingChanges: 0
+    pendingChanges: 0,
   });
 
-  constructor(config: SyncConfig) {
+  constructor(config: ISyncConfig) {
     this.config = {
       syncInterval: 5 * 60 * 1000, // 默认5分钟同步一次
-      ...config
+      ...config,
     };
     this.initDB();
     this.startAutoSync();
@@ -49,10 +57,10 @@ export class SyncService {
               objectStore.createIndex('syncStatus', 'syncStatus');
             }
           }
-        }
+        },
       });
     } catch (error) {
-      console.error('Failed to initialize IndexedDB:', error);
+      console.error('Error in index.ts:', 'Failed to initialize IndexedDB:', error);
       this.updateSyncStatus({ error });
     }
   }
@@ -65,11 +73,11 @@ export class SyncService {
   }
 
   // 更新同步状态
-  private updateSyncStatus(partial: Partial<SyncStatus>) {
+  private updateSyncStatus(partial: Partial<ISyncStatus>) {
     const current = this.syncStatus$.value;
     this.syncStatus$.next({
       ...current,
-      ...partial
+      ...partial,
     });
   }
 
@@ -89,7 +97,7 @@ export class SyncService {
 
       // 获取所有待同步的数据
       const pendingChanges = await this.getPendingChanges();
-      
+
       if (pendingChanges.length > 0) {
         // 上传本地更改到服务器
         await this.uploadChanges(pendingChanges);
@@ -101,13 +109,13 @@ export class SyncService {
       this.updateSyncStatus({
         lastSync: new Date(),
         isSyncing: false,
-        pendingChanges: 0
+        pendingChanges: 0,
       });
     } catch (error) {
-      console.error('Sync failed:', error);
+      console.error('Error in index.ts:', 'Sync failed:', error);
       this.updateSyncStatus({
         isSyncing: false,
-        error
+        error,
       });
     }
   }
@@ -141,13 +149,13 @@ export class SyncService {
       await tx.store.put({
         ...data,
         syncStatus: 'pending',
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
       this.updateSyncStatus({
-        pendingChanges: this.syncStatus$.value.pendingChanges + 1
+        pendingChanges: this.syncStatus$.value.pendingChanges + 1,
       });
     } catch (error) {
-      console.error(`Failed to save to ${store}:`, error);
+      console.error('Error in index.ts:', `Failed to save to ${store}:`, error);
       throw error;
     }
   }
@@ -157,7 +165,7 @@ export class SyncService {
     try {
       return await this.db.get(store, id);
     } catch (error) {
-      console.error(`Failed to get from ${store}:`, error);
+      console.error('Error in index.ts:', `Failed to get from ${store}:`, error);
       throw error;
     }
   }
@@ -167,7 +175,7 @@ export class SyncService {
     try {
       await this.db.delete(store, id);
     } catch (error) {
-      console.error(`Failed to delete from ${store}:`, error);
+      console.error('Error in index.ts:', `Failed to delete from ${store}:`, error);
       throw error;
     }
   }
@@ -177,7 +185,7 @@ export class SyncService {
     try {
       await this.db.clear(store);
     } catch (error) {
-      console.error(`Failed to clear ${store}:`, error);
+      console.error('Error in index.ts:', `Failed to clear ${store}:`, error);
       throw error;
     }
   }
@@ -189,7 +197,7 @@ export class SyncService {
       const index = tx.store.index('updatedAt');
       return await index.getAll();
     } catch (error) {
-      console.error(`Failed to get list from ${store}:`, error);
+      console.error('Error in index.ts:', `Failed to get list from ${store}:`, error);
       throw error;
     }
   }
@@ -213,8 +221,8 @@ export class SyncService {
 
     window.addEventListener('offline', () => {
       this.updateSyncStatus({
-        error: new Error('Network is offline')
+        error: new Error('Network is offline'),
       });
     });
   }
-} 
+}

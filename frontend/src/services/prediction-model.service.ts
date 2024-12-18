@@ -1,21 +1,27 @@
 import * as tf from '@tensorflow/tfjs';
-import { LocalDatabase, createDatabase } from '../utils/local-database';
-import { RiskAssessmentService } from './risk-assessment.service';
 import { AnomalyDetectionService } from './anomaly-detection.service';
 import { CustomAttentionLayer } from '../utils/custom-layers';
+import { ILocalDatabase, createDatabase } from '../utils/local-database';
+import { RiskAssessmentService } from './risk-assessment.service';
 
 // 注册自定义注意力层
 tf.serialization.registerClass(CustomAttentionLayer);
 
-interface PredictionConfig {
-  horizon: number;  // 预测时间范围
-  windowSize: number;  // 历史窗口大小
-  updateInterval: number;  // 模型更新间隔
-  confidenceLevel: number;  // 置信水平
+interface IPredictionConfig {
+  /** horizon 的描述 */
+  horizon: number; // 预测时间范围
+  /** windowSize 的描述 */
+  windowSize: number; // 历史窗口大小
+  /** updateInterval 的描述 */
+  updateInterval: number; // 模型更新间隔
+  /** confidenceLevel 的描述 */
+  confidenceLevel: number; // 置信水平
 }
 
-interface PredictionResult {
+interface IPredictionResult {
+  /** timestamp 的描述 */
   timestamp: Date;
+  /** predictions 的描述 */
   predictions: Array<{
     time: Date;
     value: number;
@@ -25,10 +31,12 @@ interface PredictionResult {
       lower: number;
     };
   }>;
+  /** features 的描述 */
   features: {
     importance: Record<string, number>;
     correlations: Record<string, number>;
   };
+  /** metrics 的描述 */
   metrics: {
     accuracy: number;
     rmse: number;
@@ -37,11 +45,11 @@ interface PredictionResult {
 }
 
 export class PredictionModelService {
-  private db: LocalDatabase;
+  private db: ILocalDatabase;
   private riskService: RiskAssessmentService;
   private anomalyService: AnomalyDetectionService;
   private model: tf.LayersModel | null = null;
-  private config: PredictionConfig;
+  private config: IPredictionConfig;
   private featureScaler: tf.LayersModel | null = null;
 
   constructor() {
@@ -49,10 +57,10 @@ export class PredictionModelService {
     this.riskService = new RiskAssessmentService();
     this.anomalyService = new AnomalyDetectionService();
     this.config = {
-      horizon: 24,  // 24小时预测
-      windowSize: 168,  // 一周历史数据
-      updateInterval: 3600,  // 每小时更新
-      confidenceLevel: 0.95
+      horizon: 24, // 24小时预测
+      windowSize: 168, // 一周历史数据
+      updateInterval: 3600, // 每小时更新
+      confidenceLevel: 0.95,
     };
     this.initialize();
   }
@@ -67,7 +75,7 @@ export class PredictionModelService {
     try {
       this.model = await tf.loadLayersModel('/models/prediction/model.json');
     } catch (error) {
-      console.error('加载预测模型失败:', error);
+      console.error('Error in prediction-model.service.ts:', '加载预测模型失败:', error);
       this.model = await this.buildModel();
     }
   }
@@ -76,68 +84,71 @@ export class PredictionModelService {
     try {
       this.featureScaler = await tf.loadLayersModel('/models/prediction/scaler.json');
     } catch (error) {
-      console.error('加载特征缩放器失败:', error);
+      console.error('Error in prediction-model.service.ts:', '加载特征缩放器失败:', error);
     }
   }
 
   private async buildModel(): Promise<tf.LayersModel> {
     const model = tf.sequential();
-    
+
     // 添加LSTM层
-    model.add(tf.layers.lstm({
-      units: 64,
-      returnSequences: true,
-      inputShape: [this.config.windowSize, 1]
-    }));
-    
+    model.add(
+      tf.layers.lstm({
+        units: 64,
+        returnSequences: true,
+        inputShape: [this.config.windowSize, 1],
+      }),
+    );
+
     // 使用自定义注意力层
-    model.add(new CustomAttentionLayer({
-      units: 32
-    }));
-    
+    model.add(
+      new CustomAttentionLayer({
+        units: 32,
+      }),
+    );
+
     // 添加Dense层
-    model.add(tf.layers.dense({
-      units: this.config.horizon,
-      activation: 'linear'
-    }));
+    model.add(
+      tf.layers.dense({
+        units: this.config.horizon,
+        activation: 'linear',
+      }),
+    );
 
     model.compile({
       optimizer: tf.train.adam(0.001),
       loss: 'meanSquaredError',
-      metrics: ['mae']
+      metrics: ['mae'],
     });
 
     return model;
   }
 
   // 生成预测
-  async generatePredictions(
-    userId: string,
-    targetVariable: string
-  ): Promise<PredictionResult> {
+  async generatePredictions(userId: string, targetVariable: string): Promise<IPredictionResult> {
     try {
       // 收集历史数据
       const historicalData = await this.collectHistoricalData(userId, targetVariable);
-      
+
       // 特征工程
       const features = await this.engineerFeatures(historicalData);
-      
+
       // 数据预处理
       const processedData = await this.preprocessData(features);
-      
+
       // 生成预测
       const predictions = await this.makePredictions(processedData);
-      
+
       // 计算置信区间
       const confidenceIntervals = this.calculateConfidenceIntervals(predictions);
-      
+
       // 评估预测
       const metrics = await this.evaluatePredictions(predictions, historicalData);
-      
+
       // 特征重要性分析
       const featureImportance = await this.analyzeFeatureImportance(features);
 
-      const result: PredictionResult = {
+      const result: IPredictionResult = {
         timestamp: new Date(),
         predictions: predictions.map((value, index) => ({
           time: new Date(Date.now() + index * 3600000),
@@ -145,32 +156,29 @@ export class PredictionModelService {
           confidence: confidenceIntervals[index].confidence,
           bounds: {
             upper: confidenceIntervals[index].upper,
-            lower: confidenceIntervals[index].lower
-          }
+            lower: confidenceIntervals[index].lower,
+          },
         })),
         features: {
           importance: featureImportance.importance,
-          correlations: featureImportance.correlations
+          correlations: featureImportance.correlations,
         },
-        metrics
+        metrics,
       };
 
       await this.savePredictionResult(userId, result);
       return result;
     } catch (error) {
-      console.error('生成预测失败:', error);
+      console.error('Error in prediction-model.service.ts:', '生成预测失败:', error);
       throw error;
     }
   }
 
   // 收集历史数据
-  private async collectHistoricalData(
-    userId: string,
-    targetVariable: string
-  ): Promise<any[]> {
+  private async collectHistoricalData(userId: string, targetVariable: string): Promise<any[]> {
     const riskHistory = await this.riskService.getHistoricalAssessments(userId);
     const anomalyHistory = await this.anomalyService.getHistoricalAnomalies(userId);
-    
+
     return this.mergeHistoricalData(riskHistory, anomalyHistory);
   }
 
@@ -195,26 +203,24 @@ export class PredictionModelService {
       throw new Error('预测模型未加载');
     }
 
-    const predictions = await this.model.predict(data) as tf.Tensor;
+    const predictions = (await this.model.predict(data)) as tf.Tensor;
     return Array.from(await predictions.data());
   }
 
   // 计算置信区间
-  private calculateConfidenceIntervals(
-    predictions: number[]
-  ): Array<{
+  private calculateConfidenceIntervals(predictions: number[]): Array<{
     confidence: number;
     upper: number;
     lower: number;
   }> {
     return predictions.map(prediction => {
-      const std = 0.1 * prediction;  // 简化的标准差计算
-      const z = 1.96;  // 95% 置信水平
-      
+      const std = 0.1 * prediction; // 简化的标准差计算
+      const z = 1.96; // 95% 置信水平
+
       return {
         confidence: this.config.confidenceLevel,
         upper: prediction + z * std,
-        lower: prediction - z * std
+        lower: prediction - z * std,
       };
     });
   }
@@ -222,7 +228,7 @@ export class PredictionModelService {
   // 评估预测
   private async evaluatePredictions(
     predictions: number[],
-    actualData: any[]
+    actualData: any[],
   ): Promise<{
     accuracy: number;
     rmse: number;
@@ -232,30 +238,25 @@ export class PredictionModelService {
     return {
       accuracy: 0.9,
       rmse: 0.1,
-      mae: 0.08
+      mae: 0.08,
     };
   }
 
   // 分析特征重要性
-  private async analyzeFeatureImportance(
-    features: tf.Tensor
-  ): Promise<{
+  private async analyzeFeatureImportance(features: tf.Tensor): Promise<{
     importance: Record<string, number>;
     correlations: Record<string, number>;
   }> {
     // 实现特征重要性分析
     return {
       importance: {},
-      correlations: {}
+      correlations: {},
     };
   }
 
   // 保存预测结果
-  private async savePredictionResult(
-    userId: string,
-    result: PredictionResult
-  ): Promise<void> {
-    const predictions = await this.db.get(`predictions-${userId}`) || [];
+  private async savePredictionResult(userId: string, result: IPredictionResult): Promise<void> {
+    const predictions = (await this.db.get(`predictions-${userId}`)) || [];
     predictions.push(result);
     await this.db.put(`predictions-${userId}`, predictions);
   }
@@ -267,10 +268,10 @@ export class PredictionModelService {
       startDate?: Date;
       endDate?: Date;
       limit?: number;
-    } = {}
-  ): Promise<PredictionResult[]> {
-    const predictions = await this.db.get(`predictions-${userId}`) || [];
-    
+    } = {},
+  ): Promise<IPredictionResult[]> {
+    const predictions = (await this.db.get(`predictions-${userId}`)) || [];
+
     return predictions
       .filter(prediction => {
         if (options.startDate && prediction.timestamp < options.startDate) {
@@ -289,26 +290,23 @@ export class PredictionModelService {
     try {
       // 收集新数据
       const newData = await this.collectTrainingData();
-      
+
       // 训练模型
       await this.trainModel(newData);
-      
+
       // 评估模型
       await this.evaluateModel();
-      
+
       // 保存模型
       await this.saveModel();
     } catch (error) {
-      console.error('更新模型失败:', error);
+      console.error('Error in prediction-model.service.ts:', '更新模型失败:', error);
     }
   }
 
   // 自动更新
   private startAutoUpdate(): void {
-    setInterval(
-      () => this.updateModel(),
-      this.config.updateInterval * 1000
-    );
+    setInterval(() => this.updateModel(), this.config.updateInterval * 1000);
   }
 
   // 合并历史数据
@@ -328,7 +326,7 @@ export class PredictionModelService {
     if (!this.model) return;
 
     const [trainData, valData] = this.splitTrainValidation(data);
-    
+
     await this.model.fit(trainData.x, trainData.y, {
       epochs: 100,
       batchSize: 32,
@@ -336,8 +334,8 @@ export class PredictionModelService {
       callbacks: {
         onEpochEnd: (epoch, logs) => {
           console.log(`Epoch ${epoch}: loss = ${logs?.loss}`);
-        }
-      }
+        },
+      },
     });
   }
 
@@ -347,13 +345,16 @@ export class PredictionModelService {
     y: tf.Tensor;
   }> {
     // 实现数据分割
-    return [{
-      x: tf.tensor([]),
-      y: tf.tensor([])
-    }, {
-      x: tf.tensor([]),
-      y: tf.tensor([])
-    }];
+    return [
+      {
+        x: tf.tensor([]),
+        y: tf.tensor([]),
+      },
+      {
+        x: tf.tensor([]),
+        y: tf.tensor([]),
+      },
+    ];
   }
 
   // 评估模型
@@ -368,11 +369,11 @@ export class PredictionModelService {
   }
 
   // 更新配置
-  async updateConfig(config: Partial<PredictionConfig>): Promise<void> {
+  async updateConfig(config: Partial<IPredictionConfig>): Promise<void> {
     this.config = {
       ...this.config,
-      ...config
+      ...config,
     };
     await this.db.put('prediction-config', this.config);
   }
-} 
+}

@@ -1,36 +1,37 @@
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Card } from '../Card';
-import { Loading } from '../Loading';
-import { DietPlan } from '../../services/food';
-import { foodService } from '../../services/food';
 
-interface Props {
+import { Card } from '../Card';
+import { IDietPlan } from '../../services/food';
+import { Loading } from '../Loading';
+import { foodService } from '../../services/food';
+import { useTranslation } from 'react-i18next';
+
+interface IProps {
   /** 初始饮食计划 */
-  initialPlan?: DietPlan;
+  initialPlan?: IDietPlan;
   /** 加载状态 */
   loading?: boolean;
   /** 错误信息 */
   error?: string;
   /** 计划更新回调 */
-  onPlanUpdate?: (plan: DietPlan) => void;
+  onPlanUpdate?: (plan: IDietPlan) => void;
 }
 
 /** 饮食计划组件 */
-export const DietPlanComponent: React.FC<Props> = ({
+export const DietPlanComponent: React.FC<IProps> = ({
   initialPlan,
   loading,
   error,
-  onPlanUpdate
+  onPlanUpdate,
 }) => {
   const { t } = useTranslation();
-  const [plan, setPlan] = useState<DietPlan | undefined>(initialPlan);
+  const [plan, setPlan] = useState<IDietPlan | undefined>(initialPlan);
   const [preferences, setPreferences] = useState({
-    goal: 'maintenance' as DietPlan['goal'],
+    goal: 'maintenance' as IDietPlan['goal'],
     restrictions: [] as string[],
     currentWeight: undefined as number | undefined,
     targetWeight: undefined as number | undefined,
-    activityLevel: 'moderate' as 'low' | 'moderate' | 'high'
+    activityLevel: 'moderate' as 'low' | 'moderate' | 'high',
   });
 
   /** 生成新计划 */
@@ -40,7 +41,7 @@ export const DietPlanComponent: React.FC<Props> = ({
       setPlan(newPlan);
       onPlanUpdate?.(newPlan);
     } catch (error) {
-      console.error('Failed to generate diet plan:', error);
+      console.error('Error in index.tsx:', 'Failed to generate diet plan:', error);
     }
   };
 
@@ -70,10 +71,12 @@ export const DietPlanComponent: React.FC<Props> = ({
             <select
               className="w-full border border-gray-300 rounded-md px-3 py-2"
               value={preferences.goal}
-              onChange={e => setPreferences(prev => ({
-                ...prev,
-                goal: e.target.value as DietPlan['goal']
-              }))}
+              onChange={e =>
+                setPreferences(prev => ({
+                  ...prev,
+                  goal: e.target.value as IDietPlan['goal'],
+                }))
+              }
             >
               <option value="weight_loss">{t('dietPlan.goals.weightLoss')}</option>
               <option value="weight_gain">{t('dietPlan.goals.weightGain')}</option>
@@ -91,10 +94,12 @@ export const DietPlanComponent: React.FC<Props> = ({
             <select
               className="w-full border border-gray-300 rounded-md px-3 py-2"
               value={preferences.activityLevel}
-              onChange={e => setPreferences(prev => ({
-                ...prev,
-                activityLevel: e.target.value as 'low' | 'moderate' | 'high'
-              }))}
+              onChange={e =>
+                setPreferences(prev => ({
+                  ...prev,
+                  activityLevel: e.target.value as 'low' | 'moderate' | 'high',
+                }))
+              }
             >
               <option value="low">{t('dietPlan.activity.low')}</option>
               <option value="moderate">{t('dietPlan.activity.moderate')}</option>
@@ -111,10 +116,12 @@ export const DietPlanComponent: React.FC<Props> = ({
               type="number"
               className="w-full border border-gray-300 rounded-md px-3 py-2"
               value={preferences.currentWeight || ''}
-              onChange={e => setPreferences(prev => ({
-                ...prev,
-                currentWeight: e.target.value ? Number(e.target.value) : undefined
-              }))}
+              onChange={e =>
+                setPreferences(prev => ({
+                  ...prev,
+                  currentWeight: e.target.value ? Number(e.target.value) : undefined,
+                }))
+              }
               placeholder={t('dietPlan.weightPlaceholder')}
             />
           </div>
@@ -128,10 +135,12 @@ export const DietPlanComponent: React.FC<Props> = ({
               type="number"
               className="w-full border border-gray-300 rounded-md px-3 py-2"
               value={preferences.targetWeight || ''}
-              onChange={e => setPreferences(prev => ({
-                ...prev,
-                targetWeight: e.target.value ? Number(e.target.value) : undefined
-              }))}
+              onChange={e =>
+                setPreferences(prev => ({
+                  ...prev,
+                  targetWeight: e.target.value ? Number(e.target.value) : undefined,
+                }))
+              }
               placeholder={t('dietPlan.weightPlaceholder')}
             />
           </div>
@@ -157,7 +166,7 @@ export const DietPlanComponent: React.FC<Props> = ({
                       ...prev,
                       restrictions: e.target.checked
                         ? [...prev.restrictions, restriction]
-                        : prev.restrictions.filter(r => r !== restriction)
+                        : prev.restrictions.filter(r => r !== restriction),
                     }));
                   }}
                 />
@@ -195,9 +204,7 @@ export const DietPlanComponent: React.FC<Props> = ({
               </div>
               <div className="p-4 bg-gray-50 rounded-lg">
                 <div className="text-sm text-gray-500">{t('dietPlan.goal')}</div>
-                <div className="text-2xl font-bold">
-                  {t(`dietPlan.goals.${plan.goal}`)}
-                </div>
+                <div className="text-2xl font-bold">{t(`dietPlan.goals.${plan.goal}`)}</div>
               </div>
             </div>
           </div>
@@ -207,18 +214,11 @@ export const DietPlanComponent: React.FC<Props> = ({
             <h3 className="text-xl font-medium mb-4">{t('dietPlan.nutrientTargets')}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {plan.nutrientTargets.map((target, index) => (
-                <div
-                  key={index}
-                  className="p-4 border border-gray-200 rounded-lg"
-                >
-                  <div className="font-medium mb-2">
-                    {t(`nutrition.nutrients.${target.type}`)}
-                  </div>
+                <div key={index} className="p-4 border border-gray-200 rounded-lg">
+                  <div className="font-medium mb-2">{t(`nutrition.nutrients.${target.type}`)}</div>
                   <div className="text-2xl font-bold">
                     {target.min} - {target.max}
-                    <span className="text-sm font-normal text-gray-500 ml-1">
-                      {target.unit}
-                    </span>
+                    <span className="text-sm font-normal text-gray-500 ml-1">{target.unit}</span>
                   </div>
                 </div>
               ))}
@@ -230,15 +230,10 @@ export const DietPlanComponent: React.FC<Props> = ({
             <h3 className="text-xl font-medium mb-4">{t('dietPlan.mealSchedule')}</h3>
             <div className="space-y-6">
               {plan.meals.map((meal, index) => (
-                <div
-                  key={index}
-                  className="p-6 border border-gray-200 rounded-lg"
-                >
+                <div key={index} className="p-6 border border-gray-200 rounded-lg">
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      <div className="font-medium">
-                        {t(`dietPlan.mealTypes.${meal.type}`)}
-                      </div>
+                      <div className="font-medium">{t(`dietPlan.mealTypes.${meal.type}`)}</div>
                       <div className="text-sm text-gray-500">{meal.time}</div>
                     </div>
                     <div className="text-right">
@@ -249,10 +244,7 @@ export const DietPlanComponent: React.FC<Props> = ({
                   </div>
                   <div className="space-y-2">
                     {meal.foods.map((food, foodIndex) => (
-                      <div
-                        key={foodIndex}
-                        className="flex items-center justify-between"
-                      >
+                      <div key={foodIndex} className="flex items-center justify-between">
                         <div>{food.name}</div>
                         <div className="text-gray-500">
                           {food.amount} {food.unit}
@@ -268,15 +260,10 @@ export const DietPlanComponent: React.FC<Props> = ({
           {/* 食物推荐 */}
           {plan.recommendations && plan.recommendations.length > 0 && (
             <div className="mt-8">
-              <h3 className="text-xl font-medium mb-4">
-                {t('dietPlan.recommendations')}
-              </h3>
+              <h3 className="text-xl font-medium mb-4">{t('dietPlan.recommendations')}</h3>
               <div className="flex flex-wrap gap-2">
                 {plan.recommendations.map((food, index) => (
-                  <div
-                    key={index}
-                    className="px-3 py-1 bg-gray-100 rounded-full text-sm"
-                  >
+                  <div key={index} className="px-3 py-1 bg-gray-100 rounded-full text-sm">
                     {food}
                   </div>
                 ))}
@@ -287,9 +274,7 @@ export const DietPlanComponent: React.FC<Props> = ({
           {/* 饮食限制 */}
           {plan.restrictions && plan.restrictions.length > 0 && (
             <div className="mt-8">
-              <h3 className="text-xl font-medium mb-4">
-                {t('dietPlan.restrictions')}
-              </h3>
+              <h3 className="text-xl font-medium mb-4">{t('dietPlan.restrictions')}</h3>
               <div className="flex flex-wrap gap-2">
                 {plan.restrictions.map((restriction, index) => (
                   <div
@@ -308,4 +293,4 @@ export const DietPlanComponent: React.FC<Props> = ({
   );
 };
 
-export default DietPlanComponent; 
+export default DietPlanComponent;

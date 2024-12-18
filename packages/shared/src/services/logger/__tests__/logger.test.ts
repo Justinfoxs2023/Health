@@ -1,4 +1,4 @@
-import { logger, LoggerService, LogEntry } from '../index';
+import { logger, LoggerService, ILogEntry } from '../index';
 import { storage } from '../../storage';
 
 describe('LoggerService', () => {
@@ -12,7 +12,7 @@ describe('LoggerService', () => {
       debug: jest.spyOn(console, 'debug').mockImplementation(),
       info: jest.spyOn(console, 'info').mockImplementation(),
       warn: jest.spyOn(console, 'warn').mockImplementation(),
-      error: jest.spyOn(console, 'error').mockImplementation()
+      error: jest.spyOn(console, 'error').mockImplementation(),
     };
     storageSpy = jest.spyOn(storage, 'setItem').mockImplementation();
     dateNowSpy = jest.spyOn(Date, 'now').mockReturnValue(mockTimestamp);
@@ -37,19 +37,19 @@ describe('LoggerService', () => {
       enableConsole: true,
       enableStorage: true,
       storageTTL: 7 * 24 * 60 * 60 * 1000,
-      maxStorageEntries: 1000
+      maxStorageEntries: 1000,
     });
   });
 
   it('应该更新配置', () => {
     const newConfig = {
       level: 'debug' as const,
-      enableConsole: false
+      enableConsole: false,
     };
     logger.setConfig(newConfig);
     expect(logger.getConfig()).toEqual({
       ...logger.getConfig(),
-      ...newConfig
+      ...newConfig,
     });
   });
 
@@ -73,13 +73,13 @@ describe('LoggerService', () => {
     it('应该正确格式化控制台输出', () => {
       const message = 'Test message';
       const data = { test: true };
-      
+
       logger.info(message, data);
 
       expect(consoleSpy.info).toHaveBeenCalledWith(
         '[2021-01-01T00:00:00.000Z] [INFO]',
         message,
-        data
+        data,
       );
     });
 
@@ -90,7 +90,7 @@ describe('LoggerService', () => {
       expect(consoleSpy.error).toHaveBeenCalledWith(
         '[2021-01-01T00:00:00.000Z] [ERROR]',
         'Error message',
-        error
+        error,
       );
       expect(consoleSpy.error).toHaveBeenCalledWith(error.stack);
     });
@@ -108,7 +108,7 @@ describe('LoggerService', () => {
       expect(call[1][0]).toMatchObject({
         timestamp: mockTimestamp,
         level: 'info',
-        message
+        message,
       });
     });
 
@@ -127,15 +127,15 @@ describe('LoggerService', () => {
 
     it('应该清理过期日志', async () => {
       const oldTimestamp = mockTimestamp - 8 * 24 * 60 * 60 * 1000; // 8天前
-      const oldLog: LogEntry = {
+      const oldLog: ILogEntry = {
         timestamp: oldTimestamp,
         level: 'info',
-        message: 'Old message'
+        message: 'Old message',
       };
-      const newLog: LogEntry = {
+      const newLog: ILogEntry = {
         timestamp: mockTimestamp,
         level: 'info',
-        message: 'New message'
+        message: 'New message',
       };
 
       await storage.setItem('logs', [oldLog, newLog]);
@@ -163,12 +163,14 @@ describe('LoggerService', () => {
       const data = { test: true };
       await logger.info(message, data);
 
-      expect(customHandler).toHaveBeenCalledWith(expect.objectContaining({
-        timestamp: mockTimestamp,
-        level: 'info',
-        message,
-        data
-      }));
+      expect(customHandler).toHaveBeenCalledWith(
+        expect.objectContaining({
+          timestamp: mockTimestamp,
+          level: 'info',
+          message,
+          data,
+        }),
+      );
     });
   });
 
@@ -179,4 +181,4 @@ describe('LoggerService', () => {
       expect(logs[0].source).toMatch(/logger\.test\.ts/);
     });
   });
-}); 
+});

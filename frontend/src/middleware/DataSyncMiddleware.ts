@@ -1,23 +1,31 @@
-import { LocalDatabase } from '../utils/local-database';
+import { ILocalDatabase } from '../utils/local-database';
 
-interface SyncConfig {
+interface ISyncConfig {
+  /** syncInterval 的描述 */
   syncInterval: number; // 同步间隔(ms)
+  /** retryAttempts 的描述 */
   retryAttempts: number; // 重试次数
+  /** batchSize 的描述 */
   batchSize: number; // 批量同步大小
+  /** priority 的描述 */
   priority: 'realtime' | 'batch' | 'manual';
 }
 
-interface SyncStatus {
+interface ISyncStatus {
+  /** lastSync 的描述 */
   lastSync: Date;
+  /** pendingChanges 的描述 */
   pendingChanges: number;
+  /** syncErrors 的描述 */
   syncErrors: Error[];
+  /** isSyncing 的描述 */
   isSyncing: boolean;
 }
 
 export class DataSyncMiddleware {
-  private db: LocalDatabase;
-  private config: SyncConfig;
-  private status: SyncStatus;
+  private db: ILocalDatabase;
+  private config: ISyncConfig;
+  private status: ISyncStatus;
   private syncQueue: Map<string, any[]>;
   private syncInterval: NodeJS.Timeout | null;
 
@@ -27,13 +35,13 @@ export class DataSyncMiddleware {
       syncInterval: 5000,
       retryAttempts: 3,
       batchSize: 100,
-      priority: 'realtime'
+      priority: 'realtime',
     };
     this.status = {
       lastSync: new Date(),
       pendingChanges: 0,
       syncErrors: [],
-      isSyncing: false
+      isSyncing: false,
     };
     this.syncQueue = new Map();
     this.initializeSync();
@@ -54,7 +62,7 @@ export class DataSyncMiddleware {
     this.syncQueue.get(type)!.push({
       data,
       timestamp: new Date(),
-      retryCount: 0
+      retryCount: 0,
     });
     this.status.pendingChanges++;
 
@@ -66,13 +74,13 @@ export class DataSyncMiddleware {
   // 立即同步
   private async syncImmediately(): Promise<void> {
     if (this.status.isSyncing) return;
-    
+
     try {
       this.status.isSyncing = true;
       for (const [type, changes] of this.syncQueue.entries()) {
         const batch = changes.slice(0, this.config.batchSize);
         await this.syncBatch(type, batch);
-        
+
         // 移除已同步的数据
         this.syncQueue.set(type, changes.slice(this.config.batchSize));
         this.status.pendingChanges -= batch.length;
@@ -92,9 +100,9 @@ export class DataSyncMiddleware {
       const response = await fetch(`/api/sync/${type}`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(batch)
+        body: JSON.stringify(batch),
       });
 
       if (!response.ok) {
@@ -111,7 +119,7 @@ export class DataSyncMiddleware {
 
   // 处理离线同步
   private async handleOfflineSync(): Promise<void> {
-    const offlineChanges = await this.db.get('offline-changes') || [];
+    const offlineChanges = (await this.db.get('offline-changes')) || [];
     if (offlineChanges.length > 0) {
       await this.queueChange('offline', offlineChanges);
       await this.db.delete('offline-changes');
@@ -124,10 +132,10 @@ export class DataSyncMiddleware {
     if (this.status.syncErrors.length > 10) {
       this.status.syncErrors.shift();
     }
-    
+
     // 存储错误日志
     await this.db.put('sync-errors', this.status.syncErrors);
-    
+
     // 触发错误事件
     this.emit('syncError', error);
   }
@@ -137,7 +145,7 @@ export class DataSyncMiddleware {
     await this.db.put('sync-status', {
       lastSync: this.status.lastSync,
       pendingChanges: this.status.pendingChanges,
-      syncQueue: Array.from(this.syncQueue.entries())
+      syncQueue: Array.from(this.syncQueue.entries()),
     });
   }
 
@@ -156,10 +164,7 @@ export class DataSyncMiddleware {
     if (this.syncInterval) {
       clearInterval(this.syncInterval);
     }
-    this.syncInterval = setInterval(
-      () => this.syncImmediately(),
-      this.config.syncInterval
-    );
+    this.syncInterval = setInterval(() => this.syncImmediately(), this.config.syncInterval);
   }
 
   // 注册离线处理
@@ -176,7 +181,7 @@ export class DataSyncMiddleware {
   }
 
   // 获取同步状态
-  getSyncStatus(): SyncStatus {
+  getSyncStatus(): ISyncStatus {
     return { ...this.status };
   }
 
@@ -185,4 +190,4 @@ export class DataSyncMiddleware {
     const customEvent = new CustomEvent(event, { detail: data });
     window.dispatchEvent(customEvent);
   }
-} 
+}

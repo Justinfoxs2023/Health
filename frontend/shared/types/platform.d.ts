@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 platform.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 declare module 'react-native' {
   export interface PlatformOSType {
     ios: string;
@@ -30,11 +37,11 @@ declare module 'react-native' {
     set: (dimensions: { [key: string]: ScaledSize }) => void;
     addEventListener: (
       type: 'change',
-      handler: (dims: { window: ScaledSize; screen: ScaledSize }) => void
+      handler: (dims: { window: ScaledSize; screen: ScaledSize }) => void,
     ) => void;
     removeEventListener: (
       type: 'change',
-      handler: (dims: { window: ScaledSize; screen: ScaledSize }) => void
+      handler: (dims: { window: ScaledSize; screen: ScaledSize }) => void,
     ) => void;
   };
 
@@ -44,4 +51,4 @@ declare module 'react-native' {
     scale: number;
     fontScale: number;
   }
-} 
+}

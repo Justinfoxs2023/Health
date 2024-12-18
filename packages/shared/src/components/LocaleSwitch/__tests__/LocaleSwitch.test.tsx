@@ -1,7 +1,8 @@
 import React from 'react';
-import { render, fireEvent, screen } from '@testing-library/react';
+
 import { LocaleSwitch } from '../index';
 import { i18n } from '../../../services/i18n';
+import { render, fireEvent, screen } from '@testing-library/react';
 
 describe('LocaleSwitch', () => {
   beforeEach(() => {
@@ -34,10 +35,10 @@ describe('LocaleSwitch', () => {
   it('应该能够切换语言', () => {
     render(<LocaleSwitch />);
     const select = screen.getByRole('combobox');
-    
+
     fireEvent.change(select, { target: { value: 'en-US' } });
     expect(i18n.getLocale()).toBe('en-US');
-    
+
     fireEvent.change(select, { target: { value: 'zh-CN' } });
     expect(i18n.getLocale()).toBe('zh-CN');
   });
@@ -45,10 +46,10 @@ describe('LocaleSwitch', () => {
   it('应该应用自定义类名和样式', () => {
     const className = 'custom-class';
     const style = { margin: '10px' };
-    
+
     render(<LocaleSwitch className={className} style={style} />);
     const container = screen.getByRole('combobox').parentElement;
-    
+
     expect(container).toHaveClass('locale-switch', className);
     expect(container).toHaveStyle(style);
   });
@@ -56,10 +57,10 @@ describe('LocaleSwitch', () => {
   it('应该在语言切换时更新DOM', () => {
     render(<LocaleSwitch />);
     const select = screen.getByRole('combobox');
-    
+
     fireEvent.change(select, { target: { value: 'en-US' } });
     expect(document.documentElement.getAttribute('lang')).toBe('en-US');
-    
+
     fireEvent.change(select, { target: { value: 'zh-CN' } });
     expect(document.documentElement.getAttribute('lang')).toBe('zh-CN');
   });
@@ -67,11 +68,11 @@ describe('LocaleSwitch', () => {
   it('应该在语言切换时保存到localStorage', () => {
     render(<LocaleSwitch />);
     const select = screen.getByRole('combobox');
-    
+
     fireEvent.change(select, { target: { value: 'en-US' } });
     expect(localStorage.getItem('language')).toBe('en-US');
-    
+
     fireEvent.change(select, { target: { value: 'zh-CN' } });
     expect(localStorage.getItem('language')).toBe('zh-CN');
   });
-}); 
+});

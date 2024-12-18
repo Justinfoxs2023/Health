@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { View, StyleSheet } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { useNavigation } from '@react-navigation/native';
@@ -30,4 +31,4 @@ const styles = StyleSheet.create({
   webview: {
     flex: 1,
   },
-}); 
+});

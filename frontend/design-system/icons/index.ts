@@ -1,11 +1,14 @@
-import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
-import { TextProps } from 'react-native';
 import icoMoonConfig from './selection.json';
+import { TextProps } from 'react-native';
+import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
 
 // 定义图标Props接口
 interface IconProps extends TextProps {
+  /** name 的描述 */
   name: string;
+  /** size 的描述 */
   size?: number;
+  /** color 的描述 */
   color?: string;
 }
 
@@ -13,15 +16,16 @@ interface IconProps extends TextProps {
 export const CustomIcon = createIconSetFromIcoMoon(
   icoMoonConfig,
   'health-icons',
-  'health-icons.ttf'
+  'health-icons.ttf',
 );
 
 // 图标类型定义
-export type IconName = keyof typeof icoMoonConfig.icons;
+export type IconNameType = keyof typeof icoMoonConfig.icons;
 
 // 导出自定义图标Props类型
-export interface CustomIconProps extends Omit<IconProps, 'name'> {
-  name: IconName;
+export interface ICustomIconProps extends Omit<IconProps, 'name'> {
+  /** name 的描述 */
+  name: IconNameType;
 }
 
 // 图标分类
@@ -31,7 +35,7 @@ export const IconTypes = {
     home: 'home',
     profile: 'user',
     settings: 'settings',
-    back: 'arrow-left'
+    back: 'arrow-left',
   },
 
   // 健康相关图标
@@ -39,7 +43,7 @@ export const IconTypes = {
     heartRate: 'heart-pulse',
     bloodPressure: 'blood-pressure',
     weight: 'weight-scale',
-    sleep: 'moon'
+    sleep: 'moon',
   },
 
   // 功能图标
@@ -47,7 +51,7 @@ export const IconTypes = {
     add: 'plus',
     edit: 'edit',
     delete: 'trash',
-    search: 'search'
+    search: 'search',
   },
 
   // 状态图标
@@ -55,9 +59,9 @@ export const IconTypes = {
     success: 'check-circle',
     warning: 'alert-triangle',
     error: 'x-circle',
-    info: 'info'
-  }
+    info: 'info',
+  },
 } as const;
 
 // 导出图标类型
-export type IconTypes = typeof IconTypes; 
+export type IconTypesType = typeof IconTypes;

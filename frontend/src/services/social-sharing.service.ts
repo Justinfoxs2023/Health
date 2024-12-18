@@ -1,14 +1,17 @@
+import { INutritionReport } from './nutrition-report.service';
 import { api } from '../utils/api';
-import { NutritionReport } from './nutrition-report.service';
 
-export interface ShareConfig {
+export interface IShareConfig {
+  /** platform 的描述 */
   platform: 'wechat' | 'weibo' | 'twitter' | 'facebook';
+  /** content 的描述 */
   content: {
     title: string;
     description: string;
     image?: string;
     url: string;
   };
+  /** permissions 的描述 */
   permissions: {
     public: boolean;
     allowComments: boolean;
@@ -17,15 +20,15 @@ export interface ShareConfig {
 }
 
 export class SocialSharingService {
-  async shareReport(report: NutritionReport, config: ShareConfig) {
+  async shareReport(report: INutritionReport, config: IShareConfig) {
     try {
       const response = await api.post('/api/social/share', {
         report,
-        config
+        config,
       });
       return response.data;
     } catch (error) {
-      console.error('分享失败:', error);
+      console.error('Error in social-sharing.service.ts:', '分享失败:', error);
       throw error;
     }
   }
@@ -35,8 +38,8 @@ export class SocialSharingService {
       const response = await api.get(`/api/social/statistics/${shareId}`);
       return response.data;
     } catch (error) {
-      console.error('获取分享统计失败:', error);
+      console.error('Error in social-sharing.service.ts:', '获取分享统计失败:', error);
       throw error;
     }
   }
-} 
+}

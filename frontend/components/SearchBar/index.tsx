@@ -1,18 +1,18 @@
 import React from 'react';
-import { View, TextInput, StyleSheet } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 
-interface Props {
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import { View, TextInput, StyleSheet } from 'react-native';
+
+interface IProps {
+  /** value 的描述 */
   value: string;
+  /** onChangeText 的描述 */
   onChangeText: (text: string) => void;
+  /** placeholder 的描述 */
   placeholder?: string;
 }
 
-export const SearchBar: React.FC<Props> = ({
-  value,
-  onChangeText,
-  placeholder = '搜索...'
-}) => {
+export const SearchBar: React.FC<IProps> = ({ value, onChangeText, placeholder = '搜索...' }) => {
   return (
     <View style={styles.container}>
       <Icon name="search" size={20} color="#999" />
@@ -35,11 +35,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
     marginHorizontal: 16,
-    marginVertical: 8
+    marginVertical: 8,
   },
   input: {
     flex: 1,
     marginLeft: 8,
-    fontSize: 16
-  }
-}); 
+    fontSize: 16,
+  },
+});

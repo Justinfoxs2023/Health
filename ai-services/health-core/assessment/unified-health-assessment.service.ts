@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
-import { Logger } from '../../shared/utils/logger';
+import { AIModelManager } from '../../shared/utils/ai-model-manager';
 import { CacheManager } from '../../shared/utils/cache-manager';
 import { DataProcessor } from '../../shared/utils/data-processor';
-import { AIModelManager } from '../../shared/utils/ai-model-manager';
-import { HealthData } from '../../shared/types/health.types';
 import { IAssessmentResult } from '../../shared/types/assessment.types';
+import { IHealthData } from '../../shared/types/health.types';
+import { Injectable } from '@nestjs/common';
+import { Logger } from '../../shared/utils/logger';
 
 @Injectable()
 export class UnifiedHealthAssessmentService {
@@ -13,13 +13,13 @@ export class UnifiedHealthAssessmentService {
   constructor(
     private readonly cacheManager: CacheManager,
     private readonly dataProcessor: DataProcessor,
-    private readonly modelManager: AIModelManager
+    private readonly modelManager: AIModelManager,
   ) {}
 
   /**
    * 评估生命体征数据
    */
-  async assessVitalSigns(healthData: HealthData): Promise<IAssessmentResult> {
+  async assessVitalSigns(healthData: IHealthData): Promise<IAssessmentResult> {
     try {
       // 生成缓存键
       const cacheKey = `vital-signs-${healthData.userId}-${Date.now()}`;
@@ -48,33 +48,33 @@ export class UnifiedHealthAssessmentService {
             bloodPressure: modelResult.categoryScores.bloodPressure,
             heartRate: modelResult.categoryScores.heartRate,
             bodyTemperature: modelResult.categoryScores.bodyTemperature,
-            bloodOxygen: modelResult.categoryScores.bloodOxygen
-          }
+            bloodOxygen: modelResult.categoryScores.bloodOxygen,
+          },
         },
         recommendations: modelResult.recommendations,
         alerts: modelResult.alerts,
         metadata: {
           modelVersion: modelResult.modelVersion,
           confidenceScores: modelResult.confidenceScores,
-          dataQuality: processedData.metadata
-        }
+          dataQuality: processedData.metadata,
+        },
       };
 
       // 缓存结果
       await this.cacheManager.set(cacheKey, result, 3600); // 缓存1小时
-      
+
       this.logger.info('完成健康评估', { userId: healthData.userId });
       return result;
     } catch (error) {
-        this.logger.error('生命体征评估失败', error);
-        throw error;
+      this.logger.error('生命体征评估失败', error);
+      throw error;
     }
   }
 
   /**
    * 评估生活方式数据
    */
-  async assessLifestyle(healthData: HealthData): Promise<IAssessmentResult> {
+  async assessLifestyle(healthData: IHealthData): Promise<IAssessmentResult> {
     try {
       // 生成缓存键
       const cacheKey = `lifestyle-${healthData.userId}-${Date.now()}`;
@@ -99,7 +99,7 @@ export class UnifiedHealthAssessmentService {
       const modelResult = await this.modelManager.predict('lifestyle', {
         data: processedData,
         patterns,
-        recommendations
+        recommendations,
       });
 
       // 处理评估结果
@@ -113,8 +113,8 @@ export class UnifiedHealthAssessmentService {
             sleep: modelResult.categoryScores.sleep,
             activity: modelResult.categoryScores.activity,
             nutrition: modelResult.categoryScores.nutrition,
-            stress: modelResult.categoryScores.stress
-          }
+            stress: modelResult.categoryScores.stress,
+          },
         },
         patterns,
         recommendations: modelResult.recommendations,
@@ -122,8 +122,8 @@ export class UnifiedHealthAssessmentService {
         metadata: {
           modelVersion: modelResult.modelVersion,
           confidenceScores: modelResult.confidenceScores,
-          dataQuality: processedData.metadata
-        }
+          dataQuality: processedData.metadata,
+        },
       };
 
       // 缓存结果
@@ -140,7 +140,7 @@ export class UnifiedHealthAssessmentService {
   /**
    * 分析生活模式
    */
-  private analyzePatterns(data: HealthData): any {
+  private analyzePatterns(data: IHealthData): any {
     // TODO: 实现生活模式分析逻辑
     return {};
   }
@@ -152,4 +152,4 @@ export class UnifiedHealthAssessmentService {
     // TODO: 实现建议生成逻辑
     return {};
   }
-} 
+}

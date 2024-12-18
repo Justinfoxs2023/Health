@@ -1,10 +1,14 @@
 import * as tf from '@tensorflow/tfjs';
-import { LocalDatabase } from '../utils/local-database';
+import { ILocalDatabase } from '../utils/local-database';
 
-interface ExplainabilityConfig {
+interface IExplainabilityConfig {
+  /** methods 的描述 */
   methods: Array<'lime' | 'shap' | 'gradcam' | 'integrated-gradients'>;
+  /** sampleSize 的描述 */
   sampleSize: number;
+  /** interpretabilityLevel 的描述 */
   interpretabilityLevel: 'local' | 'global' | 'both';
+  /** visualizationOptions 的描述 */
   visualizationOptions: {
     colorMap: string;
     resolution: number;
@@ -12,18 +16,23 @@ interface ExplainabilityConfig {
   };
 }
 
-interface ExplanationResult {
+interface IExplanationResult {
+  /** method 的描述 */
   method: string;
+  /** featureImportance 的描述 */
   featureImportance: Record<string, number>;
+  /** attributions 的描述 */
   attributions: number[];
+  /** visualization 的描述 */
   visualization: any;
+  /** confidence 的描述 */
   confidence: number;
 }
 
 export class ModelExplainabilityService {
-  private db: LocalDatabase;
+  private db: ILocalDatabase;
   private model: tf.LayersModel | null = null;
-  private config: ExplainabilityConfig;
+  private config: IExplainabilityConfig;
 
   constructor() {
     this.db = createDatabase('model-explainability');
@@ -34,8 +43,8 @@ export class ModelExplainabilityService {
       visualizationOptions: {
         colorMap: 'viridis',
         resolution: 100,
-        threshold: 0.1
-      }
+        threshold: 0.1,
+      },
     };
     this.initialize();
   }
@@ -45,10 +54,7 @@ export class ModelExplainabilityService {
   }
 
   // 生成解释
-  async explainPrediction(
-    input: tf.Tensor,
-    method: string
-  ): Promise<ExplanationResult> {
+  async explainPrediction(input: tf.Tensor, method: string): Promise<IExplanationResult> {
     if (!this.model) {
       throw new Error('模型未加载');
     }
@@ -68,52 +74,52 @@ export class ModelExplainabilityService {
   }
 
   // LIME解释
-  private async generateLIMEExplanation(input: tf.Tensor): Promise<ExplanationResult> {
+  private async generateLIMEExplanation(input: tf.Tensor): Promise<IExplanationResult> {
     // 实现LIME解释生成
     return {
       method: 'lime',
       featureImportance: {},
       attributions: [],
       visualization: null,
-      confidence: 0
+      confidence: 0,
     };
   }
 
   // SHAP解释
-  private async generateSHAPExplanation(input: tf.Tensor): Promise<ExplanationResult> {
+  private async generateSHAPExplanation(input: tf.Tensor): Promise<IExplanationResult> {
     // 实现SHAP解释生成
     return {
       method: 'shap',
       featureImportance: {},
       attributions: [],
       visualization: null,
-      confidence: 0
+      confidence: 0,
     };
   }
 
   // Grad-CAM解释
-  private async generateGradCAMExplanation(input: tf.Tensor): Promise<ExplanationResult> {
+  private async generateGradCAMExplanation(input: tf.Tensor): Promise<IExplanationResult> {
     // 实现Grad-CAM解释生成
     return {
       method: 'gradcam',
       featureImportance: {},
       attributions: [],
       visualization: null,
-      confidence: 0
+      confidence: 0,
     };
   }
 
   // 积分梯度解释
   private async generateIntegratedGradientsExplanation(
-    input: tf.Tensor
-  ): Promise<ExplanationResult> {
+    input: tf.Tensor,
+  ): Promise<IExplanationResult> {
     // 实现积分梯度解释生成
     return {
       method: 'integrated-gradients',
       featureImportance: {},
       attributions: [],
       visualization: null,
-      confidence: 0
+      confidence: 0,
     };
   }
 
@@ -150,62 +156,62 @@ export class ModelExplainabilityService {
   // 生成解释报告
   async generateExplanationReport(input: tf.Tensor): Promise<{
     summary: string;
-    explanations: ExplanationResult[];
+    explanations: IExplanationResult[];
     insights: string[];
     recommendations: string[];
   }> {
     const explanations = await Promise.all(
-      this.config.methods.map(method => this.explainPrediction(input, method))
+      this.config.methods.map(method => this.explainPrediction(input, method)),
     );
 
     return {
       summary: this.generateSummary(explanations),
       explanations,
       insights: this.generateInsights(explanations),
-      recommendations: this.generateRecommendations(explanations)
+      recommendations: this.generateRecommendations(explanations),
     };
   }
 
   // 生成摘要
-  private generateSummary(explanations: ExplanationResult[]): string {
+  private generateSummary(explanations: IExplanationResult[]): string {
     // 实现摘要生成
     return '';
   }
 
   // 生成洞察
-  private generateInsights(explanations: ExplanationResult[]): string[] {
+  private generateInsights(explanations: IExplanationResult[]): string[] {
     // 实现洞察生成
     return [];
   }
 
   // 生成建议
-  private generateRecommendations(explanations: ExplanationResult[]): string[] {
+  private generateRecommendations(explanations: IExplanationResult[]): string[] {
     // 实现建议生成
     return [];
   }
 
   // 更新配置
-  async updateConfig(config: Partial<ExplainabilityConfig>): Promise<void> {
+  async updateConfig(config: Partial<IExplainabilityConfig>): Promise<void> {
     this.config = {
       ...this.config,
-      ...config
+      ...config,
     };
     await this.db.put('explainability-config', this.config);
   }
 
   // 保存解释结果
-  private async saveExplanation(explanation: ExplanationResult): Promise<void> {
-    const explanations = await this.db.get('explanations') || [];
+  private async saveExplanation(explanation: IExplanationResult): Promise<void> {
+    const explanations = (await this.db.get('explanations')) || [];
     explanations.push({
       ...explanation,
-      timestamp: new Date()
+      timestamp: new Date(),
     });
     await this.db.put('explanations', explanations);
   }
 
   // 获取解释历史
-  async getExplanationHistory(): Promise<ExplanationResult[]> {
-    return await this.db.get('explanations') || [];
+  async getExplanationHistory(): Promise<IExplanationResult[]> {
+    return (await this.db.get('explanations')) || [];
   }
 
   // 加载模型
@@ -213,7 +219,7 @@ export class ModelExplainabilityService {
     try {
       this.model = await tf.loadLayersModel('indexeddb://explainable-model');
     } catch (error) {
-      console.error('加载模型失败:', error);
+      console.error('Error in model-explainability.service.ts:', '加载模型失败:', error);
     }
   }
-} 
+}

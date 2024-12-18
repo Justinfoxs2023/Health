@@ -1,8 +1,5 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { Card } from '../Card';
-import { Loading } from '../Loading';
-import { NutritionAnalysis, NutrientType } from '../../services/food';
+
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -11,23 +8,19 @@ import {
   Title,
   Tooltip,
   Legend,
-  ArcElement
+  ArcElement,
 } from 'chart.js';
 import { Bar, Doughnut } from 'react-chartjs-2';
+import { Card } from '../Card';
+import { INutritionAnalysis, NutrientType } from '../../services/food';
+import { Loading } from '../Loading';
+import { useTranslation } from 'react-i18next';
+ChartJS.r;
+egister(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement
-);
-
-interface Props {
+interface IProps {
   /** 营养分析数据 */
-  data?: NutritionAnalysis;
+  data?: INutritionAnalysis;
   /** 加载状态 */
   loading?: boolean;
   /** 错误信息 */
@@ -35,11 +28,7 @@ interface Props {
 }
 
 /** 营养分析组件 */
-export const NutritionAnalysisComponent: React.FC<Props> = ({
-  data,
-  loading,
-  error
-}) => {
+export const NutritionAnalysisComponent: React.FC<IProps> = ({ data, loading, error }) => {
   const { t } = useTranslation();
 
   if (loading) {
@@ -88,13 +77,11 @@ export const NutritionAnalysisComponent: React.FC<Props> = ({
       {
         label: t('nutrition.distribution'),
         data: data.nutrientDistribution.map(n => n.percentage),
-        backgroundColor: data.nutrientDistribution.map(n =>
-          getStatusColor(n.status)
-        ),
+        backgroundColor: data.nutrientDistribution.map(n => getStatusColor(n.status)),
         borderColor: 'rgba(255, 255, 255, 0.5)',
-        borderWidth: 1
-      }
-    ]
+        borderWidth: 1,
+      },
+    ],
   };
 
   /** 营养素分布图表选项 */
@@ -102,13 +89,13 @@ export const NutritionAnalysisComponent: React.FC<Props> = ({
     responsive: true,
     plugins: {
       legend: {
-        position: 'bottom' as const
+        position: 'bottom' as const,
       },
       title: {
         display: true,
-        text: t('nutrition.distributionTitle')
-      }
-    }
+        text: t('nutrition.distributionTitle'),
+      },
+    },
   };
 
   /** 健康评分数据 */
@@ -119,9 +106,9 @@ export const NutritionAnalysisComponent: React.FC<Props> = ({
         data: [data.healthScore, 100 - data.healthScore],
         backgroundColor: ['#10B981', '#E5E7EB'],
         borderColor: ['#fff', '#fff'],
-        borderWidth: 1
-      }
-    ]
+        borderWidth: 1,
+      },
+    ],
   };
 
   /** 健康评分图表选项 */
@@ -129,14 +116,14 @@ export const NutritionAnalysisComponent: React.FC<Props> = ({
     responsive: true,
     plugins: {
       legend: {
-        display: false
+        display: false,
       },
       title: {
         display: true,
-        text: t('nutrition.scoreTitle')
-      }
+        text: t('nutrition.scoreTitle'),
+      },
     },
-    cutout: '70%'
+    cutout: '70%',
   };
 
   return (
@@ -170,10 +157,7 @@ export const NutritionAnalysisComponent: React.FC<Props> = ({
         <h3 className="text-xl font-medium mb-4">{t('nutrition.recommendations')}</h3>
         <div className="space-y-4">
           {data.recommendations.map((rec, index) => (
-            <div
-              key={index}
-              className="p-4 rounded-lg border border-gray-200 flex items-start"
-            >
+            <div key={index} className="p-4 rounded-lg border border-gray-200 flex items-start">
               <div
                 className={`w-2 h-2 rounded-full mt-2 mr-3 ${
                   rec.priority === 3
@@ -184,9 +168,7 @@ export const NutritionAnalysisComponent: React.FC<Props> = ({
                 }`}
               />
               <div>
-                <div className="font-medium mb-1">
-                  {getNutrientName(rec.type)}
-                </div>
+                <div className="font-medium mb-1">{getNutrientName(rec.type)}</div>
                 <div className="text-gray-600">{rec.suggestion}</div>
               </div>
             </div>
@@ -199,10 +181,7 @@ export const NutritionAnalysisComponent: React.FC<Props> = ({
         <h3 className="text-xl font-medium mb-4">{t('nutrition.details')}</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {data.nutrientDistribution.map((nutrient, index) => (
-            <div
-              key={index}
-              className="p-4 rounded-lg border border-gray-200"
-            >
+            <div key={index} className="p-4 rounded-lg border border-gray-200">
               <div className="flex items-center justify-between mb-2">
                 <div className="font-medium">{getNutrientName(nutrient.type)}</div>
                 <div
@@ -234,4 +213,4 @@ export const NutritionAnalysisComponent: React.FC<Props> = ({
   );
 };
 
-export default NutritionAnalysisComponent; 
+export default NutritionAnalysisComponent;

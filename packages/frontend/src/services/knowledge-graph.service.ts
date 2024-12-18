@@ -1,11 +1,16 @@
-import { LocalDatabase } from '../utils/local-database';
 import { CryptoService } from './crypto.service';
+import { ILocalDatabase } from '../utils/local-database';
 
-interface KnowledgeNode {
+interface IKnowledgeNode {
+  /** id 的描述 */
   id: string;
+  /** type 的描述 */
   type: string;
+  /** label 的描述 */
   label: string;
+  /** properties 的描述 */
   properties: Record<string, any>;
+  /** metadata 的描述 */
   metadata: {
     confidence: number;
     source: string;
@@ -13,39 +18,55 @@ interface KnowledgeNode {
   };
 }
 
-interface KnowledgeRelation {
+interface IKnowledgeRelation {
+  /** id 的描述 */
   id: string;
+  /** type 的描述 */
   type: string;
+  /** sourceId 的描述 */
   sourceId: string;
+  /** targetId 的描述 */
   targetId: string;
+  /** properties 的描述 */
   properties: Record<string, any>;
+  /** weight 的描述 */
   weight: number;
 }
 
-interface GraphQuery {
-  patterns: QueryPattern[];
-  filters: QueryFilter[];
+interface IGraphQuery {
+  /** patterns 的描述 */
+  patterns: IQueryPattern[];
+  /** filters 的描述 */
+  filters: IQueryFilter[];
+  /** limit 的描述 */
   limit?: number;
+  /** offset 的描述 */
   offset?: number;
 }
 
-interface QueryPattern {
+interface IQueryPattern {
+  /** nodeType 的描述 */
   nodeType?: string;
+  /** relationType 的描述 */
   relationType?: string;
+  /** direction 的描述 */
   direction?: 'in' | 'out' | 'both';
 }
 
-interface QueryFilter {
+interface IQueryFilter {
+  /** property 的描述 */
   property: string;
+  /** operator 的描述 */
   operator: 'eq' | 'gt' | 'lt' | 'contains';
+  /** value 的描述 */
   value: any;
 }
 
 export class KnowledgeGraphService {
-  private db: LocalDatabase;
+  private db: ILocalDatabase;
   private crypto: CryptoService;
-  private nodes: Map<string, KnowledgeNode> = new Map();
-  private relations: Map<string, KnowledgeRelation> = new Map();
+  private nodes: Map<string, IKnowledgeNode> = new Map();
+  private relations: Map<string, IKnowledgeRelation> = new Map();
   private indexedProperties: Set<string> = new Set();
 
   constructor() {
@@ -69,7 +90,7 @@ export class KnowledgeGraphService {
         this.relations = new Map(data.relations);
       }
     } catch (error) {
-      console.error('加载知识图谱失败:', error);
+      console.error('Error in knowledge-graph.service.ts:', '加载知识图谱失败:', error);
     }
   }
 
@@ -79,15 +100,15 @@ export class KnowledgeGraphService {
   }
 
   // 添加节点
-  async addNode(node: Omit<KnowledgeNode, 'id'>): Promise<string> {
+  async addNode(node: Omit<IKnowledgeNode, 'id'>): Promise<string> {
     const nodeId = `node_${Date.now()}_${Math.random()}`;
-    const newNode: KnowledgeNode = {
+    const newNode: IKnowledgeNode = {
       ...node,
       id: nodeId,
       metadata: {
         ...node.metadata,
-        lastUpdated: new Date()
-      }
+        lastUpdated: new Date(),
+      },
     };
 
     this.nodes.set(nodeId, newNode);
@@ -96,11 +117,11 @@ export class KnowledgeGraphService {
   }
 
   // 添加关系
-  async addRelation(relation: Omit<KnowledgeRelation, 'id'>): Promise<string> {
+  async addRelation(relation: Omit<IKnowledgeRelation, 'id'>): Promise<string> {
     const relationId = `rel_${Date.now()}_${Math.random()}`;
-    const newRelation: KnowledgeRelation = {
+    const newRelation: IKnowledgeRelation = {
       ...relation,
-      id: relationId
+      id: relationId,
     };
 
     this.relations.set(relationId, newRelation);
@@ -109,9 +130,9 @@ export class KnowledgeGraphService {
   }
 
   // 查询节点
-  async queryNodes(query: GraphQuery): Promise<KnowledgeNode[]> {
-    const results: KnowledgeNode[] = [];
-    
+  async queryNodes(query: IGraphQuery): Promise<IKnowledgeNode[]> {
+    const results: IKnowledgeNode[] = [];
+
     for (const [_, node] of this.nodes) {
       if (this.matchesQuery(node, query)) {
         results.push(node);
@@ -122,9 +143,9 @@ export class KnowledgeGraphService {
   }
 
   // 查询关系
-  async queryRelations(query: GraphQuery): Promise<KnowledgeRelation[]> {
-    const results: KnowledgeRelation[] = [];
-    
+  async queryRelations(query: IGraphQuery): Promise<IKnowledgeRelation[]> {
+    const results: IKnowledgeRelation[] = [];
+
     for (const [_, relation] of this.relations) {
       if (this.matchesQuery(relation, query)) {
         results.push(relation);
@@ -135,13 +156,15 @@ export class KnowledgeGraphService {
   }
 
   // 匹配查询
-  private matchesQuery(entity: any, query: GraphQuery): boolean {
-    return query.patterns.every(pattern => this.matchesPattern(entity, pattern)) &&
-           query.filters.every(filter => this.matchesFilter(entity, filter));
+  private matchesQuery(entity: any, query: IGraphQuery): boolean {
+    return (
+      query.patterns.every(pattern => this.matchesPattern(entity, pattern)) &&
+      query.filters.every(filter => this.matchesFilter(entity, filter))
+    );
   }
 
   // 匹配模式
-  private matchesPattern(entity: any, pattern: QueryPattern): boolean {
+  private matchesPattern(entity: any, pattern: IQueryPattern): boolean {
     if (pattern.nodeType && entity.type !== pattern.nodeType) {
       return false;
     }
@@ -154,9 +177,9 @@ export class KnowledgeGraphService {
   }
 
   // 匹配过滤器
-  private matchesFilter(entity: any, filter: QueryFilter): boolean {
+  private matchesFilter(entity: any, filter: IQueryFilter): boolean {
     const value = entity.properties[filter.property];
-    
+
     switch (filter.operator) {
       case 'eq':
         return value === filter.value;
@@ -172,7 +195,7 @@ export class KnowledgeGraphService {
   }
 
   // 应用分页
-  private applyPagination<T>(results: T[], query: GraphQuery): T[] {
+  private applyPagination<T>(results: T[], query: IGraphQuery): T[] {
     const start = query.offset || 0;
     const end = query.limit ? start + query.limit : undefined;
     return results.slice(start, end);
@@ -182,7 +205,7 @@ export class KnowledgeGraphService {
   private async saveGraph(): Promise<void> {
     const data = {
       nodes: Array.from(this.nodes.entries()),
-      relations: Array.from(this.relations.entries())
+      relations: Array.from(this.relations.entries()),
     };
 
     const encryptedData = await this.crypto.encryptData(data);
@@ -196,15 +219,15 @@ export class KnowledgeGraphService {
       direction?: 'in' | 'out' | 'both';
       types?: string[];
       maxDepth?: number;
-    } = {}
+    } = {},
   ): Promise<{
-    nodes: KnowledgeNode[];
-    relations: KnowledgeRelation[];
+    nodes: IKnowledgeNode[];
+    relations: IKnowledgeRelation[];
   }> {
     const visited = new Set<string>();
     const neighbors = {
-      nodes: [] as KnowledgeNode[],
-      relations: [] as KnowledgeRelation[]
+      nodes: [] as IKnowledgeNode[],
+      relations: [] as IKnowledgeRelation[],
     };
 
     await this.traverseNeighbors(nodeId, options, visited, neighbors, 0);
@@ -217,10 +240,9 @@ export class KnowledgeGraphService {
     options: any,
     visited: Set<string>,
     neighbors: any,
-    depth: number
+    depth: number,
   ): Promise<void> {
-    if (visited.has(nodeId) || 
-        (options.maxDepth !== undefined && depth > options.maxDepth)) {
+    if (visited.has(nodeId) || (options.maxDepth !== undefined && depth > options.maxDepth)) {
       return;
     }
 
@@ -233,23 +255,13 @@ export class KnowledgeGraphService {
     const relations = this.getNodeRelations(nodeId, options);
     for (const relation of relations) {
       neighbors.relations.push(relation);
-      const nextNodeId = relation.sourceId === nodeId ? 
-        relation.targetId : relation.sourceId;
-      await this.traverseNeighbors(
-        nextNodeId,
-        options,
-        visited,
-        neighbors,
-        depth + 1
-      );
+      const nextNodeId = relation.sourceId === nodeId ? relation.targetId : relation.sourceId;
+      await this.traverseNeighbors(nextNodeId, options, visited, neighbors, depth + 1);
     }
   }
 
   // 获取节点关系
-  private getNodeRelations(
-    nodeId: string,
-    options: any
-  ): KnowledgeRelation[] {
+  private getNodeRelations(nodeId: string, options: any): IKnowledgeRelation[] {
     return Array.from(this.relations.values()).filter(relation => {
       if (options.types && !options.types.includes(relation.type)) {
         return false;
@@ -273,26 +285,26 @@ export class KnowledgeGraphService {
     options: {
       maxDepth?: number;
       relationTypes?: string[];
-    } = {}
+    } = {},
   ): Promise<{
-    nodes: KnowledgeNode[];
-    relations: KnowledgeRelation[];
+    nodes: IKnowledgeNode[];
+    relations: IKnowledgeRelation[];
   }> {
     // 实现路径查找算法
     return {
       nodes: [],
-      relations: []
+      relations: [],
     };
   }
 
   // 导出子图
   async exportSubgraph(nodeIds: string[]): Promise<{
-    nodes: KnowledgeNode[];
-    relations: KnowledgeRelation[];
+    nodes: IKnowledgeNode[];
+    relations: IKnowledgeRelation[];
   }> {
     const subgraph = {
-      nodes: [] as KnowledgeNode[],
-      relations: [] as KnowledgeRelation[]
+      nodes: [] as IKnowledgeNode[],
+      relations: [] as IKnowledgeRelation[],
     };
 
     // 收集节点
@@ -305,12 +317,11 @@ export class KnowledgeGraphService {
 
     // 收集关系
     for (const relation of this.relations.values()) {
-      if (nodeIds.includes(relation.sourceId) && 
-          nodeIds.includes(relation.targetId)) {
+      if (nodeIds.includes(relation.sourceId) && nodeIds.includes(relation.targetId)) {
         subgraph.relations.push(relation);
       }
     }
 
     return subgraph;
   }
-} 
+}

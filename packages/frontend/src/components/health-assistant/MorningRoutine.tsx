@@ -1,19 +1,23 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Card, Text, Icon } from '../common';
-import { VitalSignsCard } from './VitalSignsCard';
-import { BreakfastCard } from './BreakfastCard';
-import { ExercisePlanCard } from './ExercisePlanCard';
 
-interface Props {
+import { BreakfastCard } from './BreakfastCard';
+import { Card, Text, Icon } from '../common';
+import { ExercisePlanCard } from './ExercisePlanCard';
+import { View, StyleSheet } from 'react-native';
+import { VitalSignsCard } from './VitalSignsCard';
+
+interface IProps {
+  /** vitalSigns 的描述 */
   vitalSigns: {
     time: string;
     items: string[];
   };
+  /** breakfast 的描述 */
   breakfast: {
     menu: string[];
     nutrition: Record<string, number>;
   };
+  /** exercise 的描述 */
   exercise: {
     type: string;
     duration: number;
@@ -21,25 +25,15 @@ interface Props {
   };
 }
 
-export const MorningRoutine: React.FC<Props> = ({
-  vitalSigns,
-  breakfast,
-  exercise
-}) => {
+export const MorningRoutine: React.FC<IProps> = ({ vitalSigns, breakfast, exercise }) => {
   return (
     <Card style={styles.container}>
       <Text style={styles.title}>晨间例程</Text>
-      
-      <VitalSignsCard 
-        time={vitalSigns.time}
-        items={vitalSigns.items}
-      />
-      
-      <BreakfastCard
-        menu={breakfast.menu}
-        nutrition={breakfast.nutrition}
-      />
-      
+
+      <VitalSignsCard time={vitalSigns.time} items={vitalSigns.items} />
+
+      <BreakfastCard menu={breakfast.menu} nutrition={breakfast.nutrition} />
+
       <ExercisePlanCard
         type={exercise.type}
         duration={exercise.duration}
@@ -52,11 +46,11 @@ export const MorningRoutine: React.FC<Props> = ({
 const styles = StyleSheet.create({
   container: {
     padding: 15,
-    marginBottom: 10
+    marginBottom: 10,
   },
   title: {
     fontSize: 16,
     fontWeight: '600',
-    marginBottom: 15
-  }
-}); 
+    marginBottom: 15,
+  },
+});

@@ -1,6 +1,6 @@
 import { Redis as IORedis } from 'ioredis';
 
-export interface Redis extends IORedis {
+export interface IRedis extends IORedis {
   lpush(key: string, value: string): Promise<number>;
   ltrim(key: string, start: number, stop: number): Promise<'OK'>;
   sadd(key: string, ...members: string[]): Promise<number>;
@@ -10,7 +10,7 @@ export interface Redis extends IORedis {
   remove(key: string): Promise<void>;
 }
 
-export class RedisClient implements Redis {
+export class RedisClient implements IRedis {
   private client: IORedis;
 
   constructor(config: any) {
@@ -18,4 +18,4 @@ export class RedisClient implements Redis {
   }
 
   // 实现 Redis 接口的所有方法...
-} 
+}

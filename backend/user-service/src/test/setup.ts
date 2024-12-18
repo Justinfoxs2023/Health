@@ -1,6 +1,6 @@
 import 'reflect-metadata';
-import { container } from '../di/container';
 import { TYPES } from '../di/types';
+import { container } from '../di/container';
 
 // Mock dependencies
 beforeEach(() => {
@@ -9,4 +9,4 @@ beforeEach(() => {
 
 afterEach(() => {
   container.restore();
-}); 
+});

@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 privilege-booking.service.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export class PrivilegeBookingService {
   private readonly bookingRepo: BookingRepository;
   private readonly privilegeService: PrivilegeManagementService;
@@ -13,16 +20,16 @@ export class PrivilegeBookingService {
     try {
       // 验证预约资格
       await this.validateBookingEligibility(userId, bookingData.privilegeId);
-      
+
       // 检查可用时段
       const availableSlots = await this.checkAvailability(bookingData);
-      
+
       // 创建预约
       const booking = await this.bookingRepo.createBooking({
         userId,
         ...bookingData,
         status: 'confirmed',
-        createdAt: new Date()
+        createdAt: new Date(),
       });
 
       // 发送预约确认
@@ -31,7 +38,7 @@ export class PrivilegeBookingService {
       return {
         booking,
         confirmationCode: await this.generateConfirmationCode(booking),
-        instructions: await this.generateInstructions(booking)
+        instructions: await this.generateInstructions(booking),
       };
     } catch (error) {
       this.logger.error('创建预约失败', error);
@@ -43,29 +50,29 @@ export class PrivilegeBookingService {
   async manageBookingReminders(bookingId: string): Promise<ReminderSetup> {
     try {
       const booking = await this.bookingRepo.getBooking(bookingId);
-      
+
       // 设置提醒时间
       const reminderTimes = await this.calculateReminderTimes(booking);
-      
+
       // 创建提醒任务
       await Promise.all(
-        reminderTimes.map(time => 
+        reminderTimes.map(time =>
           this.notificationService.scheduleReminder(booking.userId, {
             bookingId,
             time,
-            type: 'booking_reminder'
-          })
-        )
+            type: 'booking_reminder',
+          }),
+        ),
       );
 
       return {
         reminderTimes,
         channels: await this.getNotificationChannels(booking.userId),
-        nextReminder: reminderTimes[0]
+        nextReminder: reminderTimes[0],
       };
     } catch (error) {
       this.logger.error('管理预约提醒失败', error);
       throw error;
     }
   }
-} 
+}

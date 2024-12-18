@@ -1,23 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  View, 
-  ScrollView, 
-  StyleSheet,
-  Switch,
-  TouchableOpacity 
-} from 'react-native';
-import { 
-  Text,
-  List,
-  Dialog,
-  Portal,
-  Button 
-} from 'react-native-paper';
+
+import { Text, List, Dialog, Portal, Button } from 'react-native-paper';
+import { View, ScrollView, StyleSheet, Switch, TouchableOpacity } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
+
+import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { SettingSection } from '@/components/SettingSection';
 import { SystemConfigType } from '@/types/system-config';
 import { updateSystemConfig } from '@/store/actions/system';
-import { SettingSection } from '@/components/SettingSection';
-import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { useTheme } from '@/hooks/useTheme';
 
 export const SettingsScreen = () => {
@@ -25,7 +15,7 @@ export const SettingsScreen = () => {
   const theme = useTheme();
   const [loading, setLoading] = useState(false);
   const [selectedSection, setSelectedSection] = useState<SystemConfigType | null>(null);
-  
+
   const systemConfig = useSelector(state => state.system.config);
 
   // 处理设置更新
@@ -34,7 +24,7 @@ export const SettingsScreen = () => {
       setLoading(true);
       await dispatch(updateSystemConfig(type, value));
     } catch (error) {
-      console.error('Failed to update config:', error);
+      console.error('Error in SettingsScreen.tsx:', 'Failed to update config:', error);
     } finally {
       setLoading(false);
     }
@@ -43,7 +33,7 @@ export const SettingsScreen = () => {
   return (
     <ScrollView style={styles.container}>
       <LoadingSpinner visible={loading} />
-      
+
       {/* 存储设置 */}
       <SettingSection
         title="存储设置"
@@ -55,9 +45,9 @@ export const SettingsScreen = () => {
           right={() => (
             <Switch
               value={systemConfig.storage.compression}
-              onValueChange={value => 
+              onValueChange={value =>
                 handleConfigUpdate(SystemConfigType.STORAGE, {
-                  compression: value
+                  compression: value,
                 })
               }
             />
@@ -79,7 +69,7 @@ export const SettingsScreen = () => {
               value={systemConfig.ai.foodRecognition}
               onValueChange={value =>
                 handleConfigUpdate(SystemConfigType.AI, {
-                  foodRecognition: value
+                  foodRecognition: value,
                 })
               }
             />
@@ -101,7 +91,7 @@ export const SettingsScreen = () => {
               value={systemConfig.security.twoFactorAuth}
               onValueChange={value =>
                 handleConfigUpdate(SystemConfigType.SECURITY, {
-                  twoFactorAuth: value
+                  twoFactorAuth: value,
                 })
               }
             />
@@ -130,16 +120,9 @@ export const SettingsScreen = () => {
 
       {/* 设置详情对话框 */}
       <Portal>
-        <Dialog
-          visible={!!selectedSection}
-          onDismiss={() => setSelectedSection(null)}
-        >
-          <Dialog.Title>
-            {selectedSection && `${selectedSection} 设置`}
-          </Dialog.Title>
-          <Dialog.Content>
-            {/* 根据selectedSection渲染对应的详细设置 */}
-          </Dialog.Content>
+        <Dialog visible={!!selectedSection} onDismiss={() => setSelectedSection(null)}>
+          <Dialog.Title>{selectedSection && `${selectedSection} 设置`}</Dialog.Title>
+          <Dialog.Content>{/* 根据selectedSection渲染对应的详细设置 */}</Dialog.Content>
           <Dialog.Actions>
             <Button onPress={() => setSelectedSection(null)}>关闭</Button>
           </Dialog.Actions>
@@ -152,6 +135,6 @@ export const SettingsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff'
-  }
-}); 
+    backgroundColor: '#fff',
+  },
+});

@@ -1,26 +1,32 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
-import { Card, Text, Button, Switch } from '../common';
 
-interface DeviceConfig {
+import { Card, Text, Button, Switch } from '../common';
+import { View, StyleSheet, ScrollView } from 'react-native';
+
+interface IDeviceConfig {
+  /** id 的描述 */
   id: string;
+  /** name 的描述 */
   name: string;
+  /** settings 的描述 */
   settings: {
     [key: string]: {
       type: 'toggle' | 'select' | 'input';
       label: string;
       value: any;
       options?: string[];
-    }
-  }
+    };
+  };
 }
 
-interface Props {
-  config: DeviceConfig;
-  onSave: (config: DeviceConfig) => void;
+interface IProps {
+  /** config 的描述 */
+  config: IDeviceConfig;
+  /** onSave 的描述 */
+  onSave: (config: IDeviceConfig) => void;
 }
 
-export const DeviceConfigPanel: React.FC<Props> = ({ config, onSave }) => {
+export const DeviceConfigPanel: React.FC<IProps> = ({ config, onSave }) => {
   const [settings, setSettings] = useState(config.settings);
 
   const handleSettingChange = (key: string, value: any) => {
@@ -28,15 +34,15 @@ export const DeviceConfigPanel: React.FC<Props> = ({ config, onSave }) => {
       ...prev,
       [key]: {
         ...prev[key],
-        value
-      }
+        value,
+      },
     }));
   };
 
   const handleSave = () => {
     onSave({
       ...config,
-      settings
+      settings,
     });
   };
 
@@ -44,29 +50,25 @@ export const DeviceConfigPanel: React.FC<Props> = ({ config, onSave }) => {
     <Card style={styles.container}>
       <ScrollView>
         <Text style={styles.title}>{config.name}设置</Text>
-        
+
         {Object.entries(settings).map(([key, setting]) => (
           <View key={key} style={styles.settingItem}>
             <Text style={styles.label}>{setting.label}</Text>
-            
+
             {setting.type === 'toggle' && (
               <Switch
                 value={setting.value}
-                onValueChange={(value) => handleSettingChange(key, value)}
+                onValueChange={value => handleSettingChange(key, value)}
               />
             )}
-            
+
             {/* 添加其他设置类型的渲染逻辑 */}
           </View>
         ))}
       </ScrollView>
 
       <View style={styles.footer}>
-        <Button 
-          title="保存设置"
-          onPress={handleSave}
-          type="primary"
-        />
+        <Button title="保存设置" onPress={handleSave} type="primary" />
       </View>
     </Card>
   );
@@ -98,5 +100,5 @@ const styles = StyleSheet.create({
     paddingTop: 15,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: '#eee',
-  }
-}); 
+  },
+});

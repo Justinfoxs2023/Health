@@ -1,6 +1,6 @@
+import { Logger } from '../utils/logger';
 import { Request, Response } from 'express';
 import { UserService } from '../services/user.service';
-import { Logger } from '../utils/logger';
 import { validateUserUpdate } from '../utils/validators';
 
 export class UserController {
@@ -18,7 +18,7 @@ export class UserController {
       if (!userId) {
         return res.status(401).json({
           code: 401,
-          message: '未授权的访问'
+          message: '未授权的访问',
         });
       }
 
@@ -26,21 +26,20 @@ export class UserController {
       if (!user) {
         return res.status(404).json({
           code: 404,
-          message: '用户不存在'
+          message: '用户不存在',
         });
       }
 
       const safeUser = this.userService.sanitizeUser(user);
       return res.json({
         code: 200,
-        data: safeUser
+        data: safeUser,
       });
-
     } catch (error) {
       this.logger.error('获取用户信息失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
@@ -58,26 +57,26 @@ export class UserController {
       if (error) {
         return res.status(400).json({
           code: 400,
-          message: error.details[0].message
+          message: error.details[0].message,
         });
       }
 
       // 更新用户信息
       const updatedUser = await this.userService.updateUser(userId, updateData);
-      
+
       // 更新用户画像
       await this.profileService.updateProfile(userId, updateData);
 
       return res.json({
         code: 200,
         data: this.userService.sanitizeUser(updatedUser),
-        message: '更新成功'
+        message: '更新成功',
       });
     } catch (error) {
       this.logger.error('更新用户信息失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
@@ -93,7 +92,7 @@ export class UserController {
       if (!file) {
         return res.status(400).json({
           code: 400,
-          message: '请上传头像文件'
+          message: '请上传头像文件',
         });
       }
 
@@ -102,14 +101,14 @@ export class UserController {
       return res.json({
         code: 200,
         data: { avatarUrl },
-        message: '头像更新成功'
+        message: '头像更新成功',
       });
     } catch (error) {
       this.logger.error('更新头像失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
-} 
+}

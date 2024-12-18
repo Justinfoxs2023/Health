@@ -1,24 +1,27 @@
-import { LocalDatabase } from '../utils/local-database';
+import { ILocalDatabase } from '../utils/local-database';
 
-interface CacheConfig {
+interface ICacheConfig {
+  /** maxAge 的描述 */
   maxAge: number;
+  /** maxSize 的描述 */
   maxSize: number;
+  /** priority 的描述 */
   priority: 'lru' | 'lfu' | 'fifo';
 }
 
 export class CacheStrategyService {
-  private db: LocalDatabase;
-  private config: CacheConfig;
+  private db: ILocalDatabase;
+  private config: ICacheConfig;
   private memoryCache: Map<string, any>;
   private accessCount: Map<string, number>;
 
-  constructor(config: Partial<CacheConfig> = {}) {
+  constructor(config: Partial<ICacheConfig> = {}) {
     this.db = new LocalDatabase('cache-store');
     this.config = {
       maxAge: 24 * 60 * 60 * 1000, // 24小时
-      maxSize: 100 * 1024 * 1024,   // 100MB
+      maxSize: 100 * 1024 * 1024, // 100MB
       priority: 'lru',
-      ...config
+      ...config,
     };
     this.memoryCache = new Map();
     this.accessCount = new Map();
@@ -42,7 +45,7 @@ export class CacheStrategyService {
     return null;
   }
 
-  async set(key: string, value: any, config?: Partial<CacheConfig>): Promise<void> {
+  async set(key: string, value: any, config?: Partial<ICacheConfig>): Promise<void> {
     const cacheConfig = { ...this.config, ...config };
 
     // 检查缓存大小限制
@@ -53,7 +56,7 @@ export class CacheStrategyService {
     await this.db.put(key, {
       data: value,
       timestamp: Date.now(),
-      config: cacheConfig
+      config: cacheConfig,
     });
 
     this.updateAccessMetrics(key);
@@ -71,12 +74,10 @@ export class CacheStrategyService {
 
     switch (this.config.priority) {
       case 'lru':
-        entries = Array.from(this.accessCount.entries())
-          .sort(([, a], [, b]) => a - b);
+        entries = Array.from(this.accessCount.entries()).sort(([, a], [, b]) => a - b);
         break;
       case 'lfu':
-        entries = Array.from(this.accessCount.entries())
-          .sort(([, a], [, b]) => b - a);
+        entries = Array.from(this.accessCount.entries()).sort(([, a], [, b]) => b - a);
         break;
       case 'fifo':
       default:
@@ -117,4 +118,4 @@ export class CacheStrategyService {
     this.accessCount.delete(key);
     await this.db.delete(key);
   }
-} 
+}

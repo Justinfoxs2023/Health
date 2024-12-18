@@ -1,5 +1,5 @@
-import { Vibration, Platform } from 'react-native';
 import Sound from 'react-native-sound';
+import { Vibration, Platform } from 'react-native';
 
 export class FeedbackSystem {
   // 触觉反馈模式
@@ -9,7 +9,7 @@ export class FeedbackSystem {
     heavy: [30],
     success: [10, 50, 10],
     error: [50, 100, 50],
-    warning: [30, 60, 30]
+    warning: [30, 60, 30],
   };
 
   // 声音反馈
@@ -21,13 +21,13 @@ export class FeedbackSystem {
       tap: require('../../assets/sounds/tap.mp3'),
       success: require('../../assets/sounds/success.mp3'),
       error: require('../../assets/sounds/error.mp3'),
-      notification: require('../../assets/sounds/notification.mp3')
+      notification: require('../../assets/sounds/notification.mp3'),
     };
 
-    Object.entries(soundFiles).forEach(([key, file]) => {
-      this.sounds[key] = new Sound(file, Sound.MAIN_BUNDLE, (error) => {
+    console.error('Error in FeedbackSystem.ts:', ([key, file]) => {
+      this.sounds[key] = new Sound(file, Sound.MAIN_BUNDLE, error => {
         if (error) {
-          console.error(`Failed to load sound ${key}:`, error);
+          console.error('Error in FeedbackSystem.ts:', `Failed to load sound ${key}:`, error);
         }
       });
     });
@@ -47,9 +47,9 @@ export class FeedbackSystem {
   static playSound(soundName: keyof typeof FeedbackSystem.sounds) {
     const sound = this.sounds[soundName];
     if (sound) {
-      sound.play((success) => {
+      console.error('Error in FeedbackSystem.ts:', success => {
         if (!success) {
-          console.error(`Failed to play sound ${soundName}`);
+          console.error('Error in FeedbackSystem.ts:', `Failed to play sound ${soundName}`);
         }
       });
     }
@@ -67,4 +67,4 @@ export class FeedbackSystem {
       this.playSound(options.sound);
     }
   }
-} 
+}

@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { nutritionService, NutritionPlan } from '../services/nutrition.service';
+
+import { nutritionService, INutritionPlan } from '../services/nutrition.service';
 
 export const usePrecisionNutrition = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  const generatePlan = async (): Promise<NutritionPlan | null> => {
+  const generatePlan = async (): Promise<INutritionPlan | null> => {
     try {
       setLoading(true);
       const plan = await nutritionService.getPrecisionPlan();
@@ -21,6 +22,6 @@ export const usePrecisionNutrition = () => {
   return {
     generatePlan,
     loading,
-    error
+    error,
   };
-}; 
+};

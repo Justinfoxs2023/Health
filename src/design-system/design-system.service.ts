@@ -1,21 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import type { Observable } from 'rxjs';
 import type { OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ITheme, IAccessibilityConfig } from './types';
+import { Injectable } from '@nestjs/common';
 import { Logger } from '../infrastructure/logger/logger.service';
-import { Theme, AccessibilityConfig } from './types';
 import { Subject } from 'rxjs';
-import type { Observable } from 'rxjs';
 
 @Injectable()
 export class DesignSystemService implements OnModuleInit {
-  private readonly currentTheme = new Subject<Theme>();
-  private readonly accessibilityConfig = new Subject<AccessibilityConfig>();
-  private themes: Map<string, Theme> = new Map();
+  private readonly currentTheme = new Subject<ITheme>();
+  private readonly accessibilityConfig = new Subject<IAccessibilityConfig>();
+  private themes: Map<string, ITheme> = new Map();
 
-  constructor(
-    private readonly config: ConfigService,
-    private readonly logger: Logger
-  ) {}
+  constructor(private readonly config: ConfigService, private readonly logger: Logger) {}
 
   async onModuleInit() {
     await this.initializeThemes();
@@ -52,11 +49,11 @@ export class DesignSystemService implements OnModuleInit {
   }
 
   // 主题相关方法
-  getTheme(themeId: string): Theme {
+  getTheme(themeId: string): ITheme {
     return this.themes.get(themeId);
   }
 
-  getCurrentTheme(): Observable<Theme> {
+  getCurrentTheme(): Observable<ITheme> {
     return this.currentTheme.asObservable();
   }
 
@@ -71,12 +68,12 @@ export class DesignSystemService implements OnModuleInit {
     this.applyTheme(theme);
   }
 
-  async createCustomTheme(theme: Partial<Theme>): Promise<string> {
+  async createCustomTheme(theme: Partial<ITheme>): Promise<string> {
     const newTheme = {
       ...this.getDefaultTheme(),
       ...theme,
       id: `custom-${Date.now()}`,
-      type: 'custom'
+      type: 'custom',
     };
 
     this.themes.set(newTheme.id, newTheme);
@@ -84,7 +81,7 @@ export class DesignSystemService implements OnModuleInit {
     return newTheme.id;
   }
 
-  async updateTheme(themeId: string, updates: Partial<Theme>): Promise<void> {
+  async updateTheme(themeId: string, updates: Partial<ITheme>): Promise<void> {
     const theme = this.themes.get(themeId);
     if (!theme || theme.type !== 'custom') {
       throw new Error('Cannot update non-custom theme');
@@ -100,14 +97,14 @@ export class DesignSystemService implements OnModuleInit {
   }
 
   // 无障碍相关方法
-  getAccessibilityConfig(): Observable<AccessibilityConfig> {
+  getAccessibilityConfig(): Observable<IAccessibilityConfig> {
     return this.accessibilityConfig.asObservable();
   }
 
-  async setAccessibilityConfig(config: Partial<AccessibilityConfig>): Promise<void> {
+  async setAccessibilityConfig(config: Partial<IAccessibilityConfig>): Promise<void> {
     const newConfig = {
       ...this.accessibilityConfig.value,
-      ...config
+      ...config,
     };
 
     this.accessibilityConfig.next(newConfig);
@@ -116,12 +113,12 @@ export class DesignSystemService implements OnModuleInit {
   }
 
   // 辅助方法
-  private async loadDefaultThemes(): Promise<Theme[]> {
+  private async loadDefaultThemes(): Promise<ITheme[]> {
     // 实现加载预设主题的逻辑
     return [];
   }
 
-  private async loadCustomThemes(): Promise<Theme[]> {
+  private async loadCustomThemes(): Promise<ITheme[]> {
     // 实现加载自定义主题的逻辑
     return [];
   }
@@ -135,23 +132,23 @@ export class DesignSystemService implements OnModuleInit {
     return '';
   }
 
-  private getDefaultTheme(): Theme {
+  private getDefaultTheme(): ITheme {
     // 实现获取默认主题的逻辑
     return null;
   }
 
-  private getDefaultAccessibilityConfig(): AccessibilityConfig {
+  private getDefaultAccessibilityConfig(): IAccessibilityConfig {
     // 实现获取默认无障碍配置的逻辑
     return null;
   }
 
-  private applyTheme(theme: Theme): void {
+  private applyTheme(theme: ITheme): void {
     // 实现应用主题的逻辑
     document.documentElement.style.setProperty('--primary-color', theme.colors.primary);
     // ... 设置其他CSS变量
   }
 
-  private applyAccessibilityConfig(config: AccessibilityConfig): void {
+  private applyAccessibilityConfig(config: IAccessibilityConfig): void {
     // 实现应用无障碍配置的逻辑
     if (config.visual.highContrast) {
       document.body.classList.add('high-contrast');
@@ -160,4 +157,4 @@ export class DesignSystemService implements OnModuleInit {
     }
     // ... 应用其他无障碍设置
   }
-} 
+}

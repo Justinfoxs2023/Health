@@ -1,42 +1,58 @@
 import { DialectAccuracyEnhancementService } from './dialect-accuracy-enhancement.service';
-import { LocalDatabase } from '../utils/local-database';
+import { ILocalDatabase } from '../utils/local-database';
 
-interface SceneConfig {
+interface ISceneConfig {
+  /** id 的描述 */
   id: string;
+  /** name 的描述 */
   name: string;
-  noiseProfile: NoiseProfile;
+  /** noiseProfile 的描述 */
+  noiseProfile: INoiseProfile;
+  /** vocabularySet 的描述 */
   vocabularySet: Set<string>;
-  contextRules: ContextRule[];
+  /** contextRules 的描述 */
+  contextRules: IContextRule[];
 }
 
-interface NoiseProfile {
+interface INoiseProfile {
+  /** threshold 的描述 */
   threshold: number;
-  filters: AudioFilter[];
-  patterns: NoisePattern[];
+  /** filters 的描述 */
+  filters: IAudioFilter[];
+  /** patterns 的描述 */
+  patterns: INoisePattern[];
 }
 
-interface ContextRule {
+interface IContextRule {
+  /** pattern 的描述 */
   pattern: RegExp;
+  /** weight 的描述 */
   weight: number;
+  /** relatedTerms 的描述 */
   relatedTerms: string[];
 }
 
-interface NoisePattern {
+interface INoisePattern {
+  /** signature 的描述 */
   signature: Float32Array;
+  /** type 的描述 */
   type: string;
 }
 
-interface AudioFilter {
+interface IAudioFilter {
+  /** type 的描述 */
   type: BiquadFilterType;
+  /** frequency 的描述 */
   frequency: number;
+  /** Q 的描述 */
   Q: number;
 }
 
 export class SceneAdaptationService {
-  private db: LocalDatabase;
+  private db: ILocalDatabase;
   private dialectService: DialectAccuracyEnhancementService;
-  private activeScene: SceneConfig | null = null;
-  private sceneConfigs: Map<string, SceneConfig> = new Map();
+  private activeScene: ISceneConfig | null = null;
+  private sceneConfigs: Map<string, ISceneConfig> = new Map();
   private audioContext: AudioContext;
   private noiseReducer: AudioWorkletNode | null = null;
 
@@ -64,16 +80,16 @@ export class SceneAdaptationService {
       // 从服务器同步
       const response = await fetch('/api/scenes/configs');
       const configs = await response.json();
-      
+
       // 更新配置
-      configs.forEach((config: SceneConfig) => {
+      configs.forEach((config: ISceneConfig) => {
         this.sceneConfigs.set(config.id, config);
       });
 
       // 保存到本地
       await this.db.put('scene-configs', Array.from(this.sceneConfigs.entries()));
     } catch (error) {
-      console.error('加载场景配置失败:', error);
+      console.error('Error in scene-adaptation.service.ts:', '加载场景配置失败:', error);
     }
   }
 
@@ -83,7 +99,7 @@ export class SceneAdaptationService {
       await this.audioContext.audioWorklet.addModule('/worklets/noise-reducer.js');
       this.noiseReducer = new AudioWorkletNode(this.audioContext, 'noise-reducer');
     } catch (error) {
-      console.error('初始化音频处理失败:', error);
+      console.error('Error in scene-adaptation.service.ts:', '初始化音频处理失败:', error);
     }
   }
 
@@ -99,22 +115,22 @@ export class SceneAdaptationService {
   }
 
   // 应用场景配置
-  private async applySceneConfiguration(scene: SceneConfig) {
+  private async applySceneConfiguration(scene: ISceneConfig) {
     // 应用噪音配置
     await this.configureNoiseReduction(scene.noiseProfile);
-    
+
     // 加载场景词汇
     await this.loadSceneVocabulary(scene.vocabularySet);
-    
+
     // 设置上下文规则
     this.setContextRules(scene.contextRules);
   }
 
   // 配置噪音消除
-  private async configureNoiseReduction(profile: NoiseProfile) {
+  private async configureNoiseReduction(profile: INoiseProfile) {
     if (this.noiseReducer) {
       this.noiseReducer.parameters.get('threshold').value = profile.threshold;
-      
+
       // 配置音频过滤器
       profile.filters.forEach(filter => {
         const audioFilter = this.audioContext.createBiquadFilter();
@@ -126,7 +142,7 @@ export class SceneAdaptationService {
       // 设置噪音模式
       this.noiseReducer.port.postMessage({
         type: 'updatePatterns',
-        patterns: profile.patterns
+        patterns: profile.patterns,
       });
     }
   }
@@ -136,12 +152,12 @@ export class SceneAdaptationService {
     try {
       await this.dialectService.updateVocabulary(Array.from(vocabulary));
     } catch (error) {
-      console.error('加载场景词汇失败:', error);
+      console.error('Error in scene-adaptation.service.ts:', '加载场景词汇失败:', error);
     }
   }
 
   // 设置上下文规则
-  private setContextRules(rules: ContextRule[]) {
+  private setContextRules(rules: IContextRule[]) {
     this.dialectService.updateContextRules(rules);
   }
 
@@ -153,7 +169,7 @@ export class SceneAdaptationService {
 
     // 应用场景特定的音频处理
     const processedAudio = await this.applySceneAudioProcessing(audioData);
-    
+
     // 应用噪音消除
     return this.applyNoiseReduction(processedAudio);
   }
@@ -175,8 +191,8 @@ export class SceneAdaptationService {
 
   // 应用音频过滤器
   private async applyAudioFilter(
-    audioData: Float32Array, 
-    filter: AudioFilter
+    audioData: Float32Array,
+    filter: IAudioFilter,
   ): Promise<Float32Array> {
     // 实现音频过滤逻辑
     return audioData;
@@ -201,7 +217,7 @@ export class SceneAdaptationService {
       activeScene: this.activeScene?.name || null,
       noiseLevel: await this.measureNoiseLevel(),
       recognitionAccuracy: await this.calculateRecognitionAccuracy(),
-      adaptationMetrics: await this.getAdaptationMetrics()
+      adaptationMetrics: await this.getAdaptationMetrics(),
     };
   }
 
@@ -219,4 +235,4 @@ export class SceneAdaptationService {
     // 实现适配指标获取逻辑
     return {};
   }
-} 
+}

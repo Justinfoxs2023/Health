@@ -1,42 +1,54 @@
 import React from 'react';
-import { View, FlatList, StyleSheet, Text, TouchableOpacity, Image } from 'react-native';
-import { useQuery } from '@tanstack/react-query';
-import { getChallenges } from '../../api/community';
-import { LoadingSpinner, Icon, ProgressBar } from '../../components';
 
-interface Challenge {
+import { LoadingSpinner, Icon, ProgressBar } from '../../components';
+import { View, FlatList, StyleSheet, Text, TouchableOpacity, Image } from 'react-native';
+import { getChallenges } from '../../api/community';
+import { useQuery } from '@tanstack/react-query';
+
+interface IChallenge {
+  /** id 的描述 */
   id: string;
+  /** title 的描述 */
   title: string;
+  /** description 的描述 */
   description: string;
+  /** imageUrl 的描述 */
   imageUrl: string;
+  /** startDate 的描述 */
   startDate: string;
+  /** endDate 的描述 */
   endDate: string;
+  /** participants 的描述 */
   participants: {
     count: number;
     target: number;
   };
+  /** progress 的描述 */
   progress: {
     current: number;
     target: number;
   };
+  /** rewards 的描述 */
   rewards: {
     type: string;
     value: string;
     icon: string;
   }[];
+  /** tags 的描述 */
   tags: string[];
+  /** status 的描述 */
   status: 'upcoming' | 'ongoing' | 'completed';
 }
 
 export const TeamChallengeScreen = ({ navigation }) => {
-  const [selectedStatus, setSelectedStatus] = React.useState<'upcoming' | 'ongoing' | 'completed'>('ongoing');
-  const { data: challenges, isLoading } = useQuery<Challenge[]>('challenges', getChallenges);
-
-  const filteredChallenges = challenges?.filter(
-    challenge => challenge.status === selectedStatus
+  const [selectedStatus, setSelectedStatus] = React.useState<'upcoming' | 'ongoing' | 'completed'>(
+    'ongoing',
   );
+  const { data: challenges, isLoading } = useQuery<IChallenge[]>('challenges', getChallenges);
 
-  const renderChallenge = ({ item: challenge }: { item: Challenge }) => (
+  const filteredChallenges = challenges?.filter(challenge => challenge.status === selectedStatus);
+
+  const renderChallenge = ({ item: challenge }: { item: IChallenge }) => (
     <TouchableOpacity
       style={styles.challengeCard}
       onPress={() => navigation.navigate('ChallengeDetail', { id: challenge.id })}
@@ -61,7 +73,7 @@ export const TeamChallengeScreen = ({ navigation }) => {
             style={styles.progressBar}
           />
           <Text style={styles.progressDetail}>
-            已完成{Math.round(challenge.progress.current / challenge.progress.target * 100)}%
+            已完成{Math.round((challenge.progress.current / challenge.progress.target) * 100)}%
           </Text>
         </View>
 
@@ -87,7 +99,8 @@ export const TeamChallengeScreen = ({ navigation }) => {
 
         <View style={styles.footer}>
           <Text style={styles.dateText}>
-            {new Date(challenge.startDate).toLocaleDateString()} - {new Date(challenge.endDate).toLocaleDateString()}
+            {new Date(challenge.startDate).toLocaleDateString()} -{' '}
+            {new Date(challenge.endDate).toLocaleDateString()}
           </Text>
           <TouchableOpacity
             style={styles.joinButton}
@@ -106,7 +119,7 @@ export const TeamChallengeScreen = ({ navigation }) => {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>团队挑战</Text>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.createButton}
           onPress={() => navigation.navigate('CreateChallenge')}
         >
@@ -156,19 +169,19 @@ export const TeamChallengeScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 15,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#333'
+    color: '#333',
   },
   createButton: {
     flexDirection: 'row',
@@ -176,12 +189,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#2E7D32',
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 20
+    borderRadius: 20,
   },
   createButtonText: {
     color: '#fff',
     fontSize: 14,
-    marginLeft: 4
+    marginLeft: 4,
   },
   tabBar: {
     flexDirection: 'row',
@@ -189,91 +202,91 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 10,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#f0f0f0'
+    borderBottomColor: '#f0f0f0',
   },
   tab: {
     flex: 1,
     alignItems: 'center',
-    paddingVertical: 8
+    paddingVertical: 8,
   },
   activeTab: {
     borderBottomWidth: 2,
-    borderBottomColor: '#2E7D32'
+    borderBottomColor: '#2E7D32',
   },
   tabText: {
     fontSize: 14,
-    color: '#666'
+    color: '#666',
   },
   activeTabText: {
     color: '#2E7D32',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   list: {
-    padding: 15
+    padding: 15,
   },
   challengeCard: {
     backgroundColor: '#fff',
     borderRadius: 12,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   challengeImage: {
     width: '100%',
     height: 160,
-    backgroundColor: '#f0f0f0'
+    backgroundColor: '#f0f0f0',
   },
   challengeContent: {
-    padding: 15
+    padding: 15,
   },
   challengeTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 8
+    marginBottom: 8,
   },
   challengeDesc: {
     fontSize: 14,
     color: '#666',
     lineHeight: 20,
-    marginBottom: 15
+    marginBottom: 15,
   },
   progressSection: {
-    marginBottom: 15
+    marginBottom: 15,
   },
   progressHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8
+    marginBottom: 8,
   },
   progressTitle: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#333'
+    color: '#333',
   },
   progressText: {
     fontSize: 12,
-    color: '#666'
+    color: '#666',
   },
   progressBar: {
-    marginBottom: 4
+    marginBottom: 4,
   },
   progressDetail: {
     fontSize: 12,
     color: '#666',
-    textAlign: 'right'
+    textAlign: 'right',
   },
   rewardsSection: {
-    marginBottom: 15
+    marginBottom: 15,
   },
   rewardsTitle: {
     fontSize: 14,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 8
+    marginBottom: 8,
   },
   rewardsList: {
     flexDirection: 'row',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
   },
   rewardItem: {
     flexDirection: 'row',
@@ -283,17 +296,17 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 12,
     marginRight: 8,
-    marginBottom: 8
+    marginBottom: 8,
   },
   rewardText: {
     fontSize: 12,
     color: '#F57C00',
-    marginLeft: 4
+    marginLeft: 4,
   },
   tagsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginBottom: 15
+    marginBottom: 15,
   },
   tag: {
     backgroundColor: '#f5f5f5',
@@ -301,11 +314,11 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 12,
     marginRight: 8,
-    marginBottom: 8
+    marginBottom: 8,
   },
   tagText: {
     fontSize: 12,
-    color: '#666'
+    color: '#666',
   },
   footer: {
     flexDirection: 'row',
@@ -313,24 +326,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 15,
     borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: '#f0f0f0'
+    borderTopColor: '#f0f0f0',
   },
   dateText: {
     fontSize: 12,
-    color: '#999'
+    color: '#999',
   },
   joinButton: {
     backgroundColor: '#2E7D32',
     paddingHorizontal: 15,
     paddingVertical: 6,
-    borderRadius: 20
+    borderRadius: 20,
   },
   joinButtonText: {
     color: '#fff',
     fontSize: 14,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   separator: {
-    height: 15
-  }
-}); 
+    height: 15,
+  },
+});

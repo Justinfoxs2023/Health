@@ -1,36 +1,36 @@
-import { exportService } from '../index';
-import { storage } from '../../storage';
-import { logger } from '../../logger';
-import { IHealthData, HealthDataType } from '../../../types';
-import { saveAs } from 'file-saver';
 import * as XLSX from 'xlsx';
+import { IHealthData, HealthDataType } from '../../../types';
+import { exportService } from '../index';
+import { logger } from '../../logger';
+import { saveAs } from 'file-saver';
+import { storage } from '../../storage';
 
 // Mock dependencies
 jest.mock('file-saver', () => ({
-  saveAs: jest.fn()
+  saveAs: jest.fn(),
 }));
 
 jest.mock('xlsx', () => ({
   utils: {
     book_new: jest.fn(() => ({})),
     json_to_sheet: jest.fn(() => ({})),
-    book_append_sheet: jest.fn()
+    book_append_sheet: jest.fn(),
   },
-  writeFile: jest.fn()
+  writeFile: jest.fn(),
 }));
 
 jest.mock('../../storage', () => ({
   storage: {
     setItem: jest.fn(),
-    getItem: jest.fn()
-  }
+    getItem: jest.fn(),
+  },
 }));
 
 jest.mock('../../logger', () => ({
   logger: {
     info: jest.fn(),
-    error: jest.fn()
-  }
+    error: jest.fn(),
+  },
 }));
 
 describe('ExportService', () => {
@@ -41,7 +41,7 @@ describe('ExportService', () => {
       type: HealthDataType.BLOOD_PRESSURE,
       value: 120,
       timestamp: new Date('2023-01-01'),
-      userId: 'user1'
+      userId: 'user1',
     },
     {
       id: '2',
@@ -49,15 +49,15 @@ describe('ExportService', () => {
       value: 75,
       timestamp: new Date('2023-01-02'),
       userId: 'user1',
-      deleted: true
+      deleted: true,
     },
     {
       id: '3',
       type: HealthDataType.BLOOD_SUGAR,
       value: 5.5,
       timestamp: new Date('2023-01-03'),
-      userId: 'user1'
-    }
+      userId: 'user1',
+    },
   ];
 
   beforeEach(() => {
@@ -76,12 +76,10 @@ describe('ExportService', () => {
     it('应该正确过滤已删除数据', async () => {
       await exportService.exportData(mockHealthData, {
         format: 'json',
-        includeDeleted: false
+        includeDeleted: false,
       });
 
-      const savedData = JSON.parse(
-        (saveAs as jest.Mock).mock.calls[0][0].text()
-      );
+      const savedData = JSON.parse((saveAs as jest.Mock).mock.calls[0][0].text());
       expect(savedData.length).toBe(2);
       expect(savedData.every((item: IHealthData) => !item.deleted)).toBe(true);
     });
@@ -91,25 +89,21 @@ describe('ExportService', () => {
         format: 'json',
         dateRange: {
           start: new Date('2023-01-01'),
-          end: new Date('2023-01-02')
-        }
+          end: new Date('2023-01-02'),
+        },
       });
 
-      const savedData = JSON.parse(
-        (saveAs as jest.Mock).mock.calls[0][0].text()
-      );
+      const savedData = JSON.parse((saveAs as jest.Mock).mock.calls[0][0].text());
       expect(savedData.length).toBe(2);
     });
 
     it('应该正确过滤数据类型', async () => {
       await exportService.exportData(mockHealthData, {
         format: 'json',
-        types: [HealthDataType.BLOOD_PRESSURE]
+        types: [HealthDataType.BLOOD_PRESSURE],
       });
 
-      const savedData = JSON.parse(
-        (saveAs as jest.Mock).mock.calls[0][0].text()
-      );
+      const savedData = JSON.parse((saveAs as jest.Mock).mock.calls[0][0].text());
       expect(savedData.length).toBe(1);
       expect(savedData[0].type).toBe(HealthDataType.BLOOD_PRESSURE);
     });
@@ -119,30 +113,22 @@ describe('ExportService', () => {
     it('应该正确导出JSON格式', async () => {
       await exportService.exportData(mockHealthData, {
         format: 'json',
-        filename: 'test'
+        filename: 'test',
       });
 
-      expect(saveAs).toHaveBeenCalledWith(
-        expect.any(Blob),
-        'test.json'
-      );
+      expect(saveAs).toHaveBeenCalledWith(expect.any(Blob), 'test.json');
 
-      const savedData = JSON.parse(
-        (saveAs as jest.Mock).mock.calls[0][0].text()
-      );
+      const savedData = JSON.parse((saveAs as jest.Mock).mock.calls[0][0].text());
       expect(Array.isArray(savedData)).toBe(true);
     });
 
     it('应该正确导出CSV格式', async () => {
       await exportService.exportData(mockHealthData, {
         format: 'csv',
-        filename: 'test'
+        filename: 'test',
       });
 
-      expect(saveAs).toHaveBeenCalledWith(
-        expect.any(Blob),
-        'test.csv'
-      );
+      expect(saveAs).toHaveBeenCalledWith(expect.any(Blob), 'test.csv');
 
       const content = (saveAs as jest.Mock).mock.calls[0][0].text();
       const lines = content.split('\n');
@@ -153,33 +139,25 @@ describe('ExportService', () => {
     it('应该正确导��Excel格式', async () => {
       await exportService.exportData(mockHealthData, {
         format: 'xlsx',
-        filename: 'test'
+        filename: 'test',
       });
 
       expect(XLSX.utils.book_new).toHaveBeenCalled();
       expect(XLSX.utils.json_to_sheet).toHaveBeenCalled();
       expect(XLSX.utils.book_append_sheet).toHaveBeenCalled();
-      expect(XLSX.writeFile).toHaveBeenCalledWith(
-        expect.any(Object),
-        'test.xlsx'
-      );
+      expect(XLSX.writeFile).toHaveBeenCalledWith(expect.any(Object), 'test.xlsx');
     });
 
     it('应该正确创建备份', async () => {
       await exportService.exportData(mockHealthData, {
         format: 'backup',
         filename: 'test',
-        compress: false
+        compress: false,
       });
 
-      expect(saveAs).toHaveBeenCalledWith(
-        expect.any(Blob),
-        'test.json'
-      );
+      expect(saveAs).toHaveBeenCalledWith(expect.any(Blob), 'test.json');
 
-      const backup = JSON.parse(
-        (saveAs as jest.Mock).mock.calls[0][0].text()
-      );
+      const backup = JSON.parse((saveAs as jest.Mock).mock.calls[0][0].text());
       expect(backup.version).toBe('1.0');
       expect(backup.data).toEqual(mockHealthData);
       expect(backup.metadata).toBeDefined();
@@ -188,8 +166,8 @@ describe('ExportService', () => {
     it('应该处理不支持的格式', async () => {
       await expect(
         exportService.exportData(mockHealthData, {
-          format: 'invalid' as any
-        })
+          format: 'invalid' as any,
+        }),
       ).rejects.toThrow('不支持的导出格式');
     });
   });
@@ -202,15 +180,11 @@ describe('ExportService', () => {
         data: mockHealthData,
         metadata: {
           count: mockHealthData.length,
-          types: [HealthDataType.BLOOD_PRESSURE]
-        }
+          types: [HealthDataType.BLOOD_PRESSURE],
+        },
       };
 
-      const file = new File(
-        [JSON.stringify(backup)],
-        'backup.json',
-        { type: 'application/json' }
-      );
+      const file = new File([JSON.stringify(backup)], 'backup.json', { type: 'application/json' });
 
       const result = await exportService.importBackup(file);
 
@@ -220,23 +194,19 @@ describe('ExportService', () => {
 
     it('应该拒绝无效的备份文件', async () => {
       const invalidBackup = {
-        data: mockHealthData
+        data: mockHealthData,
       };
 
-      const file = new File(
-        [JSON.stringify(invalidBackup)],
-        'invalid-backup.json',
-        { type: 'application/json' }
-      );
+      const file = new File([JSON.stringify(invalidBackup)], 'invalid-backup.json', {
+        type: 'application/json',
+      });
 
-      await expect(exportService.importBackup(file)).rejects.toThrow(
-        '无效的备份文件'
-      );
+      await expect(exportService.importBackup(file)).rejects.toThrow('无效的备份文件');
     });
 
     it('应该处理文件读取错误', async () => {
       const file = new File(['invalid json'], 'invalid.json', {
-        type: 'application/json'
+        type: 'application/json',
       });
 
       await expect(exportService.importBackup(file)).rejects.toThrow();
@@ -249,20 +219,18 @@ describe('ExportService', () => {
         throw new Error('保存失败');
       });
 
-      await expect(
-        exportService.exportData(mockHealthData, { format: 'json' })
-      ).rejects.toThrow();
+      await expect(exportService.exportData(mockHealthData, { format: 'json' })).rejects.toThrow();
 
       expect(logger.error).toHaveBeenCalled();
     });
 
     it('应该记录导入错误', async () => {
       const file = new File(['invalid json'], 'invalid.json', {
-        type: 'application/json'
+        type: 'application/json',
       });
 
       await expect(exportService.importBackup(file)).rejects.toThrow();
       expect(logger.error).toHaveBeenCalled();
     });
   });
-}); 
+});

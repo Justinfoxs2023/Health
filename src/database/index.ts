@@ -1,8 +1,6 @@
-import mongoose from 'mongoose';
 import Redis from 'ioredis';
-import { Logger } from '@utils/logger';
-
-const logger = new Logger('Database');
+import mongoose from 'mongoose';
+import logger from '../utils/logger';
 
 // MongoDB连接
 export async function connectMongoDB(): Promise<void> {
@@ -11,7 +9,7 @@ export async function connectMongoDB(): Promise<void> {
     await mongoose.connect(uri);
     logger.info('MongoDB连接成功');
 
-    mongoose.connection.on('error', (error) => {
+    mongoose.connection.on('error', error => {
       logger.error('MongoDB连接错误', error);
     });
 
@@ -40,7 +38,7 @@ export async function connectRedis(): Promise<Redis> {
       logger.info('Redis连接成功');
     });
 
-    redis.on('error', (error) => {
+    redis.on('error', error => {
       logger.error('Redis连接错误', error);
     });
 
@@ -64,13 +62,10 @@ export async function connectRedis(): Promise<Redis> {
 // 连接所有数据库
 export async function connectDatabases(): Promise<void> {
   try {
-    await Promise.all([
-      connectMongoDB(),
-      connectRedis()
-    ]);
+    await Promise.all([connectMongoDB(), connectRedis()]);
     logger.info('所有数据库连接成功');
   } catch (error) {
     logger.error('数据库连接失败', error);
     throw error;
   }
-} 
+}

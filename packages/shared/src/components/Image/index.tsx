@@ -1,15 +1,24 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Spin, Skeleton } from 'antd';
+
 import { ImageService } from '../../services/image';
+import { Spin, Skeleton } from 'antd';
 
 interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
+  /** src 的描述 */
   src: string;
+  /** alt 的描述 */
   alt: string;
+  /** lazy 的描述 */
   lazy?: boolean;
+  /** fallback 的描述 */
   fallback?: string;
+  /** placeholder 的描述 */
   placeholder?: React.ReactNode;
+  /** onLoad 的描述 */
   onLoad?: () => void;
+  /** onError 的描述 */
   onError?: (error: Error) => void;
+  /** imageService 的描述 */
   imageService?: ImageService;
 }
 
@@ -37,8 +46,8 @@ export const Image: React.FC<ImageProps> = ({
     }
 
     const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
+      entries => {
+        entries.forEach(entry => {
           if (entry.isIntersecting) {
             loadImage();
             observer.disconnect();
@@ -47,7 +56,7 @@ export const Image: React.FC<ImageProps> = ({
       },
       {
         rootMargin: '50px',
-      }
+      },
     );
 
     if (imgRef.current) {
@@ -71,13 +80,13 @@ export const Image: React.FC<ImageProps> = ({
       // 预加载图片
       const optimizedSrc = await imageService.preloadImage(src);
       setImageSrc(optimizedSrc);
-      
+
       onLoad?.();
     } catch (err) {
       const error = err instanceof Error ? err : new Error('Failed to load image');
       setError(error);
       onError?.(error);
-      
+
       if (fallback) {
         setImageSrc(fallback);
       }
@@ -96,11 +105,7 @@ export const Image: React.FC<ImageProps> = ({
 
   return (
     <div className="image-container" style={{ position: 'relative' }}>
-      {loading && (
-        <div className="image-placeholder">
-          {placeholder || <Spin />}
-        </div>
-      )}
+      {loading && <div className="image-placeholder">{placeholder || <Spin />}</div>}
       <img
         ref={imgRef}
         src={imageSrc}
@@ -108,10 +113,10 @@ export const Image: React.FC<ImageProps> = ({
         style={{
           display: loading ? 'none' : 'block',
           width: '100%',
-          height: 'auto'
+          height: 'auto',
         }}
         onLoad={() => setLoading(false)}
-        onError={(e) => {
+        onError={e => {
           const error = new Error('Image failed to load');
           setError(error);
           onError?.(error);
@@ -123,4 +128,4 @@ export const Image: React.FC<ImageProps> = ({
       />
     </div>
   );
-}; 
+};

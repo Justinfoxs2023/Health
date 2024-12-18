@@ -1,42 +1,54 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
-import { Card, Text, Icon, Button, Badge } from '../common';
 
-interface TherapyItem {
+import { Card, Text, Icon, Button, Badge } from '../common';
+import { View, StyleSheet, ScrollView } from 'react-native';
+
+interface ITherapyItem {
+  /** id 的描述 */
   id: string;
+  /** type 的描述 */
   type: 'herbal' | 'acupuncture' | 'massage' | 'aromatherapy' | 'music' | 'meditation';
+  /** title 的描述 */
   title: string;
+  /** description 的描述 */
   description: string;
+  /** ageGroups 的描述 */
   ageGroups: string[];
+  /** benefits 的描述 */
   benefits: string[];
+  /** contraindications 的描述 */
   contraindications: string[];
+  /** duration 的描述 */
   duration: string;
+  /** price 的描述 */
   price: number;
+  /** practitioner 的描述 */
   practitioner: {
     name: string;
     title: string;
     experience: string;
   };
+  /** rating 的描述 */
   rating: number;
+  /** reviews 的描述 */
   reviews: number;
 }
 
-interface Props {
+interface IProps {
+  /** userId 的描述 */
   userId: string;
+  /** userProfile 的描述 */
   userProfile: {
     age: number;
     gender: string;
     healthConditions: string[];
     preferences: string[];
   };
-  recommendations?: TherapyItem[];
+  /** recommendations 的描述 */
+  recommendations?: ITherapyItem[];
 }
 
-export const TraditionalMedicine: React.FC<Props> = ({
-  userId,
-  userProfile,
-  recommendations
-}) => {
+export const TraditionalMedicine: React.FC<IProps> = ({ userId, userProfile, recommendations }) => {
   const getTherapyIcon = (type: string) => {
     switch (type) {
       case 'herbal':
@@ -56,7 +68,7 @@ export const TraditionalMedicine: React.FC<Props> = ({
     }
   };
 
-  const renderTherapyCard = (therapy: TherapyItem) => {
+  const renderTherapyCard = (therapy: ITherapyItem) => {
     const icon = getTherapyIcon(therapy.type);
     const isRecommended = recommendations?.some(rec => rec.id === therapy.id);
 
@@ -64,11 +76,7 @@ export const TraditionalMedicine: React.FC<Props> = ({
       <Card key={therapy.id} style={styles.therapyCard}>
         <View style={styles.cardHeader}>
           <View style={styles.headerLeft}>
-            <Icon 
-              name={icon.name} 
-              size={24} 
-              color={icon.color} 
-            />
+            <Icon name={icon.name} size={24} color={icon.color} />
             <View>
               <Text style={styles.therapyTitle}>{therapy.title}</Text>
               <View style={styles.ratingContainer}>
@@ -78,13 +86,7 @@ export const TraditionalMedicine: React.FC<Props> = ({
               </View>
             </View>
           </View>
-          {isRecommended && (
-            <Badge
-              color="#2E7D32"
-              text="推荐"
-              icon="thumb-up"
-            />
-          )}
+          {isRecommended && <Badge color="#2E7D32" text="推荐" icon="thumb-up" />}
         </View>
 
         <Text style={styles.description}>{therapy.description}</Text>
@@ -105,11 +107,11 @@ export const TraditionalMedicine: React.FC<Props> = ({
           <Text style={styles.sectionTitle}>适用年龄</Text>
           <View style={styles.ageGroupTags}>
             {therapy.ageGroups.map((group, index) => (
-              <View 
-                key={index} 
+              <View
+                key={index}
                 style={[
                   styles.ageGroupTag,
-                  userProfile.age >= 60 && group === '老年' && styles.activeTag
+                  userProfile.age >= 60 && group === '老年' && styles.activeTag,
                 ]}
               >
                 <Text style={styles.ageGroupText}>{group}</Text>
@@ -134,15 +136,9 @@ export const TraditionalMedicine: React.FC<Props> = ({
 
         <View style={styles.practitionerSection}>
           <View style={styles.practitionerInfo}>
-            <Text style={styles.practitionerName}>
-              {therapy.practitioner.name}
-            </Text>
-            <Text style={styles.practitionerTitle}>
-              {therapy.practitioner.title}
-            </Text>
-            <Text style={styles.practitionerExperience}>
-              从业{therapy.practitioner.experience}
-            </Text>
+            <Text style={styles.practitionerName}>{therapy.practitioner.name}</Text>
+            <Text style={styles.practitionerTitle}>{therapy.practitioner.title}</Text>
+            <Text style={styles.practitionerExperience}>从业{therapy.practitioner.experience}</Text>
           </View>
         </View>
 
@@ -152,18 +148,8 @@ export const TraditionalMedicine: React.FC<Props> = ({
             <Text style={styles.duration}>/{therapy.duration}</Text>
           </View>
           <View style={styles.actionButtons}>
-            <Button
-              title="了解详情"
-              icon="info"
-              type="outline"
-              size="small"
-            />
-            <Button
-              title="立即预约"
-              icon="event"
-              type="solid"
-              size="small"
-            />
+            <Button title="了解详情" icon="info" type="outline" size="small" />
+            <Button title="立即预约" icon="event" type="solid" size="small" />
           </View>
         </View>
       </Card>
@@ -187,161 +173,161 @@ export const TraditionalMedicine: React.FC<Props> = ({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
   section: {
-    marginBottom: 20
+    marginBottom: 20,
   },
   sectionHeader: {
     fontSize: 16,
     fontWeight: '600',
     color: '#2E7D32',
     marginBottom: 10,
-    paddingHorizontal: 15
+    paddingHorizontal: 15,
   },
   therapyCard: {
     marginHorizontal: 15,
     marginBottom: 15,
-    padding: 15
+    padding: 15,
   },
   cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 12
+    marginBottom: 12,
   },
   headerLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10
+    gap: 10,
   },
   therapyTitle: {
     fontSize: 16,
-    fontWeight: '500'
+    fontWeight: '500',
   },
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    marginTop: 4
+    marginTop: 4,
   },
   ratingText: {
     fontSize: 14,
-    color: '#666'
+    color: '#666',
   },
   reviewCount: {
     fontSize: 12,
-    color: '#999'
+    color: '#999',
   },
   description: {
     fontSize: 14,
     color: '#666',
     lineHeight: 20,
-    marginBottom: 15
+    marginBottom: 15,
   },
   benefitsSection: {
-    marginBottom: 15
+    marginBottom: 15,
   },
   sectionTitle: {
     fontSize: 14,
     fontWeight: '500',
-    marginBottom: 8
+    marginBottom: 8,
   },
   benefitsList: {
-    gap: 8
+    gap: 8,
   },
   benefitItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8
+    gap: 8,
   },
   benefitText: {
     fontSize: 14,
-    color: '#444'
+    color: '#444',
   },
   ageGroupSection: {
-    marginBottom: 15
+    marginBottom: 15,
   },
   ageGroupTags: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8
+    gap: 8,
   },
   ageGroupTag: {
     backgroundColor: '#E8F5E9',
     paddingHorizontal: 10,
     paddingVertical: 4,
-    borderRadius: 12
+    borderRadius: 12,
   },
   activeTag: {
-    backgroundColor: '#2E7D32'
+    backgroundColor: '#2E7D32',
   },
   ageGroupText: {
     fontSize: 12,
-    color: '#2E7D32'
+    color: '#2E7D32',
   },
   warningSection: {
     backgroundColor: '#FFF3E0',
     padding: 12,
     borderRadius: 8,
-    marginBottom: 15
+    marginBottom: 15,
   },
   warningTitle: {
     fontSize: 14,
     fontWeight: '500',
     color: '#F57C00',
-    marginBottom: 8
+    marginBottom: 8,
   },
   warningList: {
-    gap: 4
+    gap: 4,
   },
   warningText: {
     fontSize: 13,
-    color: '#666'
+    color: '#666',
   },
   practitionerSection: {
-    marginBottom: 15
+    marginBottom: 15,
   },
   practitionerInfo: {
     backgroundColor: '#f8f8f8',
     padding: 12,
-    borderRadius: 8
+    borderRadius: 8,
   },
   practitionerName: {
     fontSize: 15,
-    fontWeight: '500'
+    fontWeight: '500',
   },
   practitionerTitle: {
     fontSize: 13,
     color: '#666',
-    marginTop: 2
+    marginTop: 2,
   },
   practitionerExperience: {
     fontSize: 12,
     color: '#999',
-    marginTop: 2
+    marginTop: 2,
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 15
+    marginTop: 15,
   },
   priceContainer: {
     flexDirection: 'row',
-    alignItems: 'baseline'
+    alignItems: 'baseline',
   },
   price: {
     fontSize: 20,
     fontWeight: '600',
-    color: '#2E7D32'
+    color: '#2E7D32',
   },
   duration: {
     fontSize: 14,
-    color: '#666'
+    color: '#666',
   },
   actionButtons: {
     flexDirection: 'row',
-    gap: 10
-  }
-}); 
+    gap: 10,
+  },
+});

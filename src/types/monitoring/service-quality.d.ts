@@ -1,55 +1,89 @@
+/**
+ * @fileoverview TS 文件 service-quality.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // 响应时间指标
-export interface ResponseTimeMetrics {
+export interface IResponseTimeMetrics {
+  /** currentResponseTime 的描述 */
   currentResponseTime: number;
+  /** standardTime 的描述 */
   standardTime: number;
-  compliance: boolean;
+  /** compliance 的描述 */
+  compliance: false | true;
+  /** trend 的描述 */
   trend: TrendAnalysis;
-  recommendations: Recommendation[];
+  /** recommendations 的描述 */
+  recommendations: Recommendation;
 }
 
 // 服务质量评估
-export interface QualityEvaluation {
+export interface IQualityEvaluation {
+  /** factors 的描述 */
   factors: {
-    professionalism: FactorEvaluation;
-    timeliness: FactorEvaluation;
-    effectiveness: FactorEvaluation;
-    satisfaction: FactorEvaluation;
+    professionalism: IFactorEvaluation;
+    timeliness: IFactorEvaluation;
+    effectiveness: IFactorEvaluation;
+    satisfaction: IFactorEvaluation;
   };
+  /** overallScore 的描述 */
   overallScore: number;
+  /** improvements 的描述 */
   improvements: Improvement[];
+  /** trends 的描述 */
   trends: TrendAnalysis[];
 }
 
 // 合规检查
-export interface ComplianceCheck {
-  processCompliance: ComplianceResult;
-  professionalCompliance: ComplianceResult;
-  trainingCompliance: ComplianceResult;
+export interface IComplianceCheck {
+  /** processCompliance 的描述 */
+  processCompliance: IComplianceResult;
+  /** professionalCompliance 的描述 */
+  professionalCompliance: IComplianceResult;
+  /** trainingCompliance 的描述 */
+  trainingCompliance: IComplianceResult;
+  /** overallCompliance 的描述 */
   overallCompliance: number;
-  requiredActions: Action[];
+  /** requiredActions 的描述 */
+  requiredActions: Action;
 }
 
 // 改进计划
 export interface ImprovementPlan {
+  /** analysis 的描述 */
   analysis: FeedbackAnalysis;
-  identifiedImprovements: Improvement[];
+  /** identifiedImprovements 的描述 */
+  identifiedImprovements: Improvement;
+  /** implementationPlan 的描述 */
   implementationPlan: PlanDetails;
-  expectedOutcomes: Outcome[];
+  /** expectedOutcomes 的描述 */
+  expectedOutcomes: Outcome;
+  /** timeline 的描述 */
   timeline: Timeline;
 }
 
 // 评估因素
-export interface FactorEvaluation {
+export interface IFactorEvaluation {
+  /** score 的描述 */
   score: number;
-  strengths: string[];
-  weaknesses: string[];
-  recommendations: string[];
+  /** strengths 的描述 */
+  strengths: string;
+  /** weaknesses 的描述 */
+  weaknesses: string;
+  /** recommendations 的描述 */
+  recommendations: string;
 }
 
 // 合规结果
-export interface ComplianceResult {
-  isCompliant: boolean;
+export interface IComplianceResult {
+  /** isCompliant 的描述 */
+  isCompliant: false | true;
+  /** score 的描述 */
   score: number;
-  gaps: string[];
-  requiredActions: string[];
-} 
+  /** gaps 的描述 */
+  gaps: string;
+  /** requiredActions 的描述 */
+  requiredActions: string;
+}

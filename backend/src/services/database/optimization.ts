@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
-import { logger } from '../logger';
-import { databaseMonitoringService } from '../monitoring/database';
 import { cacheService } from '../cache';
+import { databaseMonitoringService } from '../monitoring/database';
+import { logger } from '../logger';
 
 class DatabaseOptimizationService {
   private readonly SLOW_QUERY_THRESHOLD = 100; // 100ms
@@ -16,7 +16,7 @@ class DatabaseOptimizationService {
       const db = mongoose.connection.db;
       const slowQueries = await this.identifySlowQueries(db);
       const optimizationSuggestions = await this.generateQueryOptimizations(slowQueries);
-      
+
       logger.info('查询优化建议:', optimizationSuggestions);
       return optimizationSuggestions;
     } catch (error) {
@@ -31,12 +31,10 @@ class DatabaseOptimizationService {
   private async identifySlowQueries(db: any) {
     const slowQueries = await db.command({
       profile: -1,
-      millis: this.SLOW_QUERY_THRESHOLD
+      millis: this.SLOW_QUERY_THRESHOLD,
     });
 
-    return slowQueries.filter((query: any) => 
-      query.millis > this.SLOW_QUERY_THRESHOLD
-    );
+    return slowQueries.filter((query: any) => query.millis > this.SLOW_QUERY_THRESHOLD);
   }
 
   /**
@@ -50,7 +48,7 @@ class DatabaseOptimizationService {
         collection: query.ns,
         query: query.query,
         executionTime: query.millis,
-        suggestions: [] as string[]
+        suggestions: [] as string[],
       };
 
       // 分析是否需要索引
@@ -86,17 +84,18 @@ class DatabaseOptimizationService {
       for (const collection of collections) {
         const stats = await db.collection(collection.name).stats();
         const indexes = await db.collection(collection.name).indexes();
-        
-        const unusedIndexes = indexes.filter((index: any) => 
-          index.accesses?.ops === 0 || 
-          (index.accesses?.ops / stats.totalQueryExecutions) < this.INDEX_USAGE_THRESHOLD
+
+        const unusedIndexes = indexes.filter(
+          (index: any) =>
+            index.accesses?.ops === 0 ||
+            index.accesses?.ops / stats.totalQueryExecutions < this.INDEX_USAGE_THRESHOLD,
         );
 
         if (unusedIndexes.length > 0) {
           optimizationResults.push({
             collection: collection.name,
             unusedIndexes: unusedIndexes.map((index: any) => index.name),
-            recommendation: '考虑删除未使用的索引'
+            recommendation: '考虑删除未使用的索引',
           });
         }
       }
@@ -123,12 +122,12 @@ class DatabaseOptimizationService {
       for (const collection of collections) {
         if (collection.options.expireAfterSeconds) {
           const result = await db.collection(collection.name).deleteMany({
-            createdAt: { $lt: expirationDate }
+            createdAt: { $lt: expirationDate },
           });
 
           cleanupResults.push({
             collection: collection.name,
-            deletedCount: result.deletedCount
+            deletedCount: result.deletedCount,
           });
         }
       }
@@ -147,13 +146,13 @@ class DatabaseOptimizationService {
     try {
       // 分析查询性能
       const queryOptimizations = await this.analyzeAndOptimizeQueries();
-      
+
       // 优化索引
       const indexOptimizations = await this.optimizeIndexes();
-      
+
       // 清理过期数据
       const cleanupResults = await this.cleanExpiredData();
-      
+
       // 压缩数据库
       await mongoose.connection.db.command({ compact: 1 });
 
@@ -161,7 +160,7 @@ class DatabaseOptimizationService {
         queryOptimizations,
         indexOptimizations,
         cleanupResults,
-        status: 'success'
+        status: 'success',
       };
     } catch (error) {
       logger.error('数据库维护失败:', error);
@@ -184,7 +183,7 @@ class DatabaseOptimizationService {
         analysis,
         queryOptimizations,
         indexOptimizations,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     } catch (error) {
       logger.error('性能报告生成失败:', error);
@@ -193,4 +192,4 @@ class DatabaseOptimizationService {
   }
 }
 
-export const databaseOptimizationService = new DatabaseOptimizationService(); 
+export const databaseOptimizationService = new DatabaseOptimizationService();

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+
 import {
   Box,
   Card,
@@ -8,21 +9,22 @@ import {
   Dialog,
   TextField,
   Select,
-  MenuItem
+  MenuItem,
 } from '@mui/material';
 
-interface PaymentManagementProps {
+interface 
+PaymentManagementProps {
   userId: string;
-  paymentMethods: any[];
-  onAddPaymentMethod: (method: any) => Promise<void>;
-  onRemovePaymentMethod: (methodId: string) => Promise<void>;
+  paymentMethods: any;
+  onAddPaymentMethod: method: any  Promisevoid;
+  onRemovePaymentMethod: methodId: string  Promisevoid;
 }
 
 export const PaymentManagement: React.FC<PaymentManagementProps> = ({
   userId,
   paymentMethods,
   onAddPaymentMethod,
-  onRemovePaymentMethod
+  onRemovePaymentMethod,
 }) => {
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [selectedType, setSelectedType] = useState<PaymentChannelType | null>(null);
@@ -33,21 +35,14 @@ export const PaymentManagement: React.FC<PaymentManagementProps> = ({
       <Grid container spacing={3}>
         {paymentMethods.map(method => (
           <Grid item xs={12} md={4} key={method.id}>
-            <PaymentMethodCard
-              method={method}
-              onRemove={() => onRemovePaymentMethod(method.id)}
-            />
+            <PaymentMethodCard method={method} onRemove={() => onRemovePaymentMethod(method.id)} />
           </Grid>
         ))}
-        
+
         {/* 添加支付方式按钮 */}
         <Grid item xs={12} md={4}>
-          <Button
-            variant="outlined"
-            fullWidth
-            onClick={() => setShowAddDialog(true)}
-          >
-            添加支付方式
+          <Button variant="outlined" fullWidth onClick={ => setShowAddDialogtrue}>
+            
           </Button>
         </Grid>
       </Grid>
@@ -70,22 +65,11 @@ const PaymentMethodCard: React.FC<{
   onRemove: () => void;
 }> = ({ method, onRemove }) => (
   <Card className="payment-method-card">
-    <Box className="method-icon">
-      {getPaymentMethodIcon(method.type)}
-    </Box>
-    <Typography variant="subtitle1">
-      {getPaymentMethodName(method.type)}
-    </Typography>
-    <Typography variant="body2">
-      {getPaymentMethodDetail(method)}
-    </Typography>
-    <Button
-      variant="outlined"
-      color="error"
-      size="small"
-      onClick={onRemove}
-    >
-      解除绑定
+    <Box className="methodicon">{getPaymentMethodIconmethodtype}</Box>
+    <Typography variant="subtitle1">{getPaymentMethodNamemethodtype}</Typography>
+    <Typography variant="body2">{getPaymentMethodDetailmethod}</Typography>
+    <Button variant="outlined" color="error" size="small" onClick={onRemove}>
+      
     </Button>
   </Card>
 );
@@ -101,29 +85,25 @@ const AddPaymentMethodDialog: React.FC<{
   return (
     <Dialog open={open} onClose={onClose}>
       <Box className="add-payment-dialog">
-        <Typography variant="h6">添加支付方式</Typography>
-        
+        <Typography variant="h6"></Typography>
+
         {/* 支付方式选择 */}
         <Select
           value={selectedType}
-          onChange={(e) => onTypeSelect(e.target.value as PaymentChannelType)}
+          onChange={e => onTypeSelect(e.target.value as PaymentChannelType)}
         >
           {Object.values(PaymentChannelType).map(type => (
             <MenuItem value={type} key={type}>
-              {getPaymentMethodName(type)}
+              {getPaymentMethodNametype}
             </MenuItem>
           ))}
         </Select>
 
         {/* 根据选择的支付方式显示对应的表单 */}
         {selectedType && (
-          <PaymentMethodForm
-            type={selectedType}
-            onSubmit={onAdd}
-            onCancel={onClose}
-          />
+          <PaymentMethodForm type={selectedType} onSubmit={onAdd} onCancel={onClose} />
         )}
       </Box>
     </Dialog>
   );
-}; 
+};

@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from 'express';
-import { Logger } from '../../utils/logger';
-import { ValidationError } from '../../errors';
 import { HealthDataSchema } from '../../schemas/health-data.schema';
+import { Logger } from '../../utils/logger';
+import { Request, Response, NextFunction } from 'express';
+import { ValidationError } from '../../errors';
 
 export class HealthDataValidator {
   private logger: Logger;
@@ -14,13 +14,13 @@ export class HealthDataValidator {
   async validate(req: Request, res: Response, next: NextFunction) {
     try {
       const data = req.body;
-      
+
       // 1. Schema验证
       await HealthDataSchema.validateAsync(data);
-      
+
       // 2. 业务规则验证
       await this.validateBusinessRules(data);
-      
+
       // 3. 数据一致性验证
       await this.validateDataConsistency(data);
 
@@ -54,4 +54,4 @@ export class HealthDataValidator {
       throw new ValidationError('数据关联性错误');
     }
   }
-} 
+}

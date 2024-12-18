@@ -1,35 +1,50 @@
 import { EventEmitter } from 'events';
-import { LocalDatabase } from '../utils/local-database';
+import { ILocalDatabase } from '../utils/local-database';
 
-interface AlertConfig {
+interface IAlertConfig {
+  /** severity 的描述 */
   severity: 'critical' | 'high' | 'medium' | 'low';
+  /** type 的描述 */
   type: string;
+  /** threshold 的描述 */
   threshold: number;
+  /** cooldown 的描述 */
   cooldown: number;
-  actions: AlertAction[];
+  /** actions 的描述 */
+  actions: IAlertAction[];
 }
 
-interface AlertAction {
+interface IAlertAction {
+  /** type 的描述 */
   type: 'notification' | 'email' | 'webhook' | 'callback';
+  /** config 的描述 */
   config: any;
 }
 
-interface Alert {
+interface IAlert {
+  /** id 的描述 */
   id: string;
-  severity: AlertConfig['severity'];
+  /** severity 的描述 */
+  severity: IAlertConfig['severity'];
+  /** type 的描述 */
   type: string;
+  /** message 的描述 */
   message: string;
+  /** details 的描述 */
   details: any;
+  /** timestamp 的描述 */
   timestamp: Date;
+  /** status 的描述 */
   status: 'active' | 'acknowledged' | 'resolved';
-  actions: AlertAction[];
+  /** actions 的描述 */
+  actions: IAlertAction[];
 }
 
 export class RealTimeAlertService extends EventEmitter {
-  private db: LocalDatabase;
-  private alertConfigs: Map<string, AlertConfig> = new Map();
-  private activeAlerts: Map<string, Alert> = new Map();
-  private alertHistory: Alert[] = [];
+  private db: ILocalDatabase;
+  private alertConfigs: Map<string, IAlertConfig> = new Map();
+  private activeAlerts: Map<string, IAlert> = new Map();
+  private alertHistory: IAlert[] = [];
   private cooldowns: Map<string, number> = new Map();
 
   constructor() {
@@ -52,25 +67,21 @@ export class RealTimeAlertService extends EventEmitter {
         this.alertConfigs = new Map(configs);
       }
     } catch (error) {
-      console.error('加载警报配置失败:', error);
+      console.error('Error in real-time-alert.service.ts:', '加载警报配置失败:', error);
     }
   }
 
   // 加载历史记录
   private async loadAlertHistory() {
     try {
-      this.alertHistory = await this.db.get('alert-history') || [];
+      this.alertHistory = (await this.db.get('alert-history')) || [];
     } catch (error) {
-      console.error('加载警报历史失败:', error);
+      console.error('Error in real-time-alert.service.ts:', '加载警报历史失败:', error);
     }
   }
 
   // 创建警报
-  async createAlert(
-    type: string,
-    message: string,
-    details: any = {}
-  ): Promise<Alert> {
+  async createAlert(type: string, message: string, details: any = {}): Promise<IAlert> {
     const config = this.alertConfigs.get(type);
     if (!config) {
       throw new Error(`未找到警报配置: ${type}`);
@@ -81,7 +92,7 @@ export class RealTimeAlertService extends EventEmitter {
       return null;
     }
 
-    const alert: Alert = {
+    const alert: IAlert = {
       id: `alert_${Date.now()}_${Math.random()}`,
       severity: config.severity,
       type,
@@ -89,7 +100,7 @@ export class RealTimeAlertService extends EventEmitter {
       details,
       timestamp: new Date(),
       status: 'active',
-      actions: config.actions
+      actions: config.actions,
     };
 
     // 保存并触发警报
@@ -118,18 +129,22 @@ export class RealTimeAlertService extends EventEmitter {
   }
 
   // 执行警报动作
-  private async executeAlertActions(alert: Alert) {
+  private async executeAlertActions(alert: IAlert) {
     for (const action of alert.actions) {
       try {
         await this.executeAction(action, alert);
       } catch (error) {
-        console.error(`执行警报动作失败: ${action.type}`, error);
+        console.error(
+          'Error in real-time-alert.service.ts:',
+          `执行警报动作失败: ${action.type}`,
+          error,
+        );
       }
     }
   }
 
   // 执行具体动作
-  private async executeAction(action: AlertAction, alert: Alert) {
+  private async executeAction(action: IAlertAction, alert: IAlert) {
     switch (action.type) {
       case 'notification':
         await this.sendNotification(alert, action.config);
@@ -147,27 +162,27 @@ export class RealTimeAlertService extends EventEmitter {
   }
 
   // 发送通知
-  private async sendNotification(alert: Alert, config: any) {
+  private async sendNotification(alert: IAlert, config: any) {
     // 实现通知发送逻辑
   }
 
   // 发送邮件
-  private async sendEmail(alert: Alert, config: any) {
+  private async sendEmail(alert: IAlert, config: any) {
     // 实现邮件发送逻辑
   }
 
   // 触发Webhook
-  private async triggerWebhook(alert: Alert, config: any) {
+  private async triggerWebhook(alert: IAlert, config: any) {
     // 实现Webhook触发逻辑
   }
 
   // 执行回调
-  private async executeCallback(alert: Alert, config: any) {
+  private async executeCallback(alert: IAlert, config: any) {
     // 实现回调执行逻辑
   }
 
   // 保存警报
-  private async saveAlert(alert: Alert) {
+  private async saveAlert(alert: IAlert) {
     this.activeAlerts.set(alert.id, alert);
     this.alertHistory.push(alert);
     await this.saveAlertHistory();
@@ -201,7 +216,7 @@ export class RealTimeAlertService extends EventEmitter {
   }
 
   // 获取活动警报
-  getActiveAlerts(): Alert[] {
+  getActiveAlerts(): IAlert[] {
     return Array.from(this.activeAlerts.values());
   }
 
@@ -211,9 +226,9 @@ export class RealTimeAlertService extends EventEmitter {
       startDate?: Date;
       endDate?: Date;
       types?: string[];
-      severity?: AlertConfig['severity'][];
-    } = {}
-  ): Promise<Alert[]> {
+      severity?: IAlertConfig['severity'][];
+    } = {},
+  ): Promise<IAlert[]> {
     return this.alertHistory.filter(alert => {
       if (options.startDate && alert.timestamp < options.startDate) {
         return false;
@@ -232,10 +247,7 @@ export class RealTimeAlertService extends EventEmitter {
   }
 
   // 更新警报配置
-  async updateAlertConfig(
-    type: string,
-    config: Partial<AlertConfig>
-  ): Promise<void> {
+  async updateAlertConfig(type: string, config: Partial<IAlertConfig>): Promise<void> {
     const existingConfig = this.alertConfigs.get(type);
     if (existingConfig) {
       this.alertConfigs.set(type, { ...existingConfig, ...config });
@@ -262,29 +274,29 @@ export class RealTimeAlertService extends EventEmitter {
     recommendations: string[];
   }> {
     const history = await this.getAlertHistory();
-    
+
     return {
       summary: this.generateSummary(history),
       statistics: this.calculateStatistics(history),
-      recommendations: this.generateRecommendations(history)
+      recommendations: this.generateRecommendations(history),
     };
   }
 
   // 生成摘要
-  private generateSummary(history: Alert[]): string {
+  private generateSummary(history: IAlert[]): string {
     // 实现摘要生成逻辑
     return '';
   }
 
   // 计算统计信息
-  private calculateStatistics(history: Alert[]): any {
+  private calculateStatistics(history: IAlert[]): any {
     // 实现统计计算逻辑
     return {};
   }
 
   // 生成建议
-  private generateRecommendations(history: Alert[]): string[] {
+  private generateRecommendations(history: IAlert[]): string[] {
     // 实现建议生成逻辑
     return [];
   }
-} 
+}

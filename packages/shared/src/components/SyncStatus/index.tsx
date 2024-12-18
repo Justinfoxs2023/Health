@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { syncService, SyncState } from '../../services/sync';
-import { useTranslation } from 'react-i18next';
-import { formatDistanceToNow } from 'date-fns';
-import { zhCN } from 'date-fns/locale';
+
 import { Button } from '../Button';
 import { Loading } from '../Loading';
 import { Message } from '../Message';
+import { formatDistanceToNow } from 'date-fns';
+import { syncService, SyncState } from '../../services/sync';
+import { useTranslation } from 'react-i18next';
+import { zhCN } from 'date-fns/locale';
 
 /** 同步状态组件属性 */
-export interface SyncStatusProps {
+export interface ISyncStatusProps {
   /** 是否显示详细信息 */
   showDetails?: boolean;
   /** 是否显示手动同步按钮 */
@@ -18,10 +19,10 @@ export interface SyncStatusProps {
 }
 
 /** 同步状态组件 */
-export const SyncStatus: React.FC<SyncStatusProps> = ({
+export const SyncStatus: React.FC<ISyncStatusProps> = ({
   showDetails = false,
   showSyncButton = true,
-  className = ''
+  className = '',
 }) => {
   const { t } = useTranslation();
   const [state, setState] = useState<SyncState>(syncService.getState());
@@ -35,10 +36,7 @@ export const SyncStatus: React.FC<SyncStatusProps> = ({
     window.addEventListener('syncStateChange', handleStateChange as EventListener);
 
     return () => {
-      window.removeEventListener(
-        'syncStateChange',
-        handleStateChange as EventListener
-      );
+      window.removeEventListener('syncStateChange', handleStateChange as EventListener);
     };
   }, []);
 
@@ -58,27 +56,27 @@ export const SyncStatus: React.FC<SyncStatusProps> = ({
       return {
         icon: '🔴',
         text: t('sync.offline'),
-        className: 'text-red-500'
+        className: 'text-red-500',
       };
     }
     if (state.syncing) {
       return {
         icon: '🔄',
         text: t('sync.syncing'),
-        className: 'text-blue-500'
+        className: 'text-blue-500',
       };
     }
     if (state.pendingCount > 0) {
       return {
         icon: '⚠️',
         text: t('sync.pending', { count: state.pendingCount }),
-        className: 'text-yellow-500'
+        className: 'text-yellow-500',
       };
     }
     return {
       icon: '✅',
       text: t('sync.synced'),
-      className: 'text-green-500'
+      className: 'text-green-500',
     };
   };
 
@@ -94,12 +92,7 @@ export const SyncStatus: React.FC<SyncStatusProps> = ({
 
       {/* 同步按钮 */}
       {showSyncButton && !state.offline && !state.syncing && (
-        <Button
-          size="small"
-          onClick={handleSync}
-          disabled={state.syncing}
-          className="ml-2"
-        >
+        <Button size="small" onClick={handleSync} disabled={state.syncing} className="ml-2">
           {state.syncing ? <Loading size="small" /> : t('sync.button')}
         </Button>
       )}
@@ -112,15 +105,15 @@ export const SyncStatus: React.FC<SyncStatusProps> = ({
               {t('sync.lastSync', {
                 time: formatDistanceToNow(state.lastSyncTime, {
                   addSuffix: true,
-                  locale: zhCN
-                })
+                  locale: zhCN,
+                }),
               })}
             </div>
           )}
           {state.pendingCount > 0 && (
             <div>
               {t('sync.pendingDetails', {
-                count: state.pendingCount
+                count: state.pendingCount,
               })}
             </div>
           )}
@@ -128,4 +121,4 @@ export const SyncStatus: React.FC<SyncStatusProps> = ({
       )}
     </div>
   );
-}; 
+};

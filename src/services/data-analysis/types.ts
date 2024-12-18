@@ -1,30 +1,40 @@
+/**
+ * @fileoverview TS 文件 types.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // 数据源类型
-export interface DataSource {
-  id: string;
-  type: 'realtime' | 'batch' | 'stream';
+export interface IDataSource {
+  /** id 的描述 */
+    id: string;
+  /** type 的描述 */
+    type: realtime  batch  stream;
   name: string;
   description: string;
   schema: DataSchema;
   config: {
     url: string;
-    format: 'json' | 'csv' | 'xml';
-    interval?: number; // 实时数据更新间隔
-    batchSize?: number; // 批处理大小
-    compression?: boolean;
+    format: json  csv  xml;
+    interval: number;  
+    batchSize: number;  
+    compression: boolean;
   };
 }
 
 // 数据模式定义
-export interface DataSchema {
-  fields: Array<{
+export interface IDataSchema {
+  /** fields 的描述 */
+    fields: Array{
     name: string;
-    type: 'string' | 'number' | 'boolean' | 'date' | 'object' | 'array';
+    type: string  number  boolean  date  object  array;
     required: boolean;
-    validation?: {
-      min?: number;
-      max?: number;
-      pattern?: string;
-      enum?: any[];
+    validation: {
+      min: number;
+      max: number;
+      pattern: string;
+      enum: any;
     };
   }>;
   relationships?: Array<{
@@ -35,16 +45,18 @@ export interface DataSchema {
 }
 
 // 分析任务类型
-export interface AnalysisTask {
-  id: string;
-  type: 'prediction' | 'clustering' | 'classification' | 'anomaly';
+export interface IAnalysisTask {
+  /** id 的描述 */
+    id: string;
+  /** type 的描述 */
+    type: prediction  clustering  classification  anomaly;
   name: string;
   description: string;
-  
-  // 数据配置
+
+   
   dataConfig: {
-    sources: string[]; // 数据源ID
-    timeRange?: {
+    sources: string;  ID
+    timeRange: {
       start: Date;
       end: Date;
     };
@@ -78,19 +90,21 @@ export interface AnalysisTask {
 }
 
 // 分析结果类型
-export interface AnalysisResult {
-  taskId: string;
-  status: 'success' | 'failed' | 'running';
+export interface IAnalysisResult {
+  /** taskId 的描述 */
+    taskId: string;
+  /** status 的描述 */
+    status: success  failed  running;
   startTime: Date;
-  endTime?: Date;
-  
-  // 结果数据
+  endTime: Date;
+
+   
   data: {
     summary: {
       recordCount: number;
       processedTime: number;
-      accuracy?: number;
-      confidence?: number;
+      accuracy: number;
+      confidence: number;
     };
     predictions?: Array<{
       id: string;
@@ -131,12 +145,15 @@ export interface AnalysisResult {
 }
 
 // 实时分析配置
-export interface RealtimeAnalysisConfig {
-  windowSize: number; // 时间窗口大小(秒)
-  slidingInterval: number; // 滑动间隔(秒)
-  aggregations: Array<{
+export interface IRealtimeAnalysisConfig {
+  /** windowSize 的描述 */
+    windowSize: number;  
+  /** slidingInterval 的描述 */
+    slidingInterval: number;  
+  /** aggregations 的描述 */
+    aggregations: Array{
     field: string;
-    function: 'sum' | 'avg' | 'min' | 'max' | 'count';
+    function: sum  avg  min  max  count;
     window: number;
   }>;
   alerts: Array<{
@@ -148,8 +165,9 @@ export interface RealtimeAnalysisConfig {
 }
 
 // 大数据处理配置
-export interface BigDataConfig {
-  engine: 'spark' | 'flink' | 'hadoop';
+export interface IBigDataConfig {
+  /** engine 的描述 */
+    engine: spark  flink  hadoop;
   cluster: {
     nodes: number;
     memory: number;
@@ -165,4 +183,4 @@ export interface BigDataConfig {
     checkpointing: boolean;
     recovery: 'none' | 'exactly-once' | 'at-least-once';
   };
-} 
+}

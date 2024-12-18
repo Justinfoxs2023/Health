@@ -1,29 +1,18 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+
 import Confirm, { confirm } from '../index';
+import { render, screen, fireEvent } from '@testing-library/react';
 
 describe('Confirm Component', () => {
   it('应该在visible为true时显示', () => {
-    render(
-      <Confirm
-        visible={true}
-        content="确认内容"
-        onClose={() => {}}
-      />
-    );
+    render(<Confirm visible={true} content="确认内容" onClose={() => {}} />);
 
     expect(screen.getByText('确认')).toBeInTheDocument();
     expect(screen.getByText('确认内容')).toBeInTheDocument();
   });
 
   it('应该在visible为false时不显示', () => {
-    render(
-      <Confirm
-        visible={false}
-        content="确认内容"
-        onClose={() => {}}
-      />
-    );
+    render(<Confirm visible={false} content="确认内容" onClose={() => {}} />);
 
     expect(screen.queryByText('确认内容')).not.toBeInTheDocument();
   });
@@ -37,7 +26,7 @@ describe('Confirm Component', () => {
         okText="是"
         cancelText="否"
         onClose={() => {}}
-      />
+      />,
     );
 
     expect(screen.getByText('自定义标题')).toBeInTheDocument();
@@ -47,14 +36,7 @@ describe('Confirm Component', () => {
 
   it('应该在点击确认时调用onOk', async () => {
     const onOk = jest.fn();
-    render(
-      <Confirm
-        visible={true}
-        content="确认内容"
-        onOk={onOk}
-        onClose={() => {}}
-      />
-    );
+    render(<Confirm visible={true} content="确认内容" onOk={onOk} onClose={() => {}} />);
 
     fireEvent.click(screen.getByText('确定'));
     expect(onOk).toHaveBeenCalled();
@@ -62,14 +44,7 @@ describe('Confirm Component', () => {
 
   it('应该在点击取消时调用onCancel', () => {
     const onCancel = jest.fn();
-    render(
-      <Confirm
-        visible={true}
-        content="确认内容"
-        onCancel={onCancel}
-        onClose={() => {}}
-      />
-    );
+    render(<Confirm visible={true} content="确认内容" onCancel={onCancel} onClose={() => {}} />);
 
     fireEvent.click(screen.getByText('取消'));
     expect(onCancel).toHaveBeenCalled();
@@ -77,14 +52,7 @@ describe('Confirm Component', () => {
 
   it('应该在点击遮罩层时取消', () => {
     const onCancel = jest.fn();
-    render(
-      <Confirm
-        visible={true}
-        content="确认内容"
-        onCancel={onCancel}
-        onClose={() => {}}
-      />
-    );
+    render(<Confirm visible={true} content="确认内容" onCancel={onCancel} onClose={() => {}} />);
 
     fireEvent.click(screen.getByRole('dialog').parentElement!);
     expect(onCancel).toHaveBeenCalled();
@@ -99,7 +67,7 @@ describe('Confirm Service', () => {
 
   it('应该显示确认对话框', () => {
     confirm.show({
-      content: '确认内容'
+      content: '确认内容',
     });
 
     expect(screen.getByText('确认内容')).toBeInTheDocument();
@@ -109,7 +77,7 @@ describe('Confirm Service', () => {
     const onOk = jest.fn();
     const promise = confirm.show({
       content: '确认内容',
-      onOk
+      onOk,
     });
 
     fireEvent.click(screen.getByText('确定'));
@@ -121,7 +89,7 @@ describe('Confirm Service', () => {
     const onCancel = jest.fn();
     const promise = confirm.show({
       content: '确认内容',
-      onCancel
+      onCancel,
     });
 
     fireEvent.click(screen.getByText('取消'));
@@ -133,7 +101,7 @@ describe('Confirm Service', () => {
     const onOk = jest.fn().mockImplementation(() => Promise.resolve());
     const promise = confirm.show({
       content: '确认内容',
-      onOk
+      onOk,
     });
 
     fireEvent.click(screen.getByText('确定'));
@@ -146,11 +114,11 @@ describe('Confirm Service', () => {
     const onOk = jest.fn().mockImplementation(() => Promise.reject(error));
     const promise = confirm.show({
       content: '确认内容',
-      onOk
+      onOk,
     });
 
     fireEvent.click(screen.getByText('确定'));
     await expect(promise).rejects.toThrow(error);
     expect(onOk).toHaveBeenCalled();
   });
-}); 
+});

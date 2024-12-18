@@ -1,24 +1,27 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Progress, Space, Statistic, Typography, Button } from 'antd';
-import { 
-  DatabaseOutlined, 
-  CloudUploadOutlined, 
+
+import {
+  DatabaseOutlined,
+  CloudUploadOutlined,
   DeleteOutlined,
   ReloadOutlined,
 } from '@ant-design/icons';
+import { Card, Progress, Space, Statistic, Typography, Button } from 'antd';
 import { useTranslation } from 'react-i18next';
-
 const { Title } = Typography;
 
-interface CacheStats {
+interface ICacheStats {
+  /** size 的描述 */
   size: number;
+  /** itemCount 的描述 */
   itemCount: number;
+  /** hitRate 的描述 */
   hitRate: number;
 }
 
 export const ImageCacheStatus: React.FC = () => {
   const { t } = useTranslation();
-  const [stats, setStats] = useState<CacheStats>({
+  const [stats, setStats] = useState<ICacheStats>({
     size: 0,
     itemCount: 0,
     hitRate: 0,
@@ -35,7 +38,7 @@ export const ImageCacheStatus: React.FC = () => {
       const data = await response.json();
       setStats(data);
     } catch (error) {
-      console.error('获取缓存统计失败:', error);
+      console.error('Error in index.tsx:', '获取缓存统计失败:', error);
     } finally {
       setLoading(false);
     }
@@ -58,7 +61,7 @@ export const ImageCacheStatus: React.FC = () => {
       }
       await fetchStats();
     } catch (error) {
-      console.error('清理缓存失败:', error);
+      console.error('Error in index.tsx:', '清理缓存失败:', error);
     } finally {
       setLoading(false);
     }
@@ -90,19 +93,10 @@ export const ImageCacheStatus: React.FC = () => {
       }
       extra={
         <Space>
-          <Button
-            icon={<ReloadOutlined />}
-            onClick={fetchStats}
-            loading={loading}
-          >
+          <Button icon={<ReloadOutlined />} onClick={fetchStats} loading={loading}>
             {t('刷新')}
           </Button>
-          <Button
-            icon={<DeleteOutlined />}
-            onClick={handleClearCache}
-            loading={loading}
-            danger
-          >
+          <Button icon={<DeleteOutlined />} onClick={handleClearCache} loading={loading} danger>
             {t('清理缓存')}
           </Button>
         </Space>
@@ -113,7 +107,7 @@ export const ImageCacheStatus: React.FC = () => {
         <Progress
           percent={Number(usagePercent.toFixed(1))}
           status={usagePercent > 90 ? 'exception' : 'normal'}
-          format={(percent) => `${formatSize(stats.size)} / ${formatSize(maxSize)}`}
+          format={percent => `${formatSize(stats.size)} / ${formatSize(maxSize)}`}
         />
 
         <Space size={48}>
@@ -135,4 +129,4 @@ export const ImageCacheStatus: React.FC = () => {
       </Space>
     </Card>
   );
-}; 
+};

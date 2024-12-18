@@ -1,7 +1,7 @@
 import React from 'react';
 import type { ButtonHTMLAttributes } from 'react';
 
-export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+export interface IButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   /** 按钮类型 */
   variant?: 'primary' | 'secondary' | 'text';
   /** 按钮大小 */
@@ -15,7 +15,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 /** 基础按钮组件 */
-export const Button: React.FC<ButtonProps> = ({
+export const Button: React.FC<IButtonProps> = ({
   variant = 'primary',
   size = 'medium',
   loading = false,
@@ -29,12 +29,12 @@ export const Button: React.FC<ButtonProps> = ({
   const variantStyles = {
     primary: 'bg-primary-600 text-white hover:bg-primary-700',
     secondary: 'bg-gray-200 text-gray-800 hover:bg-gray-300',
-    text: 'bg-transparent text-gray-600 hover:bg-gray-100'
+    text: 'bg-transparent text-gray-600 hover:bg-gray-100',
   };
   const sizeStyles = {
     small: 'px-3 py-1 text-sm',
     medium: 'px-4 py-2',
-    large: 'px-6 py-3 text-lg'
+    large: 'px-6 py-3 text-lg',
   };
   const blockStyles = block ? 'w-full' : '';
   const disabledStyles = disabled ? 'opacity-50 cursor-not-allowed' : '';
@@ -42,7 +42,9 @@ export const Button: React.FC<ButtonProps> = ({
 
   return (
     <button
-      className={`${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${blockStyles} ${disabledStyles} ${loadingStyles} ${className || ''}`}
+      className={`${baseStyles} ${variantStyles[variant]} ${
+        sizeStyles[size]
+      } ${blockStyles} ${disabledStyles} ${loadingStyles} ${className || ''}`}
       disabled={disabled || loading}
       {...props}
     >
@@ -68,4 +70,4 @@ export const Button: React.FC<ButtonProps> = ({
       <span className={loading ? 'invisible' : ''}>{children}</span>
     </button>
   );
-}; 
+};

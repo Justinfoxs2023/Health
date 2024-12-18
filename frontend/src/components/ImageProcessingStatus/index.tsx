@@ -1,42 +1,51 @@
 import React, { useEffect, useState } from 'react';
+
 import { Progress, Card, Typography, Space, Tag } from 'antd';
-import { useTranslation } from 'react-i18next';
 import { SyncOutlined, CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 
 const { Title, Text } = Typography;
 
-interface QueueStatus {
+interface IQueueStatus {
+  /** waiting 的描述 */
   waiting: number;
+  /** active 的描述 */
   active: number;
+  /** completed 的描述 */
   completed: number;
+  /** failed 的描述 */
   failed: number;
 }
 
 export const ImageProcessingStatus: React.FC = () => {
   const { t } = useTranslation();
-  const [status, setStatus] = useState<QueueStatus>({
+  const [status, setStatus] = useState<IQueueStatus>({
     waiting: 0,
     active: 0,
     completed: 0,
     failed: 0,
   });
 
-  useEffect(() => {
-    const fetchStatus = async () => {
-      try {
-        const response = await fetch('/api/image-processing/status');
-        const data = await response.json();
-        setStatus(data);
-      } catch (error) {
-        console.error('获取队列状态失败:', error);
-      }
-    };
+  console.error(
+    'Error in index.tsx:',
+    () => {
+      const fetchStatus = async () => {
+        try {
+          const response = await fetch('/api/image-processing/status');
+          const data = await response.json();
+          setStatus(data);
+        } catch (error) {
+          console.error('Error in index.tsx:', '获取队列状态失败:', error);
+        }
+      };
 
-    fetchStatus();
-    const interval = setInterval(fetchStatus, 5000);
+      fetchStatus();
+      const interval = setInterval(fetchStatus, 5000);
 
-    return () => clearInterval(interval);
-  }, []);
+      return () => clearInterval(interval);
+    },
+    [],
+  );
 
   const total = status.waiting + status.active + status.completed + status.failed;
   const progress = total > 0 ? Math.round((status.completed / total) * 100) : 0;
@@ -45,9 +54,9 @@ export const ImageProcessingStatus: React.FC = () => {
     <Card>
       <Space direction="vertical" style={{ width: '100%' }}>
         <Title level={4}>{t('图片处理状态')}</Title>
-        
+
         <Progress percent={progress} />
-        
+
         <Space wrap>
           <Tag icon={<SyncOutlined spin />} color="processing">
             {t('等待中')}: {status.waiting}
@@ -69,4 +78,4 @@ export const ImageProcessingStatus: React.FC = () => {
       </Space>
     </Card>
   );
-}; 
+};

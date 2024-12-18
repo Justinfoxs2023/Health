@@ -1,5 +1,5 @@
-import { Model, Document } from 'mongoose';
 import { Logger } from '../utils/logger';
+import { Model, Document } from 'mongoose';
 
 export class DatabaseOperations<T extends Document> {
   private logger: Logger;
@@ -38,11 +38,14 @@ export class DatabaseOperations<T extends Document> {
     }
   }
 
-  async find(conditions: any, options?: {
-    skip?: number;
-    limit?: number;
-    sort?: any;
-  }): Promise<T[]> {
+  async find(
+    conditions: any,
+    options?: {
+      skip?: number;
+      limit?: number;
+      sort?: any;
+    },
+  ): Promise<T[]> {
     try {
       let query = this.model.find(conditions);
 
@@ -91,4 +94,4 @@ export class DatabaseOperations<T extends Document> {
       throw error;
     }
   }
-} 
+}

@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 components.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 declare namespace Components {
   // 家庭健康管理组件属性
   interface FamilyHealthManagerProps {
@@ -40,4 +47,4 @@ declare namespace Components {
     risk: Health.RiskAssessment | null;
     onClose: () => void;
   }
-} 
+}

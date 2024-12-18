@@ -1,14 +1,15 @@
 import React from 'react';
-import { logger, LogEntry, LogLevel } from '../../services/logger';
+
+import { logger, ILogEntry, LogLevelType } from '../../services/logger';
 import { useI18n } from '../../services/i18n';
 
-export interface LogViewerProps {
+export interface ILogViewerProps {
   /** 自定义类名 */
   className?: string;
   /** 自定义样式 */
   style?: React.CSSProperties;
   /** 日志级别过滤器 */
-  levelFilter?: LogLevel[];
+  levelFilter?: LogLevelType[];
   /** 自动刷新间隔（毫秒） */
   refreshInterval?: number;
   /** 最大显示条数 */
@@ -28,7 +29,7 @@ export interface LogViewerProps {
 /**
  * 日志查看组件
  */
-export const LogViewer: React.FC<LogViewerProps> = ({
+export const LogViewer: React.FC<ILogViewerProps> = ({
   className,
   style,
   levelFilter,
@@ -38,9 +39,9 @@ export const LogViewer: React.FC<LogViewerProps> = ({
   showLevel = true,
   showSource = false,
   showData = false,
-  showStack = true
+  showStack = true,
 }) => {
-  const [logs, setLogs] = React.useState<LogEntry[]>([]);
+  const [logs, setLogs] = React.useState<ILogEntry[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<Error | null>(null);
   const { t, formatDate } = useI18n();
@@ -72,7 +73,7 @@ export const LogViewer: React.FC<LogViewerProps> = ({
   }, [loadLogs, refreshInterval]);
 
   // 日志级别样式
-  const getLevelStyle = (level: LogLevel): React.CSSProperties => {
+  const getLevelStyle = (level: LogLevelType): React.CSSProperties => {
     switch (level) {
       case 'debug':
         return { color: 'var(--theme-text-color-secondary)' };
@@ -98,9 +99,7 @@ export const LogViewer: React.FC<LogViewerProps> = ({
   return (
     <div className={`log-viewer ${className || ''}`} style={style}>
       {loading && logs.length === 0 && (
-        <div className="log-viewer__loading">
-          {t('logViewer.loading')}
-        </div>
+        <div className="log-viewer__loading">{t('logViewer.loading')}</div>
       )}
       <div className="log-viewer__content">
         {logs.map((log, index) => (
@@ -111,25 +110,16 @@ export const LogViewer: React.FC<LogViewerProps> = ({
               </span>
             )}
             {showLevel && (
-              <span
-                className="log-viewer__level"
-                style={getLevelStyle(log.level)}
-              >
+              <span className="log-viewer__level" style={getLevelStyle(log.level)}>
                 [{log.level.toUpperCase()}]
               </span>
             )}
             <span className="log-viewer__message">{log.message}</span>
-            {showSource && log.source && (
-              <span className="log-viewer__source">@{log.source}</span>
-            )}
+            {showSource && log.source && <span className="log-viewer__source">@{log.source}</span>}
             {showData && log.data && (
-              <pre className="log-viewer__data">
-                {JSON.stringify(log.data, null, 2)}
-              </pre>
+              <pre className="log-viewer__data">{JSON.stringify(log.data, null, 2)}</pre>
             )}
-            {showStack && log.stack && (
-              <pre className="log-viewer__stack">{log.stack}</pre>
-            )}
+            {showStack && log.stack && <pre className="log-viewer__stack">{log.stack}</pre>}
           </div>
         ))}
       </div>
@@ -203,4 +193,4 @@ style.textContent = `
     text-align: center;
   }
 `;
-document.head.appendChild(style); 
+document.head.appendChild(style);

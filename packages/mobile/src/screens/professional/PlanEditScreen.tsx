@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
-import { TextInput, Button, Card, Text, useTheme } from 'react-native-paper';
+
 import { AppLayout } from '../../components/layout/AppLayout';
 import { GoalSetting } from '../../components/plan/GoalSetting';
 import { MilestoneEditor } from '../../components/plan/MilestoneEditor';
 import { ScheduleBuilder } from '../../components/plan/ScheduleBuilder';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import { TextInput, Button, Card, Text, useTheme } from 'react-native-paper';
 
 export const PlanEditScreen = () => {
   const theme = useTheme();
@@ -48,12 +49,7 @@ export const PlanEditScreen = () => {
         </Card>
 
         <View style={styles.actions}>
-          <Button 
-            mode="contained"
-            loading={saving}
-            onPress={handleSave}
-            style={styles.button}
-          >
+          <Button mode="contained" loading={saving} onPress={handleSave} style={styles.button}>
             保存计划
           </Button>
         </View>
@@ -87,4 +83,4 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 16,
   },
-}); 
+});

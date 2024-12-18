@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, StyleSheet } from 'react-native';
+
 import { Card, Text, Button } from '../common';
+import { FamilyActivityCard } from './FamilyActivityCard';
 import { FamilyMemberList } from './FamilyMemberList';
 import { HealthRecordPanel } from './HealthRecordPanel';
 import { PreventiveCareCard } from './PreventiveCareCard';
-import { FamilyActivityCard } from './FamilyActivityCard';
+import { View, ScrollView, StyleSheet } from 'react-native';
 import { useFamilyHealth } from '../../hooks/family';
 
 export const FamilyHealthCenter: React.FC = () => {
@@ -24,9 +25,7 @@ export const FamilyHealthCenter: React.FC = () => {
         onSelectMember={setSelectedMember}
       />
 
-      {selectedMember && (
-        <HealthRecordPanel memberId={selectedMember.id} />
-      )}
+      {selectedMember && <HealthRecordPanel memberId={selectedMember.id} />}
 
       <PreventiveCareCard
         vaccinations={familyData?.preventiveCare.vaccinations}
@@ -45,20 +44,20 @@ export const FamilyHealthCenter: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   header: {
     padding: 15,
-    marginBottom: 10
+    marginBottom: 10,
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#2E7D32'
+    color: '#2E7D32',
   },
   subtitle: {
     fontSize: 14,
     color: '#666',
-    marginTop: 5
-  }
-}); 
+    marginTop: 5,
+  },
+});

@@ -1,8 +1,9 @@
-import { Logger } from '@/utils/Logger';
-import { RecommendationError } from '@/utils/errors';
+import { ContentAnalysisService } from './ContentAnalysisService';
 import { Post } from '../models/CommunityTypes';
 import { UserInteractionService } from './UserInteractionService';
-import { ContentAnalysisService } from './ContentAnalysisService';
+
+import { Logger } from '@/utils/Logger';
+import { RecommendationError } from '@/utils/errors';
 
 export class RecommendationService {
   private logger: Logger;
@@ -20,8 +21,8 @@ export class RecommendationService {
    */
   async getPersonalizedRecommendations(
     userId: string,
-    options: RecommendationOptions = {}
-  ): Promise<RecommendationResult> {
+    options: IRecommendationOptions = {},
+  ): Promise<IRecommendationResult> {
     try {
       // 1. 获取用户兴趣
       const userInterests = await this.userInteraction.getUserInterests(userId);
@@ -37,7 +38,7 @@ export class RecommendationService {
         userInterests,
         userBehavior,
         contentFeatures,
-        options
+        options,
       );
 
       // 5. 过滤和排序
@@ -45,7 +46,7 @@ export class RecommendationService {
 
       return {
         items: finalResults,
-        metadata: this.generateMetadata(finalResults)
+        metadata: this.generateMetadata(finalResults),
       };
     } catch (error) {
       this.logger.error('获取推荐失败', error);
@@ -83,10 +84,7 @@ export class RecommendationService {
   /**
    * 实时推荐
    */
-  async getRealtimeRecommendations(
-    userId: string,
-    context: any
-  ): Promise<RecommendationResult> {
+  async getRealtimeRecommendations(userId: string, context: any): Promise<IRecommendationResult> {
     try {
       // 1. 获取实时上下文
       const realtimeContext = await this.getRealTimeContext(userId, context);
@@ -95,13 +93,11 @@ export class RecommendationService {
       const features = await this.calculateRealtimeFeatures(realtimeContext);
 
       // 3. 生成推荐
-      const recommendations = await this.generateRealtimeRecommendations(
-        features
-      );
+      const recommendations = await this.generateRealtimeRecommendations(features);
 
       return {
         items: recommendations,
-        metadata: this.generateMetadata(recommendations)
+        metadata: this.generateMetadata(recommendations),
       };
     } catch (error) {
       this.logger.error('实时推荐失败', error);
@@ -113,7 +109,7 @@ export class RecommendationService {
     interests: any,
     behavior: any,
     features: any,
-    options: any
+    options: any,
   ): Promise<Post[]> {
     // 实现推荐生成逻辑
     return [];
@@ -124,31 +120,39 @@ export class RecommendationService {
     return recommendations;
   }
 
-  private generateMetadata(results: Post[]): RecommendationMetadata {
+  private generateMetadata(results: Post[]): IRecommendationMetadata {
     // 实现元数据生成逻辑
     return {
       timestamp: new Date(),
       count: results.length,
-      categories: {}
+      categories: {},
     };
   }
 }
 
-interface RecommendationOptions {
-  limit?: number;
-  categories?: string[];
-  excludeIds?: string[];
+interface IRecommendationOptions {
+  /** limit 的描述 */
+    limit: number;
+  /** categories 的描述 */
+    categories: string;
+  /** excludeIds 的描述 */
+    excludeIds: string;
 }
 
-interface RecommendationResult {
-  items: Post[];
-  metadata: RecommendationMetadata;
+interface IRecommendationResult {
+  /** items 的描述 */
+    items: Post;
+  /** metadata 的描述 */
+    metadata: IRecommendationMetadata;
 }
 
-interface RecommendationMetadata {
-  timestamp: Date;
-  count: number;
-  categories: {
-    [key: string]: number;
+interface IRecommendationMetadata {
+  /** timestamp 的描述 */
+    timestamp: Date;
+  /** count 的描述 */
+    count: number;
+  /** categories 的描述 */
+    categories: {
+    key: string: number;
   };
-} 
+}

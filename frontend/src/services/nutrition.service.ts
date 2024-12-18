@@ -1,22 +1,29 @@
 import { api } from '../utils/api';
 
-export interface NutritionPlan {
+export interface INutritionPlan {
+  /** macroDistribution 的描述 */
   macroDistribution: {
     protein: number;
     carbs: number;
     fat: number;
   };
-  micronutrients: Record<string, {
-    current: number;
-    target: number;
-    unit: string;
-  }>;
+  /** micronutrients 的描述 */
+  micronutrients: Record<
+    string,
+    {
+      current: number;
+      target: number;
+      unit: string;
+    }
+  >;
+  /** mealTiming 的描述 */
   mealTiming: any;
+  /** portionGuide 的描述 */
   portionGuide: any;
 }
 
 export class NutritionService {
-  async getPrecisionPlan(): Promise<NutritionPlan> {
+  async getPrecisionPlan(): Promise<INutritionPlan> {
     const response = await api.get('/api/nutrition/precision-plan');
     return response.data;
   }
@@ -37,4 +44,4 @@ export class NutritionService {
   }
 }
 
-export const nutritionService = new NutritionService(); 
+export const nutritionService = new NutritionService();

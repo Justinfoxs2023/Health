@@ -1,34 +1,48 @@
 import * as tf from '@tensorflow/tfjs';
-import { LocalDatabase, createDatabase } from '../utils/local-database';
+import { ILocalDatabase, createDatabase } from '../utils/local-database';
 
 type ActivationType = 'relu' | 'tanh' | 'sigmoid' | 'linear';
 
-interface SearchSpace {
+interface ISearchSpace {
+  /** layerTypes 的描述 */
   layerTypes: string[];
+  /** units 的描述 */
   units: number[];
+  /** activations 的描述 */
   activations: ActivationType[];
+  /** dropoutRates 的描述 */
   dropoutRates: number[];
+  /** optimizers 的描述 */
   optimizers: string[];
+  /** learningRates 的描述 */
   learningRates: number[];
 }
 
-interface LayerConfig {
+interface ILayerConfig {
+  /** type 的描述 */
   type: string;
+  /** units 的描述 */
   units: number;
+  /** activation 的描述 */
   activation: ActivationType;
+  /** dropoutRate 的描述 */
   dropoutRate: number;
 }
 
-interface ArchitectureConfig {
-  layers: LayerConfig[];
+interface IArchitectureConfig {
+  /** layers 的描述 */
+  layers: ILayerConfig[];
+  /** optimizer 的描述 */
   optimizer: {
     type: string;
     learningRate: number;
   };
 }
 
-interface SearchResult {
-  architecture: ArchitectureConfig;
+interface ISearchResult {
+  /** architecture 的描述 */
+  architecture: IArchitectureConfig;
+  /** performance 的描述 */
   performance: {
     accuracy: number;
     loss: number;
@@ -38,10 +52,10 @@ interface SearchResult {
 }
 
 export class AutoArchitectureSearchService {
-  private db: LocalDatabase;
-  private searchSpace: SearchSpace;
-  private currentGeneration: ArchitectureConfig[] = [];
-  private bestArchitectures: SearchResult[] = [];
+  private db: ILocalDatabase;
+  private searchSpace: ISearchSpace;
+  private currentGeneration: IArchitectureConfig[] = [];
+  private bestArchitectures: ISearchResult[] = [];
 
   constructor() {
     this.db = createDatabase('auto-architecture-search');
@@ -51,32 +65,32 @@ export class AutoArchitectureSearchService {
       activations: ['relu', 'tanh', 'sigmoid', 'linear'],
       dropoutRates: [0, 0.1, 0.2, 0.3, 0.4, 0.5],
       optimizers: ['adam', 'sgd', 'rmsprop'],
-      learningRates: [0.1, 0.01, 0.001, 0.0001]
+      learningRates: [0.1, 0.01, 0.001, 0.0001],
     };
   }
 
   // 开始架构搜索
   async searchArchitecture(
-    dataset: { x: tf.Tensor, y: tf.Tensor },
+    dataset: { x: tf.Tensor; y: tf.Tensor },
     searchConfig: {
       populationSize: number;
       generations: number;
       maxLayers: number;
-    }
-  ): Promise<SearchResult[]> {
+    },
+  ): Promise<ISearchResult[]> {
     // 初始化种群
     this.initializePopulation(searchConfig.populationSize, searchConfig.maxLayers);
 
     for (let gen = 0; gen < searchConfig.generations; gen++) {
       // 评估当前种群
       const results = await this.evaluatePopulation(dataset);
-      
+
       // 更新最佳架构
       this.updateBestArchitectures(results);
-      
+
       // 生成下一代
       this.evolvePopulation(results);
-      
+
       // 保存搜索进度
       await this.saveSearchProgress(gen, results);
     }
@@ -86,62 +100,69 @@ export class AutoArchitectureSearchService {
 
   // 初始化种群
   private initializePopulation(size: number, maxLayers: number): void {
-    this.currentGeneration = Array(size).fill(null).map(() => 
-      this.generateRandomArchitecture(maxLayers)
-    );
+    this.currentGeneration = Array(size)
+      .fill(null)
+      .map(() => this.generateRandomArchitecture(maxLayers));
   }
 
   // 生成随机架构
-  private generateRandomArchitecture(maxLayers: number): ArchitectureConfig {
+  private generateRandomArchitecture(maxLayers: number): IArchitectureConfig {
     const numLayers = Math.floor(Math.random() * maxLayers) + 1;
-    const layers = Array(numLayers).fill(null).map(() => ({
-      type: this.randomChoice(this.searchSpace.layerTypes),
-      units: this.randomChoice(this.searchSpace.units),
-      activation: this.randomChoice(this.searchSpace.activations),
-      dropoutRate: this.randomChoice(this.searchSpace.dropoutRates)
-    }));
+    const layers = Array(numLayers)
+      .fill(null)
+      .map(() => ({
+        type: this.randomChoice(this.searchSpace.layerTypes),
+        units: this.randomChoice(this.searchSpace.units),
+        activation: this.randomChoice(this.searchSpace.activations),
+        dropoutRate: this.randomChoice(this.searchSpace.dropoutRates),
+      }));
 
     return {
       layers,
       optimizer: {
         type: this.randomChoice(this.searchSpace.optimizers),
-        learningRate: this.randomChoice(this.searchSpace.learningRates)
-      }
+        learningRate: this.randomChoice(this.searchSpace.learningRates),
+      },
     };
   }
 
   // 评估种群
-  private async evaluatePopulation(
-    dataset: { x: tf.Tensor, y: tf.Tensor }
-  ): Promise<SearchResult[]> {
+  private async evaluatePopulation(dataset: {
+    x: tf.Tensor;
+    y: tf.Tensor;
+  }): Promise<ISearchResult[]> {
     const results = await Promise.all(
-      this.currentGeneration.map(async (architecture) => {
+      this.currentGeneration.map(async architecture => {
         const model = await this.buildModel(architecture);
         const performance = await this.evaluateModel(model, dataset);
         return { architecture, performance };
-      })
+      }),
     );
 
     return results;
   }
 
   // 构建模型
-  private async buildModel(config: ArchitectureConfig): Promise<tf.LayersModel> {
+  private async buildModel(config: IArchitectureConfig): Promise<tf.LayersModel> {
     const model = tf.sequential();
 
     for (const layer of config.layers) {
       switch (layer.type) {
         case 'dense':
-          model.add(tf.layers.dense({
-            units: layer.units,
-            activation: layer.activation
-          }));
+          model.add(
+            tf.layers.dense({
+              units: layer.units,
+              activation: layer.activation,
+            }),
+          );
           break;
         case 'lstm':
-          model.add(tf.layers.lstm({
-            units: layer.units,
-            returnSequences: true
-          }));
+          model.add(
+            tf.layers.lstm({
+              units: layer.units,
+              returnSequences: true,
+            }),
+          );
           break;
         // ... 添加其他层类型
       }
@@ -154,7 +175,7 @@ export class AutoArchitectureSearchService {
     model.compile({
       optimizer: tf.train[config.optimizer.type](config.optimizer.learningRate),
       loss: 'meanSquaredError',
-      metrics: ['accuracy']
+      metrics: ['accuracy'],
     });
 
     return model;
@@ -163,7 +184,7 @@ export class AutoArchitectureSearchService {
   // 评估模型
   private async evaluateModel(
     model: tf.LayersModel,
-    dataset: { x: tf.Tensor, y: tf.Tensor }
+    dataset: { x: tf.Tensor; y: tf.Tensor },
   ): Promise<{
     accuracy: number;
     loss: number;
@@ -171,10 +192,10 @@ export class AutoArchitectureSearchService {
     complexity: number;
   }> {
     const startTime = Date.now();
-    
+
     await model.fit(dataset.x, dataset.y, {
       epochs: 10,
-      validationSplit: 0.2
+      validationSplit: 0.2,
     });
 
     const evaluation = await model.evaluate(dataset.x, dataset.y);
@@ -184,7 +205,7 @@ export class AutoArchitectureSearchService {
       accuracy: (evaluation[1] as tf.Scalar).dataSync()[0],
       loss: (evaluation[0] as tf.Scalar).dataSync()[0],
       trainingTime,
-      complexity: this.calculateModelComplexity(model)
+      complexity: this.calculateModelComplexity(model),
     };
   }
 
@@ -194,32 +215,26 @@ export class AutoArchitectureSearchService {
   }
 
   // 更新最佳架构
-  private updateBestArchitectures(results: SearchResult[]): void {
-    this.bestArchitectures = [
-      ...this.bestArchitectures,
-      ...results
-    ]
+  private updateBestArchitectures(results: ISearchResult[]): void {
+    this.bestArchitectures = [...this.bestArchitectures, ...results]
       .sort((a, b) => b.performance.accuracy - a.performance.accuracy)
       .slice(0, 5); // 保留前5个最佳架构
   }
 
   // 进化种群
-  private evolvePopulation(results: SearchResult[]): void {
+  private evolvePopulation(results: ISearchResult[]): void {
     // 实现遗传算法进化逻辑
     this.currentGeneration = this.crossoverAndMutate(results);
   }
 
   // 交叉和变异
-  private crossoverAndMutate(results: SearchResult[]): ArchitectureConfig[] {
+  private crossoverAndMutate(results: ISearchResult[]): IArchitectureConfig[] {
     // 实现交叉和变异操作
     return [];
   }
 
   // 保存搜索进度
-  private async saveSearchProgress(
-    generation: number,
-    results: SearchResult[]
-  ): Promise<void> {
+  private async saveSearchProgress(generation: number, results: ISearchResult[]): Promise<void> {
     await this.db.put(`search-progress-${generation}`, results);
   }
 
@@ -227,4 +242,4 @@ export class AutoArchitectureSearchService {
   private randomChoice<T>(array: T[]): T {
     return array[Math.floor(Math.random() * array.length)];
   }
-} 
+}

@@ -1,31 +1,36 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, Badge, Card, Space, Tag, Timeline } from 'antd';
-import { useRiskAlert } from '../../hooks/useRiskAlert';
-import { RiskAlert } from '../../services/health/types';
-import './styles.less';
 
-interface RiskAlertProps {
+import './styles.less';
+import { Alert, Badge, Card, Space, Tag, Timeline } from 'antd';
+import { IRiskAlert } from '../../services/health/types';
+import { useRiskAlert } from '../../hooks/useRiskAlert';
+
+interface IRiskAlertProps {
+  /** className 的描述 */
   className?: string;
+  /** style 的描述 */
   style?: React.CSSProperties;
+  /** maxAlerts 的描述 */
   maxAlerts?: number;
+  /** showHandled 的描述 */
   showHandled?: boolean;
 }
 
-export const RiskAlertComponent: React.FC<RiskAlertProps> = ({
+export const RiskAlertComponent: React.FC<IRiskAlertProps> = ({
   className,
   style,
   maxAlerts = 5,
-  showHandled = false
+  showHandled = false,
 }) => {
   const { alerts, loading, error, handleAlert, clearHandled } = useRiskAlert();
-  const [activeAlerts, setActiveAlerts] = useState<RiskAlert[]>([]);
+  const [activeAlerts, setActiveAlerts] = useState<IRiskAlert[]>([]);
 
   useEffect(() => {
     setActiveAlerts(
       alerts
         .filter(alert => showHandled || !alert.handled)
         .sort((a, b) => b.timestamp - a.timestamp)
-        .slice(0, maxAlerts)
+        .slice(0, maxAlerts),
     );
   }, [alerts, showHandled, maxAlerts]);
 
@@ -91,10 +96,7 @@ export const RiskAlertComponent: React.FC<RiskAlertProps> = ({
                 />
               }
             >
-              <Card
-                size="small"
-                className={`risk-alert-item ${alert.handled ? 'handled' : ''}`}
-              >
+              <Card size="small" className={`risk-alert-item ${alert.handled ? 'handled' : ''}`}>
                 <Space direction="vertical" style={{ width: '100%' }}>
                   <Space>
                     <Tag color={getLevelColor(alert.level)}>{alert.level}</Tag>
@@ -114,7 +116,7 @@ export const RiskAlertComponent: React.FC<RiskAlertProps> = ({
                   {!alert.handled && (
                     <a
                       href="#"
-                      onClick={(e) => {
+                      onClick={e => {
                         e.preventDefault();
                         handleAlert(alert.id);
                       }}
@@ -131,4 +133,4 @@ export const RiskAlertComponent: React.FC<RiskAlertProps> = ({
       )}
     </Card>
   );
-}; 
+};

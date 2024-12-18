@@ -1,15 +1,15 @@
 import React from 'react';
-import { View, ScrollView, StyleSheet, TouchableOpacity, Text } from 'react-native';
-import { useQuery, useMutation, useQueryClient } from 'react-query';
-import { getDietPlan, updatePlanStatus } from '../../api/diet';
+
 import {
   DietPlanHeader,
   NutritionTargetCard,
   MealPlanList,
   LoadingSpinner,
-  ConfirmDialog
+  ConfirmDialog,
 } from '../../components';
-
+import { View, ScrollView, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { getDietPlan, updatePlanStatus } from '../../api/diet';
+import { useQuery, useMutation, useQueryClient } from 'react-query';
 export const DietPlanScreen = ({ navigation }) => {
   const [showStatusDialog, setShowStatusDialog] = React.useState(false);
   const queryClient = useQueryClient();
@@ -19,7 +19,7 @@ export const DietPlanScreen = ({ navigation }) => {
   const mutation = useMutation(updatePlanStatus, {
     onSuccess: () => {
       queryClient.invalidateQueries('currentDietPlan');
-    }
+    },
   });
 
   if (isLoading) return <LoadingSpinner />;
@@ -29,7 +29,7 @@ export const DietPlanScreen = ({ navigation }) => {
   const handleStatusChange = (status: string) => {
     mutation.mutate({
       planId: plan._id,
-      status
+      status,
     });
     setShowStatusDialog(false);
   };
@@ -57,7 +57,7 @@ export const DietPlanScreen = ({ navigation }) => {
         <Text style={styles.sectionTitle}>每周饮食计划</Text>
         <MealPlanList
           weeklyPlan={plan.weeklyPlan}
-          onMealPress={(meal) => {
+          onMealPress={meal => {
             navigation.navigate('RecipeDetail', { id: meal.recipe });
           }}
         />
@@ -89,7 +89,7 @@ export const DietPlanScreen = ({ navigation }) => {
         options={[
           { label: '进行中', value: '进行中' },
           { label: '已完成', value: '已完成' },
-          { label: '已暂停', value: '已暂停' }
+          { label: '已暂停', value: '已暂停' },
         ]}
         onSelect={handleStatusChange}
         onCancel={() => setShowStatusDialog(false)}
@@ -101,47 +101,47 @@ export const DietPlanScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   section: {
-    padding: 15
+    padding: 15,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: '#333'
+    color: '#333',
   },
   card: {
     backgroundColor: '#fff',
     borderRadius: 8,
-    padding: 15
+    padding: 15,
   },
   restrictionContainer: {
     flexDirection: 'row',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
   },
   restrictionTag: {
     backgroundColor: '#E8F5E9',
     borderRadius: 15,
     paddingHorizontal: 12,
     paddingVertical: 6,
-    margin: 4
+    margin: 4,
   },
   restrictionText: {
     color: '#2E7D32',
-    fontSize: 14
+    fontSize: 14,
   },
   generateButton: {
     backgroundColor: '#2E7D32',
     margin: 15,
     padding: 15,
     borderRadius: 8,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   generateButtonText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: 'bold'
-  }
-}); 
+    fontWeight: 'bold',
+  },
+});

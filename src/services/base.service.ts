@@ -16,4 +16,4 @@ export abstract class BaseService {
     // 实现输入验证逻辑
     return true;
   }
-} 
+}

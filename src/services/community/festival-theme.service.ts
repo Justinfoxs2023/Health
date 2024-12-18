@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 festival-theme.service.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export class FestivalThemeService {
   private readonly themeRepo: ThemeRepository;
   private readonly culturalService: CulturalService;
@@ -12,14 +19,16 @@ export class FestivalThemeService {
     try {
       // 获取传统节日信息
       const festivals = await this.culturalService.getTraditionalFestivals();
-      
+
       // 创建节日活动
       const activities = await Promise.all(
-        festivals.map(festival => this.createFestivalActivities({
-          festival,
-          culturalElements: festival.culturalElements,
-          traditions: festival.traditions
-        }))
+        festivals.map(festival =>
+          this.createFestivalActivities({
+            festival,
+            culturalElements: festival.culturalElements,
+            traditions: festival.traditions,
+          }),
+        ),
       );
 
       return {
@@ -28,10 +37,10 @@ export class FestivalThemeService {
           activities: activities[index],
           culturalContent: await this.createCulturalContent(festival),
           specialCeremonies: await this.designCeremonies(festival),
-          traditionalRewards: await this.createTraditionalRewards(festival)
+          traditionalRewards: await this.createTraditionalRewards(festival),
         })),
         culturalEvents: await this.organizeCulturalEvents(festivals),
-        communityTraditions: await this.initiateCommunityTraditions(festivals)
+        communityTraditions: await this.initiateCommunityTraditions(festivals),
       };
     } catch (error) {
       this.logger.error('管理传统节日主题失败', error);
@@ -44,14 +53,16 @@ export class FestivalThemeService {
     try {
       // 获取健康主题
       const healthThemes = await this.themeRepo.getHealthThemes();
-      
+
       // 创建主题活动
       const themeActivities = await Promise.all(
-        healthThemes.map(theme => this.createHealthActivities({
-          theme,
-          healthFocus: theme.focus,
-          targetGroups: theme.targetGroups
-        }))
+        healthThemes.map(theme =>
+          this.createHealthActivities({
+            theme,
+            healthFocus: theme.focus,
+            targetGroups: theme.targetGroups,
+          }),
+        ),
       );
 
       return {
@@ -60,10 +71,10 @@ export class FestivalThemeService {
           activities: themeActivities[index],
           healthGuidance: await this.createHealthGuidance(theme),
           groupActivities: await this.designGroupActivities(theme),
-          wellnessRewards: await this.createWellnessRewards(theme)
+          wellnessRewards: await this.createWellnessRewards(theme),
         })),
         communityPrograms: await this.organizeHealthPrograms(healthThemes),
-        expertGuidance: await this.arrangeExpertGuidance(healthThemes)
+        expertGuidance: await this.arrangeExpertGuidance(healthThemes),
       };
     } catch (error) {
       this.logger.error('管理健康主题活动失败', error);
@@ -76,14 +87,16 @@ export class FestivalThemeService {
     try {
       // 获取社区主题
       const communityThemes = await this.themeRepo.getCommunityThemes();
-      
+
       // 创建互动活动
       const interactiveActivities = await Promise.all(
-        communityThemes.map(theme => this.createInteractiveActivities({
-          theme,
-          participationTypes: theme.participationTypes,
-          interactionModes: theme.interactionModes
-        }))
+        communityThemes.map(theme =>
+          this.createInteractiveActivities({
+            theme,
+            participationTypes: theme.participationTypes,
+            interactionModes: theme.interactionModes,
+          }),
+        ),
       );
 
       return {
@@ -92,10 +105,10 @@ export class FestivalThemeService {
           activities: interactiveActivities[index],
           groupChallenges: await this.createGroupChallenges(theme),
           teamProjects: await this.designTeamProjects(theme),
-          communityRewards: await this.createCommunityRewards(theme)
+          communityRewards: await this.createCommunityRewards(theme),
         })),
         socialEvents: await this.organizeSocialEvents(communityThemes),
-        collaborativeProjects: await this.initiateCollaborations(communityThemes)
+        collaborativeProjects: await this.initiateCollaborations(communityThemes),
       };
     } catch (error) {
       this.logger.error('管理社区互动主题失败', error);
@@ -107,13 +120,13 @@ export class FestivalThemeService {
   async trackThemeEngagement(themeId: string): Promise<ThemeEngagement> {
     try {
       const themeData = await this.themeRepo.getThemeData(themeId);
-      
+
       // 分析参与数据
       const participation = await this.analyzeParticipation(themeData);
-      
+
       // 评估互动质量
       const interaction = await this.evaluateInteraction(themeData);
-      
+
       // 收集反馈
       const feedback = await this.collectFeedback(themeId);
 
@@ -122,11 +135,11 @@ export class FestivalThemeService {
         interactionQuality: interaction,
         userFeedback: feedback,
         engagementTrends: await this.analyzeEngagementTrends(themeId),
-        improvementSuggestions: await this.generateSuggestions(themeData)
+        improvementSuggestions: await this.generateSuggestions(themeData),
       };
     } catch (error) {
       this.logger.error('追踪主题参与度失败', error);
       throw error;
     }
   }
-} 
+}

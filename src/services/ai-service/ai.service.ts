@@ -1,26 +1,24 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import * as tf from '@tensorflow/tfjs-node';
-import { Logger } from '../../infrastructure/logger/logger.service';
-import { 
-  AIServiceConfig,
+import {
+  IAIServiceConfig,
   ImageRecognitionResult,
-  RealTimeAnalysis,
-  PersonalizedModel,
-  MultiModalAnalysis 
+  IRealTimeAnalysis,
+  IPersonalizedModel,
+  IMultiModalAnalysis,
 } from './types';
+import { ConfigService } from '@nestjs/config';
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Logger } from '../../infrastructure/logger/logger.service';
 
-@Injectable()
+@Injec
+table()
 export class AIService implements OnModuleInit {
   private foodRecognitionModel: tf.LayersModel;
   private poseEstimationModel: tf.LayersModel;
   private personalizedModels: Map<string, tf.LayersModel>;
   private emotionModel: tf.LayersModel;
 
-  constructor(
-    private readonly config: ConfigService,
-    private readonly logger: Logger
-  ) {
+  constructor(private readonly config: ConfigService, private readonly logger: Logger) {
     this.personalizedModels = new Map();
   }
 
@@ -32,14 +30,14 @@ export class AIService implements OnModuleInit {
   async recognizeFood(image: ImageData): Promise<ImageRecognitionResult['foodRecognition']> {
     try {
       const tensor = this.preprocessImage(image);
-      const predictions = await this.foodRecognitionModel.predict(tensor) as tf.Tensor;
+      const predictions = (await this.foodRecognitionModel.predict(tensor)) as tf.Tensor;
       const results = await this.processFoodPredictions(predictions);
-      
+
       return {
         foodName: results.name,
         confidence: results.confidence,
         nutritionInfo: await this.getNutritionInfo(results.name),
-        suggestions: await this.generateDietarySuggestions(results.name)
+        suggestions: await this.generateDietarySuggestions(results.name),
       };
     } catch (error) {
       this.logger.error('Food recognition failed:', error);
@@ -48,16 +46,16 @@ export class AIService implements OnModuleInit {
   }
 
   // 实时姿态分析
-  async analyzePoseRealTime(videoFrame: ImageData): Promise<RealTimeAnalysis['poseAnalysis']> {
+  async analyzePoseRealTime(videoFrame: ImageData): Promise<IRealTimeAnalysis['poseAnalysis']> {
     try {
       const poses = await this.poseEstimationModel.estimatePoses(videoFrame);
       const analysis = this.analyzePoseCorrectness(poses[0]);
-      
+
       return {
         currentPose: analysis.poseName,
         isCorrect: analysis.isCorrect,
         corrections: analysis.corrections,
-        riskLevel: this.assessPoseRisk(analysis)
+        riskLevel: this.assessPoseRisk(analysis),
       };
     } catch (error) {
       this.logger.error('Pose analysis failed:', error);
@@ -66,7 +64,7 @@ export class AIService implements OnModuleInit {
   }
 
   // 个性化模型训练
-  async trainPersonalizedModel(userId: string, data: any): Promise<PersonalizedModel> {
+  async trainPersonalizedModel(userId: string, data: any): Promise<IPersonalizedModel> {
     try {
       let model = this.personalizedModels.get(userId);
       if (!model) {
@@ -77,7 +75,7 @@ export class AIService implements OnModuleInit {
       const { history } = await model.fit(data.x, data.y, {
         epochs: 10,
         batchSize: 32,
-        validationSplit: 0.2
+        validationSplit: 0.2,
       });
 
       return {
@@ -87,9 +85,9 @@ export class AIService implements OnModuleInit {
         performance: {
           accuracy: history.history.accuracy[9],
           lastUpdated: new Date(),
-          iterations: history.epoch.length
+          iterations: history.epoch.length,
         },
-        preferences: await this.extractUserPreferences(userId)
+        preferences: await this.extractUserPreferences(userId),
       };
     } catch (error) {
       this.logger.error('Personalized model training failed:', error);
@@ -98,29 +96,27 @@ export class AIService implements OnModuleInit {
   }
 
   // 多模态分析
-  async performMultiModalAnalysis(
-    inputs: {
-      audio?: ArrayBuffer;
-      video?: ImageData;
-      text?: string;
-    }
-  ): Promise<MultiModalAnalysis> {
+  async performMultiModalAnalysis(inputs: {
+    audio?: ArrayBuffer;
+    video?: ImageData;
+    text?: string;
+  }): Promise<IMultiModalAnalysis> {
     try {
       const [speechAnalysis, emotionAnalysis] = await Promise.all([
         inputs.audio ? this.analyzeSpeech(inputs.audio) : null,
-        inputs.video ? this.analyzeEmotion(inputs.video) : null
+        inputs.video ? this.analyzeEmotion(inputs.video) : null,
       ]);
 
       const recommendations = await this.generateIntegratedRecommendations({
         speech: speechAnalysis,
         emotion: emotionAnalysis,
-        text: inputs.text
+        text: inputs.text,
       });
 
       return {
         speech: speechAnalysis,
         emotion: emotionAnalysis,
-        recommendations
+        recommendations,
       };
     } catch (error) {
       this.logger.error('Multi-modal analysis failed:', error);
@@ -130,20 +126,15 @@ export class AIService implements OnModuleInit {
 
   // 私有辅助方法
   private async initializeModels() {
-    this.foodRecognitionModel = await tf.loadLayersModel(
-      this.config.get('AI_FOOD_MODEL_PATH')
-    );
-    this.poseEstimationModel = await tf.loadLayersModel(
-      this.config.get('AI_POSE_MODEL_PATH')
-    );
-    this.emotionModel = await tf.loadLayersModel(
-      this.config.get('AI_EMOTION_MODEL_PATH')
-    );
+    this.foodRecognitionModel = await tf.loadLayersModel(this.config.get('AI_FOOD_MODEL_PATH'));
+    this.poseEstimationModel = await tf.loadLayersModel(this.config.get('AI_POSE_MODEL_PATH'));
+    this.emotionModel = await tf.loadLayersModel(this.config.get('AI_EMOTION_MODEL_PATH'));
   }
 
   private preprocessImage(image: ImageData): tf.Tensor {
     return tf.tidy(() => {
-      const tensor = tf.browser.fromPixels(image)
+      const tensor = tf.browser
+        .fromPixels(image)
         .resizeNearestNeighbor([224, 224])
         .toFloat()
         .expandDims();
@@ -156,7 +147,7 @@ export class AIService implements OnModuleInit {
     const maxIndex = data.indexOf(Math.max(...Array.from(data)));
     return {
       name: this.getFoodLabelFromIndex(maxIndex),
-      confidence: data[maxIndex]
+      confidence: data[maxIndex],
     };
   }
 
@@ -165,7 +156,7 @@ export class AIService implements OnModuleInit {
     return {
       poseName: 'squat',
       isCorrect: true,
-      corrections: []
+      corrections: [],
     };
   }
 
@@ -189,7 +180,7 @@ export class AIService implements OnModuleInit {
     return {
       learningRate: 0.001,
       features: [],
-      constraints: {}
+      constraints: {},
     };
   }
 
@@ -207,4 +198,4 @@ export class AIService implements OnModuleInit {
     // 实现综合建议生成逻辑
     return [];
   }
-} 
+}

@@ -15,4 +15,4 @@ export const FadeTransition = styled.div<{ delay?: number }>`
   animation: ${fadeIn} 0.5s ease-out;
   animation-delay: ${({ delay = 0 }) => delay}ms;
   animation-fill-mode: both;
-`; 
+`;

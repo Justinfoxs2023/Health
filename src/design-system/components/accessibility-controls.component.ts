@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { DesignSystemService } from '../design-system.service';
-import { AccessibilityConfig } from '../types';
+import { IAccessibilityConfig } from '../types';
 
 @Component({
   selector: 'app-accessibility-controls',
   template: `
     <div class="accessibility-controls">
       <section class="visual-controls">
-        <h3>视觉辅助</h3>
+        <h3></h3>
         <div class="control-group">
           <label>
             <input
@@ -17,7 +17,7 @@ import { AccessibilityConfig } from '../types';
             />
             高对比度
           </label>
-          
+
           <label>
             <input
               type="checkbox"
@@ -26,9 +26,9 @@ import { AccessibilityConfig } from '../types';
             />
             减少动画
           </label>
-          
+
           <div class="font-size-control">
-            <label>字体大小</label>
+            <label></label>
             <input
               type="range"
               [value]="config.visual.fontSize"
@@ -42,7 +42,7 @@ import { AccessibilityConfig } from '../types';
       </section>
 
       <section class="keyboard-controls">
-        <h3>键盘导航</h3>
+        <h3></h3>
         <div class="control-group">
           <label>
             <input
@@ -56,7 +56,7 @@ import { AccessibilityConfig } from '../types';
       </section>
 
       <section class="voice-controls">
-        <h3>语音控制</h3>
+        <h3></h3>
         <div class="control-group">
           <label>
             <input
@@ -69,10 +69,10 @@ import { AccessibilityConfig } from '../types';
         </div>
       </section>
     </div>
-  `
+  `,
 })
 export class AccessibilityControlsComponent implements OnInit {
-  config: AccessibilityConfig;
+  config: IAccessibilityConfig;
 
   constructor(private designSystem: DesignSystemService) {}
 
@@ -87,8 +87,8 @@ export class AccessibilityControlsComponent implements OnInit {
     await this.designSystem.setAccessibilityConfig({
       visual: {
         ...this.config.visual,
-        highContrast: checkbox.checked
-      }
+        highContrast: checkbox.checked,
+      },
     });
   }
 
@@ -97,8 +97,8 @@ export class AccessibilityControlsComponent implements OnInit {
     await this.designSystem.setAccessibilityConfig({
       visual: {
         ...this.config.visual,
-        reducedMotion: checkbox.checked
-      }
+        reducedMotion: checkbox.checked,
+      },
     });
   }
 
@@ -107,8 +107,8 @@ export class AccessibilityControlsComponent implements OnInit {
     await this.designSystem.setAccessibilityConfig({
       visual: {
         ...this.config.visual,
-        fontSize: parseInt(input.value)
-      }
+        fontSize: parseInt(input.value),
+      },
     });
   }
 
@@ -117,8 +117,8 @@ export class AccessibilityControlsComponent implements OnInit {
     await this.designSystem.setAccessibilityConfig({
       keyboard: {
         ...this.config.keyboard,
-        enabled: checkbox.checked
-      }
+        enabled: checkbox.checked,
+      },
     });
   }
 
@@ -127,8 +127,8 @@ export class AccessibilityControlsComponent implements OnInit {
     await this.designSystem.setAccessibilityConfig({
       voice: {
         ...this.config.voice,
-        enabled: checkbox.checked
-      }
+        enabled: checkbox.checked,
+      },
     });
   }
-} 
+}

@@ -1,33 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
+
 import {
   dataStatisticsService,
-  StatTimeRange,
-  StatisticsData,
-  HealthReport
+  StatTimeRangeType,
+  IStatisticsData,
+  IHealthReport,
 } from '../../services/statistics';
-import { HealthData, HealthMetric } from '../../types';
 import { Button } from '../Button';
+import { HealthData, HealthMetric } from '../../types';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { Loading } from '../Loading';
 import { Message } from '../Message';
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend
-} from 'recharts';
+import { useTranslation } from 'react-i18next';
+/** 统
 
-/** 统计组件属性 */
-export interface StatisticsProps {
+计组件属性 */
+export interface IStatisticsProps {
   /** 健康数据 */
   data: HealthData[];
   /** 选中的指标 */
   selectedMetrics?: HealthMetric[];
   /** 时间范围 */
-  timeRange?: StatTimeRange;
+  timeRange?: StatTimeRangeType;
   /** 自定义开始时间 */
   startDate?: Date;
   /** 自定义结束时间 */
@@ -39,34 +33,32 @@ export interface StatisticsProps {
 }
 
 /** 统计数据展示组件 */
-export const Statistics: React.FC<StatisticsProps> = ({
+export const Statistics: React.FC<IStatisticsProps> = ({
   data,
   selectedMetrics = Object.values(HealthMetric),
   timeRange = 'week',
   startDate,
   endDate,
   showReport = false,
-  className = ''
+  className = '',
 }) => {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
-  const [statistics, setStatistics] = useState<Record<HealthMetric, StatisticsData>>(
-    {}
-  );
-  const [report, setReport] = useState<HealthReport | null>(null);
+  const [statistics, setStatistics] = useState<Record<HealthMetric, IStatisticsData>>({});
+  const [report, setReport] = useState<IHealthReport | null>(null);
 
   // 计算统计数据
   useEffect(() => {
     setLoading(true);
     try {
-      const stats: Record<HealthMetric, StatisticsData> = {};
+      const stats: Record<HealthMetric, IStatisticsData> = {};
       selectedMetrics.forEach(metric => {
         stats[metric] = dataStatisticsService.calculateStatistics(
           data,
           metric,
           timeRange,
           startDate,
-          endDate
+          endDate,
         );
       });
       setStatistics(stats);
@@ -80,7 +72,7 @@ export const Statistics: React.FC<StatisticsProps> = ({
             ? 'weekly'
             : timeRange === 'month'
             ? 'monthly'
-            : 'annual'
+            : 'annual',
         );
         setReport(newReport);
       }
@@ -104,10 +96,7 @@ export const Statistics: React.FC<StatisticsProps> = ({
           if (!stats) return null;
 
           return (
-            <div
-              key={metric}
-              className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow"
-            >
+            <div key={metric} className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
               <h3 className="text-lg font-semibold mb-2">{t(`metric.${metric}`)}</h3>
               <div className="space-y-2">
                 <p>
@@ -120,8 +109,7 @@ export const Statistics: React.FC<StatisticsProps> = ({
                   {t('statistics.min')}: {stats.min}
                 </p>
                 <p>
-                  {t('statistics.standardDeviation')}:{' '}
-                  {stats.standardDeviation.toFixed(2)}
+                  {t('statistics.standardDeviation')}: {stats.standardDeviation.toFixed(2)}
                 </p>
               </div>
 
@@ -131,16 +119,10 @@ export const Statistics: React.FC<StatisticsProps> = ({
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis
                     dataKey="time"
-                    tickFormatter={time =>
-                      new Date(time).toLocaleDateString()
-                    }
+                    tickFormatter={time => new Date(time).toLocaleDateString()}
                   />
                   <YAxis />
-                  <Tooltip
-                    labelFormatter={label =>
-                      new Date(label).toLocaleString()
-                    }
-                  />
+                  <Tooltip labelFormatter={label => new Date(label).toLocaleString()} />
                   <Legend />
                   <Line
                     type="monotone"
@@ -154,14 +136,12 @@ export const Statistics: React.FC<StatisticsProps> = ({
               {/* 异常数据提示 */}
               {stats.anomalies.length > 0 && (
                 <div className="mt-4">
-                  <h4 className="font-semibold text-yellow-500">
-                    {t('statistics.anomalies')}
-                  </h4>
+                  <h4 className="font-semibold text-yellow-500">{t('statistics.anomalies')}</h4>
                   <ul className="list-disc list-inside">
                     {stats.anomalies.map((anomaly, index) => (
                       <li key={index} className="text-sm">
-                        {new Date(anomaly.time).toLocaleString()}: {anomaly.value}{' '}
-                        ({anomaly.reason})
+                        {new Date(anomaly.time).toLocaleString()}: {anomaly.value} ({anomaly.reason}
+                        )
                       </li>
                     ))}
                   </ul>
@@ -179,9 +159,7 @@ export const Statistics: React.FC<StatisticsProps> = ({
 
           {/* 健康建议 */}
           <div className="mb-6">
-            <h3 className="text-xl font-semibold mb-2">
-              {t('statistics.report.recommendations')}
-            </h3>
+            <h3 className="text-xl font-semibold mb-2">{t('statistics.report.recommendations')}</h3>
             <ul className="list-disc list-inside space-y-2">
               {report.recommendations.map((recommendation, index) => (
                 <li key={index}>{recommendation}</li>
@@ -191,9 +169,7 @@ export const Statistics: React.FC<StatisticsProps> = ({
 
           {/* 健康风险 */}
           <div>
-            <h3 className="text-xl font-semibold mb-2">
-              {t('statistics.report.risks')}
-            </h3>
+            <h3 className="text-xl font-semibold mb-2">{t('statistics.report.risks')}</h3>
             <div className="space-y-2">
               {report.risks.map((risk, index) => (
                 <div
@@ -218,4 +194,4 @@ export const Statistics: React.FC<StatisticsProps> = ({
       )}
     </div>
   );
-}; 
+};

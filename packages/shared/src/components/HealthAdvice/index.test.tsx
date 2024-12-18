@@ -1,21 +1,22 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+
 import { HealthAdvice } from './index';
 import { HealthDataType } from '../../types';
 import { healthAnalysisService } from '../../services/analysis';
+import { render, screen, waitFor } from '@testing-library/react';
 
 // Mock services
 jest.mock('../../services/analysis', () => ({
   healthAnalysisService: {
-    generateAdvice: jest.fn()
-  }
+    generateAdvice: jest.fn(),
+  },
 }));
 
 // Mock i18n
 jest.mock('react-i18next', () => ({
   useTranslation: () => ({
-    t: (key: string) => key
-  })
+    t: (key: string) => key,
+  }),
 }));
 
 describe('HealthAdvice', () => {
@@ -24,14 +25,14 @@ describe('HealthAdvice', () => {
       id: '1',
       type: HealthDataType.BLOOD_PRESSURE,
       value: 120,
-      timestamp: new Date('2023-01-01')
+      timestamp: new Date('2023-01-01'),
     },
     {
       id: '2',
       type: HealthDataType.HEART_RATE,
       value: 80,
-      timestamp: new Date('2023-01-02')
-    }
+      timestamp: new Date('2023-01-02'),
+    },
   ];
 
   beforeEach(() => {
@@ -40,27 +41,27 @@ describe('HealthAdvice', () => {
       {
         type: HealthDataType.BLOOD_PRESSURE,
         advice: '建议减少盐分摄入',
-        priority: 3
+        priority: 3,
       },
       {
         type: HealthDataType.HEART_RATE,
         advice: '建议保持���律运动',
-        priority: 2
-      }
+        priority: 2,
+      },
     ]);
   });
 
-  it('should render loading state initially', () => {
+  it('render loading state initially', () => {
     render(<HealthAdvice data={mockData} />);
     expect(screen.getByText('loading')).toBeInTheDocument();
   });
 
-  it('should render no data message when data is empty', () => {
+  it('render no data message when data is empty', () => {
     render(<HealthAdvice data={[]} />);
     expect(screen.getByText('advice.noData')).toBeInTheDocument();
   });
 
-  it('should render advice cards', async () => {
+  it('render advice cards', async () => {
     render(<HealthAdvice data={mockData} />);
 
     await waitFor(() => {
@@ -72,14 +73,16 @@ describe('HealthAdvice', () => {
     });
   });
 
-  it('should render priority indicators', async () => {
+  it('render priority indicators', async () => {
     render(<HealthAdvice data={mockData} />);
 
     await waitFor(() => {
-      const highPriorityAdvice = screen.getByText('建议减少盐分摄入')
+      const highPriorityAdvice = screen
+        .getByText('建议减少盐分摄入')
         .closest('div')
         ?.closest('div');
-      const mediumPriorityAdvice = screen.getByText('建议保持规律运动')
+      const mediumPriorityAdvice = screen
+        .getByText('建议保持规律运动')
         .closest('div')
         ?.closest('div');
 
@@ -88,7 +91,7 @@ describe('HealthAdvice', () => {
     });
   });
 
-  it('should render comprehensive advice section', async () => {
+  it('render comprehensive advice section', async () => {
     render(<HealthAdvice data={mockData} />);
 
     await waitFor(() => {
@@ -102,9 +105,9 @@ describe('HealthAdvice', () => {
     });
   });
 
-  it('should handle error states', async () => {
+  it('handle error states', async () => {
     (healthAnalysisService.generateAdvice as jest.Mock).mockRejectedValue(new Error());
-    
+
     render(<HealthAdvice data={mockData} />);
 
     await waitFor(() => {
@@ -112,7 +115,7 @@ describe('HealthAdvice', () => {
     });
   });
 
-  it('should update when data changes', async () => {
+  it('update when data changes', async () => {
     const { rerender } = render(<HealthAdvice data={mockData} />);
 
     await waitFor(() => {
@@ -125,16 +128,16 @@ describe('HealthAdvice', () => {
         id: '3',
         type: HealthDataType.BLOOD_SUGAR,
         value: 6.0,
-        timestamp: new Date('2023-01-03')
-      }
+        timestamp: new Date('2023-01-03'),
+      },
     ];
 
     (healthAnalysisService.generateAdvice as jest.Mock).mockResolvedValue([
       {
         type: HealthDataType.BLOOD_SUGAR,
         advice: '血糖控制良好',
-        priority: 1
-      }
+        priority: 1,
+      },
     ]);
 
     rerender(<HealthAdvice data={newMockData} />);
@@ -145,17 +148,13 @@ describe('HealthAdvice', () => {
     });
   });
 
-  it('should apply custom className and style', () => {
+  it('apply custom className and style', () => {
     const { container } = render(
-      <HealthAdvice
-        data={mockData}
-        className="custom-class"
-        style={{ margin: '20px' }}
-      />
+      <HealthAdvice data={mockData} className="custom-class" style={{ margin: '20px' }} />,
     );
 
     const component = container.firstChild as HTMLElement;
     expect(component).toHaveClass('custom-class');
     expect(component).toHaveStyle({ margin: '20px' });
   });
-}); 
+});

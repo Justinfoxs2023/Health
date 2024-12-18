@@ -1,0 +1,137 @@
+email:
+  host: smtp.example.com
+  port: 587
+  secure: true
+  auth:
+    user: ${SMTP_USER}
+    pass: ${SMTP_PASS}
+  from: noreply@example.com
+
+slack:
+  token: ${SLACK_TOKEN}
+  defaultChannel: "#general"
+
+webhook:
+  url: https://api.example.com/webhook
+  method: POST
+  headers:
+    Authorization: Bearer ${WEBHOOK_TOKEN}
+  timeout: 5000
+  retryCount: 3
+  retryDelay: 1000
+  validateSSL: true
+
+sms:
+  provider: twilio
+  credentials:
+    accountSid: ${TWILIO_ACCOUNT_SID}
+    authToken: ${TWILIO_AUTH_TOKEN}
+  from: "+1234567890"
+  region: us-east-1
+
+templates:
+  alert:
+    id: alert-template
+    name: 系统告警通知
+    type: email
+    subject: "[{{level}}] 系统告警: {{title}}"
+    content: |
+      <h2>系统告警</h2>
+      <p><strong>告警级别:</strong> {{level}}</p>
+      <p><strong>告警标题:</strong> {{title}}</p>
+      <p><strong>告警时间:</strong> {{timestamp}}</p>
+      <p><strong>告警详情:</strong></p>
+      <pre>{{details}}</pre>
+    variables:
+      - level
+      - title
+      - timestamp
+      - details
+
+  welcome:
+    id: welcome-template
+    name: 欢迎新用户
+    type: email
+    subject: "欢迎加入 {{appName}}"
+    content: |
+      <h1>欢迎加入 {{appName}}!</h1>
+      <p>亲爱的 {{username}},</p>
+      <p>感谢您注册使用我们的服务。</p>
+      <p>如果您有任何问题，请随时联系我们的支持团队。</p>
+    variables:
+      - appName
+      - username
+
+  verification:
+    id: verification-template
+    name: 验证码通知
+    type: sms
+    content: "您的验证码是: {{code}}，{{expireMinutes}}分钟内有效。请勿泄露给他人。"
+    variables:
+      - code
+      - expireMinutes
+
+channels:
+  system-alert:
+    id: system-alert
+    name: 系统告警通知
+    type: email
+    config:
+      host: smtp.example.com
+      port: 587
+      secure: true
+      auth:
+        user: ${ALERT_SMTP_USER}
+        pass: ${ALERT_SMTP_PASS}
+      from: alert@example.com
+    templates:
+      - alert-template
+
+  marketing:
+    id: marketing
+    name: 营销通知
+    type: email
+    config:
+      host: smtp.example.com
+      port: 587
+      secure: true
+      auth:
+        user: ${MARKETING_SMTP_USER}
+        pass: ${MARKETING_SMTP_PASS}
+      from: marketing@example.com
+
+  support:
+    id: support
+    name: 客户支持
+    type: slack
+    config:
+      token: ${SUPPORT_SLACK_TOKEN}
+      defaultChannel: "#support"
+
+  monitoring:
+    id: monitoring
+    name: 系统监控
+    type: webhook
+    config:
+      url: https://monitoring.example.com/webhook
+      method: POST
+      headers:
+        Authorization: Bearer ${MONITORING_TOKEN}
+      timeout: 5000
+      retryCount: 3
+      retryDelay: 1000
+      validateSSL: true
+
+  verification:
+    id: verification
+    name: 验证码通知
+    type: sms
+    config:
+      provider: twilio
+      credentials:
+        accountSid: ${VERIFICATION_TWILIO_SID}
+        authToken: ${VERIFICATION_TWILIO_TOKEN}
+      from: "+1234567890"
+      region: us-east-1
+    templates:
+      - verification-template

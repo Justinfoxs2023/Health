@@ -24,4 +24,4 @@ export class EncryptionService {
   generateHash(data: any): string {
     return CryptoJS.SHA256(JSON.stringify(data)).toString();
   }
-} 
+}

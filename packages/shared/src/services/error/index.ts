@@ -13,11 +13,11 @@ export enum ErrorType {
   /** 服务器错误 */
   SERVER = 'SERVER',
   /** 未知错误 */
-  UNKNOWN = 'UNKNOWN'
+  UNKNOWN = 'UNKNOWN',
 }
 
 /** 错误信息 */
-export interface ErrorInfo {
+export interface IErrorInfo {
   /** 错误类型 */
   type: ErrorType;
   /** 错误消息 */
@@ -29,15 +29,15 @@ export interface ErrorInfo {
 }
 
 /** 错误处理器 */
-export interface ErrorHandler {
+export interface IErrorHandler {
   /** 处理错误 */
-  handle(error: ErrorInfo): void;
+  handle(error: IErrorInfo): void;
 }
 
 /** 错误处理服务 */
 export class ErrorService {
   private static instance: ErrorService;
-  private handlers: ErrorHandler[] = [];
+  private handlers: IErrorHandler[] = [];
 
   private constructor() {}
 
@@ -50,12 +50,12 @@ export class ErrorService {
   }
 
   /** 添加错误处理器 */
-  public addHandler(handler: ErrorHandler) {
+  public addHandler(handler: IErrorHandler) {
     this.handlers.push(handler);
   }
 
   /** 移除错误处理器 */
-  public removeHandler(handler: ErrorHandler) {
+  public removeHandler(handler: IErrorHandler) {
     const index = this.handlers.indexOf(handler);
     if (index > -1) {
       this.handlers.splice(index, 1);
@@ -69,7 +69,7 @@ export class ErrorService {
   }
 
   /** 解析错误 */
-  private parseError(error: any): ErrorInfo {
+  private parseError(error: any): IErrorInfo {
     if (error instanceof AxiosError) {
       return this.parseAxiosError(error);
     }
@@ -78,24 +78,24 @@ export class ErrorService {
       return {
         type: ErrorType.UNKNOWN,
         message: error.message,
-        originalError: error
+        originalError: error,
       };
     }
 
     return {
       type: ErrorType.UNKNOWN,
       message: String(error),
-      originalError: error
+      originalError: error,
     };
   }
 
   /** 解析Axios错误 */
-  private parseAxiosError(error: AxiosError): ErrorInfo {
+  private parseAxiosError(error: AxiosError): IErrorInfo {
     if (!error.response) {
       return {
         type: ErrorType.NETWORK,
         message: '网络连接失败，请检查网络设置',
-        originalError: error
+        originalError: error,
       };
     }
 
@@ -108,28 +108,28 @@ export class ErrorService {
           type: ErrorType.BUSINESS,
           message: data?.message || '请求参数错误',
           code: data?.code,
-          originalError: error
+          originalError: error,
         };
       case 401:
         return {
           type: ErrorType.AUTH,
           message: '未授权，请重新登录',
           code: status,
-          originalError: error
+          originalError: error,
         };
       case 403:
         return {
           type: ErrorType.PERMISSION,
           message: '没有权限访问该资源',
           code: status,
-          originalError: error
+          originalError: error,
         };
       case 404:
         return {
           type: ErrorType.BUSINESS,
           message: '请求的资源不存在',
           code: status,
-          originalError: error
+          originalError: error,
         };
       case 500:
       case 502:
@@ -139,24 +139,25 @@ export class ErrorService {
           type: ErrorType.SERVER,
           message: '服务器错误，请稍后重试',
           code: status,
-          originalError: error
+          originalError: error,
         };
       default:
         return {
           type: ErrorType.UNKNOWN,
           message: data?.message || '未知错误',
           code: status,
-          originalError: error
+          originalError: error,
         };
     }
   }
 }
 
 /** 控制台错误处理器 */
-export class ConsoleErrorHandler implements ErrorHandler {
-  handle(error: ErrorInfo): void {
+export class ConsoleErrorHandler implements IErrorHandler {
+  handle(error: IErrorInfo): void {
     console.error(
-      `[${error.type}] ${error.message}${error.code ? ` (${error.code})` : ''}`
+      'Error in index.ts:',
+      `[${error.type}] ${error.message}${error.code ? ` (${error.code})` : ''}`,
     );
   }
 }
@@ -165,4 +166,4 @@ export class ConsoleErrorHandler implements ErrorHandler {
 export const errorService = ErrorService.getInstance();
 
 // 添加默认的控制台错误处理器
-errorService.addHandler(new ConsoleErrorHandler()); 
+errorService.addHandler(new ConsoleErrorHandler());

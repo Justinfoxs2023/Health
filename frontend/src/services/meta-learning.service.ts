@@ -1,29 +1,41 @@
 import * as tf from '@tensorflow/tfjs';
-import { LocalDatabase, createDatabase } from '../utils/local-database';
+import { ILocalDatabase, createDatabase } from '../utils/local-database';
 
-interface MetaTask {
+interface IMetaTask {
+  /** id 的描述 */
   id: string;
+  /** name 的描述 */
   name: string;
+  /** type 的描述 */
   type: 'classification' | 'regression';
+  /** samples 的描述 */
   samples: number;
+  /** supportSize 的描述 */
   supportSize: number;
+  /** querySize 的描述 */
   querySize: number;
 }
 
-interface MetaConfig {
+interface IMetaConfig {
+  /** innerLearningRate 的描述 */
   innerLearningRate: number;
+  /** outerLearningRate 的描述 */
   outerLearningRate: number;
+  /** innerSteps 的描述 */
   innerSteps: number;
+  /** outerSteps 的描述 */
   outerSteps: number;
+  /** metaBatchSize 的描述 */
   metaBatchSize: number;
+  /** adaptationSteps 的描述 */
   adaptationSteps: number;
 }
 
 export class MetaLearningService {
-  private db: LocalDatabase;
+  private db: ILocalDatabase;
   private metaModel: tf.LayersModel | null = null;
-  private tasks: Map<string, MetaTask> = new Map();
-  private config: MetaConfig;
+  private tasks: Map<string, IMetaTask> = new Map();
+  private config: IMetaConfig;
 
   constructor() {
     this.db = createDatabase('meta-learning');
@@ -33,7 +45,7 @@ export class MetaLearningService {
       innerSteps: 5,
       outerSteps: 1000,
       metaBatchSize: 4,
-      adaptationSteps: 10
+      adaptationSteps: 10,
     };
     this.initialize();
   }
@@ -43,37 +55,45 @@ export class MetaLearningService {
   }
 
   // 添加元学习任务
-  async addTask(task: MetaTask): Promise<void> {
+  async addTask(task: IMetaTask): Promise<void> {
     this.tasks.set(task.id, task);
   }
 
   // 构建元模型
   private async buildMetaModel(): Promise<tf.LayersModel> {
     const model = tf.sequential();
-    
+
     // 特征提取器
-    model.add(tf.layers.dense({
-      units: 64,
-      activation: 'relu',
-      inputShape: [this.getInputShape()]
-    }));
-    
-    model.add(tf.layers.dense({
-      units: 32,
-      activation: 'relu'
-    }));
+    model.add(
+      tf.layers.dense({
+        units: 64,
+        activation: 'relu',
+        inputShape: [this.getInputShape()],
+      }),
+    );
+
+    model.add(
+      tf.layers.dense({
+        units: 32,
+        activation: 'relu',
+      }),
+    );
 
     // 任务适应层
-    model.add(tf.layers.dense({
-      units: 32,
-      activation: 'relu'
-    }));
+    model.add(
+      tf.layers.dense({
+        units: 32,
+        activation: 'relu',
+      }),
+    );
 
     // 输出层
-    model.add(tf.layers.dense({
-      units: this.getOutputShape(),
-      activation: 'softmax'
-    }));
+    model.add(
+      tf.layers.dense({
+        units: this.getOutputShape(),
+        activation: 'softmax',
+      }),
+    );
 
     return model;
   }
@@ -82,18 +102,18 @@ export class MetaLearningService {
   private async mamlStep(
     supportSet: tf.Tensor[],
     querySet: tf.Tensor[],
-    innerSteps: number
+    innerSteps: number,
   ): Promise<tf.Scalar> {
     return tf.tidy(() => {
       // 克隆模型参数
       const clonedParams = this.metaModel!.getWeights().map(w => w.clone());
-      
+
       // 内循环优化
       for (let i = 0; i < innerSteps; i++) {
         const supportLoss = this.computeTaskLoss(supportSet[0], supportSet[1]);
         const gradFunc = (...args: tf.Tensor[]) => supportLoss;
         const grads = tf.grads(gradFunc)([supportSet[0]]);
-        
+
         // 更新克隆的参数
         clonedParams.forEach((param, j) => {
           const update = grads[j].mul(this.config.innerLearningRate);
@@ -120,7 +140,7 @@ export class MetaLearningService {
     tasks: Array<{
       support: { x: tf.Tensor; y: tf.Tensor };
       query: { x: tf.Tensor; y: tf.Tensor };
-    }>
+    }>,
   ): Promise<void> {
     if (!this.metaModel) {
       this.metaModel = await this.buildMetaModel();
@@ -130,15 +150,15 @@ export class MetaLearningService {
 
     for (let step = 0; step < this.config.outerSteps; step++) {
       const taskBatch = this.sampleTasks(tasks, this.config.metaBatchSize);
-      
+
       const losses = await Promise.all(
-        taskBatch.map(task => 
+        taskBatch.map(task =>
           this.mamlStep(
             [task.support.x, task.support.y],
             [task.query.x, task.query.y],
-            this.config.innerSteps
-          )
-        )
+            this.config.innerSteps,
+          ),
+        ),
       );
 
       const totalLossScalar = tf.tidy(() => tf.stack(losses).mean());
@@ -147,12 +167,12 @@ export class MetaLearningService {
       const gradFunc = (...args: tf.Tensor[]) => totalLossScalar as tf.Tensor;
       const inputTensor = tf.tensor1d([1.0]);
       const grads = tf.grads(gradFunc)([inputTensor]);
-      
+
       const namedGrads = this.metaModel.trainableWeights.map((w, i) => ({
         name: w.name,
-        tensor: grads[i]
+        tensor: grads[i],
       }));
-      
+
       optimizer.applyGradients(namedGrads);
 
       // 记录训练进度
@@ -170,12 +190,10 @@ export class MetaLearningService {
   }
 
   // 快速适应
-  async adapt(
-    task: {
-      support: { x: tf.Tensor; y: tf.Tensor };
-      query: { x: tf.Tensor; y: tf.Tensor };
-    }
-  ): Promise<tf.LayersModel> {
+  async adapt(task: {
+    support: { x: tf.Tensor; y: tf.Tensor };
+    query: { x: tf.Tensor; y: tf.Tensor };
+  }): Promise<tf.LayersModel> {
     if (!this.metaModel) {
       throw new Error('元模型未初始化');
     }
@@ -189,7 +207,7 @@ export class MetaLearningService {
     for (let i = 0; i < this.config.adaptationSteps; i++) {
       const loss = this.computeTaskLoss(task.support.x, task.support.y);
       const grads = tf.grads(() => loss);
-      
+
       // 更新适应后的模型
       const newWeights = adaptedModel.getWeights().map((w, j) => {
         const update = grads[j].mul(this.config.innerLearningRate);
@@ -233,7 +251,7 @@ export class MetaLearningService {
         this.config = config;
       }
     } catch (error) {
-      console.error('加载元模型失败:', error);
+      console.error('Error in meta-learning.service.ts:', '加载元模型失败:', error);
     }
   }
 
@@ -242,7 +260,7 @@ export class MetaLearningService {
     tasks: Array<{
       support: { x: tf.Tensor; y: tf.Tensor };
       query: { x: tf.Tensor; y: tf.Tensor };
-    }>
+    }>,
   ): Promise<{
     averageAccuracy: number;
     adaptationSpeed: number;
@@ -251,23 +269,20 @@ export class MetaLearningService {
     const results = await Promise.all(
       tasks.map(async task => {
         const adaptedModel = await this.adapt(task);
-        const evaluation = await adaptedModel.evaluate(
-          task.query.x,
-          task.query.y
-        ) as tf.Scalar[];
-        
+        const evaluation = (await adaptedModel.evaluate(task.query.x, task.query.y)) as tf.Scalar[];
+
         return {
           accuracy: evaluation[1].dataSync()[0],
           adaptationTime: 0, // 需要实现计时逻辑
-          queryLoss: evaluation[0].dataSync()[0]
+          queryLoss: evaluation[0].dataSync()[0],
         };
-      })
+      }),
     );
 
     return {
       averageAccuracy: results.reduce((acc, r) => acc + r.accuracy, 0) / results.length,
       adaptationSpeed: results.reduce((acc, r) => acc + r.adaptationTime, 0) / results.length,
-      generalization: results.reduce((acc, r) => acc + r.queryLoss, 0) / results.length
+      generalization: results.reduce((acc, r) => acc + r.queryLoss, 0) / results.length,
     };
   }
-} 
+}

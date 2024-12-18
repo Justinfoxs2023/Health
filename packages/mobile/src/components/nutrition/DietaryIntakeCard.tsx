@@ -1,21 +1,28 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+
 import { Card, Text, useTheme } from 'react-native-paper';
 import { PieChart } from 'react-native-chart-kit';
+import { View, StyleSheet } from 'react-native';
 
-interface NutrientData {
+interface INutrientData {
+  /** name 的描述 */
   name: string;
+  /** value 的描述 */
   value: number;
+  /** color 的描述 */
   color: string;
 }
 
-interface DietaryIntakeCardProps {
+interface IDietaryIntakeCardProps {
+  /** calories 的描述 */
   calories: number;
-  nutrients: NutrientData[];
+  /** nutrients 的描述 */
+  nutrients: INutrientData[];
+  /** goal 的描述 */
   goal: number;
 }
 
-export const DietaryIntakeCard = ({ calories, nutrients, goal }: DietaryIntakeCardProps) => {
+export const DietaryIntakeCard = ({ calories, nutrients, goal }: IDietaryIntakeCardProps) => {
   const theme = useTheme();
 
   const chartData = nutrients.map(nutrient => ({
@@ -79,4 +86,4 @@ const styles = StyleSheet.create({
     color: '#666',
     marginTop: 4,
   },
-}); 
+});

@@ -1,10 +1,17 @@
+/**
+ * @fileoverview TS 文件 FirstScreenMonitor.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export class FirstScreenMonitor {
   private static metrics = {
     firstPaint: 0,
     firstContentfulPaint: 0,
     firstMeaningfulPaint: 0,
     domContentLoaded: 0,
-    loadComplete: 0
+    loadComplete: 0,
   };
 
   static init() {
@@ -14,7 +21,7 @@ export class FirstScreenMonitor {
   }
 
   private static observePaints() {
-    const observer = new PerformanceObserver((list) => {
+    const observer = new PerformanceObserver(list => {
       for (const entry of list.getEntries()) {
         switch (entry.name) {
           case 'first-paint':
@@ -48,4 +55,4 @@ export class FirstScreenMonitor {
     console.log('首屏加载性能指标:', this.metrics);
     // TODO: 发送性能数据到分析服务
   }
-} 
+}

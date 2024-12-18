@@ -1,20 +1,33 @@
+/**
+ * @fileoverview TS 文件 types.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // 个性化方案类型定义
-export interface PersonalizedPlan {
-  id: string;
-  userId: string;
-  type: 'exercise' | 'diet';
-  status: 'active' | 'completed' | 'paused';
+export interface IPersonalizedPlan {
+  /** id 的描述 */
+    id: string;
+  /** userId 的描述 */
+    userId: string;
+  /** type 的描述 */
+    type: exercise  /** diet 的描述 */
+    /** diet 的描述 */
+    diet;
+  /** status 的描述 */
+    status: active  completed  paused;
   startDate: Date;
   endDate: Date;
-  progress: number; // 0-100
+  progress: number;  0100
 
-  // 目标设定
-  goals: Array<{
+   
+  goals: Array{
     type: string;
     target: number;
     unit: string;
     currentValue: number;
-    priority: 'high' | 'medium' | 'low';
+    priority: high  medium  low;
   }>;
 
   // 调整历史
@@ -26,9 +39,10 @@ export interface PersonalizedPlan {
 }
 
 // 运动计划详情
-export interface ExercisePlan extends PersonalizedPlan {
+export interface IExercisePlan extends IPersonalizedPlan {
   // 运动安排
-  schedule: Array<{
+  /** schedule 的描述 */
+    schedule: Array<{
     dayOfWeek: number;
     exercises: Array<{
       name: string;
@@ -43,14 +57,16 @@ export interface ExercisePlan extends PersonalizedPlan {
   }>;
 
   // 运动限制
-  restrictions: Array<{
+  /** restrictions 的描述 */
+    restrictions: Array<{
     type: string;
     description: string;
     alternatives: string[];
   }>;
 
   // 进度追踪
-  tracking: {
+  /** tracking 的描述 */
+    tracking: {
     weeklyTarget: {
       sessions: number;
       totalDuration: number;
@@ -65,9 +81,10 @@ export interface ExercisePlan extends PersonalizedPlan {
 }
 
 // 饮食方案详情
-export interface DietPlan extends PersonalizedPlan {
+export interface IDietPlan extends IPersonalizedPlan {
   // 营养目标
-  nutritionTargets: {
+  /** nutritionTargets 的描述 */
+    nutritionTargets: {
     calories: number;
     macros: {
       protein: number;
@@ -78,7 +95,8 @@ export interface DietPlan extends PersonalizedPlan {
   };
 
   // 膳食安排
-  mealSchedule: Array<{
+  /** mealSchedule 的描述 */
+    mealSchedule: Array<{
     type: 'breakfast' | 'lunch' | 'dinner' | 'snack';
     time: string;
     suggestions: Array<{
@@ -96,15 +114,17 @@ export interface DietPlan extends PersonalizedPlan {
   }>;
 
   // 饮食限制
-  restrictions: Array<{
+  /** restrictions 的描述 */
+    restrictions: Array<{
     type: 'allergy' | 'preference' | 'medical';
     items: string[];
     alternatives: string[];
   }>;
 
   // 水分摄入
-  hydration: {
+  /** hydration 的描述 */
+    hydration: {
     dailyTarget: number;
     reminders: string[];
   };
-} 
+}

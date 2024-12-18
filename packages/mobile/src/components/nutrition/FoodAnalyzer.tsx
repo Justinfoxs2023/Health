@@ -1,45 +1,61 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Image, ScrollView } from 'react-native';
-import { Card, Text, Button, Chip, useTheme, ActivityIndicator } from 'react-native-paper';
-import { Camera } from 'expo-camera';
-import * as ImagePicker from 'expo-image-picker';
 
-interface NutritionInfo {
+import * as ImagePicker from 'expo-image-picker';
+import { Camera } from 'expo-camera';
+import { Card, Text, Button, Chip, useTheme, ActivityIndicator } from 'react-native-paper';
+import { View, StyleSheet, Image, ScrollView } from 'react-native';
+
+interface INutritionInfo {
+  /** calories 的描述 */
   calories: number;
+  /** protein 的描述 */
   protein: number;
+  /** carbs 的描述 */
   carbs: number;
+  /** fat 的描述 */
   fat: number;
+  /** fiber 的描述 */
   fiber: number;
+  /** vitamins 的描述 */
   vitamins: {
     [key: string]: number;
   };
+  /** minerals 的描述 */
   minerals: {
     [key: string]: number;
   };
 }
 
-interface FoodAnalysis {
+interface IFoodAnalysis {
+  /** foodName 的描述 */
   foodName: string;
+  /** confidence 的描述 */
   confidence: number;
+  /** portion 的描述 */
   portion: string;
-  nutrition: NutritionInfo;
+  /** nutrition 的描述 */
+  nutrition: INutritionInfo;
+  /** healthIndex 的描述 */
   healthIndex: number;
+  /** recommendations 的描述 */
   recommendations: string[];
+  /** alternatives 的描述 */
   alternatives: Array<{
     name: string;
     reason: string;
   }>;
 }
 
-interface FoodAnalyzerProps {
-  onAnalysisComplete: (analysis: FoodAnalysis) => void;
+interface IFoodAnalyzerProps {
+  /** onAnalysisComplete 的描述 */
+  onAnalysisComplete: (analysis: IFoodAnalysis) => void;
 }
 
-export const FoodAnalyzer = ({ onAnalysisComplete }: FoodAnalyzerProps) => {
+export const FoodAnalyzer = ({ onAnalysisComplete }: IFoodAnalyzerProps) => {
   const theme = useTheme();
   const [image, setImage] = useState<string | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
-  const [analysis, setAnalysis] = useState<FoodAnalysis | null>(null);
+  const [analysis, setAnalysis] = useState<IFoodAnalysis | null>(null);
 
   const takePicture = async () => {
     const { status } = await Camera.requestCameraPermissionsAsync();
@@ -101,7 +117,7 @@ export const FoodAnalyzer = ({ onAnalysisComplete }: FoodAnalyzerProps) => {
       setAnalysis(result);
       onAnalysisComplete(result);
     } catch (error) {
-      console.error('食物分析失败:', error);
+      console.error('Error in FoodAnalyzer.tsx:', '食物分析失败:', error);
       alert('食物分析失败，请重试');
     } finally {
       setAnalyzing(false);
@@ -111,20 +127,10 @@ export const FoodAnalyzer = ({ onAnalysisComplete }: FoodAnalyzerProps) => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.buttonContainer}>
-        <Button
-          mode="contained"
-          onPress={takePicture}
-          icon="camera"
-          style={styles.button}
-        >
+        <Button mode="contained" onPress={takePicture} icon="camera" style={styles.button}>
           拍摄食物
         </Button>
-        <Button
-          mode="outlined"
-          onPress={pickImage}
-          icon="image"
-          style={styles.button}
-        >
+        <Button mode="outlined" onPress={pickImage} icon="image" style={styles.button}>
           从相册选择
         </Button>
       </View>
@@ -147,35 +153,25 @@ export const FoodAnalyzer = ({ onAnalysisComplete }: FoodAnalyzerProps) => {
           <Card.Content>
             <View style={styles.header}>
               <Text style={styles.foodName}>{analysis.foodName}</Text>
-              <Chip mode="outlined">
-                {Math.round(analysis.confidence * 100)}% 匹配
-              </Chip>
+              <Chip mode="outlined">{Math.round(analysis.confidence * 100)}% 匹配</Chip>
             </View>
 
             <Text style={styles.sectionTitle}>营养成分</Text>
             <View style={styles.nutritionGrid}>
               <View style={styles.nutritionItem}>
-                <Text style={styles.nutritionValue}>
-                  {analysis.nutrition.calories}
-                </Text>
+                <Text style={styles.nutritionValue}>{analysis.nutrition.calories}</Text>
                 <Text style={styles.nutritionLabel}>卡路里</Text>
               </View>
               <View style={styles.nutritionItem}>
-                <Text style={styles.nutritionValue}>
-                  {analysis.nutrition.protein}g
-                </Text>
+                <Text style={styles.nutritionValue}>{analysis.nutrition.protein}g</Text>
                 <Text style={styles.nutritionLabel}>蛋白质</Text>
               </View>
               <View style={styles.nutritionItem}>
-                <Text style={styles.nutritionValue}>
-                  {analysis.nutrition.carbs}g
-                </Text>
+                <Text style={styles.nutritionValue}>{analysis.nutrition.carbs}g</Text>
                 <Text style={styles.nutritionLabel}>碳水</Text>
               </View>
               <View style={styles.nutritionItem}>
-                <Text style={styles.nutritionValue}>
-                  {analysis.nutrition.fat}g
-                </Text>
+                <Text style={styles.nutritionValue}>{analysis.nutrition.fat}g</Text>
                 <Text style={styles.nutritionLabel}>脂肪</Text>
               </View>
             </View>
@@ -191,9 +187,7 @@ export const FoodAnalyzer = ({ onAnalysisComplete }: FoodAnalyzerProps) => {
             {analysis.alternatives.map((alternative, index) => (
               <View key={index} style={styles.alternative}>
                 <Text style={styles.alternativeName}>{alternative.name}</Text>
-                <Text style={styles.alternativeReason}>
-                  {alternative.reason}
-                </Text>
+                <Text style={styles.alternativeReason}>{alternative.reason}</Text>
               </View>
             ))}
           </Card.Content>
@@ -288,4 +282,4 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
   },
-}); 
+});

@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Param } from '@nestjs/common';
 import { RewardService } from '../services/reward.service';
 
-@Controller('rewards')
+@Controller()
 export class RewardController {
   constructor(private readonly rewardService: RewardService) {}
 
@@ -10,8 +10,8 @@ export class RewardController {
     return this.rewardService.getAvailableRewards();
   }
 
-  @Post(':id/claim')
-  async claimReward(@Param('id') id: string) {
+  @Post()
+  async claimReward(@Param() id: string) {
     return this.rewardService.claimReward(id);
   }
-} 
+}

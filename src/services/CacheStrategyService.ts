@@ -1,10 +1,11 @@
 import { PerformanceOptimizer } from '@/utils/PerformanceOptimizer';
 
-interface CacheStrategy {
-  type: 'memory' | 'localStorage' | 'indexedDB';
+interface ICacheStrategy {
+  /** type 的描述 */
+    type: memory  localStorage  indexedDB;
   ttl: number;
-  maxSize?: number;
-  priority?: 'high' | 'normal' | 'low';
+  maxSize: number;
+  priority: high  normal  low;
 }
 
 export class CacheStrategyService {
@@ -12,7 +13,7 @@ export class CacheStrategyService {
   private static db: IDBDatabase;
 
   // 多级缓存
-  static async get(key: string, strategies: CacheStrategy[]) {
+  static async get(key: string, strategies: ICacheStrategy[]) {
     for (const strategy of strategies) {
       const value = await this.getFromStrategy(key, strategy);
       if (value) return value;
@@ -26,7 +27,7 @@ export class CacheStrategyService {
       const data = await this.fetchData(key);
       await this.set(key, data, {
         type: 'memory',
-        ttl: 5 * 60 * 1000 // 5分钟
+        ttl: 5 * 60 * 1000, // 5分钟
       });
     });
 
@@ -61,16 +62,16 @@ export class CacheStrategyService {
   private static lruCache = {
     capacity: 1000,
     cache: new Map(),
-    
+
     get(key: string) {
       if (!this.cache.has(key)) return null;
-      
+
       const value = this.cache.get(key);
       this.cache.delete(key);
       this.cache.set(key, value);
       return value;
     },
-    
+
     put(key: string, value: any) {
       if (this.cache.has(key)) {
         this.cache.delete(key);
@@ -78,6 +79,6 @@ export class CacheStrategyService {
         this.cache.delete(this.cache.keys().next().value);
       }
       this.cache.set(key, value);
-    }
+    },
   };
-} 
+}

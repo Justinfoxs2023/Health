@@ -1,18 +1,23 @@
 import * as tf from '@tensorflow/tfjs-node';
-import { Logger } from '../../shared/utils/logger';
 import { DataProcessor } from '../../shared/utils/data-processor';
-import { HealthData } from '../../shared/types/health.types';
+import { IHealthData } from '../../shared/types/health.types';
+import { Logger } from '../../shared/utils/logger';
 
 const logger = new Logger('LifestyleModelTraining');
 
 /**
  * 生活方式模型训练配置
  */
-interface TrainingConfig {
+interface ITrainingConfig {
+  /** epochs 的描述 */
   epochs: number;
+  /** batchSize 的描述 */
   batchSize: number;
+  /** validationSplit 的描述 */
   validationSplit: number;
+  /** learningRate 的描述 */
   learningRate: number;
+  /** modelArchitecture 的描述 */
   modelArchitecture: {
     hiddenLayers: number[];
     dropout: number;
@@ -22,15 +27,15 @@ interface TrainingConfig {
 /**
  * 默认训练配置
  */
-const defaultConfig: TrainingConfig = {
+const defaultConfig: ITrainingConfig = {
   epochs: 100,
   batchSize: 32,
   validationSplit: 0.2,
   learningRate: 0.001,
   modelArchitecture: {
     hiddenLayers: [128, 64, 32],
-    dropout: 0.3
-  }
+    dropout: 0.3,
+  },
 };
 
 /**
@@ -40,7 +45,7 @@ export class LifestyleModelTrainer {
   private readonly dataProcessor: DataProcessor;
   private model: tf.LayersModel | null = null;
 
-  constructor(private readonly config: TrainingConfig = defaultConfig) {
+  constructor(private readonly config: ITrainingConfig = defaultConfig) {
     this.dataProcessor = new DataProcessor();
   }
 
@@ -51,32 +56,38 @@ export class LifestyleModelTrainer {
     const model = tf.sequential();
 
     // 输入层
-    model.add(tf.layers.dense({
-      units: this.config.modelArchitecture.hiddenLayers[0],
-      activation: 'relu',
-      inputShape: [inputShape]
-    }));
+    model.add(
+      tf.layers.dense({
+        units: this.config.modelArchitecture.hiddenLayers[0],
+        activation: 'relu',
+        inputShape: [inputShape],
+      }),
+    );
 
     // 隐藏层
     for (let i = 1; i < this.config.modelArchitecture.hiddenLayers.length; i++) {
       model.add(tf.layers.dropout({ rate: this.config.modelArchitecture.dropout }));
-      model.add(tf.layers.dense({
-        units: this.config.modelArchitecture.hiddenLayers[i],
-        activation: 'relu'
-      }));
+      model.add(
+        tf.layers.dense({
+          units: this.config.modelArchitecture.hiddenLayers[i],
+          activation: 'relu',
+        }),
+      );
     }
 
     // 输出层
-    model.add(tf.layers.dense({
-      units: 5, // 总分 + 4个类别分数(睡眠、活动、营养、压力)
-      activation: 'sigmoid'
-    }));
+    model.add(
+      tf.layers.dense({
+        units: 5, // 总分 + 4个类别分数(睡眠、活动、营养、压力)
+        activation: 'sigmoid',
+      }),
+    );
 
     // 编译模型
     model.compile({
       optimizer: tf.train.adam(this.config.learningRate),
       loss: 'meanSquaredError',
-      metrics: ['accuracy']
+      metrics: ['accuracy'],
     });
 
     return model;
@@ -85,13 +96,13 @@ export class LifestyleModelTrainer {
   /**
    * 准备训练数据
    */
-  private async prepareData(data: HealthData[]): Promise<{
+  private async prepareData(data: IHealthData[]): Promise<{
     trainFeatures: tf.Tensor2D;
     trainLabels: tf.Tensor2D;
   }> {
     try {
       const processedData = await Promise.all(
-        data.map(d => this.dataProcessor.processHealthData(d))
+        data.map(d => this.dataProcessor.processHealthData(d)),
       );
 
       const features = processedData.map(d => d.features.flat());
@@ -99,7 +110,7 @@ export class LifestyleModelTrainer {
 
       return {
         trainFeatures: tf.tensor2d(features),
-        trainLabels: tf.tensor2d(labels)
+        trainLabels: tf.tensor2d(labels),
       };
     } catch (error) {
       logger.error('准备训练数据失败', error);
@@ -110,14 +121,14 @@ export class LifestyleModelTrainer {
   /**
    * 生成标签
    */
-  private generateLabels(data: HealthData[]): number[][] {
+  private generateLabels(data: IHealthData[]): number[][] {
     return data.map(d => {
       // 计算各项评分
       const sleepScore = this.calculateSleepScore(d.lifestyleData);
       const activityScore = this.calculateActivityScore(d.lifestyleData);
       const nutritionScore = this.calculateNutritionScore(d.nutritionData);
       const stressScore = this.calculateStressScore(d.mentalData);
-      
+
       // 计算总分
       const overallScore = (sleepScore + activityScore + nutritionScore + stressScore) / 4;
 
@@ -128,7 +139,7 @@ export class LifestyleModelTrainer {
   /**
    * 计算睡眠评分
    */
-  private calculateSleepScore(lifestyle: HealthData['lifestyleData']): number {
+  private calculateSleepScore(lifestyle: IHealthData['lifestyleData']): number {
     const sleepHoursScore = this.normalizeInRange(lifestyle.sleepHours, 7, 9);
     return sleepHoursScore;
   }
@@ -136,21 +147,20 @@ export class LifestyleModelTrainer {
   /**
    * 计算活动评分
    */
-  private calculateActivityScore(lifestyle: HealthData['lifestyleData']): number {
+  private calculateActivityScore(lifestyle: IHealthData['lifestyleData']): number {
     const activityLevelScore = lifestyle.activityLevel / 10;
-    
+
     // 计算每日活动时长得分
     const totalDuration = lifestyle.activities.reduce(
       (sum, activity) => sum + activity.duration,
-      0
+      0,
     );
     const durationScore = this.normalizeInRange(totalDuration, 30, 60);
 
     // 计算活动强度得分
-    const avgIntensity = lifestyle.activities.reduce(
-      (sum, activity) => sum + activity.intensity,
-      0
-    ) / lifestyle.activities.length || 0;
+    const avgIntensity =
+      lifestyle.activities.reduce((sum, activity) => sum + activity.intensity, 0) /
+        lifestyle.activities.length || 0;
     const intensityScore = avgIntensity / 10;
 
     return (activityLevelScore + durationScore + intensityScore) / 3;
@@ -159,10 +169,10 @@ export class LifestyleModelTrainer {
   /**
    * 计算营养评分
    */
-  private calculateNutritionScore(nutrition: HealthData['nutritionData']): number {
+  private calculateNutritionScore(nutrition: IHealthData['nutritionData']): number {
     // 计算卡路里摄入得分
     const calorieScore = this.normalizeInRange(nutrition.calorieIntake, 1500, 2500);
-    
+
     // 计算水分摄入得分
     const waterScore = this.normalizeInRange(nutrition.waterIntake, 2000, 3000);
 
@@ -175,17 +185,13 @@ export class LifestyleModelTrainer {
   /**
    * 计算餐食规律性评分
    */
-  private calculateMealRegularity(meals: HealthData['nutritionData']['meals']): number {
+  private calculateMealRegularity(meals: IHealthData['nutritionData']['meals']): number {
     // 检查三餐是否规律
     const mealTypes = new Set(meals.map(m => m.type));
-    const hasAllMeals = ['breakfast', 'lunch', 'dinner'].every(type => 
-      mealTypes.has(type as any)
-    );
+    const hasAllMeals = ['breakfast', 'lunch', 'dinner'].every(type => mealTypes.has(type as any));
 
     // 检查进餐时间间隔
-    const mealTimes = meals
-      .filter(m => m.type !== 'snack')
-      .map(m => new Date(m.time).getHours());
+    const mealTimes = meals.filter(m => m.type !== 'snack').map(m => new Date(m.time).getHours());
     const hasProperIntervals = this.checkMealIntervals(mealTimes);
 
     return hasAllMeals && hasProperIntervals ? 1 : 0.5;
@@ -196,26 +202,26 @@ export class LifestyleModelTrainer {
    */
   private checkMealIntervals(mealTimes: number[]): boolean {
     if (mealTimes.length < 2) return false;
-    
+
     mealTimes.sort((a, b) => a - b);
     for (let i = 1; i < mealTimes.length; i++) {
       const interval = mealTimes[i] - mealTimes[i - 1];
       if (interval < 3 || interval > 6) return false;
     }
-    
+
     return true;
   }
 
   /**
    * 计算压力评分
    */
-  private calculateStressScore(mental: HealthData['mentalData']): number {
+  private calculateStressScore(mental: IHealthData['mentalData']): number {
     // 压力水平得分(反向计算,压力越低分数越高)
-    const stressScore = 1 - (mental.stressLevel / 10);
-    
+    const stressScore = 1 - mental.stressLevel / 10;
+
     // 情绪得分
     const moodScore = mental.moodScore / 10;
-    
+
     // 睡眠质量得分
     const sleepQualityScore = mental.sleepQuality / 10;
 
@@ -234,15 +240,15 @@ export class LifestyleModelTrainer {
   /**
    * 训练模型
    */
-  async train(data: HealthData[]): Promise<tf.History> {
+  async train(data: IHealthData[]): Promise<tf.History> {
     try {
       logger.info('开始训练模型', {
         dataSize: data.length,
-        config: this.config
+        config: this.config,
       });
 
       const { trainFeatures, trainLabels } = await this.prepareData(data);
-      
+
       // 创建模型
       this.model = this.createModel(trainFeatures.shape[1]);
 
@@ -254,13 +260,13 @@ export class LifestyleModelTrainer {
         callbacks: {
           onEpochEnd: (epoch, logs) => {
             logger.debug('训练进度', { epoch, ...logs });
-          }
-        }
+          },
+        },
       });
 
       logger.info('模型训练完成', {
         finalLoss: history.history.loss[history.history.loss.length - 1],
-        finalAccuracy: history.history.acc[history.history.acc.length - 1]
+        finalAccuracy: history.history.acc[history.history.acc.length - 1],
       });
 
       // 保存模型
@@ -293,7 +299,7 @@ export class LifestyleModelTrainer {
   /**
    * 评估模型
    */
-  async evaluate(testData: HealthData[]): Promise<{
+  async evaluate(testData: IHealthData[]): Promise<{
     loss: number;
     accuracy: number;
   }> {
@@ -307,11 +313,11 @@ export class LifestyleModelTrainer {
 
       return {
         loss: (result as tf.Scalar[])[0].dataSync()[0],
-        accuracy: (result as tf.Scalar[])[1].dataSync()[0]
+        accuracy: (result as tf.Scalar[])[1].dataSync()[0],
       };
     } catch (error) {
       logger.error('模型评估失败', error);
       throw error;
     }
   }
-} 
+}

@@ -1,10 +1,14 @@
 import { openDB, IDBPDatabase } from 'idb';
+
 import { NetworkStatus } from '@/utils/networkStatus';
 
-interface CacheConfig {
-  storeName: string;
-  maxAge?: number;
-  priority?: 'high' | 'normal' | 'low';
+interface ICacheConfig {
+  /** storeName 的描述 */
+    storeName: string;
+  /** maxAge 的描述 */
+    maxAge: number;
+  /** priority 的描述 */
+    priority: high  normal  low;
 }
 
 export class OfflineManager {
@@ -30,12 +34,12 @@ export class OfflineManager {
         db.createObjectStore('media', { keyPath: 'url' });
         // 同步队列存储
         db.createObjectStore('syncQueue', { keyPath: 'timestamp' });
-      }
+      },
     });
   }
 
   // 数据缓存
-  async cacheData(config: CacheConfig, data: any) {
+  async cacheData(config: ICacheConfig, data: any) {
     try {
       await this.db.put(config.storeName, {
         ...data,
@@ -43,7 +47,7 @@ export class OfflineManager {
         maxAge: config.maxAge,
       });
     } catch (error) {
-      console.error('缓存数据失败:', error);
+      console.error('Error in OfflineManager.ts:', '缓存数据失败:', error);
     }
   }
 
@@ -53,11 +57,11 @@ export class OfflineManager {
       this.syncQueue.push({
         action: 'collect',
         data,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
       await this.db.put('syncQueue', this.syncQueue);
     } catch (error) {
-      console.error('离线数据收集失败:', error);
+      console.error('Error in OfflineManager.ts:', '离线数据收集失败:', error);
     }
   }
 
@@ -72,7 +76,7 @@ export class OfflineManager {
       }
       await this.db.clear('syncQueue');
     } catch (error) {
-      console.error('数据同步失败:', error);
+      console.error('Error in OfflineManager.ts:', '数据同步失败:', error);
     }
   }
 
@@ -81,4 +85,4 @@ export class OfflineManager {
     // 基于时间戳的冲突解决
     return localData.timestamp > serverData.timestamp ? localData : serverData;
   }
-} 
+}

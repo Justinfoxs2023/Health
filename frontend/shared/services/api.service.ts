@@ -10,8 +10,8 @@ export class ApiService {
       baseURL: process.env.API_URL,
       timeout: 10000,
       headers: {
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+      },
     });
 
     this.setupInterceptors();
@@ -27,28 +27,28 @@ export class ApiService {
   private setupInterceptors() {
     // 请求拦截器
     this.api.interceptors.request.use(
-      async (config) => {
+      async config => {
         const token = await storage.get('token');
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
         return config;
       },
-      (error) => {
+      error => {
         return Promise.reject(error);
-      }
+      },
     );
 
     // 响应拦截器
     this.api.interceptors.response.use(
-      (response) => response.data,
-      (error) => {
+      response => response.data,
+      error => {
         if (error.response?.status === 401) {
           // 处理token过期
           this.handleUnauthorized();
         }
         return Promise.reject(error);
-      }
+      },
     );
   }
 
@@ -73,4 +73,4 @@ export class ApiService {
   async delete<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
     return this.api.delete(url, config);
   }
-} 
+}

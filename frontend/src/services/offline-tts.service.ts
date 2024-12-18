@@ -1,26 +1,36 @@
-import { LocalDatabase } from '../utils/local-database';
+import { ILocalDatabase } from '../utils/local-database';
 
-interface VoiceConfig {
+interface IVoiceConfig {
+  /** id 的描述 */
   id: string;
+  /** name 的描述 */
   name: string;
+  /** gender 的描述 */
   gender: 'male' | 'female';
+  /** language 的描述 */
   language: string;
+  /** model 的描述 */
   model: ArrayBuffer;
+  /** sampleRate 的描述 */
   sampleRate: number;
 }
 
-interface SynthesisOptions {
+interface ISynthesisOptions {
+  /** pitch 的描述 */
   pitch?: number;
+  /** rate 的描述 */
   rate?: number;
+  /** volume 的描述 */
   volume?: number;
+  /** emotion 的描述 */
   emotion?: string;
 }
 
 export class OfflineTTSService {
-  private db: LocalDatabase;
+  private db: ILocalDatabase;
   private audioContext: AudioContext;
-  private voices: Map<string, VoiceConfig> = new Map();
-  private currentVoice: VoiceConfig | null = null;
+  private voices: Map<string, IVoiceConfig> = new Map();
+  private currentVoice: IVoiceConfig | null = null;
   private synthesisModel: any = null;
 
   constructor() {
@@ -46,7 +56,7 @@ export class OfflineTTSService {
       // 从服务器同步
       const response = await fetch('/api/tts/voices');
       const voices = await response.json();
-      
+
       // 更新配置
       for (const voice of voices) {
         this.voices.set(voice.id, voice);
@@ -55,7 +65,7 @@ export class OfflineTTSService {
       // 保存到本地
       await this.db.put('voice-configs', Array.from(this.voices.entries()));
     } catch (error) {
-      console.error('加载语音配置失败:', error);
+      console.error('Error in offline-tts.service.ts:', '加载语音配置失败:', error);
     }
   }
 
@@ -71,12 +81,12 @@ export class OfflineTTSService {
       // 从服务器下载
       const response = await fetch('/api/tts/model');
       const model = await response.arrayBuffer();
-      
+
       // 保存到本地
       await this.db.put('synthesis-model', model);
       this.synthesisModel = await this.initializeModel(model);
     } catch (error) {
-      console.error('加载合成模型失败:', error);
+      console.error('Error in offline-tts.service.ts:', '加载合成模型失败:', error);
     }
   }
 
@@ -98,7 +108,7 @@ export class OfflineTTSService {
   }
 
   // 加载语音模型
-  private async loadVoiceModel(voice: VoiceConfig) {
+  private async loadVoiceModel(voice: IVoiceConfig) {
     try {
       const modelData = await this.db.get(`voice-model-${voice.id}`);
       if (!modelData) {
@@ -108,12 +118,12 @@ export class OfflineTTSService {
         await this.db.put(`voice-model-${voice.id}`, model);
       }
     } catch (error) {
-      console.error(`加载语音模型失败: ${voice.id}`, error);
+      console.error('Error in offline-tts.service.ts:', `加载语音模型失败: ${voice.id}`, error);
     }
   }
 
   // 合成语音
-  async synthesize(text: string, options: SynthesisOptions = {}): Promise<AudioBuffer> {
+  async synthesize(text: string, options: ISynthesisOptions = {}): Promise<AudioBuffer> {
     if (!this.currentVoice || !this.synthesisModel) {
       throw new Error('未设置语音或模型未加载');
     }
@@ -121,14 +131,14 @@ export class OfflineTTSService {
     try {
       // 文本预处理
       const processedText = await this.preprocessText(text);
-      
+
       // 生成音频
       const audioData = await this.generateAudio(processedText, options);
-      
+
       // 后处理
       return this.postprocessAudio(audioData);
     } catch (error) {
-      console.error('语音合成失败:', error);
+      console.error('Error in offline-tts.service.ts:', '语音合成失败:', error);
       throw error;
     }
   }
@@ -140,7 +150,7 @@ export class OfflineTTSService {
   }
 
   // 生成音频
-  private async generateAudio(text: string, options: SynthesisOptions): Promise<Float32Array> {
+  private async generateAudio(text: string, options: ISynthesisOptions): Promise<Float32Array> {
     // 实现音频生成逻辑
     return new Float32Array();
   }
@@ -160,7 +170,7 @@ export class OfflineTTSService {
   }
 
   // 获取可用语音列表
-  getAvailableVoices(): VoiceConfig[] {
+  getAvailableVoices(): IVoiceConfig[] {
     return Array.from(this.voices.values());
   }
 
@@ -176,4 +186,4 @@ export class OfflineTTSService {
       await this.loadVoiceModel(voice);
     }
   }
-} 
+}

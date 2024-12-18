@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 nest-common.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 declare module '@nestjs/common' {
   export const Module: Function;
   export const Injectable: Function;
@@ -26,7 +33,7 @@ declare module '@nestjs/core' {
 declare module '@nestjs/microservices' {
   export const Client: Function;
   export interface ClientGrpc {
-    getService<T>(service: string): T;
+    getServiceTservice: string: T;
   }
   export interface GrpcOptions {
     transport: any;
@@ -35,4 +42,4 @@ declare module '@nestjs/microservices' {
       protoPath: string;
     };
   }
-} 
+}

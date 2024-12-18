@@ -1,6 +1,6 @@
+import { DataHashService } from './data-hash.service';
 import { Logger } from '../../utils/logger';
 import { PlatformStateService } from './platform-state.service';
-import { DataHashService } from './data-hash.service';
 
 export class ConsistencyCheckerService {
   private logger: Logger;
@@ -18,13 +18,13 @@ export class ConsistencyCheckerService {
     try {
       // 1. 收集状态快照
       const snapshots = await this.collectSnapshots(platforms);
-      
+
       // 2. 生成数据哈希
       const hashes = await this.generateHashes(snapshots);
-      
+
       // 3. 比较差异
       const differences = this.compareDifferences(hashes);
-      
+
       // 4. 生成报告
       return this.generateReport(differences);
     } catch (error) {
@@ -34,21 +34,17 @@ export class ConsistencyCheckerService {
   }
 
   // 修复不一致
-  async repairInconsistency(
-    source: string,
-    target: string,
-    data: any
-  ): Promise<void> {
+  async repairInconsistency(source: string, target: string, data: any): Promise<void> {
     try {
       // 1. 验证源数据
       await this.validateSourceData(source, data);
-      
+
       // 2. 准备修复
       const repairPlan = await this.prepareRepair(source, target, data);
-      
+
       // 3. 执行修复
       await this.executeRepair(repairPlan);
-      
+
       // 4. 验证修复
       await this.verifyRepair(source, target);
     } catch (error) {
@@ -58,10 +54,7 @@ export class ConsistencyCheckerService {
   }
 
   // 监控一致性
-  startConsistencyMonitor(
-    platforms: string[],
-    interval: number
-  ): () => void {
+  startConsistencyMonitor(platforms: string[], interval: number): () => void {
     const timer = setInterval(async () => {
       try {
         const report = await this.checkConsistency(platforms);
@@ -85,7 +78,7 @@ export class ConsistencyCheckerService {
       hasDifferences: differences.length > 0,
       differences,
       recommendations: this.generateRecommendations(differences),
-      summary: this.generateSummary(differences)
+      summary: this.generateSummary(differences),
     };
   }
-} 
+}

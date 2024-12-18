@@ -1,18 +1,19 @@
 import React from 'react';
-import { 
-  WechatOutlined, 
-  WeiboOutlined, 
+
+import * as Social from '../../types/social';
+import {
+  WechatOutlined,
+  WeiboOutlined,
   QqOutlined,
   AlipayCircleOutlined,
   DingtalkOutlined,
   GoogleOutlined,
   FacebookOutlined,
   AppleOutlined,
-  GithubOutlined
+  GithubOutlined,
 } from '@ant-design/icons';
-import * as Social from '../../types/social';
-
-const PlatformIcons: Record<Social.Platform, React.ComponentType<any>> = {
+const Plat;
+formIcons: Record<Social.Platform, React.ComponentType<any>> = {
   wechat: WechatOutlined,
   weibo: WeiboOutlined,
   qq: QqOutlined,
@@ -21,7 +22,7 @@ const PlatformIcons: Record<Social.Platform, React.ComponentType<any>> = {
   google: GoogleOutlined,
   facebook: FacebookOutlined,
   apple: AppleOutlined,
-  github: GithubOutlined
+  github: GithubOutlined,
 };
 
 export const PlatformIcon: React.FC<Social.PlatformIconProps> = ({
@@ -29,18 +30,12 @@ export const PlatformIcon: React.FC<Social.PlatformIconProps> = ({
   size = 24,
   color,
   className,
-  onClick
+  onClick,
 }) => {
   const Icon = PlatformIcons[platform];
-  
-  return (
-    <Icon
-      style={{ fontSize: size, color }}
-      className={className}
-      onClick={onClick}
-    />
-  );
-}; 
-  
-  // 确保导出所有必要的成员
-  export default PlatformIcon;
+
+  return <Icon style={{ fontSize: size, color }} className={className} onClick={onClick} />;
+};
+
+// 确保导出所有必要的成员
+export default PlatformIcon;

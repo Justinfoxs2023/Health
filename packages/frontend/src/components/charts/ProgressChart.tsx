@@ -1,26 +1,34 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+
 import { ProgressCircle } from 'react-native-svg-charts';
 import { Text } from '../common';
+import { View, StyleSheet } from 'react-native';
 
-interface Props {
+interface IProps {
+  /** progress 的描述 */
   progress: number; // 0-1
+  /** size 的描述 */
   size?: number;
+  /** strokeWidth 的描述 */
   strokeWidth?: number;
+  /** color 的描述 */
   color?: string;
+  /** backgroundColor 的描述 */
   backgroundColor?: string;
+  /** title 的描述 */
   title?: string;
+  /** showPercentage 的描述 */
   showPercentage?: boolean;
 }
 
-export const ProgressChart: React.FC<Props> = ({
+export const ProgressChart: React.FC<IProps> = ({
   progress,
   size = 100,
   strokeWidth = 10,
   color = '#2E7D32',
   backgroundColor = '#E8F5E9',
   title,
-  showPercentage = true
+  showPercentage = true,
 }) => {
   return (
     <View style={styles.container}>
@@ -34,9 +42,7 @@ export const ProgressChart: React.FC<Props> = ({
           strokeWidth={strokeWidth}
         />
         {showPercentage && (
-          <Text style={[styles.percentage, { color }]}>
-            {Math.round(progress * 100)}%
-          </Text>
+          <Text style={[styles.percentage, { color }]}>{Math.round(progress * 100)}%</Text>
         )}
       </View>
     </View>
@@ -61,5 +67,5 @@ const styles = StyleSheet.create({
     position: 'absolute',
     fontSize: 16,
     fontWeight: '600',
-  }
-}); 
+  },
+});

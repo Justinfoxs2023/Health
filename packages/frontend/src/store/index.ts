@@ -1,8 +1,8 @@
-import { configureStore } from '@reduxjs/toolkit';
-import userReducer from './slices/userSlice';
-import healthReducer from './slices/healthSlice';
-import consultationReducer from './slices/consultationSlice';
 import communityReducer from './slices/communitySlice';
+import consultationReducer from './slices/consultationSlice';
+import healthReducer from './slices/healthSlice';
+import userReducer from './slices/userSlice';
+import { configureStore } from '@reduxjs/toolkit';
 
 export const store = configureStore({
   reducer: {
@@ -11,11 +11,11 @@ export const store = configureStore({
     consultation: consultationReducer,
     community: communityReducer,
   },
-  middleware: (getDefaultMiddleware) =>
+  middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
       serializableCheck: false,
     }),
 });
 
-export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch; 
+export type RootStateType = ReturnType<typeof store.getState>;
+export type AppDispatchType = typeof store.dispatch;

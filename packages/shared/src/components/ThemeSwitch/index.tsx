@@ -1,9 +1,10 @@
 import React from 'react';
+
+import { Button } from '../Button';
 import { useTheme } from '../../services/theme';
 import { useTranslation } from 'react-i18next';
-import { Button } from '../Button';
 
-interface ThemeSwitchProps {
+interface IThemeSwitchProps {
   /** 按钮大小 */
   size?: 'small' | 'medium' | 'large';
   /** 自定义类名 */
@@ -13,11 +14,7 @@ interface ThemeSwitchProps {
 }
 
 /** 主题切换按钮组件 */
-export const ThemeSwitch: React.FC<ThemeSwitchProps> = ({
-  size = 'medium',
-  className,
-  style
-}) => {
+export const ThemeSwitch: React.FC<IThemeSwitchProps> = ({ size = 'medium', className, style }) => {
   const { t } = useTranslation();
   const { mode, toggleMode } = useTheme();
 
@@ -25,14 +22,14 @@ export const ThemeSwitch: React.FC<ThemeSwitchProps> = ({
   const themeIcons = {
     light: '🌞',
     dark: '🌙',
-    system: '💻'
+    system: '💻',
   };
 
   // 主题文本映射
   const themeTexts = {
     light: t('theme.light'),
     dark: t('theme.dark'),
-    system: t('theme.system')
+    system: t('theme.system'),
   };
 
   return (
@@ -43,7 +40,7 @@ export const ThemeSwitch: React.FC<ThemeSwitchProps> = ({
         alignItems: 'center',
         gap: '8px',
         transition: 'var(--theme-transition)',
-        ...style
+        ...style,
       }}
       size={size}
       onClick={toggleMode}
@@ -56,4 +53,4 @@ export const ThemeSwitch: React.FC<ThemeSwitchProps> = ({
       <span className="theme-switch-text">{themeTexts[mode]}</span>
     </Button>
   );
-}; 
+};

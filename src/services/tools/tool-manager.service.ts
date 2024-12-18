@@ -1,39 +1,38 @@
 import { Injectable } from '@nestjs/common';
-import { 
-  ToolType, 
+
+import {
+  ToolType,
   ToolCategory,
-  ToolFeature,
-  ToolUsageStats,
-  ToolDataSync 
+  IToolFeature,
+  IToolUsageStats,
+  IToolDataSync,
 } from '@/types/tool-features';
 import { DatabaseService } from '@/services/database/database.service';
 import { HealthDocumentService } from '@/services/health/health-document.service';
 import { NotificationService } from '@/services/notification/notification.service';
 
-@Injectable()
+@Injec
+table()
 export class ToolManagerService {
   constructor(
     private readonly db: DatabaseService,
     private readonly healthDoc: HealthDocumentService,
-    private readonly notification: NotificationService
+    private readonly notification: NotificationService,
   ) {}
 
   // 获取用户可用工具列表
-  async getUserTools(userId: string): Promise<ToolFeature[]> {
+  async getUserTools(userId: string): Promise<IToolFeature[]> {
     const userProfile = await this.db.findOne('user_profiles', { userId });
     const isVip = userProfile.vipStatus?.active || false;
-    
+
     const tools = await this.db.find('tool_features', {
       enabled: true,
-      $or: [
-        { requiresVip: false },
-        { requiresVip: true, isVip: true }
-      ]
+      $or: [{ requiresVip: false }, { requiresVip: true, isVip: true }],
     });
 
     return tools.map(tool => ({
       ...tool,
-      available: this.checkToolAvailability(tool, userProfile)
+      available: this.checkToolAvailability(tool, userProfile),
     }));
   }
 
@@ -41,7 +40,7 @@ export class ToolManagerService {
   async syncToolDataToHealthDoc(
     userId: string,
     toolType: ToolType,
-    data: ToolDataSync
+    data: IToolDataSync,
   ): Promise<void> {
     try {
       // 更新健康文档
@@ -49,7 +48,7 @@ export class ToolManagerService {
         toolType,
         data: data.data,
         timestamp: data.timestamp,
-        source: data.source
+        source: data.source,
       });
 
       // 记录同步状态
@@ -59,9 +58,9 @@ export class ToolManagerService {
         {
           $set: {
             'syncStatus.lastSync': new Date(),
-            'syncStatus.syncSuccess': true
-          }
-        }
+            'syncStatus.syncSuccess': true,
+          },
+        },
       );
     } catch (error) {
       // 记录同步失败
@@ -71,30 +70,30 @@ export class ToolManagerService {
         {
           $set: {
             'syncStatus.syncSuccess': false,
-            'syncStatus.errorMessage': error.message
-          }
-        }
+            'syncStatus.errorMessage': error.message,
+          },
+        },
       );
       throw error;
     }
   }
 
   // 获取工具使用建议
-  async getToolRecommendations(userId: string): Promise<ToolFeature[]> {
+  async getToolRecommendations(userId: string): Promise<IToolFeature[]> {
     const healthDoc = await this.healthDoc.getDocument(userId);
     const userProfile = await this.db.findOne('user_profiles', { userId });
-    
+
     // 基于健康文档数据推荐相关工具
     return this.analyzeAndRecommendTools(healthDoc, userProfile);
   }
 
-  private async analyzeAndRecommendTools(healthDoc: any, userProfile: any): Promise<ToolFeature[]> {
+  private async analyzeAndRecommendTools(healthDoc: any, userProfile: any): Promise<IToolFeature[]> {
     // 实现工具推荐逻辑
     return [];
   }
 
-  private checkToolAvailability(tool: ToolFeature, userProfile: any): boolean {
+  private checkToolAvailability(tool: IToolFeature, userProfile: any): boolean {
     // 实现工具可用性检查逻辑
     return true;
   }
-} 
+}

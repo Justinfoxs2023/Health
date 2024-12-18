@@ -1,37 +1,51 @@
 import * as tf from '@tensorflow/tfjs';
-import { LocalDatabase } from '../utils/local-database';
+import { ILocalDatabase } from '../utils/local-database';
 
-interface ModelArchitecture {
+interface IModelArchitecture {
+  /** type 的描述 */
   type: 'cnn' | 'rnn' | 'transformer' | 'hybrid';
-  layers: LayerConfig[];
-  optimizer: OptimizerConfig;
+  /** layers 的描述 */
+  layers: ILayerConfig[];
+  /** optimizer 的描述 */
+  optimizer: IOptimizerConfig;
+  /** loss 的描述 */
   loss: string;
+  /** metrics 的描述 */
   metrics: string[];
 }
 
-interface LayerConfig {
+interface ILayerConfig {
+  /** type 的描述 */
   type: string;
+  /** config 的描述 */
   config: any;
 }
 
-interface OptimizerConfig {
+interface IOptimizerConfig {
+  /** type 的描述 */
   type: string;
+  /** learningRate 的描述 */
   learningRate: number;
+  /** options 的描述 */
   options?: any;
 }
 
-interface TrainingConfig {
+interface ITrainingConfig {
+  /** batchSize 的描述 */
   batchSize: number;
+  /** epochs 的描述 */
   epochs: number;
+  /** validationSplit 的描述 */
   validationSplit: number;
+  /** callbacks 的描述 */
   callbacks: any[];
 }
 
 export class DeepLearningService {
-  private db: LocalDatabase;
+  private db: ILocalDatabase;
   private model: tf.LayersModel | null = null;
-  private architecture: ModelArchitecture;
-  private trainingConfig: TrainingConfig;
+  private architecture: IModelArchitecture;
+  private trainingConfig: ITrainingConfig;
 
   constructor() {
     this.db = new LocalDatabase('deep-learning');
@@ -42,35 +56,35 @@ export class DeepLearningService {
           type: 'dense',
           config: {
             units: 128,
-            activation: 'relu'
-          }
+            activation: 'relu',
+          },
         },
         {
           type: 'dropout',
           config: {
-            rate: 0.3
-          }
+            rate: 0.3,
+          },
         },
         {
           type: 'dense',
           config: {
             units: 64,
-            activation: 'relu'
-          }
-        }
+            activation: 'relu',
+          },
+        },
       ],
       optimizer: {
         type: 'adam',
-        learningRate: 0.001
+        learningRate: 0.001,
       },
       loss: 'categoricalCrossentropy',
-      metrics: ['accuracy']
+      metrics: ['accuracy'],
     };
     this.trainingConfig = {
       batchSize: 32,
       epochs: 100,
       validationSplit: 0.2,
-      callbacks: []
+      callbacks: [],
     };
     this.initialize();
   }
@@ -95,7 +109,7 @@ export class DeepLearningService {
     model.compile({
       optimizer,
       loss: this.architecture.loss,
-      metrics: this.architecture.metrics
+      metrics: this.architecture.metrics,
     });
 
     return model;
@@ -118,7 +132,7 @@ export class DeepLearningService {
   async train(
     data: tf.Tensor,
     labels: tf.Tensor,
-    config?: Partial<TrainingConfig>
+    config?: Partial<ITrainingConfig>,
   ): Promise<tf.History> {
     if (!this.model) {
       this.model = await this.buildModel();
@@ -126,7 +140,7 @@ export class DeepLearningService {
 
     const trainingConfig = {
       ...this.trainingConfig,
-      ...config
+      ...config,
     };
 
     // 添加回调
@@ -137,7 +151,7 @@ export class DeepLearningService {
       batchSize: trainingConfig.batchSize,
       epochs: trainingConfig.epochs,
       validationSplit: trainingConfig.validationSplit,
-      callbacks
+      callbacks,
     });
 
     // 保存模型
@@ -152,7 +166,7 @@ export class DeepLearningService {
       {
         onEpochEnd: async (epoch, logs) => {
           console.log(`Epoch ${epoch}: loss = ${logs.loss}`);
-        }
+        },
       },
       // 早停
       {
@@ -160,7 +174,7 @@ export class DeepLearningService {
           if (logs.val_loss < 0.1) {
             this.model.stopTraining = true;
           }
-        }
+        },
       },
       // 学习率调度
       {
@@ -169,8 +183,8 @@ export class DeepLearningService {
             const newLR = this.architecture.optimizer.learningRate * 0.9;
             this.architecture.optimizer.learningRate = newLR;
           }
-        }
-      }
+        },
+      },
     ];
   }
 
@@ -185,7 +199,7 @@ export class DeepLearningService {
   // 评估模型
   async evaluate(
     testData: tf.Tensor,
-    testLabels: tf.Tensor
+    testLabels: tf.Tensor,
   ): Promise<{
     loss: number;
     metrics: Record<string, number>;
@@ -196,14 +210,14 @@ export class DeepLearningService {
 
     const evaluation = await this.model.evaluate(testData, testLabels);
     const metrics = {};
-    
+
     this.architecture.metrics.forEach((metric, index) => {
       metrics[metric] = (evaluation[index + 1] as tf.Scalar).dataSync()[0];
     });
 
     return {
       loss: (evaluation[0] as tf.Scalar).dataSync()[0],
-      metrics
+      metrics,
     };
   }
 
@@ -221,33 +235,29 @@ export class DeepLearningService {
       this.model = await tf.loadLayersModel('indexeddb://deep-learning-model');
       const architecture = await this.db.get('model-architecture');
       const trainingConfig = await this.db.get('training-config');
-      
+
       if (architecture) this.architecture = architecture;
       if (trainingConfig) this.trainingConfig = trainingConfig;
     } catch (error) {
-      console.error('加载模型失败:', error);
+      console.error('Error in deep-learning.service.ts:', '加载模型失败:', error);
     }
   }
 
   // 更新架构
-  async updateArchitecture(
-    architecture: Partial<ModelArchitecture>
-  ): Promise<void> {
+  async updateArchitecture(architecture: Partial<IModelArchitecture>): Promise<void> {
     this.architecture = {
       ...this.architecture,
-      ...architecture
+      ...architecture,
     };
     this.model = await this.buildModel();
     await this.saveModel();
   }
 
   // 更新训练配置
-  async updateTrainingConfig(
-    config: Partial<TrainingConfig>
-  ): Promise<void> {
+  async updateTrainingConfig(config: Partial<ITrainingConfig>): Promise<void> {
     this.trainingConfig = {
       ...this.trainingConfig,
-      ...config
+      ...config,
     };
     await this.db.put('training-config', this.trainingConfig);
   }
@@ -257,7 +267,7 @@ export class DeepLearningService {
     if (!this.model) {
       throw new Error('模型未加载');
     }
-    
+
     let summary = '';
     this.model.summary((line: string) => {
       summary += line + '\n';
@@ -291,11 +301,11 @@ export class DeepLearningService {
   }> {
     const summary = await this.getModelSummary();
     const performance = await this.analyzePerformance();
-    
+
     return {
       summary,
       performance,
-      recommendations: this.generateRecommendations(performance)
+      recommendations: this.generateRecommendations(performance),
     };
   }
 
@@ -310,4 +320,4 @@ export class DeepLearningService {
     // 实现建议生成
     return [];
   }
-} 
+}

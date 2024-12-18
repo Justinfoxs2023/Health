@@ -1,9 +1,10 @@
-import { Logger } from '@/utils/Logger';
-import { AIError } from '@/utils/errors';
 import * as tf from '@tensorflow/tfjs-node';
-import { FoodInfo, NutritionInfo } from '../models/FoodTypes';
 import { AIModelService } from './AIModelService';
+import { FoodInfo, NutritionInfo } from '../models/FoodTypes';
 import { NutritionService } from '../health/NutritionService';
+
+import { AIError } from '@/utils/errors';
+import { Logger } from '@/utils/Logger';
 
 export class FoodRecognitionService {
   private logger: Logger;
@@ -42,7 +43,7 @@ export class FoodRecognitionService {
       return {
         ...recognitionResult,
         nutrition: nutritionInfo,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     } catch (error) {
       this.logger.error('食物识别失败', error);
@@ -97,7 +98,7 @@ export class FoodRecognitionService {
     return {
       foodName: await this.getFoodName(topIndex),
       confidence,
-      category: await this.getFoodCategory(topIndex)
+      category: await this.getFoodCategory(topIndex),
     };
   }
 
@@ -107,4 +108,4 @@ export class FoodRecognitionService {
   private async getNutritionInfo(foodName: string): Promise<NutritionInfo> {
     return await this.nutritionService.getNutritionInfo(foodName);
   }
-} 
+}

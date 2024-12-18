@@ -1,18 +1,16 @@
 import 'reflect-metadata';
 import express from 'express';
 import { config } from 'dotenv';
-import { Logger } from '@utils/logger';
-import { setupMiddlewares } from './middlewares';
-import { setupRoutes } from './routes';
-import { setupMonitoring } from './monitoring';
 import { connectDatabases } from './database';
+import { setupMiddlewares } from './middlewares';
+import { setupMonitoring } from './monitoring';
+import { setupRoutes } from './routes';
+import logger from './utils/logger';
 
 // 加载环境变量
 config();
 
-const logger = new Logger('App');
-
-async function bootstrap() {
+async function bootstrap(): Promise<void> {
   try {
     // 创建Express应用
     const app = express();
@@ -40,11 +38,10 @@ async function bootstrap() {
       logger.info('收到 SIGTERM 信号，正在关闭服务器...');
       process.exit(0);
     });
-
   } catch (error) {
     logger.error('启动服务器失败', error);
     process.exit(1);
   }
 }
 
-bootstrap(); 
+bootstrap();

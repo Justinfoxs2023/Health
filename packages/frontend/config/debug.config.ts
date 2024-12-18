@@ -76,10 +76,7 @@ export const debugConfig = {
     enabled: true,
     captureUnhandledRejections: true,
     captureUncaughtExceptions: true,
-    ignorePatterns: [
-      /Failed to load resource/,
-      /Loading chunk \d+ failed/,
-    ],
+    ignorePatterns: [/Failed to load resource/, /Loading chunk \d+ failed/],
     breadcrumbs: {
       enabled: true,
       maxBreadcrumbs: 100,
@@ -98,4 +95,4 @@ export const debugConfig = {
       maxSnapshots: 3,
     },
   },
-}; 
+};

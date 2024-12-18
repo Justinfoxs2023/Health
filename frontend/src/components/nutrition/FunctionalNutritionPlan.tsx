@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { View, ScrollView, StyleSheet } from 'react-native';
+
 import { Card, Text, Button, TabView } from '../common';
 import { SupplementPlanPanel } from './SupplementPlanPanel';
 import { TherapeuticDietPanel } from './TherapeuticDietPanel';
+import { View, ScrollView, StyleSheet } from 'react-native';
 import { useFunctionalNutrition } from '../../hooks/nutrition';
 
 export const FunctionalNutritionPlan: React.FC = () => {
@@ -11,25 +12,17 @@ export const FunctionalNutritionPlan: React.FC = () => {
 
   const tabs = [
     { key: 'supplements', title: '营养补充' },
-    { key: 'therapeutic', title: '治疗饮食' }
+    { key: 'therapeutic', title: '治疗饮食' },
   ];
 
   return (
     <View style={styles.container}>
-      <TabView
-        tabs={tabs}
-        activeTab={activeTab}
-        onChangeTab={setActiveTab}
-      />
+      <TabView tabs={tabs} activeTab={activeTab} onChangeTab={setActiveTab} />
 
       <ScrollView>
-        {activeTab === 'supplements' && (
-          <SupplementPlanPanel plan={supplementPlan} />
-        )}
-        
-        {activeTab === 'therapeutic' && (
-          <TherapeuticDietPanel diet={therapeuticDiet} />
-        )}
+        {activeTab === 'supplements' && <SupplementPlanPanel plan={supplementPlan} />}
+
+        {activeTab === 'therapeutic' && <TherapeuticDietPanel diet={therapeuticDiet} />}
       </ScrollView>
     </View>
   );
@@ -38,6 +31,6 @@ export const FunctionalNutritionPlan: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff'
-  }
-}); 
+    backgroundColor: '#fff',
+  },
+});

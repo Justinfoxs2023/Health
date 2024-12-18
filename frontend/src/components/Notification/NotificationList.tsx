@@ -1,56 +1,79 @@
 import React, { useState, useEffect } from 'react';
-import { List, Badge, Button, Empty, Spin, Typography, Space, Dropdown, Menu, Modal } from 'antd';
+
+import 'dayjs/locale/zh-cn';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import {
   BellOutlined,
   CheckOutlined,
   DeleteOutlined,
   MoreOutlined,
   ExclamationCircleOutlined,
-  FilterOutlined
+  FilterOutlined,
 } from '@ant-design/icons';
-import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
-import 'dayjs/locale/zh-cn';
-
-dayjs.extend(relativeTime);
+import { List, Badge, Button, Empty, Spin, Typography, Space, Dropdown, Menu, Modal } from 'antd';
+dayjs.e;
+xtend(relativeTime);
 dayjs.locale('zh-cn');
 
 const { Text, Title } = Typography;
 const { confirm } = Modal;
 
-interface Notification {
+interface INotification {
+  /** _id 的描述 */
   _id: string;
+  /** type 的描述 */
   type: string;
+  /** title 的描述 */
   title: string;
+  /** content 的描述 */
   content: string;
+  /** status 的描述 */
   status: 'unread' | 'read' | 'archived';
+  /** priority 的描述 */
   priority: 'low' | 'normal' | 'high' | 'urgent';
+  /** sender 的描述 */
   sender?: {
     _id: string;
     name: string;
     avatar?: string;
   };
+  /** relatedType 的描述 */
   relatedType?: string;
+  /** relatedId 的描述 */
   relatedId?: string;
+  /** metadata 的描述 */
   metadata?: Record<string, any>;
+  /** createdAt 的描述 */
   createdAt: string;
 }
 
-interface NotificationListProps {
-  notifications: Notification[];
+interface INotificationListProps {
+  /** notifications 的描述 */
+  notifications: INotification[];
+  /** loading 的描述 */
   loading?: boolean;
+  /** hasMore 的描述 */
   hasMore?: boolean;
+  /** onLoadMore 的描述 */
   onLoadMore?: () => void;
+  /** onMarkAsRead 的描述 */
   onMarkAsRead?: (notificationIds: string[]) => void;
+  /** onArchive 的描述 */
   onArchive?: (notificationIds: string[]) => void;
+  /** onDelete 的描述 */
   onDelete?: (notificationIds: string[]) => void;
+  /** onFilterChange 的描述 */
   onFilterChange?: (filters: Record<string, any>) => void;
-  onNotificationClick?: (notification: Notification) => void;
+  /** onNotificationClick 的描述 */
+  onNotificationClick?: (notification: INotification) => void;
+  /** className 的描述 */
   className?: string;
+  /** style 的描述 */
   style?: React.CSSProperties;
 }
 
-export const NotificationList: React.FC<NotificationListProps> = ({
+export const NotificationList: React.FC<INotificationListProps> = ({
   notifications,
   loading = false,
   hasMore = false,
@@ -61,14 +84,14 @@ export const NotificationList: React.FC<NotificationListProps> = ({
   onFilterChange,
   onNotificationClick,
   className,
-  style
+  style,
 }) => {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [filterVisible, setFilterVisible] = useState(false);
   const [filters, setFilters] = useState({
     type: [],
     priority: [],
-    status: ['unread']
+    status: ['unread'],
   });
 
   useEffect(() => {
@@ -91,7 +114,7 @@ export const NotificationList: React.FC<NotificationListProps> = ({
       onOk() {
         onArchive?.(selectedItems);
         setSelectedItems([]);
-      }
+      },
     });
   };
 
@@ -105,7 +128,7 @@ export const NotificationList: React.FC<NotificationListProps> = ({
       onOk() {
         onDelete?.(selectedItems);
         setSelectedItems([]);
-      }
+      },
     });
   };
 
@@ -206,9 +229,7 @@ export const NotificationList: React.FC<NotificationListProps> = ({
               visible={filterVisible}
               onVisibleChange={setFilterVisible}
             >
-              <Button icon={<FilterOutlined />}>
-                筛选
-              </Button>
+              <Button icon={<FilterOutlined />}>筛选</Button>
             </Dropdown>
             <Button
               type="primary"
@@ -235,7 +256,7 @@ export const NotificationList: React.FC<NotificationListProps> = ({
         dataSource={notifications}
         loadMore={loadMore}
         locale={{
-          emptyText: <Empty description="暂无通知" />
+          emptyText: <Empty description="暂无通知" />,
         }}
         renderItem={notification => {
           const menu = (
@@ -267,7 +288,7 @@ export const NotificationList: React.FC<NotificationListProps> = ({
                     okType: 'danger',
                     onOk() {
                       onDelete?.([notification._id]);
-                    }
+                    },
                   });
                 }}
               >
@@ -281,13 +302,11 @@ export const NotificationList: React.FC<NotificationListProps> = ({
               key={notification._id}
               actions={[
                 <Space key="actions">
-                  <Text type="secondary">
-                    {dayjs(notification.createdAt).fromNow()}
-                  </Text>
+                  <Text type="secondary">{dayjs(notification.createdAt).fromNow()}</Text>
                   <Dropdown overlay={menu} trigger={['click']}>
                     <Button type="text" icon={<MoreOutlined />} />
                   </Dropdown>
-                </Space>
+                </Space>,
               ]}
               onClick={() => onNotificationClick?.(notification)}
               style={{ cursor: 'pointer' }}
@@ -301,12 +320,8 @@ export const NotificationList: React.FC<NotificationListProps> = ({
                 title={
                   <Space>
                     <Text strong>{notification.title}</Text>
-                    {notification.priority === 'urgent' && (
-                      <Badge color="red" text="紧急" />
-                    )}
-                    {notification.priority === 'high' && (
-                      <Badge color="orange" text="重要" />
-                    )}
+                    {notification.priority === 'urgent' && <Badge color="red" text="紧急" />}
+                    {notification.priority === 'high' && <Badge color="orange" text="重要" />}
                     <Tag>{getNotificationTypeText(notification.type)}</Tag>
                   </Space>
                 }
@@ -314,9 +329,7 @@ export const NotificationList: React.FC<NotificationListProps> = ({
               />
               {notification.metadata && (
                 <div style={{ marginTop: 8 }}>
-                  <Text type="secondary">
-                    {JSON.stringify(notification.metadata)}
-                  </Text>
+                  <Text type="secondary">{JSON.stringify(notification.metadata)}</Text>
                 </div>
               )}
             </List.Item>
@@ -325,4 +338,4 @@ export const NotificationList: React.FC<NotificationListProps> = ({
       />
     </div>
   );
-}; 
+};

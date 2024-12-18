@@ -1,8 +1,35 @@
+import * as mongoose from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { Logger } from '../utils/logger';
 import { SecurityConfig } from '../security/security.config';
 import { SecurityService } from '../security/security.service';
-import * as mongoose from 'mongoose';
+
+// 定义状态类型
+type AuditLogStatusType = 'success' | 'failure' | 'warning';
+
+interface IAuditLogEntry {
+  /** userId 的描述 */
+  userId: string;
+  /** event 的描述 */
+  event: string;
+  /** category 的描述 */
+  category: string;
+  /** action 的描述 */
+  action: string;
+  /** status 的描述 */
+  status: AuditLogStatusType; // 使用枚举类型
+  /** timestamp 的描述 */
+  timestamp: Date;
+  /** details 的描述 */
+  details?: any;
+  /** metadata 的描述 */
+  metadata?: {
+    ip?: string;
+    userAgent?: string;
+    sessionId?: string;
+    requestId?: string;
+  };
+}
 
 @Injectable()
 export class AuditLogService {
@@ -10,33 +37,43 @@ export class AuditLogService {
   private readonly securityService: SecurityService;
 
   // 审计日志模型
-  private readonly AuditLogModel = mongoose.model('AuditLog', new mongoose.Schema({
-    timestamp: { type: Date, required: true, index: true },
-    userId: { type: String, required: true, index: true },
-    event: { type: String, required: true, index: true },
-    category: { type: String, required: true, index: true },
-    action: { type: String, required: true },
-    status: { type: String, required: true },
-    details: mongoose.Schema.Types.Mixed,
-    metadata: {
-      ip: String,
-      userAgent: String,
-      sessionId: String,
-      requestId: String
-    },
-    changes: [{
-      field: String,
-      oldValue: mongoose.Schema.Types.Mixed,
-      newValue: mongoose.Schema.Types.Mixed
-    }],
-    relatedResources: [{
-      type: String,
-      id: String
-    }]
-  }, {
-    timestamps: true,
-    versionKey: false
-  }));
+  private readonly AuditLogModel = mongoose.model(
+    'AuditLog',
+    new mongoose.Schema(
+      {
+        timestamp: { type: Date, required: true, index: true },
+        userId: { type: String, required: true, index: true },
+        event: { type: String, required: true, index: true },
+        category: { type: String, required: true, index: true },
+        action: { type: String, required: true },
+        status: { type: String, required: true },
+        details: mongoose.Schema.Types.Mixed,
+        metadata: {
+          ip: String,
+          userAgent: String,
+          sessionId: String,
+          requestId: String,
+        },
+        changes: [
+          {
+            field: String,
+            oldValue: mongoose.Schema.Types.Mixed,
+            newValue: mongoose.Schema.Types.Mixed,
+          },
+        ],
+        relatedResources: [
+          {
+            type: String,
+            id: String,
+          },
+        ],
+      },
+      {
+        timestamps: true,
+        versionKey: false,
+      },
+    ),
+  );
 
   constructor() {
     this.securityService = new SecurityService();
@@ -87,7 +124,7 @@ export class AuditLogService {
           : change.oldValue,
         newValue: SecurityConfig.AUDIT_LOG.sensitiveFields.includes(change.field)
           ? '******'
-          : change.newValue
+          : change.newValue,
       }));
 
       // 创建审计日志
@@ -101,7 +138,7 @@ export class AuditLogService {
         details: maskedDetails,
         metadata: params.metadata,
         changes: maskedChanges,
-        relatedResources: params.relatedResources
+        relatedResources: params.relatedResources,
       });
 
       const result = await auditLog.save();
@@ -109,7 +146,7 @@ export class AuditLogService {
       this.logger.info('审计日志记录成功', {
         userId: params.userId,
         event: params.event,
-        action: params.action
+        action: params.action,
       });
 
       return result._id.toString();
@@ -171,20 +208,15 @@ export class AuditLogService {
 
       // 执行查询
       const [logs, total] = await Promise.all([
-        this.AuditLogModel
-          .find(query)
-          .sort(sort)
-          .skip(skip)
-          .limit(pageSize)
-          .lean(),
-        this.AuditLogModel.countDocuments(query)
+        this.AuditLogModel.find(query).sort(sort).skip(skip).limit(pageSize).lean(),
+        this.AuditLogModel.countDocuments(query),
       ]);
 
       return {
         logs,
         total,
         page,
-        pageSize
+        pageSize,
       };
     } catch (error) {
       this.logger.error('审计日志查询失败', error);
@@ -195,11 +227,7 @@ export class AuditLogService {
   /**
    * 获取审计统计信息
    */
-  async getStats(params: {
-    startTime?: Date;
-    endTime?: Date;
-    userId?: string;
-  }): Promise<{
+  async getStats(params: { startTime?: Date; endTime?: Date; userId?: string }): Promise<{
     totalEvents: number;
     eventsByCategory: Record<string, number>;
     eventsByStatus: Record<string, number>;
@@ -223,80 +251,71 @@ export class AuditLogService {
 
       if (params.userId) query.userId = params.userId;
 
-      const [
-        totalEvents,
-        eventsByCategory,
-        eventsByStatus,
-        topUsers,
-        timeDistribution
-      ] = await Promise.all([
-        // 总事件数
-        this.AuditLogModel.countDocuments(query),
+      const [totalEvents, eventsByCategory, eventsByStatus, topUsers, timeDistribution] =
+        await Promise.all([
+          // 总事件数
+          this.AuditLogModel.countDocuments(query),
 
-        // 按类别统计
-        this.AuditLogModel.aggregate([
-          { $match: query },
-          {
-            $group: {
-              _id: '$category',
-              count: { $sum: 1 }
-            }
-          }
-        ]),
+          // 按类别统计
+          this.AuditLogModel.aggregate([
+            { $match: query },
+            {
+              $group: {
+                _id: '$category',
+                count: { $sum: 1 },
+              },
+            },
+          ]),
 
-        // 按状态统计
-        this.AuditLogModel.aggregate([
-          { $match: query },
-          {
-            $group: {
-              _id: '$status',
-              count: { $sum: 1 }
-            }
-          }
-        ]),
+          // 按状态统计
+          this.AuditLogModel.aggregate([
+            { $match: query },
+            {
+              $group: {
+                _id: '$status',
+                count: { $sum: 1 },
+              },
+            },
+          ]),
 
-        // 活跃用户统计
-        this.AuditLogModel.aggregate([
-          { $match: query },
-          {
-            $group: {
-              _id: '$userId',
-              count: { $sum: 1 }
-            }
-          },
-          { $sort: { count: -1 } },
-          { $limit: 10 }
-        ]),
+          // 活跃用户统计
+          this.AuditLogModel.aggregate([
+            { $match: query },
+            {
+              $group: {
+                _id: '$userId',
+                count: { $sum: 1 },
+              },
+            },
+            { $sort: { count: -1 } },
+            { $limit: 10 },
+          ]),
 
-        // 时间分布统计
-        this.AuditLogModel.aggregate([
-          { $match: query },
-          {
-            $group: {
-              _id: { $hour: '$timestamp' },
-              count: { $sum: 1 }
-            }
-          },
-          { $sort: { '_id': 1 } }
-        ])
-      ]);
+          // 时间分布统计
+          this.AuditLogModel.aggregate([
+            { $match: query },
+            {
+              $group: {
+                _id: { $hour: '$timestamp' },
+                count: { $sum: 1 },
+              },
+            },
+            { $sort: { _id: 1 } },
+          ]),
+        ]);
 
       return {
         totalEvents,
-        eventsByCategory: Object.fromEntries(
-          eventsByCategory.map(item => [item._id, item.count])
-        ),
-        eventsByStatus: Object.fromEntries(
-          eventsByStatus.map(item => [item._id, item.count])
-        ),
+        eventsByCategory: Object.fromEntries(eventsByCategory.map(item => [item._id, item.count])),
+        eventsByStatus: Object.fromEntries(eventsByStatus.map(item => [item._id, item.count])),
         topUsers: topUsers.map(item => ({
           userId: item._id,
-          count: item.count
+          count: item.count,
         })),
         timeDistribution: timeDistribution.map(item => ({
           hour: item._id,
-          count: item.count
-        }))
+          count: item.count,
+        })),
       };
     } catch (error) {
       this.logger.error('获取审计统计信息失败', error);
@@ -332,28 +351,14 @@ export class AuditLogService {
       }
 
       // 查询数据
-      const logs = await this.AuditLogModel
-        .find(query)
-        .sort({ timestamp: -1 })
-        .lean();
+      const logs = await this.AuditLogModel.find(query).sort({ timestamp: -1 }).lean();
 
       // 格式化数据
       if (params.format === 'csv') {
-        const fields = [
-          'timestamp',
-          'userId',
-          'event',
-          'category',
-          'action',
-          'status'
-        ];
+        const fields = ['timestamp', 'userId', 'event', 'category', 'action', 'status'];
         const csv = [
           fields.join(','), // 表头
-          ...logs.map(log =>
-            fields.map(field =>
-              JSON.stringify(log[field] || '')
-            ).join(',')
-          )
+          ...logs.map(log => fields.map(field => JSON.stringify(log[field] || '')).join(',')),
         ].join('\n');
 
         return Buffer.from(csv, 'utf8');
@@ -375,11 +380,11 @@ export class AuditLogService {
       cutoffDate.setTime(cutoffDate.getTime() - SecurityConfig.AUDIT_LOG.retention);
 
       const result = await this.AuditLogModel.deleteMany({
-        timestamp: { $lt: cutoffDate }
+        timestamp: { $lt: cutoffDate },
       });
 
       this.logger.info('清理过期审计日志完成', {
-        deletedCount: result.deletedCount
+        deletedCount: result.deletedCount,
       });
     } catch (error) {
       this.logger.error('清理过期审计日志失败', error);
@@ -392,12 +397,7 @@ export class AuditLogService {
   private setupCleanupJob(): void {
     // 每天凌晨2点执行清理
     const now = new Date();
-    const nextRun = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate() + 1,
-      2, 0, 0
-    );
+    const nextRun = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 2, 0, 0);
     const timeToNextRun = nextRun.getTime() - now.getTime();
 
     // 设置定时任务
@@ -407,4 +407,4 @@ export class AuditLogService {
       setInterval(() => this.cleanupOldLogs(), 24 * 60 * 60 * 1000);
     }, timeToNextRun);
   }
-} 
+}

@@ -1,10 +1,13 @@
 import React from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
-import { LineChart, BarChart } from 'react-native-chart-kit';
-import { DesignTokens } from '../../tokens';
 
-interface HealthChartProps {
+import { DesignTokens } from '../../tokens';
+import { LineChart, BarChart } from 'react-native-chart-kit';
+import { View, StyleSheet, Dimensions } from 'react-native';
+
+interface IHealthChartProps {
+  /** type 的描述 */
   type: 'line' | 'bar';
+  /** data 的描述 */
   data: {
     labels: string[];
     datasets: {
@@ -12,17 +15,20 @@ interface HealthChartProps {
       color?: string;
     }[];
   };
+  /** height 的描述 */
   height?: number;
+  /** title 的描述 */
   title?: string;
+  /** yAxisSuffix 的描述 */
   yAxisSuffix?: string;
 }
 
-export const HealthChart: React.FC<HealthChartProps> = ({
+export const HealthChart: React.FC<IHealthChartProps> = ({
   type,
   data,
   height = 220,
   title,
-  yAxisSuffix = ''
+  yAxisSuffix = '',
 }) => {
   const screenWidth = Dimensions.get('window').width - DesignTokens.spacing.lg * 2;
 
@@ -33,8 +39,8 @@ export const HealthChart: React.FC<HealthChartProps> = ({
     decimalPlaces: 1,
     color: (opacity = 1) => DesignTokens.colors.brand.primary,
     style: {
-      borderRadius: DesignTokens.radius.lg
-    }
+      borderRadius: DesignTokens.radius.lg,
+    },
   };
 
   const renderChart = () => {
@@ -45,15 +51,11 @@ export const HealthChart: React.FC<HealthChartProps> = ({
       chartConfig,
       style: {
         marginVertical: DesignTokens.spacing.md,
-        borderRadius: DesignTokens.radius.lg
-      }
+        borderRadius: DesignTokens.radius.lg,
+      },
     };
 
-    return type === 'line' ? (
-      <LineChart {...commonProps} bezier />
-    ) : (
-      <BarChart {...commonProps} />
-    );
+    return type === 'line' ? <LineChart {...commonProps} bezier /> : <BarChart {...commonProps} />;
   };
 
   return (
@@ -69,12 +71,12 @@ const styles = StyleSheet.create({
     backgroundColor: DesignTokens.colors.background.paper,
     padding: DesignTokens.spacing.md,
     borderRadius: DesignTokens.radius.lg,
-    ...DesignTokens.shadows.md
+    ...DesignTokens.shadows.md,
   },
   title: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: String(DesignTokens.typography.weights.semibold),
     color: DesignTokens.colors.text.primary,
-    marginBottom: DesignTokens.spacing.md
-  }
-}); 
+    marginBottom: DesignTokens.spacing.md,
+  },
+});

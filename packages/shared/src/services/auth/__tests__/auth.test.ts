@@ -1,7 +1,7 @@
+import { STORAGE_KEYS } from '../../../constants';
+import { authService } from '../index';
 import { http } from '../../http';
 import { storage } from '../../storage';
-import { authService } from '../index';
-import { STORAGE_KEYS } from '../../../constants';
 
 jest.mock('../../http');
 jest.mock('../../storage');
@@ -13,13 +13,13 @@ describe('AuthService', () => {
     email: 'test@example.com',
     role: 'user',
     createdAt: new Date(),
-    updatedAt: new Date()
+    updatedAt: new Date(),
   };
 
   const mockAuthResponse = {
     user: mockUser,
     token: 'mock-token',
-    refreshToken: 'mock-refresh-token'
+    refreshToken: 'mock-refresh-token',
   };
 
   beforeEach(() => {
@@ -64,12 +64,12 @@ describe('AuthService', () => {
 
       await authService.login({
         username: 'test',
-        password: 'password'
+        password: 'password',
       });
 
       expect(http.post).toHaveBeenCalledWith('/auth/login', {
         username: 'test',
-        password: 'password'
+        password: 'password',
       });
       expect(storage.setItem).toHaveBeenCalledWith(STORAGE_KEYS.TOKEN, mockAuthResponse.token);
       expect(storage.setItem).toHaveBeenCalledWith(STORAGE_KEYS.USER, mockAuthResponse.user);
@@ -83,12 +83,12 @@ describe('AuthService', () => {
       await authService.login({
         username: 'test',
         password: 'password',
-        remember: true
+        remember: true,
       });
 
       expect(storage.setItem).toHaveBeenCalledWith(
         STORAGE_KEYS.REFRESH_TOKEN,
-        mockAuthResponse.refreshToken
+        mockAuthResponse.refreshToken,
       );
     });
 
@@ -99,8 +99,8 @@ describe('AuthService', () => {
       await expect(
         authService.login({
           username: 'test',
-          password: 'wrong'
-        })
+          password: 'wrong',
+        }),
       ).rejects.toThrow(error);
 
       expect(authService.getCurrentUser()).toBeNull();
@@ -115,13 +115,13 @@ describe('AuthService', () => {
       await authService.register({
         username: 'test',
         password: 'password',
-        email: 'test@example.com'
+        email: 'test@example.com',
       });
 
       expect(http.post).toHaveBeenCalledWith('/auth/register', {
         username: 'test',
         password: 'password',
-        email: 'test@example.com'
+        email: 'test@example.com',
       });
       expect(storage.setItem).toHaveBeenCalledWith(STORAGE_KEYS.TOKEN, mockAuthResponse.token);
       expect(storage.setItem).toHaveBeenCalledWith(STORAGE_KEYS.USER, mockAuthResponse.user);
@@ -136,7 +136,7 @@ describe('AuthService', () => {
       (http.post as jest.Mock).mockResolvedValueOnce({ data: mockAuthResponse });
       await authService.login({
         username: 'test',
-        password: 'password'
+        password: 'password',
       });
 
       // 清理mock
@@ -159,7 +159,7 @@ describe('AuthService', () => {
       (http.post as jest.Mock).mockResolvedValueOnce({ data: mockAuthResponse });
       await authService.login({
         username: 'test',
-        password: 'password'
+        password: 'password',
       });
 
       // 清理mock
@@ -183,20 +183,20 @@ describe('AuthService', () => {
       await authService.login({
         username: 'test',
         password: 'password',
-        remember: true
+        remember: true,
       });
 
       // 模拟401错误
       const originalRequest = { url: '/test', _retry: false };
       const error = {
         config: originalRequest,
-        response: { status: 401 }
+        response: { status: 401 },
       };
 
       // 模拟刷新token响应
       const newToken = 'new-token';
       (http.post as jest.Mock).mockResolvedValueOnce({
-        data: { ...mockAuthResponse, token: newToken }
+        data: { ...mockAuthResponse, token: newToken },
       });
 
       // 模拟重试原始请求的响应
@@ -207,7 +207,7 @@ describe('AuthService', () => {
       const response = await http.interceptors.response.handlers[0].rejected(error);
 
       expect(http.post).toHaveBeenCalledWith('/auth/refresh', {
-        refreshToken: mockAuthResponse.refreshToken
+        refreshToken: mockAuthResponse.refreshToken,
       });
       expect(storage.setItem).toHaveBeenCalledWith(STORAGE_KEYS.TOKEN, newToken);
       expect(http.defaults.headers.common.Authorization).toBe(`Bearer ${newToken}`);
@@ -220,26 +220,26 @@ describe('AuthService', () => {
       await authService.login({
         username: 'test',
         password: 'password',
-        remember: true
+        remember: true,
       });
 
       // 模拟401错误
       const error = {
         config: { url: '/test', _retry: false },
-        response: { status: 401 }
+        response: { status: 401 },
       };
 
       // 模拟刷新token失败
       (http.post as jest.Mock).mockRejectedValueOnce(new Error('Refresh failed'));
 
       // 触发token刷新
-      await expect(
-        http.interceptors.response.handlers[0].rejected(error)
-      ).rejects.toThrow('Refresh failed');
+      await expect(http.interceptors.response.handlers[0].rejected(error)).rejects.toThrow(
+        'Refresh failed',
+      );
 
       expect(authService.getCurrentUser()).toBeNull();
       expect(authService.isAuthenticated()).toBe(false);
       expect(http.defaults.headers.common.Authorization).toBeUndefined();
     });
   });
-}); 
+});

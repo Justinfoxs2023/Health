@@ -11,14 +11,14 @@ class CacheService {
       port: parseInt(process.env.REDIS_PORT || '6379'),
       password: process.env.REDIS_PASSWORD,
       db: 0,
-      retryStrategy: (times) => {
+      retryStrategy: times => {
         const delay = Math.min(times * 50, 2000);
         return delay;
       },
-      maxRetriesPerRequest: 3
+      maxRetriesPerRequest: 3,
     });
 
-    this.redis.on('error', (err) => {
+    this.redis.on('error', err => {
       logger.error('Redis连接错误:', err);
     });
 
@@ -132,4 +132,4 @@ class CacheService {
   }
 }
 
-export const cacheService = new CacheService(); 
+export const cacheService = new CacheService();

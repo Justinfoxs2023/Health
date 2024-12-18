@@ -1,22 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Tag, Progress, Button, Space, Modal, message } from 'antd';
+
+import 'dayjs/locale/zh-cn';
+import dayjs from 'dayjs';
 import { DeleteOutlined, ReloadOutlined, ClearOutlined } from '@ant-design/icons';
 import { ImageProcessingService } from '../../services/imageProcessing';
-import dayjs from 'dayjs';
-import 'dayjs/locale/zh-cn';
+import { Table, Tag, Progress, Button, Space, Modal, message } from 'antd';
 
 dayjs.locale('zh-cn');
 
 interface ImageProcessingTasksProps {
+  /** imageProcessingService 的描述 */
   imageProcessingService: ImageProcessingService;
+  /** className 的描述 */
   className?: string;
+  /** style 的描述 */
   style?: React.CSSProperties;
 }
 
 export const ImageProcessingTasks: React.FC<ImageProcessingTasksProps> = ({
   imageProcessingService,
   className,
-  style
+  style,
 }) => {
   const [tasks, setTasks] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -37,7 +41,7 @@ export const ImageProcessingTasks: React.FC<ImageProcessingTasksProps> = ({
       onOk: () => {
         imageProcessingService.cancelTask(taskId);
         message.success('任务已取消');
-      }
+      },
     });
   };
 
@@ -48,7 +52,7 @@ export const ImageProcessingTasks: React.FC<ImageProcessingTasksProps> = ({
       onOk: () => {
         imageProcessingService.clearCompletedTasks();
         message.success('已清理完成的任务');
-      }
+      },
     });
   };
 
@@ -58,7 +62,7 @@ export const ImageProcessingTasks: React.FC<ImageProcessingTasksProps> = ({
       dataIndex: 'id',
       key: 'id',
       width: 100,
-      ellipsis: true
+      ellipsis: true,
     },
     {
       title: '类型',
@@ -69,10 +73,10 @@ export const ImageProcessingTasks: React.FC<ImageProcessingTasksProps> = ({
         const typeMap = {
           compress: '压缩',
           convert: '转换',
-          resize: '调整大小'
+          resize: '调整大小',
         };
         return typeMap[type] || type;
-      }
+      },
     },
     {
       title: '状态',
@@ -84,11 +88,11 @@ export const ImageProcessingTasks: React.FC<ImageProcessingTasksProps> = ({
           pending: { color: 'default', text: '等待中' },
           processing: { color: 'processing', text: '处理中' },
           completed: { color: 'success', text: '已完成' },
-          failed: { color: 'error', text: '失败' }
+          failed: { color: 'error', text: '失败' },
         };
         const { color, text } = statusMap[status] || { color: 'default', text: status };
         return <Tag color={color}>{text}</Tag>;
-      }
+      },
     },
     {
       title: '进度',
@@ -102,28 +106,28 @@ export const ImageProcessingTasks: React.FC<ImageProcessingTasksProps> = ({
           status={record.status === 'failed' ? 'exception' : undefined}
           showInfo={record.status !== 'pending'}
         />
-      )
+      ),
     },
     {
       title: '创建时间',
       dataIndex: 'createdAt',
       key: 'createdAt',
       width: 200,
-      render: (date: Date) => dayjs(date).format('YYYY-MM-DD HH:mm:ss')
+      render: (date: Date) => dayjs(date).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: '完成时间',
       dataIndex: 'completedAt',
       key: 'completedAt',
       width: 200,
-      render: (date: Date) => (date ? dayjs(date).format('YYYY-MM-DD HH:mm:ss') : '-')
+      render: (date: Date) => (date ? dayjs(date).format('YYYY-MM-DD HH:mm:ss') : '-'),
     },
     {
       title: '错误信息',
       dataIndex: 'error',
       key: 'error',
       ellipsis: true,
-      render: (error: string) => error || '-'
+      render: (error: string) => error || '-',
     },
     {
       title: '操作',
@@ -154,8 +158,8 @@ export const ImageProcessingTasks: React.FC<ImageProcessingTasksProps> = ({
             </Button>
           )}
         </Space>
-      )
-    }
+      ),
+    },
   ];
 
   return (
@@ -178,9 +182,9 @@ export const ImageProcessingTasks: React.FC<ImageProcessingTasksProps> = ({
           defaultPageSize: 10,
           showSizeChanger: true,
           showQuickJumper: true,
-          showTotal: total => `共 ${total} 条`
+          showTotal: total => `共 ${total} 条`,
         }}
       />
     </div>
   );
-}; 
+};

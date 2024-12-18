@@ -1,40 +1,62 @@
 /**
+ * @fileoverview TS 文件 UXEnhancement.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
+/**
  * 用户体验增强模块
  * 提供交互反馈、错误处理和个性化功能
  */
 
 // 交互反馈配置接口
 interface InteractionFeedbackConfig {
+  /** loadingStates 的描述 */
   loadingStates: boolean;
+  /** animations 的描述 */
   animations: boolean;
+  /** hapticFeedback 的描述 */
   hapticFeedback: boolean;
+  /** loadingTimeout 的描述 */
   loadingTimeout?: number;
+  /** animationDuration 的描述 */
   animationDuration?: number;
 }
 
 // 错误处理配置接口
-interface ErrorHandlingConfig {
+interface IErrorHandlingConfig {
+  /** gracefulDegradation 的描述 */
   gracefulDegradation: boolean;
+  /** retryMechanism 的描述 */
   retryMechanism: boolean;
+  /** offlineSupport 的描述 */
   offlineSupport: boolean;
+  /** maxRetries 的描述 */
   maxRetries?: number;
+  /** retryDelay 的描述 */
   retryDelay?: number;
 }
 
 // 个性化配置接口
-interface PersonalizationConfig {
+interface IPersonalizationConfig {
+  /** themeCustomization 的描述 */
   themeCustomization: boolean;
+  /** layoutAdjustment 的描述 */
   layoutAdjustment: boolean;
+  /** contentPreferences 的描述 */
   contentPreferences: boolean;
+  /** defaultTheme 的描述 */
   defaultTheme?: string;
+  /** fontSize 的描述 */
   fontSize?: number;
 }
 
 export class UXEnhancement {
   private static instance: UXEnhancement;
   private interactionConfig: InteractionFeedbackConfig;
-  private errorConfig: ErrorHandlingConfig;
-  private personalizationConfig: PersonalizationConfig;
+  private errorConfig: IErrorHandlingConfig;
+  private personalizationConfig: IPersonalizationConfig;
 
   private constructor() {
     // 默认配置
@@ -43,7 +65,7 @@ export class UXEnhancement {
       animations: true,
       hapticFeedback: true,
       loadingTimeout: 30000,
-      animationDuration: 300
+      animationDuration: 300,
     };
 
     this.errorConfig = {
@@ -51,7 +73,7 @@ export class UXEnhancement {
       retryMechanism: true,
       offlineSupport: true,
       maxRetries: 3,
-      retryDelay: 1000
+      retryDelay: 1000,
     };
 
     this.personalizationConfig = {
@@ -59,7 +81,7 @@ export class UXEnhancement {
       layoutAdjustment: true,
       contentPreferences: true,
       defaultTheme: 'light',
-      fontSize: 16
+      fontSize: 16,
     };
   }
 
@@ -78,7 +100,7 @@ export class UXEnhancement {
    * @param elementId 目标元素ID
    * @param message 加载提示信息
    */
-  public showLoading(elementId: string, message: string = '加载中...'): void {
+  public showLoading(elementId: string, message = '加载中...'): void {
     if (!this.interactionConfig.loadingStates) return;
 
     const element = document.getElementById(elementId);
@@ -120,7 +142,7 @@ export class UXEnhancement {
    * @param error 错误对象
    */
   public async handleError(error: Error): Promise<void> {
-    console.error('发生错误:', error);
+    console.error('Error in UXEnhancement.ts:', '发生错误:', error);
 
     if (this.errorConfig.retryMechanism) {
       let retryCount = 0;
@@ -193,4 +215,4 @@ export class UXEnhancement {
   }
 }
 
-export default UXEnhancement.getInstance(); 
+export default UXEnhancement.getInstance();

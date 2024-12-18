@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 modules.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // 声明所有模块
 declare module '*';
 
@@ -67,4 +74,4 @@ declare module '*.json' {
 declare module '*.yml' {
   const content: any;
   export default content;
-} 
+}

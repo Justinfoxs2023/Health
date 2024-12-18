@@ -15,8 +15,8 @@ export const routeConfig = {
       subRoutes: [
         { path: '/vitals', component: lazy(() => import('@/pages/health-monitor/VitalsDisplay')) },
         { path: '/metrics', component: lazy(() => import('@/pages/health-monitor/HealthMetrics')) },
-        { path: '/alerts', component: lazy(() => import('@/pages/health-monitor/AlertPanel')) }
-      ]
+        { path: '/alerts', component: lazy(() => import('@/pages/health-monitor/AlertPanel')) },
+      ],
     },
     consultation: {
       path: '/consultation',
@@ -24,17 +24,23 @@ export const routeConfig = {
       subRoutes: [
         { path: '/doctors', component: lazy(() => import('@/pages/consultation/DoctorList')) },
         { path: '/video-chat', component: lazy(() => import('@/pages/consultation/VideoChat')) },
-        { path: '/prescription', component: lazy(() => import('@/pages/consultation/Prescription')) }
-      ]
+        {
+          path: '/prescription',
+          component: lazy(() => import('@/pages/consultation/Prescription')),
+        },
+      ],
     },
     chronicManagement: {
       path: '/chronic-management',
       component: ChronicManagement,
       subRoutes: [
         { path: '/tracking', component: lazy(() => import('@/pages/chronic/DiseaseTracking')) },
-        { path: '/medication', component: lazy(() => import('@/pages/chronic/MedicationReminder')) },
-        { path: '/lifestyle', component: lazy(() => import('@/pages/chronic/LifestyleGuide')) }
-      ]
+        {
+          path: '/medication',
+          component: lazy(() => import('@/pages/chronic/MedicationReminder')),
+        },
+        { path: '/lifestyle', component: lazy(() => import('@/pages/chronic/LifestyleGuide')) },
+      ],
     },
     nutritionManagement: {
       path: '/nutrition',
@@ -42,8 +48,11 @@ export const routeConfig = {
       subRoutes: [
         { path: '/diet-analysis', component: lazy(() => import('@/pages/nutrition/DietAnalysis')) },
         { path: '/meal-planning', component: lazy(() => import('@/pages/nutrition/MealPlanning')) },
-        { path: '/nutrition-advice', component: lazy(() => import('@/pages/nutrition/NutritionAdvice')) }
-      ]
-    }
-  }
-}; 
+        {
+          path: '/nutrition-advice',
+          component: lazy(() => import('@/pages/nutrition/NutritionAdvice')),
+        },
+      ],
+    },
+  },
+};

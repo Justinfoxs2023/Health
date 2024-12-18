@@ -1,0 +1,140 @@
+alipay:
+  name: 支付宝支付
+  type: payment
+  enabled: true
+  endpoint: https://openapi.alipay.com/gateway.do
+  timeout: 10000
+  retryCount: 3
+  retryDelay: 1000
+  circuitBreaker:
+    enabled: true
+    failureThreshold: 5
+    resetTimeout: 60000
+  auth:
+    type: key
+    credentials:
+      key: ${ALIPAY_APP_ID}
+      privateKey: ${ALIPAY_PRIVATE_KEY}
+      publicKey: ${ALIPAY_PUBLIC_KEY}
+  rateLimit:
+    enabled: true
+    maxRequests: 100
+    interval: 60000
+  monitoring: true
+
+wechat_pay:
+  name: 微信支付
+  type: payment
+  enabled: true
+  endpoint: https://api.mch.weixin.qq.com/v3
+  timeout: 10000
+  retryCount: 3
+  retryDelay: 1000
+  circuitBreaker:
+    enabled: true
+    failureThreshold: 5
+    resetTimeout: 60000
+  auth:
+    type: key
+    credentials:
+      appId: ${WECHAT_APP_ID}
+      mchId: ${WECHAT_MCH_ID}
+      key: ${WECHAT_API_KEY}
+      certPath: ${WECHAT_CERT_PATH}
+  rateLimit:
+    enabled: true
+    maxRequests: 100
+    interval: 60000
+  monitoring: true
+
+openai:
+  name: OpenAI服务
+  type: ai
+  enabled: true
+  endpoint: https://api.openai.com/v1
+  timeout: 30000
+  retryCount: 2
+  retryDelay: 2000
+  circuitBreaker:
+    enabled: true
+    failureThreshold: 3
+    resetTimeout: 120000
+  auth:
+    type: bearer
+    credentials:
+      token: ${OPENAI_API_KEY}
+  rateLimit:
+    enabled: true
+    maxRequests: 50
+    interval: 60000
+  monitoring: true
+
+sms:
+  name: 短信服务
+  type: notification
+  enabled: true
+  endpoint: https://sms.tencentcloudapi.com
+  timeout: 5000
+  retryCount: 2
+  retryDelay: 1000
+  circuitBreaker:
+    enabled: true
+    failureThreshold: 3
+    resetTimeout: 30000
+  auth:
+    type: key
+    credentials:
+      secretId: ${SMS_SECRET_ID}
+      secretKey: ${SMS_SECRET_KEY}
+  rateLimit:
+    enabled: true
+    maxRequests: 200
+    interval: 60000
+  monitoring: true
+
+email:
+  name: 邮件服务
+  type: notification
+  enabled: true
+  endpoint: smtp.example.com
+  timeout: 10000
+  retryCount: 3
+  retryDelay: 2000
+  circuitBreaker:
+    enabled: true
+    failureThreshold: 5
+    resetTimeout: 60000
+  auth:
+    type: basic
+    credentials:
+      username: ${EMAIL_USERNAME}
+      password: ${EMAIL_PASSWORD}
+  rateLimit:
+    enabled: true
+    maxRequests: 100
+    interval: 60000
+  monitoring: true
+
+oss:
+  name: 对象存储服务
+  type: storage
+  enabled: true
+  endpoint: https://oss-cn-beijing.aliyuncs.com
+  timeout: 15000
+  retryCount: 3
+  retryDelay: 2000
+  circuitBreaker:
+    enabled: true
+    failureThreshold: 5
+    resetTimeout: 60000
+  auth:
+    type: key
+    credentials:
+      accessKeyId: ${OSS_ACCESS_KEY_ID}
+      accessKeySecret: ${OSS_ACCESS_KEY_SECRET}
+      bucket: ${OSS_BUCKET}
+  rateLimit:
+    enabled: true
+    maxRequests: 500
+    interval: 60000
+  monitoring: true

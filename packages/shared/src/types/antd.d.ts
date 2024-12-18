@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 antd.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 declare module 'antd' {
   export const message: {
     success: (content: string) => void;
@@ -62,4 +69,4 @@ declare module 'antd' {
     wrap?: boolean;
     children?: React.ReactNode;
   }>;
-} 
+}

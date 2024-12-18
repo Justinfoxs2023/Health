@@ -1,7 +1,9 @@
 import { api } from '../utils/api';
 
-export interface FoodPreference {
+export interface IFoodPreference {
+  /** userId 的描述 */
   userId: string;
+  /** preferences 的描述 */
   preferences: {
     likedFoods: string[];
     dislikedFoods: string[];
@@ -9,6 +11,7 @@ export interface FoodPreference {
     dietaryRestrictions: string[];
     mealTimes: Record<string, string[]>;
   };
+  /** learningData 的描述 */
   learningData: {
     interactions: Array<{
       foodId: string;
@@ -25,10 +28,10 @@ export class FoodPreferenceLearningService {
         userId,
         foodId,
         action,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
     } catch (error) {
-      console.error('记录交互失败:', error);
+      console.error('Error in food-preference-learning.service.ts:', '记录交互失败:', error);
     }
   }
 
@@ -37,8 +40,8 @@ export class FoodPreferenceLearningService {
       const response = await api.get(`/api/food/recommendations/${userId}`);
       return response.data;
     } catch (error) {
-      console.error('获取推荐失败:', error);
+      console.error('Error in food-preference-learning.service.ts:', '获取推荐失败:', error);
       throw error;
     }
   }
-} 
+}

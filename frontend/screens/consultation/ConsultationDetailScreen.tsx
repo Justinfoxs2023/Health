@@ -1,13 +1,16 @@
 import React from 'react';
-import { View, ScrollView, StyleSheet, Text, TouchableOpacity, Image } from 'react-native';
-import { useQuery } from '@tanstack/react-query';
-import { getConsultationDetail } from '../../api/consultation';
+
 import { LoadingSpinner, Icon, AlertDialog } from '../../components';
+import { View, ScrollView, StyleSheet, Text, TouchableOpacity, Image } from 'react-native';
 import { format } from 'date-fns';
+import { getConsultationDetail } from '../../api/consultation';
+import { useQuery } from '@tanstack/react-query';
 import { zhCN } from 'date-fns/locale';
 
-interface ConsultationDetail {
+interface IConsultationDetail {
+  /** id 的描述 */
   id: string;
+  /** expert 的描述 */
   expert: {
     id: string;
     name: string;
@@ -15,11 +18,17 @@ interface ConsultationDetail {
     title: string;
     hospital: string;
   };
+  /** date 的描述 */
   date: string;
+  /** timeSlot 的描述 */
   timeSlot: string;
+  /** status 的描述 */
   status: 'upcoming' | 'ongoing' | 'completed' | 'cancelled';
+  /** description 的描述 */
   description: string;
+  /** diagnosis 的描述 */
   diagnosis?: string;
+  /** prescription 的描述 */
   prescription?: {
     medicines: {
       name: string;
@@ -29,20 +38,23 @@ interface ConsultationDetail {
     }[];
     notes?: string;
   };
+  /** followUpDate 的描述 */
   followUpDate?: string;
+  /** attachments 的描述 */
   attachments?: {
     type: 'image' | 'document';
     url: string;
     name: string;
   }[];
+  /** price 的描述 */
   price: number;
 }
 
 export const ConsultationDetailScreen = ({ route, navigation }) => {
   const { id } = route.params;
-  const { data: consultation, isLoading } = useQuery<ConsultationDetail>(
+  const { data: consultation, isLoading } = useQuery<IConsultationDetail>(
     ['consultationDetail', id],
-    () => getConsultationDetail(id)
+    () => getConsultationDetail(id),
   );
 
   const getStatusText = (status: string) => {
@@ -88,7 +100,12 @@ export const ConsultationDetailScreen = ({ route, navigation }) => {
             <Text style={styles.hospital}>{consultation?.expert.hospital}</Text>
           </View>
         </View>
-        <View style={[styles.statusBadge, { backgroundColor: `${getStatusColor(consultation?.status || '')}20` }]}>
+        <View
+          style={[
+            styles.statusBadge,
+            { backgroundColor: `${getStatusColor(consultation?.status || '')}20` },
+          ]}
+        >
           <Text style={[styles.statusText, { color: getStatusColor(consultation?.status || '') }]}>
             {getStatusText(consultation?.status || '')}
           </Text>
@@ -127,15 +144,11 @@ export const ConsultationDetailScreen = ({ route, navigation }) => {
               <Text style={styles.medicineName}>{medicine.name}</Text>
               <Text style={styles.medicineUsage}>用法：{medicine.usage}</Text>
               <Text style={styles.medicineDuration}>疗程：{medicine.duration}</Text>
-              {medicine.notes && (
-                <Text style={styles.medicineNotes}>备注：{medicine.notes}</Text>
-              )}
+              {medicine.notes && <Text style={styles.medicineNotes}>备注：{medicine.notes}</Text>}
             </View>
           ))}
           {consultation.prescription.notes && (
-            <Text style={styles.prescriptionNotes}>
-              医嘱：{consultation.prescription.notes}
-            </Text>
+            <Text style={styles.prescriptionNotes}>医嘱：{consultation.prescription.notes}</Text>
           )}
         </View>
       )}
@@ -157,7 +170,9 @@ export const ConsultationDetailScreen = ({ route, navigation }) => {
               <TouchableOpacity
                 key={index}
                 style={styles.attachmentItem}
-                onPress={() => {/* 打开附件 */}}
+                onPress={() => {
+                  /* 打开附件 */
+                }}
               >
                 <Icon
                   name={attachment.type === 'image' ? 'image' : 'file-text'}
@@ -175,7 +190,9 @@ export const ConsultationDetailScreen = ({ route, navigation }) => {
         <View style={styles.actions}>
           <TouchableOpacity
             style={[styles.actionButton, styles.secondaryButton]}
-            onPress={() => {/* 取消预约 */}}
+            onPress={() => {
+              /* 取消预约 */
+            }}
           >
             <Text style={styles.secondaryButtonText}>取消预约</Text>
           </TouchableOpacity>
@@ -194,113 +211,113 @@ export const ConsultationDetailScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     padding: 15,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   expertInfo: {
     flexDirection: 'row',
-    flex: 1
+    flex: 1,
   },
   avatar: {
     width: 50,
     height: 50,
     borderRadius: 25,
-    marginRight: 12
+    marginRight: 12,
   },
   expertName: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 4
+    marginBottom: 4,
   },
   expertTitle: {
     fontSize: 14,
     color: '#666',
-    marginBottom: 2
+    marginBottom: 2,
   },
   hospital: {
     fontSize: 12,
-    color: '#999'
+    color: '#999',
   },
   statusBadge: {
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 12
+    borderRadius: 12,
   },
   statusText: {
     fontSize: 12,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   section: {
     marginTop: 10,
     padding: 15,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   timeInfo: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   timeText: {
     fontSize: 14,
     color: '#666',
-    marginLeft: 6
+    marginLeft: 6,
   },
   timeIcon: {
-    marginLeft: 15
+    marginLeft: 15,
   },
   price: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#F57C00',
-    marginTop: 10
+    marginTop: 10,
   },
   sectionTitle: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 10
+    marginBottom: 10,
   },
   description: {
     fontSize: 14,
     color: '#666',
-    lineHeight: 20
+    lineHeight: 20,
   },
   diagnosis: {
     fontSize: 14,
     color: '#666',
-    lineHeight: 20
+    lineHeight: 20,
   },
   medicineItem: {
     marginBottom: 15,
     padding: 12,
     backgroundColor: '#f8f8f8',
-    borderRadius: 8
+    borderRadius: 8,
   },
   medicineName: {
     fontSize: 14,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 4
+    marginBottom: 4,
   },
   medicineUsage: {
     fontSize: 14,
     color: '#666',
-    marginBottom: 2
+    marginBottom: 2,
   },
   medicineDuration: {
     fontSize: 14,
     color: '#666',
-    marginBottom: 2
+    marginBottom: 2,
   },
   medicineNotes: {
     fontSize: 14,
-    color: '#666'
+    color: '#666',
   },
   prescriptionNotes: {
     fontSize: 14,
@@ -308,33 +325,33 @@ const styles = StyleSheet.create({
     marginTop: 10,
     padding: 12,
     backgroundColor: '#f8f8f8',
-    borderRadius: 8
+    borderRadius: 8,
   },
   followUpDate: {
     fontSize: 14,
-    color: '#666'
+    color: '#666',
   },
   attachments: {
     flexDirection: 'row',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
   },
   attachmentItem: {
     width: '33.33%',
     padding: 8,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   attachmentName: {
     fontSize: 12,
     color: '#666',
     marginTop: 4,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   actions: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     padding: 15,
     backgroundColor: '#fff',
-    marginTop: 10
+    marginTop: 10,
   },
   actionButton: {
     flex: 1,
@@ -342,21 +359,21 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 8,
     alignItems: 'center',
-    marginHorizontal: 5
+    marginHorizontal: 5,
   },
   secondaryButton: {
     backgroundColor: '#fff',
     borderWidth: 1,
-    borderColor: '#2E7D32'
+    borderColor: '#2E7D32',
   },
   actionButtonText: {
     color: '#fff',
     fontSize: 14,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   secondaryButtonText: {
     color: '#2E7D32',
     fontSize: 14,
-    fontWeight: 'bold'
-  }
-}); 
+    fontWeight: 'bold',
+  },
+});

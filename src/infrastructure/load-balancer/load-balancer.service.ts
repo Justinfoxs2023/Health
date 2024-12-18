@@ -1,23 +1,20 @@
-import { Injectable } from '@nestjs/common';
 import { ConfigService } from '../config/config.service';
+import { IServiceInstance } from '../../types/service';
+import { Injectable } from '@nestjs/common';
 import { MetricsService } from '../monitoring/metrics.service';
-import { ServiceInstance } from '../../types/service';
 
 @Injectable()
 export class LoadBalancerService {
   private currentIndex = 0;
 
-  constructor(
-    private readonly config: ConfigService,
-    private readonly metrics: MetricsService
-  ) {}
+  constructor(private readonly config: ConfigService, private readonly metrics: MetricsService) {}
 
   // 选择服务实例
-  async selectInstance(instances: ServiceInstance[]): Promise<ServiceInstance> {
+  async selectInstance(instances: IServiceInstance[]): Promise<IServiceInstance> {
     if (!instances.length) {
       throw new Error('No available instances');
     }
-    
+
     // 简单轮询策略
     const instance = instances[this.currentIndex];
     this.currentIndex = (this.currentIndex + 1) % instances.length;
@@ -35,4 +32,4 @@ export class LoadBalancerService {
     // 实现熔断逻辑
     return true;
   }
-} 
+}

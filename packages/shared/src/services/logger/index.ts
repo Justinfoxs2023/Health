@@ -1,12 +1,12 @@
 import { storage } from '../storage';
 
 /** 日志级别 */
-export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
+export type LogLevelType = 'debug' | 'info' | 'warn' | 'error';
 
 /** 日志配置 */
-export interface LoggerConfig {
+export interface ILoggerConfig {
   /** 日志级别 */
-  level: LogLevel;
+  level: LogLevelType;
   /** 是否启用控制台输出 */
   enableConsole?: boolean;
   /** 是否启用存储 */
@@ -16,15 +16,15 @@ export interface LoggerConfig {
   /** 最大存储条数 */
   maxStorageEntries?: number;
   /** 自定义日志处理器 */
-  customHandler?: (entry: LogEntry) => void;
+  customHandler?: (entry: ILogEntry) => void;
 }
 
 /** 日志条目 */
-export interface LogEntry {
+export interface ILogEntry {
   /** 时间戳 */
   timestamp: number;
   /** 日志级别 */
-  level: LogLevel;
+  level: LogLevelType;
   /** 消息 */
   message: string;
   /** 额外数据 */
@@ -35,30 +35,30 @@ export interface LogEntry {
   source?: string;
 }
 
-const LOG_LEVELS: Record<LogLevel, number> = {
+const LOG_LEVELS: Record<LogLevelType, number> = {
   debug: 0,
   info: 1,
   warn: 2,
-  error: 3
+  error: 3,
 };
 
 /** 日志服务 */
 class LoggerService {
   private static instance: LoggerService;
-  private config: LoggerConfig;
+  private config: ILoggerConfig;
   private storageKey = 'logs';
 
-  private constructor(config: LoggerConfig) {
+  private constructor(config: ILoggerConfig) {
     this.config = {
       enableConsole: true,
       enableStorage: true,
       storageTTL: 7 * 24 * 60 * 60 * 1000, // 7天
       maxStorageEntries: 1000,
-      ...config
+      ...config,
     };
   }
 
-  public static getInstance(config: LoggerConfig = { level: 'info' }): LoggerService {
+  public static getInstance(config: ILoggerConfig = { level: 'info' }): LoggerService {
     if (!LoggerService.instance) {
       LoggerService.instance = new LoggerService(config);
     }
@@ -86,9 +86,9 @@ class LoggerService {
   }
 
   /** 获取所有日志 */
-  public async getLogs(): Promise<LogEntry[]> {
+  public async getLogs(): Promise<ILogEntry[]> {
     if (!this.config.enableStorage) return [];
-    return await storage.getItem<LogEntry[]>(this.storageKey) || [];
+    return (await storage.getItem<ILogEntry[]>(this.storageKey)) || [];
   }
 
   /** 清空日志 */
@@ -98,28 +98,33 @@ class LoggerService {
   }
 
   /** 设置配置 */
-  public setConfig(config: Partial<LoggerConfig>): void {
+  public setConfig(config: Partial<ILoggerConfig>): void {
     this.config = {
       ...this.config,
-      ...config
+      ...config,
     };
   }
 
   /** 获取配置 */
-  public getConfig(): LoggerConfig {
+  public getConfig(): ILoggerConfig {
     return { ...this.config };
   }
 
-  private async log(level: LogLevel, message: string, data?: any, stack?: string): Promise<void> {
+  private async log(
+    level: LogLevelType,
+    message: string,
+    data?: any,
+    stack?: string,
+  ): Promise<void> {
     if (LOG_LEVELS[level] < LOG_LEVELS[this.config.level]) return;
 
-    const entry: LogEntry = {
+    const entry: ILogEntry = {
       timestamp: Date.now(),
       level,
       message,
       data,
       stack,
-      source: this.getSource()
+      source: this.getSource(),
     };
 
     // 控制台输出
@@ -138,7 +143,7 @@ class LoggerService {
     }
   }
 
-  private consoleLog(entry: LogEntry): void {
+  private consoleLog(entry: ILogEntry): void {
     const { level, message, data, stack } = entry;
     const timestamp = new Date(entry.timestamp).toISOString();
     const prefix = `[${timestamp}] [${level.toUpperCase()}]`;
@@ -154,13 +159,13 @@ class LoggerService {
         console.warn(prefix, message, data);
         break;
       case 'error':
-        console.error(prefix, message, data);
-        if (stack) console.error(stack);
+        console.error('Error in index.ts:', prefix, message, data);
+        if (stack) console.error('Error in index.ts:', stack);
         break;
     }
   }
 
-  private async storeLog(entry: LogEntry): Promise<void> {
+  private async storeLog(entry: ILogEntry): Promise<void> {
     const logs = await this.getLogs();
     logs.push(entry);
 
@@ -171,29 +176,26 @@ class LoggerService {
 
     // 移除过期日志
     const now = Date.now();
-    const validLogs = logs.filter(log => 
-      now - log.timestamp < this.config.storageTTL!
-    );
+    const validLogs = logs.filter(log => now - log.timestamp < this.config.storageTTL!);
 
     await storage.setItem(this.storageKey, validLogs, {
-      ttl: this.config.storageTTL
+      ttl: this.config.storageTTL,
     });
   }
 
   private getSource(): string {
     try {
       throw new Error();
-    } catch (e) {
-      const stack = (e as Error).stack || '';
+    } catch (error) {
+      const stack = (error as Error).stack || '';
       const frames = stack.split('\n');
       // 跳过前3帧（Error、getSource、log）
       const frame = frames[3] || '';
-      const match = frame.match(/at\s+(.+?)\s+\((.+?)\)/) || 
-                   frame.match(/at\s+(.+)$/);
+      const match = frame.match(/at\s+(.+?)\s+\((.+?)\)/) || frame.match(/at\s+(.+)$/);
       return match ? match[1] : 'unknown';
     }
   }
 }
 
 /** 日志服务实例 */
-export const logger = LoggerService.getInstance(); 
+export const logger = LoggerService.getInstance();

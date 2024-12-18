@@ -1,24 +1,32 @@
 import React from 'react';
-import { View, StyleSheet, FlatList } from 'react-native';
-import { Card, Text, Icon, Button } from '../common';
 
-interface ScreeningRecord {
+import { Card, Text, Icon, Button } from '../common';
+import { View, StyleSheet, FlatList } from 'react-native';
+
+interface IScreeningRecord {
+  /** id 的描述 */
   id: string;
+  /** type 的描述 */
   type: string;
+  /** date 的描述 */
   date: string;
+  /** result 的描述 */
   result: 'normal' | 'abnormal' | 'pending';
+  /** details 的描述 */
   details?: string;
+  /** followUp 的描述 */
   followUp?: {
     date: string;
     notes: string;
   };
 }
 
-interface Props {
+interface IProps {
+  /** memberId 的描述 */
   memberId: string;
 }
 
-export const ScreeningRecord: React.FC<Props> = ({ memberId }) => {
+export const ScreeningRecord: React.FC<IProps> = ({ memberId }) => {
   const getResultColor = (result: string) => {
     switch (result) {
       case 'normal':
@@ -45,20 +53,15 @@ export const ScreeningRecord: React.FC<Props> = ({ memberId }) => {
     }
   };
 
-  const renderScreeningItem = ({ item }: { item: ScreeningRecord }) => (
+  const renderScreeningItem = ({ item }: { item: IScreeningRecord }) => (
     <View style={styles.recordItem}>
       <View style={styles.recordHeader}>
         <View>
           <Text style={styles.screeningType}>{item.type}</Text>
           <Text style={styles.screeningDate}>{item.date}</Text>
         </View>
-        <View style={[
-          styles.resultBadge,
-          { backgroundColor: getResultColor(item.result) }
-        ]}>
-          <Text style={styles.resultText}>
-            {getResultText(item.result)}
-          </Text>
+        <View style={[styles.resultBadge, { backgroundColor: getResultColor(item.result) }]}>
+          <Text style={styles.resultText}>{getResultText(item.result)}</Text>
         </View>
       </View>
 
@@ -80,18 +83,8 @@ export const ScreeningRecord: React.FC<Props> = ({ memberId }) => {
       )}
 
       <View style={styles.actionButtons}>
-        <Button
-          title="查看报告"
-          icon="description"
-          type="outline"
-          size="small"
-        />
-        <Button
-          title="预约随访"
-          icon="event"
-          type="outline"
-          size="small"
-        />
+        <Button title="查看报告" icon="description" type="outline" size="small" />
+        <Button title="预约随访" icon="event" type="outline" size="small" />
       </View>
     </View>
   );
@@ -118,7 +111,7 @@ export const ScreeningRecord: React.FC<Props> = ({ memberId }) => {
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 10
+    marginBottom: 10,
   },
   header: {
     flexDirection: 'row',
@@ -126,94 +119,94 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 15,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee'
+    borderBottomColor: '#eee',
   },
   title: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#2E7D32'
+    color: '#2E7D32',
   },
   subtitle: {
     fontSize: 12,
     color: '#666',
-    marginTop: 2
+    marginTop: 2,
   },
   listContainer: {
-    padding: 15
+    padding: 15,
   },
   recordItem: {
     marginBottom: 15,
     padding: 12,
     backgroundColor: '#f8f8f8',
-    borderRadius: 8
+    borderRadius: 8,
   },
   recordHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 12
+    marginBottom: 12,
   },
   screeningType: {
     fontSize: 15,
-    fontWeight: '500'
+    fontWeight: '500',
   },
   screeningDate: {
     fontSize: 12,
     color: '#666',
-    marginTop: 2
+    marginTop: 2,
   },
   resultBadge: {
     paddingHorizontal: 10,
     paddingVertical: 4,
-    borderRadius: 12
+    borderRadius: 12,
   },
   resultText: {
     color: '#fff',
     fontSize: 12,
-    fontWeight: '500'
+    fontWeight: '500',
   },
   detailsSection: {
     marginTop: 10,
     padding: 10,
     backgroundColor: '#fff',
-    borderRadius: 6
+    borderRadius: 6,
   },
   detailsTitle: {
     fontSize: 14,
     fontWeight: '500',
-    marginBottom: 5
+    marginBottom: 5,
   },
   detailsText: {
     fontSize: 13,
     color: '#444',
-    lineHeight: 18
+    lineHeight: 18,
   },
   followUpSection: {
     marginTop: 10,
     padding: 10,
     backgroundColor: '#fff',
-    borderRadius: 6
+    borderRadius: 6,
   },
   followUpTitle: {
     fontSize: 14,
     fontWeight: '500',
-    marginBottom: 5
+    marginBottom: 5,
   },
   followUpContent: {
-    gap: 4
+    gap: 4,
   },
   followUpDate: {
     fontSize: 13,
-    color: '#666'
+    color: '#666',
   },
   followUpNotes: {
     fontSize: 13,
-    color: '#444'
+    color: '#444',
   },
   actionButtons: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
     gap: 10,
-    marginTop: 12
-  }
-}); 
+    marginTop: 12,
+  },
+});

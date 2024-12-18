@@ -1,16 +1,22 @@
 import mongoose from 'mongoose';
 import { logger } from '../services/logger';
 
-interface ValidationError {
+interface IValidationError {
+  /** field 的描述 */
   field: string;
+  /** value 的描述 */
   value: any;
+  /** rule 的描述 */
   rule: string;
+  /** message 的描述 */
   message: string;
 }
 
-interface ValidationResult {
+interface IValidationResult {
+  /** isValid 的描述 */
   isValid: boolean;
-  errors: ValidationError[];
+  /** errors 的描述 */
+  errors: IValidationError[];
 }
 
 class ValidationPlugin {
@@ -23,7 +29,7 @@ class ValidationPlugin {
    */
   static addValidation(schema: mongoose.Schema): void {
     // 添加通用验证中间件
-    schema.pre('validate', function(next) {
+    schema.pre('validate', function (next) {
       const validationResult = ValidationPlugin.validateDocument(this);
       if (!validationResult.isValid) {
         const error = new mongoose.Error.ValidationError(null);
@@ -32,7 +38,7 @@ class ValidationPlugin {
             message: err.message,
             type: err.rule,
             path: err.field,
-            value: err.value
+            value: err.value,
           });
         });
         next(error);
@@ -42,7 +48,7 @@ class ValidationPlugin {
     });
 
     // 添加自定义验证方法
-    schema.methods.validate = async function(): Promise<ValidationResult> {
+    schema.methods.validate = async function (): Promise<IValidationResult> {
       return ValidationPlugin.validateDocument(this);
     };
   }
@@ -50,8 +56,8 @@ class ValidationPlugin {
   /**
    * 验证文档
    */
-  private static validateDocument(doc: any): ValidationResult {
-    const errors: ValidationError[] = [];
+  private static validateDocument(doc: any): IValidationResult {
+    const errors: IValidationError[] = [];
     const schema = doc.schema;
 
     for (const path in schema.paths) {
@@ -64,7 +70,7 @@ class ValidationPlugin {
           field: path,
           value,
           rule: 'required',
-          message: `${path} is required`
+          message: `${path} is required`,
         });
         continue;
       }
@@ -85,7 +91,7 @@ class ValidationPlugin {
 
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
@@ -95,8 +101,8 @@ class ValidationPlugin {
   private static validateType(
     field: string,
     value: any,
-    schemaType: mongoose.SchemaType
-  ): ValidationError | null {
+    schemaType: mongoose.SchemaType,
+  ): IValidationError | null {
     const type = schemaType.instance;
 
     switch (type) {
@@ -106,7 +112,7 @@ class ValidationPlugin {
             field,
             value,
             rule: 'type',
-            message: `${field} must be a string`
+            message: `${field} must be a string`,
           };
         }
         break;
@@ -117,7 +123,7 @@ class ValidationPlugin {
             field,
             value,
             rule: 'type',
-            message: `${field} must be a number`
+            message: `${field} must be a number`,
           };
         }
         break;
@@ -128,7 +134,7 @@ class ValidationPlugin {
             field,
             value,
             rule: 'type',
-            message: `${field} must be a valid date`
+            message: `${field} must be a valid date`,
           };
         }
         break;
@@ -139,7 +145,7 @@ class ValidationPlugin {
             field,
             value,
             rule: 'type',
-            message: `${field} must be a boolean`
+            message: `${field} must be a boolean`,
           };
         }
         break;
@@ -150,7 +156,7 @@ class ValidationPlugin {
             field,
             value,
             rule: 'type',
-            message: `${field} must be a valid ObjectID`
+            message: `${field} must be a valid ObjectID`,
           };
         }
         break;
@@ -165,9 +171,9 @@ class ValidationPlugin {
   private static validateCustomRules(
     field: string,
     value: any,
-    schemaType: mongoose.SchemaType
-  ): ValidationError[] {
-    const errors: ValidationError[] = [];
+    schemaType: mongoose.SchemaType,
+  ): IValidationError[] {
+    const errors: IValidationError[] = [];
 
     // 获取字段定义中的验证规则
     const options = (schemaType as any).options || {};
@@ -179,7 +185,7 @@ class ValidationPlugin {
           field,
           value,
           rule: 'minLength',
-          message: `${field} must be at least ${options.minLength} characters long`
+          message: `${field} must be at least ${options.minLength} characters long`,
         });
       }
       if (options.maxLength && value.length > options.maxLength) {
@@ -187,7 +193,7 @@ class ValidationPlugin {
           field,
           value,
           rule: 'maxLength',
-          message: `${field} must be no more than ${options.maxLength} characters long`
+          message: `${field} must be no more than ${options.maxLength} characters long`,
         });
       }
     }
@@ -199,7 +205,7 @@ class ValidationPlugin {
           field,
           value,
           rule: 'min',
-          message: `${field} must be at least ${options.min}`
+          message: `${field} must be at least ${options.min}`,
         });
       }
       if (options.max !== undefined && value > options.max) {
@@ -207,7 +213,7 @@ class ValidationPlugin {
           field,
           value,
           rule: 'max',
-          message: `${field} must be no more than ${options.max}`
+          message: `${field} must be no more than ${options.max}`,
         });
       }
     }
@@ -218,7 +224,7 @@ class ValidationPlugin {
         field,
         value,
         rule: 'email',
-        message: `${field} must be a valid email address`
+        message: `${field} must be a valid email address`,
       });
     }
 
@@ -228,7 +234,7 @@ class ValidationPlugin {
         field,
         value,
         rule: 'phone',
-        message: `${field} must be a valid phone number`
+        message: `${field} must be a valid phone number`,
       });
     }
 
@@ -238,7 +244,7 @@ class ValidationPlugin {
         field,
         value,
         rule: 'password',
-        message: `${field} must contain at least 8 characters, including letters and numbers`
+        message: `${field} must contain at least 8 characters, including letters and numbers`,
       });
     }
 
@@ -248,7 +254,7 @@ class ValidationPlugin {
         field,
         value,
         rule: 'enum',
-        message: `${field} must be one of: ${options.enum.join(', ')}`
+        message: `${field} must be one of: ${options.enum.join(', ')}`,
       });
     }
 
@@ -261,7 +267,7 @@ class ValidationPlugin {
             field,
             value,
             rule: 'custom',
-            message: options.message || `${field} failed custom validation`
+            message: options.message || `${field} failed custom validation`,
           });
         }
       } catch (error) {
@@ -270,7 +276,7 @@ class ValidationPlugin {
           field,
           value,
           rule: 'custom',
-          message: 'Custom validation failed'
+          message: 'Custom validation failed',
         });
       }
     }
@@ -285,7 +291,7 @@ class ValidationPlugin {
     schema: mongoose.Schema,
     field: string,
     validator: (value: any) => boolean,
-    message: string
+    message: string,
   ): void {
     const path = schema.path(field);
     if (path) {
@@ -295,9 +301,9 @@ class ValidationPlugin {
 }
 
 // 导出插件
-export { ValidationPlugin, ValidationError, ValidationResult };
+export { ValidationPlugin, IValidationError, IValidationResult };
 
 // 默认导出插件函数
-export default function(schema: mongoose.Schema) {
+export default function (schema: mongoose.Schema): void {
   ValidationPlugin.addValidation(schema);
-} 
+}

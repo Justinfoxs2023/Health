@@ -1,30 +1,30 @@
-import { injectable } from 'inversify';
-import { User } from '../types/interfaces/user.interface';
+import { IUser } from '../types/interfaces/user.interface';
 import { IUserRepository } from './interfaces/user.repository';
+import { injectable } from 'inversify';
 
 @injectable()
 export class UserRepositoryImpl implements IUserRepository {
-  async create(data: Partial<User>): Promise<User> {
+  async create(data: Partial<IUser>): Promise<IUser> {
     // 实现创建用户逻辑
     throw new Error('Not implemented');
   }
 
-  async findById(id: string): Promise<User | null> {
+  async findById(id: string): Promise<IUser | null> {
     // 实现查找用户逻辑
     throw new Error('Not implemented');
   }
 
-  async findByEmail(email: string): Promise<User | null> {
+  async findByEmail(email: string): Promise<IUser | null> {
     // 实现通过邮箱查找用户逻辑
     throw new Error('Not implemented');
   }
 
-  async findBySocialId(platform: string, id: string): Promise<User | null> {
+  async findBySocialId(platform: string, id: string): Promise<IUser | null> {
     // 实现社交账号查找用户逻辑
     throw new Error('Not implemented');
   }
 
-  async update(id: string, data: Partial<User>): Promise<User> {
+  async update(id: string, data: Partial<IUser>): Promise<IUser> {
     // 实现更新用户逻辑
     throw new Error('Not implemented');
   }
@@ -35,4 +35,4 @@ export class UserRepositoryImpl implements IUserRepository {
   }
 }
 
-export { IUserRepository as UserRepository }; 
+export { IUserRepository as UserRepository };

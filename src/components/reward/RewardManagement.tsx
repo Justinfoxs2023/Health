@@ -1,16 +1,20 @@
 import React, { useState, useCallback } from 'react';
+
 import { ErrorBoundary } from '../ErrorBoundary';
 import { message } from 'antd';
 import { request } from '../../utils/request';
 
-interface Reward {
-  id: string;
-  title: string;
-  points: number;
+interface IReward {
+  /** id 的描述 */
+    id: string;
+  /** title 的描述 */
+    title: string;
+  /** points 的描述 */
+    points: number;
 }
 
 export const RewardManagement: React.FC = () => {
-  const [rewards, setRewards] = useState<Reward[]>([]);
+  const [rewards, setRewards] = useState<IReward[]>([]);
   const [loading, setLoading] = useState(false);
 
   const fetchRewards = useCallback(async () => {
@@ -39,16 +43,14 @@ export const RewardManagement: React.FC = () => {
     <ErrorBoundary>
       <div className="rewards-container">
         {loading ? (
-          <div>加载中...</div>
+          <div></div>
         ) : (
           <div className="rewards-list">
             {rewards.map(reward => (
               <div key={reward.id} className="reward-card">
-                <h3>{reward.title}</h3>
-                <p>所需积分: {reward.points}</p>
-                <button onClick={() => claimReward(reward.id)}>
-                  领取奖励
-                </button>
+                <h3>{rewardtitle}</h3>
+                <p> {rewardpoints}</p>
+                <button onClick={ => claimRewardrewardid}></button>
               </div>
             ))}
           </div>
@@ -56,4 +58,4 @@ export const RewardManagement: React.FC = () => {
       </div>
     </ErrorBoundary>
   );
-}; 
+};

@@ -1,12 +1,12 @@
 import { HealthData, HealthMetric } from '../../types';
 
 /** 统计时间范围类型 */
-export type StatTimeRange = 'day' | 'week' | 'month' | 'year' | 'custom';
+export type StatTimeRangeType = 'day' | 'week' | 'month' | 'year' | 'custom';
 
 /** 统计数据类型 */
-export interface StatisticsData {
+export interface IStatisticsData {
   /** 时间范围 */
-  timeRange: StatTimeRange;
+  timeRange: StatTimeRangeType;
   /** 数据总数 */
   totalCount: number;
   /** 平均值 */
@@ -31,7 +31,7 @@ export interface StatisticsData {
 }
 
 /** 报告类型 */
-export interface HealthReport {
+export interface IHealthReport {
   /** 报告ID */
   id: string;
   /** 生成时间 */
@@ -39,7 +39,7 @@ export interface HealthReport {
   /** 报告类型 */
   type: 'daily' | 'weekly' | 'monthly' | 'annual';
   /** 统计数据 */
-  statistics: Record<HealthMetric, StatisticsData>;
+  statistics: Record<HealthMetric, IStatisticsData>;
   /** 健康建议 */
   recommendations: string[];
   /** 风险提示 */
@@ -55,17 +55,12 @@ class DataStatisticsService {
   calculateStatistics(
     data: HealthData[],
     metric: HealthMetric,
-    timeRange: StatTimeRange,
+    timeRange: StatTimeRangeType,
     startDate?: Date,
-    endDate?: Date
-  ): StatisticsData {
+    endDate?: Date,
+  ): IStatisticsData {
     // 根据时间范围筛选数据
-    const filteredData = this.filterDataByTimeRange(
-      data,
-      timeRange,
-      startDate,
-      endDate
-    );
+    const filteredData = this.filterDataByTimeRange(data, timeRange, startDate, endDate);
 
     // 提取指定指标的数值
     const values = filteredData.map(d => d[metric] as number);
@@ -78,19 +73,16 @@ class DataStatisticsService {
       min: Math.min(...values),
       standardDeviation: this.calculateStandardDeviation(values),
       trend: this.calculateTrend(filteredData, metric),
-      anomalies: this.detectAnomalies(filteredData, metric)
+      anomalies: this.detectAnomalies(filteredData, metric),
     };
   }
 
   /** 生成健康报告 */
-  generateReport(
-    data: HealthData[],
-    type: HealthReport['type']
-  ): HealthReport {
+  generateReport(data: HealthData[], type: IHealthReport['type']): IHealthReport {
     const metrics = Object.values(HealthMetric);
-    const statistics: Record<HealthMetric, StatisticsData> = {} as Record<
+    const statistics: Record<HealthMetric, IStatisticsData> = {} as Record<
       HealthMetric,
-      StatisticsData
+      IStatisticsData
     >;
 
     // 计算每个指标的统计数据
@@ -104,16 +96,16 @@ class DataStatisticsService {
       type,
       statistics,
       recommendations: this.generateRecommendations(statistics),
-      risks: this.assessRisks(statistics)
+      risks: this.assessRisks(statistics),
     };
   }
 
   /** 根据时间范围筛选数据 */
   private filterDataByTimeRange(
     data: HealthData[],
-    timeRange: StatTimeRange,
+    timeRange: StatTimeRangeType,
     startDate?: Date,
-    endDate?: Date
+    endDate?: Date,
   ): HealthData[] {
     const now = new Date();
     let start: Date;
@@ -135,9 +127,7 @@ class DataStatisticsService {
         if (!startDate || !endDate) {
           throw new Error('Custom time range requires start and end dates');
         }
-        return data.filter(
-          d => d.timestamp >= startDate && d.timestamp <= endDate
-        );
+        return data.filter(d => d.timestamp >= startDate && d.timestamp <= endDate);
       default:
         return data;
     }
@@ -162,21 +152,15 @@ class DataStatisticsService {
   }
 
   /** 计算趋势数据 */
-  private calculateTrend(
-    data: HealthData[],
-    metric: HealthMetric
-  ): StatisticsData['trend'] {
+  private calculateTrend(data: HealthData[], metric: HealthMetric): IStatisticsData['trend'] {
     return data.map(d => ({
       time: d.timestamp,
-      value: d[metric] as number
+      value: d[metric] as number,
     }));
   }
 
   /** 检测异常数据点 */
-  private detectAnomalies(
-    data: HealthData[],
-    metric: HealthMetric
-  ): StatisticsData['anomalies'] {
+  private detectAnomalies(data: HealthData[], metric: HealthMetric): IStatisticsData['anomalies'] {
     const values = data.map(d => d[metric] as number);
     const avg = this.calculateAverage(values);
     const stdDev = this.calculateStandardDeviation(values);
@@ -187,7 +171,7 @@ class DataStatisticsService {
       .map(d => ({
         time: d.timestamp,
         value: d[metric] as number,
-        reason: `Value deviates significantly from average (${avg.toFixed(2)})`
+        reason: `Value deviates significantly from average (${avg.toFixed(2)})`,
       }));
   }
 
@@ -197,17 +181,13 @@ class DataStatisticsService {
   }
 
   /** 生成健康建议 */
-  private generateRecommendations(
-    statistics: Record<HealthMetric, StatisticsData>
-  ): string[] {
+  private generateRecommendations(statistics: Record<HealthMetric, IStatisticsData>): string[] {
     const recommendations: string[] = [];
 
     // 基于统计数据生成建议
     Object.entries(statistics).forEach(([metric, stat]) => {
       if (stat.anomalies.length > 0) {
-        recommendations.push(
-          `注意${metric}指标的异常波动，建议进行进一步检查。`
-        );
+        recommendations.push(`注意${metric}指标的异常波动，建议进行进一步检查。`);
       }
       // 可以添加更多基于不同指标的具体建议
     });
@@ -216,10 +196,8 @@ class DataStatisticsService {
   }
 
   /** 评估健康风险 */
-  private assessRisks(
-    statistics: Record<HealthMetric, StatisticsData>
-  ): HealthReport['risks'] {
-    const risks: HealthReport['risks'] = [];
+  private assessRisks(statistics: Record<HealthMetric, IStatisticsData>): IHealthReport['risks'] {
+    const risks: IHealthReport['risks'] = [];
 
     // 基于统计数据评估风险
     Object.entries(statistics).forEach(([metric, stat]) => {
@@ -228,12 +206,12 @@ class DataStatisticsService {
       if (anomalyRate > 0.1) {
         risks.push({
           level: 'high',
-          description: `${metric}指标异常率超过10%，建议及时就医。`
+          description: `${metric}指标异常率超过10%，建议及时就医。`,
         });
       } else if (anomalyRate > 0.05) {
         risks.push({
           level: 'medium',
-          description: `${metric}指标出现少量异常，建议密切关注。`
+          description: `${metric}指标出现少量异常，建议密切关注。`,
         });
       }
     });
@@ -242,4 +220,4 @@ class DataStatisticsService {
   }
 }
 
-export const dataStatisticsService = new DataStatisticsService(); 
+export const dataStatisticsService = new DataStatisticsService();

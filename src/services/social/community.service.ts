@@ -1,24 +1,22 @@
+import {
+  ICommunity,
+  ICommunityMember,
+  ICommunityContent,
+  ICommunityEvent,
+  IExpertQA,
+  IRewardSystem,
+} from './community.types';
+import { ConfigService } from '@nestjs/config';
 import { Injectable } from '@nestjs/common';
 import { Logger } from '../../infrastructure/logger/logger.service';
-import { ConfigService } from '@nestjs/config';
-import { 
-  Community,
-  CommunityMember,
-  CommunityContent,
-  CommunityEvent,
-  ExpertQA,
-  RewardSystem 
-} from './community.types';
 
-@Injectable()
+@Inject
+able()
 export class CommunityService {
-  constructor(
-    private readonly logger: Logger,
-    private readonly config: ConfigService
-  ) {}
+  constructor(private readonly logger: Logger, private readonly config: ConfigService) {}
 
   // 社区管理
-  async createCommunity(data: Partial<Community>): Promise<Community> {
+  async createCommunity(data: Partial<ICommunity>): Promise<ICommunity> {
     try {
       // 实现创建社区逻辑
     } catch (error) {
@@ -27,7 +25,7 @@ export class CommunityService {
     }
   }
 
-  async joinCommunity(userId: string, communityId: string): Promise<CommunityMember> {
+  async joinCommunity(userId: string, communityId: string): Promise<ICommunityMember> {
     try {
       // 实现加入社区逻辑
     } catch (error) {
@@ -37,7 +35,7 @@ export class CommunityService {
   }
 
   // 内容管理
-  async createContent(data: Partial<CommunityContent>): Promise<CommunityContent> {
+  async createContent(data: Partial<ICommunityContent>): Promise<ICommunityContent> {
     try {
       // 实现创建内容逻辑
     } catch (error) {
@@ -46,7 +44,11 @@ export class CommunityService {
     }
   }
 
-  async moderateContent(contentId: string, decision: 'approve' | 'reject', reason?: string): Promise<void> {
+  async moderateContent(
+    contentId: string,
+    decision: 'approve' | 'reject',
+    reason?: string,
+  ): Promise<void> {
     try {
       // 实现内容审核逻辑
     } catch (error) {
@@ -56,7 +58,7 @@ export class CommunityService {
   }
 
   // 活动管理
-  async createEvent(data: Partial<CommunityEvent>): Promise<CommunityEvent> {
+  async createEvent(data: Partial<ICommunityEvent>): Promise<ICommunityEvent> {
     try {
       // 实现创建活动逻辑
     } catch (error) {
@@ -75,7 +77,7 @@ export class CommunityService {
   }
 
   // 专家问答
-  async askQuestion(data: Partial<ExpertQA>): Promise<ExpertQA> {
+  async askQuestion(data: Partial<IExpertQA>): Promise<IExpertQA> {
     try {
       // 实现提问逻辑
     } catch (error) {
@@ -94,7 +96,7 @@ export class CommunityService {
   }
 
   // 积分奖励
-  async awardPoints(userId: string, action: string, points: number): Promise<RewardSystem> {
+  async awardPoints(userId: string, action: string, points: number): Promise<IRewardSystem> {
     try {
       // 实现积分奖励逻辑
     } catch (error) {
@@ -113,7 +115,7 @@ export class CommunityService {
   }
 
   // 推荐系统
-  async getRecommendedContent(userId: string): Promise<CommunityContent[]> {
+  async getRecommendedContent(userId: string): Promise<ICommunityContent[]> {
     try {
       // 实现内容推荐逻辑
     } catch (error) {
@@ -122,7 +124,7 @@ export class CommunityService {
     }
   }
 
-  async getRecommendedExperts(topic: string): Promise<CommunityMember[]> {
+  async getRecommendedExperts(topic: string): Promise<ICommunityMember[]> {
     try {
       // 实现专家推荐逻辑
     } catch (error) {
@@ -130,4 +132,4 @@ export class CommunityService {
       throw error;
     }
   }
-} 
+}

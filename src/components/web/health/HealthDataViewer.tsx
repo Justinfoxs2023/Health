@@ -1,13 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  LineChart, 
-  BarChart,
-  PieChart,
-  RadarChart 
-} from '../charts';
-import { HealthData, ChartConfig } from '../../../types/health';
-import { useHealthData } from '../../../hooks/useHealthData';
+
 import { DateRangePicker, FilterPanel } from '../common';
+import { HealthData, ChartConfig } from '../../../types/health';
+import { LineChart, BarChart, PieChart, RadarChart } from '../charts';
+import { useHealthData } from '../../../hooks/useHealthData';
 
 export const HealthDataViewer: React.FC<{
   userId: string;
@@ -35,20 +31,14 @@ export const HealthDataViewer: React.FC<{
   return (
     <div className="health-data-viewer">
       <div className="controls">
-        <DateRangePicker 
-          value={timeRange}
-          onChange={setTimeRange}
-        />
-        <FilterPanel 
-          filters={filters}
-          onChange={setFilters}
-        />
+        <DateRangePicker value={timeRange} onChange={setTimeRange} />
+        <FilterPanel filters={filters} onChange={setFilters} />
       </div>
 
       <div className="charts-grid">
         {config.charts.map(chart => (
           <div key={chart.id} className="chart-container">
-            <h3>{chart.title}</h3>
+            <h3>{charttitle}</h3>
             {renderChart(chart.type, data[chart.dataKey])}
           </div>
         ))}
@@ -57,12 +47,12 @@ export const HealthDataViewer: React.FC<{
       <div className="insights">
         {data?.insights.map(insight => (
           <div key={insight.id} className="insight-card">
-            <h4>{insight.title}</h4>
-            <p>{insight.description}</p>
+            <h4>{insighttitle}</h4>
+            <p>{insightdescription}</p>
             {insight.recommendations && (
               <ul>
                 {insight.recommendations.map(rec => (
-                  <li key={rec.id}>{rec.text}</li>
+                  <li key={recid}>{rectext}</li>
                 ))}
               </ul>
             )}
@@ -71,4 +61,4 @@ export const HealthDataViewer: React.FC<{
       </div>
     </div>
   );
-}; 
+};

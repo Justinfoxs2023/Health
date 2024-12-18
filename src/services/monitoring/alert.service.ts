@@ -1,9 +1,9 @@
+import { ConfigService } from '@nestjs/config';
+import { IAlert } from './monitoring.types';
 import { Injectable } from '@nestjs/common';
 import { Logger } from '../../infrastructure/logger/logger.service';
-import { ConfigService } from '@nestjs/config';
-import { Alert } from './monitoring.types';
-import { RedisService } from '@nestjs/redis';
 import { NotificationService } from '../notification/notification.service';
+import { RedisService } from '@nestjs/redis';
 
 @Injectable()
 export class AlertService {
@@ -14,16 +14,16 @@ export class AlertService {
     private readonly logger: Logger,
     private readonly config: ConfigService,
     private readonly redis: RedisService,
-    private readonly notification: NotificationService
+    private readonly notification: NotificationService,
   ) {
     this.recoveryScripts = new Map();
     this.initializeRecoveryScripts();
   }
 
   // 创建告警
-  async createAlert(data: Partial<Alert>): Promise<Alert> {
+  async createAlert(data: Partial<IAlert>): Promise<IAlert> {
     try {
-      const alert: Alert = {
+      const alert: IAlert = {
         id: this.generateAlertId(),
         type: data.type,
         severity: data.severity,
@@ -32,7 +32,7 @@ export class AlertService {
         updatedAt: new Date(),
         content: data.content,
         impact: data.impact || { services: [] },
-        ...data
+        ...data,
       };
 
       // 保存告警
@@ -56,8 +56,8 @@ export class AlertService {
   // 更新告警状态
   async updateAlertStatus(
     alertId: string,
-    status: Alert['status'],
-    userId?: string
+    status: IAlert['status'],
+    userId?: string,
   ): Promise<void> {
     try {
       const alert = await this.getAlert(alertId);
@@ -65,7 +65,7 @@ export class AlertService {
         throw new Error(`Alert not found: ${alertId}`);
       }
 
-      const updatedAlert: Alert = {
+      const updatedAlert: IAlert = {
         ...alert,
         status,
         updatedAt: new Date(),
@@ -73,13 +73,13 @@ export class AlertService {
           ...alert.resolution,
           ...(status === 'acknowledged' && {
             acknowledgedBy: userId,
-            acknowledgedAt: new Date()
+            acknowledgedAt: new Date(),
           }),
           ...(status === 'resolved' && {
             resolvedBy: userId,
-            resolvedAt: new Date()
-          })
-        }
+            resolvedAt: new Date(),
+          }),
+        },
       };
 
       await this.saveAlert(updatedAlert);
@@ -91,7 +91,7 @@ export class AlertService {
   }
 
   // 获取活跃告警
-  async getActiveAlerts(): Promise<Alert[]> {
+  async getActiveAlerts(): Promise<IAlert[]> {
     try {
       const alerts = await this.getAllAlerts();
       return alerts.filter(alert => alert.status === 'active');
@@ -102,7 +102,7 @@ export class AlertService {
   }
 
   // 自动恢复尝试
-  async attemptAutoRecovery(alert: Alert): Promise<boolean> {
+  async attemptAutoRecovery(alert: IAlert): Promise<boolean> {
     try {
       if (!alert.autoRecovery?.enabled) {
         return false;
@@ -123,14 +123,14 @@ export class AlertService {
       }
 
       const success = await recoveryScript();
-      const updatedAlert: Alert = {
+      const updatedAlert: IAlert = {
         ...alert,
         autoRecovery: {
           ...alert.autoRecovery,
           attempts: attempts + 1,
           lastAttempt: new Date(),
-          success
-        }
+          success,
+        },
       };
 
       if (success) {
@@ -139,7 +139,7 @@ export class AlertService {
           resolvedBy: 'system',
           resolvedAt: new Date(),
           action: 'auto-recovery',
-          notes: 'Automatically resolved by system recovery script'
+          notes: 'Automatically resolved by system recovery script',
         };
       }
 
@@ -156,7 +156,7 @@ export class AlertService {
     try {
       const alerts = await this.getAllAlerts();
       const filteredAlerts = alerts.filter(
-        alert => alert.createdAt >= period.start && alert.createdAt <= period.end
+        alert => alert.createdAt >= period.start && alert.createdAt <= period.end,
       );
 
       return {
@@ -164,7 +164,7 @@ export class AlertService {
         bySeverity: this.groupBy(filteredAlerts, 'severity'),
         byType: this.groupBy(filteredAlerts, 'type'),
         mttr: this.calculateMTTR(filteredAlerts),
-        topIssues: this.getTopIssues(filteredAlerts)
+        topIssues: this.getTopIssues(filteredAlerts),
       };
     } catch (error) {
       this.logger.error('Failed to get alert statistics:', error);
@@ -186,26 +186,24 @@ export class AlertService {
     });
   }
 
-  private async saveAlert(alert: Alert): Promise<void> {
+  private async saveAlert(alert: IAlert): Promise<void> {
     const key = `${this.alertsKey}:${alert.id}`;
     await this.redis.set(key, JSON.stringify(alert));
   }
 
-  private async getAlert(alertId: string): Promise<Alert | null> {
+  private async getAlert(alertId: string): Promise<IAlert | null> {
     const key = `${this.alertsKey}:${alertId}`;
     const data = await this.redis.get(key);
     return data ? JSON.parse(data) : null;
   }
 
-  private async getAllAlerts(): Promise<Alert[]> {
+  private async getAllAlerts(): Promise<IAlert[]> {
     const keys = await this.redis.keys(`${this.alertsKey}:*`);
-    const alerts = await Promise.all(
-      keys.map(key => this.redis.get(key))
-    );
+    const alerts = await Promise.all(keys.map(key => this.redis.get(key)));
     return alerts.map(data => JSON.parse(data));
   }
 
-  private async notifyAlert(alert: Alert): Promise<void> {
+  private async notifyAlert(alert: IAlert): Promise<void> {
     const template = this.getNotificationTemplate(alert);
     await this.notification.send({
       type: 'alert',
@@ -214,12 +212,12 @@ export class AlertService {
       content: template.content,
       metadata: {
         alertId: alert.id,
-        type: alert.type
-      }
+        type: alert.type,
+      },
     });
   }
 
-  private async notifyAlertUpdate(alert: Alert): Promise<void> {
+  private async notifyAlertUpdate(alert: IAlert): Promise<void> {
     const template = this.getUpdateTemplate(alert);
     await this.notification.send({
       type: 'alert-update',
@@ -229,8 +227,8 @@ export class AlertService {
       metadata: {
         alertId: alert.id,
         type: alert.type,
-        status: alert.status
-      }
+        status: alert.status,
+      },
     });
   }
 
@@ -238,7 +236,7 @@ export class AlertService {
     return `alert_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
-  private groupBy(alerts: Alert[], key: keyof Alert): Record<string, number> {
+  private groupBy(alerts: IAlert[], key: keyof IAlert): Record<string, number> {
     return alerts.reduce((acc, alert) => {
       const value = String(alert[key]);
       acc[value] = (acc[value] || 0) + 1;
@@ -246,25 +244,22 @@ export class AlertService {
     }, {});
   }
 
-  private calculateMTTR(alerts: Alert[]): number {
-    const resolvedAlerts = alerts.filter(
-      alert => alert.status === 'resolved' && alert.resolution
-    );
+  private calculateMTTR(alerts: IAlert[]): number {
+    const resolvedAlerts = alerts.filter(alert => alert.status === 'resolved' && alert.resolution);
 
     if (resolvedAlerts.length === 0) {
       return 0;
     }
 
     const totalResolutionTime = resolvedAlerts.reduce((sum, alert) => {
-      const resolutionTime = alert.resolution.resolvedAt.getTime() - 
-                           alert.createdAt.getTime();
+      const resolutionTime = alert.resolution.resolvedAt.getTime() - alert.createdAt.getTime();
       return sum + resolutionTime;
     }, 0);
 
     return totalResolutionTime / resolvedAlerts.length / (1000 * 60); // 转换为分钟
   }
 
-  private getTopIssues(alerts: Alert[]): any[] {
+  private getTopIssues(alerts: IAlert[]): any[] {
     const issues = alerts.reduce((acc, alert) => {
       const key = `${alert.type}:${alert.content.title}`;
       if (!acc[key]) {
@@ -272,7 +267,7 @@ export class AlertService {
           type: alert.type,
           title: alert.content.title,
           count: 0,
-          impact: 0
+          impact: 0,
         };
       }
       acc[key].count++;
@@ -285,19 +280,19 @@ export class AlertService {
       .slice(0, 5);
   }
 
-  private getNotificationTemplate(alert: Alert): { title: string; content: string } {
+  private getNotificationTemplate(alert: IAlert): { title: string; content: string } {
     // 实现告警通知模板生成逻辑
     return {
       title: `[${alert.severity.toUpperCase()}] ${alert.content.title}`,
-      content: alert.content.message
+      content: alert.content.message,
     };
   }
 
-  private getUpdateTemplate(alert: Alert): { title: string; content: string } {
+  private getUpdateTemplate(alert: IAlert): { title: string; content: string } {
     // 实现告警更新通知模板生成逻辑
     return {
       title: `Alert Status Update: ${alert.content.title}`,
-      content: `Alert status changed to ${alert.status}`
+      content: `Alert status changed to ${alert.status}`,
     };
   }
-} 
+}

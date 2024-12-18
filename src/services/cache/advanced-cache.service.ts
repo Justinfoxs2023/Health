@@ -1,6 +1,6 @@
-import { Redis } from '../../utils/redis';
-import { Logger } from '../../utils/logger';
 import { CacheConfig } from '../../types/cache';
+import { Logger } from '../../utils/logger';
+import { Redis } from '../../utils/redis';
 
 export class AdvancedCacheService {
   private redis: Redis;
@@ -15,7 +15,7 @@ export class AdvancedCacheService {
   async getWithLayeredCache<T>(
     key: string,
     fetchData: () => Promise<T>,
-    config: CacheConfig
+    config: CacheConfig,
   ): Promise<T> {
     try {
       // 1. 检查本地缓存
@@ -31,11 +31,11 @@ export class AdvancedCacheService {
 
       // 3. 获取新数据
       const data = await fetchData();
-      
+
       // 4. 更新缓存
       await Promise.all([
         this.setLocalCache(key, data, config.localTTL),
-        this.setRedisCache(key, data, config.redisTTL)
+        this.setRedisCache(key, data, config.redisTTL),
       ]);
 
       return data;
@@ -59,4 +59,4 @@ export class AdvancedCacheService {
       throw error;
     }
   }
-} 
+}

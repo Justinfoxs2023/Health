@@ -1,17 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { IHealthData, HealthDataType } from '../../types';
-import {
-  healthAnalysisService,
-  RiskLevel,
-  TrendType,
-  RiskAssessment,
-  TrendAnalysis,
-  HealthAdvice
-} from '../../services/analysis';
-import { Loading } from '../Loading';
-import { Message } from '../Message';
-import { useTranslation } from 'react-i18next';
-import { formatDate } from '../../utils';
+
 import {
   LineChart,
   Line,
@@ -29,10 +17,24 @@ import {
   PolarGrid,
   PolarAngleAxis,
   PolarRadiusAxis,
-  Radar
+  Radar,
 } from 'recharts';
+import {
+  healthAnalysisService,
+  RiskLevel,
+  TrendType,
+  IRiskAssessment,
+  ITrendAnalysis,
+  IHealthAdvice,
+} from '../../services/analysis';
+import { IHealthData, HealthDataType } from '../../types';
+import { Loading } from '../Loading';
+import { Message } from '../Message';
+import { formatDate } from '../../utils';
+import { useTranslation } from 'react-i18next';
 
-export interface HealthAnalysisProps {
+export interface IHealthAn
+alysisProps {
   /** 健康数据 */
   data: IHealthData[];
   /** 数据类型 */
@@ -43,32 +45,36 @@ export interface HealthAnalysisProps {
   style?: React.CSSProperties;
 }
 
-interface ChartDataPoint {
-  timestamp: string;
-  value: number;
-  isPrediction?: boolean;
-  isOutlier?: boolean;
+interface IChartDataPoint {
+  /** timestamp 的描述 */
+    timestamp: string;
+  /** value 的描述 */
+    value: number;
+  /** isPrediction 的描述 */
+    isPrediction?: boolean;
+  /** isOutlier 的描述 */
+    isOutlier?: boolean;
 }
 
-interface DimensionScore {
-  dimension: string;
-  score: number;
-  status: string;
+interface IDimensionScore {
+  /** dimension 的描述 */
+    dimension: string;
+  /** score 的描述 */
+    score: number;
+  /** status 的描述 */
+    status: string;
 }
 
 /** 健康趋势分析组件 */
-export const HealthAnalysis: React.FC<HealthAnalysisProps> = ({
-  data,
-  type,
-  className,
-  style
-}) => {
+export const HealthAnalysis: React.FC<HealthAnalysisProps> = ({ data, type, className, style }) => {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
-  const [riskAssessment, setRiskAssessment] = useState<RiskAssessment | null>(null);
-  const [trendAnalysis, setTrendAnalysis] = useState<TrendAnalysis | null>(null);
-  const [advice, setAdvice] = useState<HealthAdvice[]>([]);
-  const [selectedChart, setSelectedChart] = useState<'trend' | 'scatter' | 'distribution' | 'radar'>('trend');
+  const [riskAssessment, setRiskAssessment] = useState<IRiskAssessment | null>(null);
+  const [trendAnalysis, setTrendAnalysis] = useState<ITrendAnalysis | null>(null);
+  const [advice, setAdvice] = useState<IHealthAdvice[]>([]);
+  const [selectedChart, setSelectedChart] = useState<
+    'trend' | 'scatter' | 'distribution' | 'radar'
+  >('trend');
 
   useEffect(() => {
     const analyzeData = async () => {
@@ -138,28 +144,28 @@ export const HealthAnalysis: React.FC<HealthAnalysisProps> = ({
   };
 
   // 准备图表数据
-  const chartData: ChartDataPoint[] = [
+  const chartData: IChartDataPoint[] = [
     ...data.map(item => ({
       timestamp: formatDate(item.timestamp),
       value: item.value,
-      isOutlier: trendAnalysis.outliers?.some(o => 
-        o.timestamp.getTime() === item.timestamp.getTime()
-      )
+      isOutlier: trendAnalysis.outliers?.some(
+        o => o.timestamp.getTime() === item.timestamp.getTime(),
+      ),
     })),
     ...trendAnalysis.prediction.map((value, index) => ({
       timestamp: formatDate(
-        new Date(data[data.length - 1].timestamp.getTime() + (index + 1) * 24 * 60 * 60 * 1000)
+        new Date(data[data.length - 1].timestamp.getTime() + (index + 1) * 24 * 60 * 60 * 1000),
       ),
       value,
-      isPrediction: true
-    }))
+      isPrediction: true,
+    })),
   ];
 
   // 准备维度得分数据
-  const dimensionScores: DimensionScore[] = riskAssessment.details.map(detail => ({
+  const dimensionScores: IDimensionScore[] = riskAssessment.details.map(detail => ({
     dimension: t(`healthData.type.${detail.type}`),
     score: detail.score,
-    status: detail.status
+    status: detail.status,
   }));
 
   // 渲染趋势图表
@@ -179,7 +185,7 @@ export const HealthAnalysis: React.FC<HealthAnalysisProps> = ({
           dot={dot => ({
             r: dot.payload.isOutlier ? 6 : 4,
             fill: dot.payload.isOutlier ? '#ff0000' : '#8884d8',
-            stroke: dot.payload.isOutlier ? '#ff0000' : '#8884d8'
+            stroke: dot.payload.isOutlier ? '#ff0000' : '#8884d8',
           })}
           name={t('analysis.actualValue')}
         />
@@ -230,16 +236,13 @@ export const HealthAnalysis: React.FC<HealthAnalysisProps> = ({
 
     const distribution = Array(intervals).fill(0);
     values.forEach(value => {
-      const index = Math.min(
-        Math.floor((value - min) / step),
-        intervals - 1
-      );
+      const index = Math.min(Math.floor((value - min) / step), intervals - 1);
       distribution[index]++;
     });
 
     const distributionData = distribution.map((count, i) => ({
       range: `${(min + i * step).toFixed(1)}-${(min + (i + 1) * step).toFixed(1)}`,
-      count
+      count,
     }));
 
     return (
@@ -303,12 +306,17 @@ export const HealthAnalysis: React.FC<HealthAnalysisProps> = ({
           <span className="font-medium">{t(`analysis.trendType.${trendAnalysis.type}`)}</span>
         </div>
         <div className="mb-4">
-          <div>{t('analysis.changeRate')}: {(trendAnalysis.changeRate * 100).toFixed(1)}%</div>
-          <div>{t('analysis.confidence')}: {(trendAnalysis.confidence * 100).toFixed(1)}%</div>
+          <div>
+            {t('analysis.changeRate')}: {(trendAnalysis.changeRate * 100).toFixed(1)}%
+          </div>
+          <div>
+            {t('analysis.confidence')}: {(trendAnalysis.confidence * 100).toFixed(1)}%
+          </div>
           {trendAnalysis.seasonality && (
             <div>
-              {t('analysis.seasonality')}: {t(`analysis.pattern.${trendAnalysis.seasonality.pattern}`)} 
-              ({(trendAnalysis.seasonality.strength * 100).toFixed(1)}%)
+              {t('analysis.seasonality')}:{' '}
+              {t(`analysis.pattern.${trendAnalysis.seasonality.pattern}`)}(
+              {(trendAnalysis.seasonality.strength * 100).toFixed(1)}%)
             </div>
           )}
         </div>
@@ -364,8 +372,8 @@ export const HealthAnalysis: React.FC<HealthAnalysisProps> = ({
             <ul className="list-disc list-inside">
               {trendAnalysis.outliers.map((outlier, index) => (
                 <li key={index} className="text-red-500">
-                  {formatDate(outlier.timestamp)}: {outlier.value} 
-                  ({t('analysis.deviation')}: {outlier.deviation.toFixed(2)})
+                  {formatDate(outlier.timestamp)}: {outlier.value}({t('analysis.deviation')}:{' '}
+                  {outlier.deviation.toFixed(2)})
                 </li>
               ))}
             </ul>
@@ -377,26 +385,19 @@ export const HealthAnalysis: React.FC<HealthAnalysisProps> = ({
       <div className="health-analysis__advice">
         <h3 className="text-lg font-medium mb-2">{t('analysis.healthAdvice')}</h3>
         {advice.map((item, index) => (
-          <div
-            key={index}
-            className="bg-white rounded-lg shadow-sm p-4 mb-2"
-          >
+          <div key={index} className="bg-white rounded-lg shadow-sm p-4 mb-2">
             <div className="flex items-center justify-between mb-2">
-              <div className="font-medium">
-                {t(`healthData.type.${item.type}`)}
-              </div>
+              <div className="font-medium">{t(`healthData.type.${item.type}`)}</div>
               <div className="text-sm text-gray-500">
-                {t(`advice.category.${item.category}`)} | 
-                {t('advice.confidence')}: {(item.confidence * 100).toFixed(1)}% |
-                {t('advice.impact')}: {t(`advice.impact.${item.impact}`)}
+                {t(`advice.category.${item.category}`)} |{t('advice.confidence')}:{' '}
+                {(item.confidence * 100).toFixed(1)}% |{t('advice.impact')}:{' '}
+                {t(`advice.impact.${item.impact}`)}
               </div>
             </div>
-            <div className="whitespace-pre-line text-gray-600">
-              {item.advice}
-            </div>
+            <div className="whitespace-pre-line text-gray-600">{item.advice}</div>
           </div>
         ))}
       </div>
     </div>
   );
-}; 
+};

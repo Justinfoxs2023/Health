@@ -1,18 +1,22 @@
 import React, { useState, useRef, useEffect } from 'react';
+
 import { theme } from '../../styles/theme';
 
-interface TooltipProps {
-  content: React.ReactNode;
-  children: React.ReactNode;
-  placement?: 'top' | 'bottom' | 'left' | 'right';
-  delay?: number;
+interface ITooltipProps {
+  /** content 的描述 */
+    content: ReactReactNode;
+  /** children 的描述 */
+    children: ReactReactNode;
+  /** placement 的描述 */
+    placement: top  bottom  left  right;
+  delay: number;
 }
 
-export const Tooltip: React.FC<TooltipProps> = ({
+export const Tooltip: React.FC<ITooltipProps> = ({
   content,
   children,
   placement = 'top',
-  delay = 200
+  delay = 200,
 }) => {
   const [visible, setVisible] = useState(false);
   const [position, setPosition] = useState({ top: 0, left: 0 });
@@ -77,48 +81,44 @@ export const Tooltip: React.FC<TooltipProps> = ({
 
   return (
     <>
-      <div
-        ref={targetRef}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      >
+      <div ref={targetRef} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
         {children}
       </div>
       {visible && (
         <div
           ref={tooltipRef}
-          className={`tooltip ${placement}`}
+          className={tooltip {placement}}
           style={{
-            top: position.top,
-            left: position.left
+            top positiontop
+            left positionleft
           }}
         >
           {content}
         </div>
       )}
 
-      <style jsx>{`
-        .tooltip {
-          position: fixed;
-          z-index: 1000;
-          padding: ${theme.spacing(1)} ${theme.spacing(1.5)};
-          background: rgba(0, 0, 0, 0.8);
-          color: white;
-          border-radius: ${theme.borderRadius.small};
-          font-size: ${theme.typography.body2.fontSize};
-          pointer-events: none;
-          animation: fadeIn 0.2s ease-out;
+      <style jsx>{
+        tooltip {
+          position fixed
+          zindex 1000
+          padding {themespacing1} {themespacing15}
+          background rgba0 0 0 08
+          color white
+          borderradius {themeborderRadiussmall}
+          fontsize {themetypographybody2fontSize}
+          pointerevents none
+          animation fadeIn 02s easeout
         }
 
-        @keyframes fadeIn {
+        keyframes fadeIn {
           from {
-            opacity: 0;
+            opacity 0
           }
           to {
-            opacity: 1;
+            opacity 1
           }
         }
-      `}</style>
+      }</style>
     </>
   );
-}; 
+};

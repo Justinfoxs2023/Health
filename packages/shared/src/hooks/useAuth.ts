@@ -1,9 +1,22 @@
 import { useState, useEffect, useCallback } from 'react';
-import { authService, LoginParams, RegisterParams } from '../services/auth';
+
 import { IUser } from '../types';
+import { authService, ILoginParams, IRegisterParams } from '../services/auth';
 
 /** 认证Hook */
-export function useAuth() {
+export function useAuth(): {
+  user: any;
+  loading: boolean;
+  error: Error | null;
+  isAuthenticated: boolean;
+  login: (
+    params: import('D:/Health/packages/shared/src/services/auth/index').ILoginParams,
+  ) => Promise<void>;
+  register: (
+    params: import('D:/Health/packages/shared/src/services/auth/index').IRegisterParams,
+  ) => Promise<void>;
+  logout: () => Promise<void>;
+} {
   const [user, setUser] = useState<IUser | null>(authService.getCurrentUser());
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
@@ -21,7 +34,7 @@ export function useAuth() {
   }, []);
 
   /** 登录 */
-  const login = useCallback(async (params: LoginParams) => {
+  const login = useCallback(async (params: ILoginParams) => {
     setLoading(true);
     setError(null);
     try {
@@ -36,7 +49,7 @@ export function useAuth() {
   }, []);
 
   /** 注册 */
-  const register = useCallback(async (params: RegisterParams) => {
+  const register = useCallback(async (params: IRegisterParams) => {
     setLoading(true);
     setError(null);
     try {
@@ -72,6 +85,6 @@ export function useAuth() {
     isAuthenticated: authService.isAuthenticated(),
     login,
     register,
-    logout
+    logout,
   };
-} 
+}

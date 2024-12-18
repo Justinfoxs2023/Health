@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 custom.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // Redis类型定义
 declare class Redis {
   get(key: string): Promise<string | null>;
@@ -80,4 +87,4 @@ declare module 'supervision' {
   export interface Supervision {
     // 定义类型
   }
-} 
+}

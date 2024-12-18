@@ -17,4 +17,4 @@ export abstract class BaseService {
   protected validateInput<T>(input: any, schema: Record<keyof T, any>): boolean {
     return TypeChecker.validateObject<T>(input, schema);
   }
-} 
+}

@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, ScrollView, StyleSheet, Text, TouchableOpacity, TextInput } from 'react-native';
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { getExpertDetail, bookConsultation } from '../../api/consultation';
+
 import { LoadingSpinner, Icon, AlertDialog, Calendar } from '../../components';
+import { View, ScrollView, StyleSheet, Text, TouchableOpacity, TextInput } from 'react-native';
 import { format } from 'date-fns';
+import { getExpertDetail, bookConsultation } from '../../api/consultation';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { zhCN } from 'date-fns/locale';
 
 export const BookConsultationScreen = ({ route, navigation }) => {
@@ -14,9 +15,8 @@ export const BookConsultationScreen = ({ route, navigation }) => {
   const [showAlert, setShowAlert] = React.useState(false);
   const [alertMessage, setAlertMessage] = React.useState('');
 
-  const { data: expert, isLoading } = useQuery(
-    ['expertDetail', expertId],
-    () => getExpertDetail(expertId)
+  const { data: expert, isLoading } = useQuery(['expertDetail', expertId], () =>
+    getExpertDetail(expertId),
   );
 
   const bookMutation = useMutation(bookConsultation, {
@@ -26,7 +26,7 @@ export const BookConsultationScreen = ({ route, navigation }) => {
     onError: (error: any) => {
       setAlertMessage(error.message || '预约失败，请重试');
       setShowAlert(true);
-    }
+    },
   });
 
   const handleSubmit = () => {
@@ -50,7 +50,7 @@ export const BookConsultationScreen = ({ route, navigation }) => {
       expertId,
       date: selectedDate,
       timeSlot: selectedTimeSlot,
-      description: description.trim()
+      description: description.trim(),
     });
   };
 
@@ -76,10 +76,13 @@ export const BookConsultationScreen = ({ route, navigation }) => {
             selectedDate={selectedDate}
             minDate={new Date()}
             maxDate={new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)}
-            markedDates={expert?.availableTime.reduce((acc, curr) => ({
-              ...acc,
-              [curr.date]: { marked: true }
-            }), {})}
+            markedDates={expert?.availableTime.reduce(
+              (acc, curr) => ({
+                ...acc,
+                [curr.date]: { marked: true },
+              }),
+              {},
+            )}
           />
         </View>
 
@@ -92,16 +95,17 @@ export const BookConsultationScreen = ({ route, navigation }) => {
                 ?.slots.map((slot, index) => (
                   <TouchableOpacity
                     key={index}
-                    style={[
-                      styles.timeSlot,
-                      selectedTimeSlot === slot && styles.selectedTimeSlot
-                    ]}
+                    style={[styles.timeSlot, selectedTimeSlot === slot && styles.selectedTimeSlot]}
                     onPress={() => setSelectedTimeSlot(slot)}
                   >
-                    <Text style={[
-                      styles.timeSlotText,
-                      selectedTimeSlot === slot && styles.selectedTimeSlotText
-                    ]}>{slot}</Text>
+                    <Text
+                      style={[
+                        styles.timeSlotText,
+                        selectedTimeSlot === slot && styles.selectedTimeSlotText,
+                      ]}
+                    >
+                      {slot}
+                    </Text>
                   </TouchableOpacity>
                 ))}
             </View>
@@ -134,9 +138,15 @@ export const BookConsultationScreen = ({ route, navigation }) => {
           <Text style={styles.totalPrice}>¥{expert?.price}</Text>
         </View>
         <TouchableOpacity
-          style={[styles.submitButton, (!selectedDate || !selectedTimeSlot || !description.trim()) && styles.submitButtonDisabled]}
+          style={[
+            styles.submitButton,
+            (!selectedDate || !selectedTimeSlot || !description.trim()) &&
+              styles.submitButtonDisabled,
+          ]}
           onPress={handleSubmit}
-          disabled={!selectedDate || !selectedTimeSlot || !description.trim() || bookMutation.isLoading}
+          disabled={
+            !selectedDate || !selectedTimeSlot || !description.trim() || bookMutation.isLoading
+          }
         >
           <Text style={styles.submitButtonText}>确认预约</Text>
         </TouchableOpacity>
@@ -157,51 +167,51 @@ export const BookConsultationScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   expertInfo: {
     padding: 15,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   expertRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 4
+    marginBottom: 4,
   },
   expertName: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#333',
-    marginRight: 8
+    marginRight: 8,
   },
   expertTitle: {
     fontSize: 14,
     color: '#666',
-    marginRight: 8
+    marginRight: 8,
   },
   price: {
     fontSize: 16,
     color: '#F57C00',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   hospital: {
     fontSize: 14,
-    color: '#666'
+    color: '#666',
   },
   section: {
     marginTop: 10,
     padding: 15,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   sectionTitle: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 15
+    marginBottom: 15,
   },
   timeSlots: {
     flexDirection: 'row',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
   },
   timeSlot: {
     width: '30%',
@@ -210,20 +220,20 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderRadius: 8,
     backgroundColor: '#f5f5f5',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   selectedTimeSlot: {
     backgroundColor: '#E8F5E9',
     borderColor: '#2E7D32',
-    borderWidth: 1
+    borderWidth: 1,
   },
   timeSlotText: {
     fontSize: 14,
-    color: '#666'
+    color: '#666',
   },
   selectedTimeSlotText: {
     color: '#2E7D32',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   input: {
     backgroundColor: '#f5f5f5',
@@ -232,20 +242,20 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#333',
     height: 100,
-    textAlignVertical: 'top'
+    textAlignVertical: 'top',
   },
   noticeSection: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 15,
     backgroundColor: '#FFF3E0',
-    marginTop: 10
+    marginTop: 10,
   },
   noticeText: {
     fontSize: 12,
     color: '#F57C00',
     marginLeft: 8,
-    flex: 1
+    flex: 1,
   },
   footer: {
     flexDirection: 'row',
@@ -253,32 +263,32 @@ const styles = StyleSheet.create({
     padding: 15,
     backgroundColor: '#fff',
     borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: '#f0f0f0'
+    borderTopColor: '#f0f0f0',
   },
   priceInfo: {
-    flex: 1
+    flex: 1,
   },
   totalLabel: {
     fontSize: 12,
-    color: '#999'
+    color: '#999',
   },
   totalPrice: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#F57C00'
+    color: '#F57C00',
   },
   submitButton: {
     backgroundColor: '#2E7D32',
     paddingHorizontal: 30,
     paddingVertical: 12,
-    borderRadius: 24
+    borderRadius: 24,
   },
   submitButtonDisabled: {
-    backgroundColor: '#ccc'
+    backgroundColor: '#ccc',
   },
   submitButtonText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: 'bold'
-  }
-}); 
+    fontWeight: 'bold',
+  },
+});

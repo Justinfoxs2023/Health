@@ -1,16 +1,25 @@
-interface ThemeConfig {
+/**
+ * @fileoverview TS 文件 themes.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
+interface IThemeConfig {
+  /** colors 的描述 */
   colors: {
     primary: string;
     secondary: string;
     background: string;
     text: string;
-    // 更多颜色变量
   };
+  /** spacing 的描述 */
   spacing: {
     small: string;
     medium: string;
     large: string;
   };
+  /** typography 的描述 */
   typography: {
     fontFamily: string;
     fontSize: {
@@ -19,4 +28,4 @@ interface ThemeConfig {
       large: string;
     };
   };
-} 
+}

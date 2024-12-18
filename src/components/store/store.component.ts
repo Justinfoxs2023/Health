@@ -1,21 +1,21 @@
 import { Component, OnInit } from '@angular/core';
+import { IProduct, ICart } from '../../services/store/types';
 import { StoreService } from '../../services/store/store.service';
-import { Product, Cart } from '../../services/store/types';
 
 @Component({
   selector: 'app-store',
   templateUrl: './store.component.html',
-  styleUrls: ['./store.component.scss']
+  styleUrls: ['./store.component.scss'],
 })
 export class StoreComponent implements OnInit {
-  products: Product[] = [];
-  recommendations: Product[] = [];
-  cart: Cart | null = null;
+  products: IProduct[] = [];
+  recommendations: IProduct[] = [];
+  cart: ICart | null = null;
   filters = {
     category: '',
     tags: [],
     priceRange: [0, 1000],
-    healthLabels: []
+    healthLabels: [],
   };
 
   constructor(private storeService: StoreService) {}
@@ -50,7 +50,7 @@ export class StoreComponent implements OnInit {
       items.push({
         productId,
         quantity: 1,
-        selected: true
+        selected: true,
       });
     }
 
@@ -67,4 +67,4 @@ export class StoreComponent implements OnInit {
     const order = await this.storeService.createOrder('current_user_id', selectedItems);
     // 跳转到支付页面
   }
-} 
+}

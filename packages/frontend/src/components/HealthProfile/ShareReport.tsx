@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { Button, Modal, Form, Input, message } from 'antd';
 import { ShareAltOutlined } from '@ant-design/icons';
 import { shareHealthReport } from '../../services/health.service';
@@ -19,25 +20,16 @@ export const ShareReport: React.FC<{ reportId: string }> = ({ reportId }) => {
 
   return (
     <>
-      <Button
-        type="primary"
-        icon={<ShareAltOutlined />}
-        onClick={() => setVisible(true)}
-      >
+      <Button type="primary" icon={<ShareAltOutlined />} onClick={() => setVisible(true)}>
         分享报告
       </Button>
-      <Modal
-        title="分享健康报告"
-        open={visible}
-        onCancel={() => setVisible(false)}
-        footer={null}
-      >
+      <Modal title="分享健康报告" open={visible} onCancel={() => setVisible(false)} footer={null}>
         <Form form={form} onFinish={handleShare}>
           <Form.Item
             name="email"
             rules={[
               { required: true, message: '请输入邮箱地址' },
-              { type: 'email', message: '请输入有效的邮箱地址' }
+              { type: 'email', message: '请输入有效的邮箱地址' },
             ]}
           >
             <Input placeholder="请输入接收者的邮箱地址" />
@@ -51,4 +43,4 @@ export const ShareReport: React.FC<{ reportId: string }> = ({ reportId }) => {
       </Modal>
     </>
   );
-}; 
+};

@@ -1,51 +1,74 @@
+/**
+ * @fileoverview TS 文件 index.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // 平台类型
-export type PlatformType = 
-  | 'wechat'    // 微信运动
-  | 'apple'     // Apple Health
-  | 'huawei'    // 华为运动健康
-  | 'xiaomi'    // 小米运动
-  | 'samsung'   // Samsung Health
-  | 'google'    // Google Fit
-  | 'fitbit'    // Fitbit
-  | 'garmin';   // Garmin
+export type PlatformType =
+  any; // Garmin
 
 // 平台配置
-export interface PlatformConfig {
-  platform: PlatformType;
-  appId: string;
-  appSecret: string;
-  apiVersion: string;
-  scopes: string[];
-  redirectUri?: string;
+export interface IPlatformConfig {
+  /** platform 的描述 */
+    platform: "wechat" | "apple" | "huawei" | "xiaomi" | "samsung" | "google" | "fitbit" | "garmin";
+  /** appId 的描述 */
+    appId: string;
+  /** appSecret 的描述 */
+    appSecret: string;
+  /** apiVersion 的描述 */
+    apiVersion: string;
+  /** scopes 的描述 */
+    scopes: string;
+  /** redirectUri 的描述 */
+    redirectUri: string;
 }
 
 // 授权信息
-export interface AuthInfo {
-  accessToken: string;
-  refreshToken?: string;
-  expiresIn: number;
-  scope: string[];
-  userId: string;
-  platformUserId: string;
+export interface IAuthInfo {
+  /** accessToken 的描述 */
+    accessToken: string;
+  /** refreshToken 的描述 */
+    refreshToken: string;
+  /** expiresIn 的描述 */
+    expiresIn: number;
+  /** scope 的描述 */
+    scope: string;
+  /** userId 的描述 */
+    userId: string;
+  /** platformUserId 的描述 */
+    platformUserId: string;
 }
 
 // 数据同步配置
-export interface SyncConfig {
-  platform: PlatformType;
-  dataTypes: string[];
-  startTime?: Date;
-  endTime?: Date;
-  incrementalSync?: boolean;
-  batchSize?: number;
+export interface ISyncConfig {
+  /** platform 的描述 */
+    platform: "wechat" | "apple" | "huawei" | "xiaomi" | "samsung" | "google" | "fitbit" | "garmin";
+  /** dataTypes 的描述 */
+    dataTypes: string;
+  /** startTime 的描述 */
+    startTime: Date;
+  /** endTime 的描述 */
+    endTime: Date;
+  /** incrementalSync 的描述 */
+    incrementalSync: false | true;
+  /** batchSize 的描述 */
+    batchSize: number;
 }
 
 // 同步状态
-export interface SyncStatus {
-  platform: PlatformType;
-  userId: string;
-  lastSyncTime: Date;
-  nextSyncTime?: Date;
-  status: 'idle' | 'syncing' | 'error';
-  error?: string;
-  progress?: number;
-} 
+export interface ISyncStatus {
+  /** platform 的描述 */
+    platform: "wechat" | "apple" | "huawei" | "xiaomi" | "samsung" | "google" | "fitbit" | "garmin";
+  /** userId 的描述 */
+    userId: string;
+  /** lastSyncTime 的描述 */
+    lastSyncTime: Date;
+  /** nextSyncTime 的描述 */
+    nextSyncTime: Date;
+  /** status 的描述 */
+    status: idle  syncing  error;
+  error: string;
+  progress: number;
+}

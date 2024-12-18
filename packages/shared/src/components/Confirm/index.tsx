@@ -1,8 +1,9 @@
 import React from 'react';
+
 import ReactDOM from 'react-dom';
 
 /** 确认对话框配置 */
-export interface ConfirmConfig {
+export interface IConfirmConfig {
   /** 标题 */
   title?: React.ReactNode;
   /** 内容 */
@@ -20,7 +21,7 @@ export interface ConfirmConfig {
 }
 
 /** 确认对话框Props */
-interface ConfirmProps extends ConfirmConfig {
+interface IConfirmProps extends IConfirmConfig {
   /** 是否可见 */
   visible: boolean;
   /** 关闭对话框 */
@@ -28,7 +29,7 @@ interface ConfirmProps extends ConfirmConfig {
 }
 
 /** 确认对话框组件 */
-const Confirm: React.FC<ConfirmProps> = ({
+const Confirm: React.FC<IConfirmProps> = ({
   title = '确认',
   content,
   okText = '确定',
@@ -37,7 +38,7 @@ const Confirm: React.FC<ConfirmProps> = ({
   onOk,
   onCancel,
   visible,
-  onClose
+  onClose,
 }) => {
   if (!visible) return null;
 
@@ -46,7 +47,7 @@ const Confirm: React.FC<ConfirmProps> = ({
       await onOk?.();
       onClose();
     } catch (error) {
-      console.error('确认操作失败:', error);
+      console.error('Error in index.tsx:', '确认操作失败:', error);
     }
   };
 
@@ -59,19 +60,12 @@ const Confirm: React.FC<ConfirmProps> = ({
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
         {/* 背景遮罩 */}
-        <div
-          className="fixed inset-0 transition-opacity"
-          aria-hidden="true"
-          onClick={handleCancel}
-        >
+        <div className="fixed inset-0 transition-opacity" aria-hidden="true" onClick={handleCancel}>
           <div className="absolute inset-0 bg-gray-500 opacity-75" />
         </div>
 
         {/* 对话框 */}
-        <span
-          className="hidden sm:inline-block sm:align-middle sm:h-screen"
-          aria-hidden="true"
-        >
+        <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">
           &#8203;
         </span>
         <div
@@ -101,10 +95,7 @@ const Confirm: React.FC<ConfirmProps> = ({
                 </svg>
               </div>
               <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                <h3
-                  className="text-lg leading-6 font-medium text-gray-900"
-                  id="modal-headline"
-                >
+                <h3 className="text-lg leading-6 font-medium text-gray-900" id="modal-headline">
                   {title}
                 </h3>
                 <div className="mt-2">
@@ -146,8 +137,8 @@ class ConfirmContainer {
   private static instance: ConfirmContainer;
   private container: HTMLDivElement;
   private visible = false;
-  private config: ConfirmConfig = {
-    content: ''
+  private config: IConfirmConfig = {
+    content: '',
   };
 
   private constructor() {
@@ -163,7 +154,7 @@ class ConfirmContainer {
   }
 
   /** 显示确认对话框 */
-  public show(config: ConfirmConfig): Promise<void> {
+  public show(config: IConfirmConfig): Promise<void> {
     return new Promise((resolve, reject) => {
       this.config = {
         ...config,
@@ -178,7 +169,7 @@ class ConfirmContainer {
         onCancel: () => {
           config.onCancel?.();
           reject(new Error('用户取消'));
-        }
+        },
       };
       this.visible = true;
       this.render();
@@ -194,12 +185,8 @@ class ConfirmContainer {
   /** 渲染确认对话框 */
   private render() {
     ReactDOM.render(
-      <Confirm
-        {...this.config}
-        visible={this.visible}
-        onClose={() => this.close()}
-      />,
-      this.container
+      <Confirm {...this.config} visible={this.visible} onClose={() => this.close()} />,
+      this.container,
     );
   }
 }
@@ -207,9 +194,9 @@ class ConfirmContainer {
 /** 确认对话框API */
 export const confirm = {
   /** 显示确认对话框 */
-  show(config: ConfirmConfig) {
+  show(config: IConfirmConfig) {
     return ConfirmContainer.getInstance().show(config);
-  }
+  },
 };
 
-export default Confirm; 
+export default Confirm;

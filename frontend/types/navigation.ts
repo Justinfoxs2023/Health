@@ -1,6 +1,6 @@
 import { StackNavigationProp } from '@react-navigation/stack';
 
-export type RootStackParamList = {
+export type RootStackParamListType = {
   Home: undefined;
   ArticleDetail: { id: string };
   QuestionDetail: { id: string };
@@ -9,4 +9,4 @@ export type RootStackParamList = {
   // ... 其他路由
 };
 
-export type NavigationProp = StackNavigationProp<RootStackParamList>; 
+export type NavigationPropType = StackNavigationProp<RootStackParamListType>;

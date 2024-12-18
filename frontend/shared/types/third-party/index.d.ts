@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 index.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // LinearGradient类型定义
 declare module 'react-native-linear-gradient' {
   import React from 'react';
@@ -29,11 +36,7 @@ declare module 'react-native-vector-icons/MaterialIcons' {
   }
 
   export default class Icon extends React.Component<IconProps> {
-    static getImageSource(
-      name: string,
-      size?: number,
-      color?: string
-    ): Promise<any>;
+    static getImageSource(name: string, size?: number, color?: string): Promise<any>;
     static loadFont(file?: string): Promise<void>;
     static hasIcon(name: string): boolean;
   }
@@ -108,7 +111,7 @@ declare module '@tensorflow/tfjs' {
 declare module 'react-redux' {
   export function useDispatch(): any;
   export function useSelector<T = any>(selector: (state: any) => T): T;
-  export const Provider: React.ComponentType<{store: any}>;
+  export const Provider: React.ComponentType<{ store: any }>;
 }
 
 declare module '@reduxjs/toolkit' {
@@ -116,7 +119,7 @@ declare module '@reduxjs/toolkit' {
   export function createSlice(options: any): any;
   export function createAsyncThunk(
     type: string,
-    payloadCreator: (...args: any[]) => Promise<any>
+    payloadCreator: (...args: any[]) => Promise<any>,
   ): any;
 }
 
@@ -133,4 +136,4 @@ declare module 'react-native-svg' {
   export const Path: React.ComponentType<any>;
   export const Circle: React.ComponentType<any>;
   export const Rect: React.ComponentType<any>;
-} 
+}

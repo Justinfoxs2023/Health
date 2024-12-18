@@ -1,6 +1,6 @@
+import { ConfigService } from '../config/config.service';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Kafka, Producer, Consumer } from 'kafkajs';
-import { ConfigService } from '../config/config.service';
 
 @Injectable()
 export class KafkaService implements OnModuleInit {
@@ -11,7 +11,7 @@ export class KafkaService implements OnModuleInit {
   constructor(private readonly config: ConfigService) {
     this.kafka = new Kafka({
       clientId: config.get('SERVICE_NAME'),
-      brokers: config.get('KAFKA_BROKERS').split(',')
+      brokers: config.get('KAFKA_BROKERS').split(','),
     });
   }
 
@@ -33,7 +33,7 @@ export class KafkaService implements OnModuleInit {
   async sendMessage(topic: string, message: any) {
     await this.producer.send({
       topic,
-      messages: [{ value: JSON.stringify(message) }]
+      messages: [{ value: JSON.stringify(message) }],
     });
   }
 
@@ -42,7 +42,7 @@ export class KafkaService implements OnModuleInit {
     await this.consumer.run({
       eachMessage: async ({ message }) => {
         await handler(JSON.parse(message.value.toString()));
-      }
+      },
     });
   }
-} 
+}

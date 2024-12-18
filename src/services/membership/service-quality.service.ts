@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 service-quality.service.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export class ServiceQualityService {
   private readonly qualityMetricsRepo: QualityMetricsRepository;
   private readonly feedbackManager: FeedbackManager;
@@ -13,17 +20,17 @@ export class ServiceQualityService {
     try {
       // 收集响应时间数据
       const responseData = await this.collectResponseTimeData(serviceId);
-      
+
       // 分析响应时间
       const analysis = await this.analyzeResponseTime(responseData);
-      
+
       // 检查是否符合标准
       const compliance = await this.checkResponseTimeCompliance(analysis);
 
       return {
         metrics: analysis,
         compliance,
-        recommendations: await this.generateOptimizationSuggestions(analysis)
+        recommendations: await this.generateOptimizationSuggestions(analysis),
       };
     } catch (error) {
       this.logger.error('监控服务响应时间失败', error);
@@ -36,20 +43,20 @@ export class ServiceQualityService {
     try {
       // 验证反馈
       await this.validateFeedback(feedback);
-      
+
       // 分析反馈内容
       const analysis = await this.analyzeFeedback(feedback);
-      
+
       // 生成改进建议
       const improvements = await this.generateImprovements(analysis);
-      
+
       // 更新服务质量指标
       await this.updateQualityMetrics(feedback);
 
       return {
         analysis,
         improvements,
-        impact: await this.assessFeedbackImpact(analysis)
+        impact: await this.assessFeedbackImpact(analysis),
       };
     } catch (error) {
       this.logger.error('处理服务反馈失败', error);
@@ -62,10 +69,10 @@ export class ServiceQualityService {
     try {
       // 收集质量指标
       const metrics = await this.collectQualityMetrics(period);
-      
+
       // 分析服务趋势
       const trends = await this.analyzeServiceTrends(metrics);
-      
+
       // 评估服务标准
       const standards = await this.evaluateServiceStandards(metrics);
 
@@ -73,11 +80,11 @@ export class ServiceQualityService {
         metrics,
         trends,
         standards,
-        recommendations: await this.generateQualityRecommendations(trends)
+        recommendations: await this.generateQualityRecommendations(trends),
       };
     } catch (error) {
       this.logger.error('生成服务质量报告失败', error);
       throw error;
     }
   }
-} 
+}

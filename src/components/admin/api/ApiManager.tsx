@@ -1,110 +1,96 @@
 import React, { useState } from 'react';
+
 import {
   ApiDashboard,
   ApiDocumentation,
   ApiMonitor,
   ApiTesting,
   ApiVersioning,
-  ApiSecurity
+  ApiSecurity,
 } from './components';
 import { useApiManagement } from '../../../hooks/useApiManagement';
 
-export const ApiManager: React.FC = () => {
+export 
+const ApiManager: React.FC = () => {
   const [activeSection, setActiveSection] = useState('dashboard');
   const { apiData, operations, loading } = useApiManagement();
 
   return (
     <div className="api-manager">
       <div className="api-header">
-        <h2>API管理</h2>
+        <h2>API</h2>
         <div className="api-status">
-          <span className={`status ${apiData.status.toLowerCase()}`}>
-            {apiData.status}
-          </span>
-          <span className="uptime">
-            运行时间: {apiData.uptime}
-          </span>
+          <span className={status {apiDatastatustoLowerCase}}>{apiDatastatus}</span>
+          <span className="uptime"> {apiDatauptime}</span>
         </div>
       </div>
 
       <div className="api-nav">
-        <button 
-          className={activeSection === 'dashboard' ? 'active' : ''}
-          onClick={() => setActiveSection('dashboard')}
+        <button
+          className={activeSection === dashboard  active  }
+          onClick={ => setActiveSectiondashboard}
         >
-          API概览
+          API
         </button>
-        <button 
-          className={activeSection === 'documentation' ? 'active' : ''}
-          onClick={() => setActiveSection('documentation')}
+        <button
+          className={activeSection === documentation  active  }
+          onClick={ => setActiveSectiondocumentation}
         >
-          API文档
+          API
         </button>
-        <button 
-          className={activeSection === 'monitor' ? 'active' : ''}
-          onClick={() => setActiveSection('monitor')}
+        <button
+          className={activeSection === monitor  active  }
+          onClick={ => setActiveSectionmonitor}
         >
-          API监控
+          API
         </button>
-        <button 
-          className={activeSection === 'testing' ? 'active' : ''}
-          onClick={() => setActiveSection('testing')}
+        <button
+          className={activeSection === testing  active  }
+          onClick={ => setActiveSectiontesting}
         >
-          API测试
+          API
         </button>
-        <button 
-          className={activeSection === 'versioning' ? 'active' : ''}
-          onClick={() => setActiveSection('versioning')}
+        <button
+          className={activeSection === versioning  active  }
+          onClick={ => setActiveSectionversioning}
         >
-          版本管理
+          
         </button>
-        <button 
-          className={activeSection === 'security' ? 'active' : ''}
-          onClick={() => setActiveSection('security')}
+        <button
+          className={activeSection === security  active  }
+          onClick={ => setActiveSectionsecurity}
         >
-          安全配置
+          
         </button>
       </div>
 
       <div className="api-content">
         {activeSection === 'dashboard' && (
-          <ApiDashboard 
+          <ApiDashboard
             metrics={apiData.metrics}
             endpoints={apiData.endpoints}
             onAction={operations.handleDashboardAction}
           />
         )}
         {activeSection === 'documentation' && (
-          <ApiDocumentation 
+          <ApiDocumentation
             docs={apiData.documentation}
             onAction={operations.handleDocumentationAction}
           />
         )}
         {activeSection === 'monitor' && (
-          <ApiMonitor 
-            monitoring={apiData.monitoring}
-            onAction={operations.handleMonitorAction}
-          />
+          <ApiMonitor monitoring={apiData.monitoring} onAction={operations.handleMonitorAction} />
         )}
         {activeSection === 'testing' && (
-          <ApiTesting 
-            tests={apiData.tests}
-            onAction={operations.handleTestingAction}
-          />
+          <ApiTesting tests={apiData.tests} onAction={operations.handleTestingAction} />
         )}
         {activeSection === 'versioning' && (
-          <ApiVersioning 
-            versions={apiData.versions}
-            onAction={operations.handleVersioningAction}
-          />
+          <ApiVersioning versions={apiData.versions} onAction={operations.handleVersioningAction} />
         )}
         {activeSection === 'security' && (
-          <ApiSecurity 
-            security={apiData.security}
-            onAction={operations.handleSecurityAction}
-          />
+          <ApiSecurity security={apiData.security} onAction={operations.handleSecurityAction} />
         )}
       </div>
     </div>
   );
-}; 
+};

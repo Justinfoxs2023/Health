@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 family.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 declare namespace Family {
   interface DiseaseHistory {
     memberId: string;
@@ -5,14 +12,16 @@ declare namespace Family {
     diseases: {
       name: string;
       diagnosisAge: number;
-      severity: 'mild' | 'moderate' | 'severe';
+      severity: mild  moderate  severe;
     }[];
   }
 
-  interface DiseaseRisk {
-    disease: string;
-    riskLevel: 'low' | 'medium' | 'high';
-    contributingFactors: string[];
+  interface IDiseaseRisk {
+    /** disease 的描述 */
+      disease: string;
+    /** riskLevel 的描述 */
+      riskLevel: low  medium  high;
+    contributingFactors: string;
     preventiveMeasures: {
       action: string;
       timeline: string;
@@ -20,10 +29,13 @@ declare namespace Family {
     }[];
   }
 
-  interface TimelineEvent {
-    date: string;
-    action: string;
-    status: 'pending' | 'completed' | 'overdue';
+  interface ITimelineEvent {
+    /** date 的描述 */
+      date: string;
+    /** action 的描述 */
+      action: string;
+    /** status 的描述 */
+      status: pending  completed  overdue;
     priority: number;
   }
-} 
+}

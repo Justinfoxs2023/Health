@@ -1,15 +1,20 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { ProgressBar, Text, useTheme } from 'react-native-paper';
 
-interface PlanProgressProps {
+import { ProgressBar, Text, useTheme } from 'react-native-paper';
+import { View, StyleSheet } from 'react-native';
+
+interface IPlanProgressProps {
+  /** title 的描述 */
   title: string;
+  /** progress 的描述 */
   progress: number;
+  /** target 的描述 */
   target: number;
+  /** unit 的描述 */
   unit: string;
 }
 
-export const PlanProgress = ({ title, progress, target, unit }: PlanProgressProps) => {
+export const PlanProgress = ({ title, progress, target, unit }: IPlanProgressProps) => {
   const theme = useTheme();
   const percentage = Math.min(progress / target, 1);
 
@@ -21,11 +26,7 @@ export const PlanProgress = ({ title, progress, target, unit }: PlanProgressProp
           {progress} / {target} {unit}
         </Text>
       </View>
-      <ProgressBar
-        progress={percentage}
-        color={theme.colors.primary}
-        style={styles.progressBar}
-      />
+      <ProgressBar progress={percentage} color={theme.colors.primary} style={styles.progressBar} />
       <Text style={styles.percentage}>{Math.round(percentage * 100)}% 完成</Text>
     </View>
   );
@@ -59,4 +60,4 @@ const styles = StyleSheet.create({
     marginTop: 4,
     textAlign: 'right',
   },
-}); 
+});

@@ -1,18 +1,18 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { FamilyMember } from '../entities/family-member.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Injectable } from '@nestjs/common';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class FamilyService {
   constructor(
-    @InjectRepository(FamilyMember)
-    private familyMemberRepository: Repository<FamilyMember>
+    @InjectRepository()
+    private familyMemberRepository: Repository<FamilyMember>,
   ) {}
 
   async getFamilyMembers(familyId: string): Promise<FamilyMember[]> {
     return this.familyMemberRepository.find({
-      where: { familyId }
+      where: { familyId },
     });
   }
 
@@ -25,4 +25,4 @@ export class FamilyService {
     await this.familyMemberRepository.update(id, { healthStatus });
     return this.familyMemberRepository.findOne({ where: { id } });
   }
-} 
+}

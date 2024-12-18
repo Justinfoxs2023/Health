@@ -1,14 +1,14 @@
-import { Injectable } from '@nestjs/common';
-import { Logger } from '@utils/logger';
-import { CacheManager } from '@utils/cache-manager';
 import * as tf from '@tensorflow/tfjs-node';
 import axios from 'axios';
+import { CacheManager } from '@utils/cache-manager';
+import { Injectable } from '@nestjs/common';
+import { Logger } from '@utils/logger';
 
 @Injectable()
 export class AIModelManager {
   private readonly logger = new Logger(AIModelManager.name);
   private readonly models = new Map<string, tf.LayersModel>();
-  private readonly modelConfigs: {[key: string]: IModelConfig} = {
+  private readonly modelConfigs: { [key: string]: IModelConfig } = {
     'vital-signs': {
       path: process.env.VITAL_SIGNS_MODEL_PATH || './models/vital-signs',
       type: 'tensorflow',
@@ -16,7 +16,7 @@ export class AIModelManager {
       inputShape: [5], // 心率、收缩压、舒张压、体温、呼吸率、血氧
       outputShape: [3], // 评分、风险等级、建议类型
     },
-    'lifestyle': {
+    lifestyle: {
       path: process.env.LIFESTYLE_MODEL_PATH || './models/lifestyle',
       type: 'tensorflow',
       version: '1.0.0',
@@ -32,13 +32,15 @@ export class AIModelManager {
     },
     'lifestyle-recommendations': {
       type: 'api',
-      endpoint: process.env.RECOMMENDATION_API_ENDPOINT || 'https://api.example.com/recommendations',
+      endpoint:
+        process.env.RECOMMENDATION_API_ENDPOINT || 'https://api.example.com/recommendations',
       apiKey: process.env.RECOMMENDATION_API_KEY,
       version: '1.0.0',
     },
     'medical-history': {
       type: 'api',
-      endpoint: process.env.MEDICAL_HISTORY_API_ENDPOINT || 'https://api.example.com/medical-analysis',
+      endpoint:
+        process.env.MEDICAL_HISTORY_API_ENDPOINT || 'https://api.example.com/medical-analysis',
       apiKey: process.env.MEDICAL_HISTORY_API_KEY,
       version: '1.0.0',
     },
@@ -119,11 +121,7 @@ export class AIModelManager {
       }
 
       // 缓存预测结果
-      await this.cacheManager.set(
-        cacheKey,
-        result,
-        Number(process.env.AI_RESULT_EXPIRY) || 86400
-      );
+      await this.cacheManager.set(cacheKey, result, Number(process.env.AI_RESULT_EXPIRY) || 86400);
 
       return result;
     } catch (error) {
@@ -146,8 +144,8 @@ export class AIModelManager {
       const tensor = this.preprocessData(data, this.modelConfigs[modelName].inputShape);
 
       // 进行预测
-      const prediction = await model.predict(tensor) as tf.Tensor;
-      
+      const prediction = (await model.predict(tensor)) as tf.Tensor;
+
       // 后处理预测结果
       const result = await this.postprocessPrediction(prediction, modelName);
 
@@ -167,16 +165,12 @@ export class AIModelManager {
    */
   private async predictWithAPI(config: IModelConfig, data: any): Promise<any> {
     try {
-      const response = await axios.post(
-        config.endpoint,
-        data,
-        {
-          headers: {
-            'Authorization': `Bearer ${config.apiKey}`,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
+      const response = await axios.post(config.endpoint, data, {
+        headers: {
+          Authorization: `Bearer ${config.apiKey}`,
+          'Content-Type': 'application/json',
+        },
+      });
 
       return response.data;
     } catch (error) {
@@ -222,7 +216,7 @@ export class AIModelManager {
           return this.processLifestylePrediction(values);
         case 'lifestyle-pattern':
           return this.processLifestylePatternPrediction(values);
-      default:
+        default:
           return values;
       }
     } catch (error) {
@@ -239,7 +233,7 @@ export class AIModelManager {
     return {
       score,
       risks: this.generateRisks(riskLevel),
-      recommendations: this.generateRecommendations(recommendationType, 'vital-signs')
+      recommendations: this.generateRecommendations(recommendationType, 'vital-signs'),
     };
   }
 
@@ -253,7 +247,7 @@ export class AIModelManager {
       patterns: this.generatePatterns(patternType),
       risks: this.generateRisks(riskLevel),
       priority,
-      recommendations: this.generateRecommendations(recommendationType, 'lifestyle')
+      recommendations: this.generateRecommendations(recommendationType, 'lifestyle'),
     };
   }
 
@@ -263,7 +257,7 @@ export class AIModelManager {
   private processLifestylePatternPrediction(values: number[][]): any {
     return {
       patterns: this.generateDetailedPatterns(values[0]),
-      confidence: values[0][values[0].length - 1]
+      confidence: values[0][values[0].length - 1],
     };
   }
 
@@ -276,19 +270,19 @@ export class AIModelManager {
       risks.push({
         level: 'high',
         description: '存在高风险因素',
-        suggestions: ['立即就医', '密切监测指标']
+        suggestions: ['立即就医', '密切监测指标'],
       });
     } else if (riskLevel > 0.3) {
       risks.push({
         level: 'medium',
         description: '存在中等风险因素',
-        suggestions: ['定期检查', '保持健康生活方式']
+        suggestions: ['定期检查', '保持健康生活方式'],
       });
     } else {
       risks.push({
         level: 'low',
         description: '风险因素较低',
-        suggestions: ['维持现有状态', '继续保持良好习惯']
+        suggestions: ['维持现有状态', '继续保持良好习惯'],
       });
     }
     return risks;
@@ -337,19 +331,19 @@ export class AIModelManager {
       patterns.push({
         type: 'irregular',
         description: '生活作息不规律',
-        impact: '可能影响健康状况'
+        impact: '可能影响健康状况',
       });
     } else if (patternType > 0.3) {
       patterns.push({
         type: 'moderate',
         description: '生活作息基本规律',
-        impact: '健康状况稳定'
+        impact: '健康状况稳定',
       });
     } else {
       patterns.push({
         type: 'regular',
         description: '生活作息非常规律',
-        impact: '有利于健康维护'
+        impact: '有利于健康维护',
       });
     }
     return patterns;
@@ -367,7 +361,7 @@ export class AIModelManager {
       patterns.push({
         dimension,
         regularity: value > 0.7 ? 'high' : value > 0.3 ? 'medium' : 'low',
-        description: this.generatePatternDescription(dimension, value)
+        description: this.generatePatternDescription(dimension, value),
       });
     });
     return patterns;
@@ -379,17 +373,13 @@ export class AIModelManager {
   private generatePatternDescription(dimension: string, value: number): string {
     switch (dimension) {
       case '运动':
-        return value > 0.7 ? '运动习惯非常规律' :
-               value > 0.3 ? '运动习惯一般' : '运动习惯需要改善';
+        return value > 0.7 ? '运动习惯非常规律' : value > 0.3 ? '运动习惯一般' : '运动习惯需要改善';
       case '饮食':
-        return value > 0.7 ? '饮食习惯非常健康' :
-               value > 0.3 ? '饮食习惯一般' : '饮食习惯需要改善';
+        return value > 0.7 ? '饮食习惯非常健康' : value > 0.3 ? '饮食习惯一般' : '饮食习惯需要改善';
       case '睡眠':
-        return value > 0.7 ? '睡眠质量很好' :
-               value > 0.3 ? '睡眠质量一般' : '睡眠质量需要改善';
+        return value > 0.7 ? '睡眠质量很好' : value > 0.3 ? '睡眠质量一般' : '睡眠质量需要改善';
       case '压力':
-        return value > 0.7 ? '压力管理良好' :
-               value > 0.3 ? '压力水平适中' : '压力水平较高';
+        return value > 0.7 ? '压力管理良好' : value > 0.3 ? '压力水平适中' : '压力水平较高';
       default:
         return '未知模式';
     }
@@ -400,7 +390,7 @@ export class AIModelManager {
    */
   private flattenData(data: any): number[] {
     const result: number[] = [];
-    
+
     const flatten = (obj: any) => {
       for (const key in obj) {
         const value = obj[key];
@@ -430,11 +420,18 @@ export class AIModelManager {
  * 模型配置接口
  */
 interface IModelConfig {
+  /** path 的描述 */
   path?: string;
+  /** type 的描述 */
   type: 'tensorflow' | 'api';
+  /** version 的描述 */
   version: string;
+  /** inputShape 的描述 */
   inputShape?: number[];
+  /** outputShape 的描述 */
   outputShape?: number[];
+  /** endpoint 的描述 */
   endpoint?: string;
+  /** apiKey 的描述 */
   apiKey?: string;
-} 
+}

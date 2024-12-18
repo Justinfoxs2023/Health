@@ -1,29 +1,31 @@
 import { Injectable } from '@nestjs/common';
-import { 
-  SystemConfigType, 
-  BaseConfig,
-  SecurityConfig,
-  NotificationConfig,
-  PerformanceConfig 
+
+import {
+  SystemConfigType,
+  IBaseConfig,
+  ISecurityConfig,
+  INotificationConfig,
+  IPerformanceConfig,
 } from '@/types/system-config';
-import { DatabaseService } from '@/services/database/database.service';
 import { CacheService } from '@/services/cache/cache.service';
+import { DatabaseService } from '@/services/database/database.service';
 import { Logger } from '@/utils/logger';
 
-@Injectable()
+@Injec
+table()
 export class SystemConfigService {
   private readonly CACHE_PREFIX = 'system_config:';
-  
+
   constructor(
     private readonly db: DatabaseService,
     private readonly cache: CacheService,
-    private readonly logger: Logger
+    private readonly logger: Logger,
   ) {}
 
   // 获取配置
-  async getConfig<T extends BaseConfig>(type: SystemConfigType): Promise<T> {
+  async getConfig<T extends IBaseConfig>(type: SystemConfigType): Promise<T> {
     const cacheKey = `${this.CACHE_PREFIX}${type}`;
-    
+
     // 尝试从缓存获取
     let config = await this.cache.get<T>(cacheKey);
     if (config) return config;
@@ -38,24 +40,20 @@ export class SystemConfigService {
   }
 
   // 更新配置
-  async updateConfig<T extends BaseConfig>(
+  async updateConfig<T extends IBaseConfig>(
     type: SystemConfigType,
-    config: Partial<T>
+    config: Partial<T>,
   ): Promise<boolean> {
     try {
       const existing = await this.getConfig<T>(type);
       const updated = {
         ...existing,
         ...config,
-        lastUpdated: new Date()
+        lastUpdated: new Date(),
       };
 
       // 保存到数据库
-      await this.db.updateOne(
-        'system_configs',
-        { type },
-        updated
-      );
+      await this.db.updateOne('system_configs', { type }, updated);
 
       // 更新缓存
       const cacheKey = `${this.CACHE_PREFIX}${type}`;
@@ -72,9 +70,9 @@ export class SystemConfigService {
   }
 
   // 验证配置
-  async validateConfig<T extends BaseConfig>(
+  async validateConfig<T extends IBaseConfig>(
     type: SystemConfigType,
-    config: Partial<T>
+    config: Partial<T>,
   ): Promise<boolean> {
     // 实现配置验证逻辑
     return true;
@@ -101,4 +99,4 @@ export class SystemConfigService {
       throw error;
     }
   }
-} 
+}

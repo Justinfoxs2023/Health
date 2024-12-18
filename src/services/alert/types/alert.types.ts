@@ -1,143 +1,157 @@
-import { BaseHealthData } from '../../health/types/health-base.types';
+import { IBaseHealthData } from '../../health/types/health-base.types';
 
 // 预警配置
-export interface AlertConfig extends BaseHealthData {
-  userId: string;
-  type: AlertType;
-  conditions: AlertCondition[];
-  actions: AlertAction[];
-  status: AlertStatus;
-  priority: AlertPriority;
-  notificationChannels: NotificationChannel[];
+export interface IAlertConfig extends IBaseHealthData {
+  /** userId 的描述 */
+    userId: string;
+  /** type 的描述 */
+    type: "vital_signs" | "medication" | "exercise" | "nutrition" | "sleep" | "mental" | "environmental" | "social" | "rehabilitation" | "chronic_disease" | "emergency";
+  /** conditions 的描述 */
+    conditions: IAlertCondition[];
+  /** actions 的描述 */
+    actions: IAlertAction[];
+  /** status 的描述 */
+    status: "active" | "paused" | "disabled" | "triggered" | "resolved";
+  /** priority 的描述 */
+    priority: "low" | "medium" | "high" | "critical";
+  /** notificationChannels 的描述 */
+    notificationChannels: NotificationChannelType[];
 }
 
 // 预警类型
 export type AlertType =
-  | 'vital_signs'      // 生命体征
-  | 'medication'       // 用药提醒
-  | 'exercise'         // 运动监测
-  | 'nutrition'        // 营养监测
-  | 'sleep'           // 睡眠监测
-  | 'mental'          // 心理状态
-  | 'environmental'   // 环境因素
-  | 'social'          // 社交活动
-  | 'rehabilitation'  // 康复进展
-  | 'chronic_disease' // 慢性病管理
-  | 'emergency';      // 紧急情况
+  any; // 紧急情况
 
 // 预警状态
-export type AlertStatus = 
-  | 'active'    // 活跃
-  | 'paused'    // 暂停
-  | 'disabled'  // 禁用
-  | 'triggered' // 已触发
-  | 'resolved'; // 已解决
+export type AlertStatusType =
+  any; // 已解决
 
 // 预警优先级
-export type AlertPriority = 
-  | 'low'      // 低优先级
-  | 'medium'   // 中优先级
-  | 'high'     // 高优先级
-  | 'critical'; // 紧急
+export type AlertPriorityType =
+  any; // 紧急
 
 // 通知渠道
-export type NotificationChannel = 
-  | 'app'       // 应用内通知
-  | 'sms'       // 短信
-  | 'email'     // 邮件
-  | 'phone'     // 电话
-  | 'wearable'  // 可穿戴设备
-  | 'emergency'; // 紧急联系人
+export type NotificationChannelType =
+  any; // 紧急联系人
 
 // 预警历史
-export interface AlertHistory extends BaseHealthData {
-  alertId: string;
-  type: AlertType;
-  priority: AlertPriority;
-  triggeredAt: Date;
-  resolvedAt?: Date;
-  metrics: Record<string, any>;
-  actions: AlertActionHistory[];
-  outcome?: string;
+export interface IAlertHistory extends IBaseHealthData {
+  /** alertId 的描述 */
+    alertId: string;
+  /** type 的描述 */
+    type: "vital_signs" | "medication" | "exercise" | "nutrition" | "sleep" | "mental" | "environmental" | "social" | "rehabilitation" | "chronic_disease" | "emergency";
+  /** priority 的描述 */
+    priority: "low" | "medium" | "high" | "critical";
+  /** triggeredAt 的描述 */
+    triggeredAt: Date;
+  /** resolvedAt 的描述 */
+    resolvedAt?: undefined | Date;
+  /** metrics 的描述 */
+    metrics: Record<string, any>;
+  /** actions 的描述 */
+    actions: IAlertActionHistory[];
+  /** outcome 的描述 */
+    outcome?: undefined | string;
 }
 
 // 预警动作历史
-export interface AlertActionHistory {
-  type: string;
-  executedAt: Date;
-  success: boolean;
-  error?: string;
-  response?: any;
+export interface IAlertActionHistory {
+  /** type 的描述 */
+    type: string;
+  /** executedAt 的描述 */
+    executedAt: Date;
+  /** success 的描述 */
+    success: false | true;
+  /** error 的描述 */
+    error: string;
+  /** response 的描述 */
+    response: any;
 }
 
 // 预警规则
-export interface AlertRule {
-  id: string;
-  name: string;
-  description: string;
-  conditions: AlertCondition[];
-  actions: AlertAction[];
-  priority: AlertPriority;
-  enabled: boolean;
+export interface IAlertRule {
+  /** id 的描述 */
+    id: string;
+  /** name 的描述 */
+    name: string;
+  /** description 的描述 */
+    description: string;
+  /** conditions 的描述 */
+    conditions: IAlertCondition;
+  /** actions 的描述 */
+    actions: IAlertAction;
+  /** priority 的描述 */
+    priority: "low" | "medium" | "high" | "critical";
+  /** enabled 的描述 */
+    enabled: false | true;
 }
 
 // 预警条件
-export interface AlertCondition {
-  type: AlertConditionType;
-  metric: string;
-  operator: AlertOperator;
-  value: number | [number, number];
-  duration?: number;
-  frequency?: number;
-  context?: Record<string, any>;
+export interface IAlertCondition {
+  /** type 的描述 */
+    type: "threshold" | "trend" | "pattern" | "correlation" | "anomaly" | "composite";
+  /** metric 的描述 */
+    metric: string;
+  /** operator 的描述 */
+    operator: "pattern" | "gt" | "lt" | "eq" | "between" | "outside" | "change";
+  /** value 的描述 */
+    value: number  /** number 的描述 */
+    /** number 的描述 */
+    number, /** number 的描述 */
+    /** number 的描述 */
+    number;
+  /** duration 的描述 */
+    duration: number;
+  /** frequency 的描述 */
+    frequency: number;
+  /** context 的描述 */
+    context: Recordstring, /** any 的描述 */
+    /** any 的描述 */
+    any;
 }
 
 // 条件类型
 export type AlertConditionType =
-  | 'threshold'    // 阈值
-  | 'trend'        // 趋势
-  | 'pattern'      // 模式
-  | 'correlation'  // 相关性
-  | 'anomaly'      // 异常
-  | 'composite';   // 组合条件
+  any; // 组合条件
 
 // 操作符
-export type AlertOperator =
-  | 'gt'       // 大于
-  | 'lt'       // 小于
-  | 'eq'       // 等于
-  | 'between'  // 区间内
-  | 'outside'  // 区间外
-  | 'change'   // 变化
-  | 'pattern'; // 模式匹配
+export type AlertOperatorType =
+  any; // 模式匹配
 
 // 预警动作
-export interface AlertAction {
-  type: AlertActionType;
-  priority: number;
-  target: string[];
-  content: string;
-  delay?: number;
-  repeat?: boolean;
-  conditions?: AlertCondition[];
+export interface IAlertAction {
+  /** type 的描述 */
+    type: "notification" | "message" | "call" | "email" | "webhook" | "automation" | "emergency";
+  /** priority 的描述 */
+    priority: number;
+  /** target 的描述 */
+    target: string;
+  /** content 的描述 */
+    content: string;
+  /** delay 的描述 */
+    delay: number;
+  /** repeat 的描述 */
+    repeat: false | true;
+  /** conditions 的描述 */
+    conditions: IAlertCondition;
 }
 
 // 动作类型
 export type AlertActionType =
-  | 'notification'  // 通知
-  | 'message'       // 消息
-  | 'call'          // 电话
-  | 'email'         // 邮件
-  | 'webhook'       // 网络钩子
-  | 'automation'    // 自动化
-  | 'emergency';    // 紧急响应
+  any; // 紧急响应
 
 // 预警分析
-export interface AlertAnalysis {
-  alertId: string;
-  timestamp: Date;
-  metrics: Record<string, any>;
-  conditions: Array<{
+export interface IAlertAnalysis {
+  /** alertId 的描述 */
+    alertId: string;
+  /** timestamp 的描述 */
+    timestamp: Date;
+  /** metrics 的描述 */
+    metrics: Recordstring, /** any 的描述 */
+    /** any 的描述 */
+    any;
+  /** conditions 的描述 */
+    conditions: Array{
     condition: AlertCondition;
     satisfied: boolean;
     value: any;
@@ -157,18 +171,29 @@ export interface AlertAnalysis {
 }
 
 // 预警响应
-export interface AlertResponse {
-  alertId: string;
-  timestamp: Date;
-  type: AlertType;
-  priority: AlertPriority;
-  status: AlertStatus;
-  metrics: Record<string, any>;
-  actions: AlertAction[];
-  analysis: AlertAnalysis;
-  escalation?: {
+export interface IAlertResponse {
+  /** alertId 的描述 */
+    alertId: string;
+  /** timestamp 的描述 */
+    timestamp: Date;
+  /** type 的描述 */
+    type: "emergency" | "vital_signs" | "medication" | "exercise" | "nutrition" | "sleep" | "mental" | "environmental" | "social" | "rehabilitation" | "chronic_disease";
+  /** priority 的描述 */
+    priority: "low" | "medium" | "high" | "critical";
+  /** status 的描述 */
+    status: "active" | "paused" | "disabled" | "triggered" | "resolved";
+  /** metrics 的描述 */
+    metrics: Recordstring, /** any 的描述 */
+    /** any 的描述 */
+    any;
+  /** actions 的描述 */
+    actions: IAlertAction;
+  /** analysis 的描述 */
+    analysis: IAlertAnalysis;
+  /** escalation 的描述 */
+    escalation: {
     level: number;
     reason: string;
-    contacts: string[];
+    contacts: string;
   };
-} 
+}

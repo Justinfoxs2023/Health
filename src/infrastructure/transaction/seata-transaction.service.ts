@@ -1,10 +1,13 @@
-import { Injectable } from '@nestjs/common';
 import { ConfigService } from '../config/config.service';
+import { Injectable } from '@nestjs/common';
 
-interface TransactionContext {
-  xid: string;
-  branchId: string;
-  status: 'try' | 'confirm' | 'cancel';
+interface ITransactionContext {
+  /** xid 的描述 */
+    xid: string;
+  /** branchId 的描述 */
+    branchId: string;
+  /** status 的描述 */
+    status: try  confirm  cancel;
 }
 
 @Injectable()
@@ -28,4 +31,4 @@ export class SeataTransactionService {
     // 注册分支事务
     return 'branchId';
   }
-} 
+}

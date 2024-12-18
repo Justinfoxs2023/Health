@@ -1,5 +1,5 @@
-import { Container } from 'typedi';
 import { AIModelManagementService } from './ai/model-management.service';
+import { Container } from 'typedi';
 import { PerformanceDashboardService } from './monitoring/performance-dashboard.service';
 import { UserExperienceService } from './enhancement/user-experience.service';
 import { UserGrowthService } from './UserGrowthService';
@@ -8,22 +8,22 @@ import { UserGrowthService } from './UserGrowthService';
 export const registerServices = (container: Container) => {
   // 注册AI服务
   container.register('AIModelManagementService', {
-    useClass: AIModelManagementService
+    useClass: AIModelManagementService,
   });
 
   // 注册监控服务
   container.register('PerformanceDashboardService', {
-    useClass: PerformanceDashboardService
+    useClass: PerformanceDashboardService,
   });
 
   // 注册用户体验服务
   container.register('UserExperienceService', {
-    useClass: UserExperienceService
+    useClass: UserExperienceService,
   });
 
   // 注册用户成长服务
   container.register('UserGrowthService', {
-    useClass: UserGrowthService
+    useClass: UserGrowthService,
   });
 };
 
@@ -39,10 +39,17 @@ export * from './monitoring/performance-dashboard.service';
 export * from './enhancement/user-experience.service';
 
 // 导出服务类型
-export interface BaseService {
-  init(): Promise<void>;
-  validate(data: any): Promise<boolean>;
-  handleError(error: Error): void;
+export interface IBaseService {
+  /** init 的描述 */
+    init: Promisevoid;
+  /** validatedata 的描述 */
+    validatedata: any: /** Promiseboolean 的描述 */
+    /** Promiseboolean 的描述 */
+    Promiseboolean;
+  /** handleErrorerror 的描述 */
+    handleErrorerror: Error: /** void 的描述 */
+    /** void 的描述 */
+    void;
 }
 
 // 导出服务常量
@@ -55,8 +62,8 @@ export const SERVICE_TOKENS = {
   USER_GROWTH: 'USER_GROWTH_SERVICE',
   AI_MODEL: 'AI_MODEL_SERVICE',
   PERFORMANCE: 'PERFORMANCE_SERVICE',
-  USER_EXPERIENCE: 'USER_EXPERIENCE_SERVICE'
+  USER_EXPERIENCE: 'USER_EXPERIENCE_SERVICE',
 } as const;
 
 // 导出服务类型
-export type ServiceToken = typeof SERVICE_TOKENS[keyof typeof SERVICE_TOKENS]; 
+export type ServiceTokenType = any;

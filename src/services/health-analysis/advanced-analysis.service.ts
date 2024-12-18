@@ -1,19 +1,20 @@
-import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { Logger } from '../../infrastructure/logger/logger.service';
-import { MetricsService } from '../../infrastructure/monitoring/metrics.service';
 import * as tf from '@tensorflow/tfjs-node';
 import {
-  VitalSigns,
-  ExerciseData,
-  DietaryData,
-  HealthAnalysisResult,
-  RiskPrediction,
-  CorrelationAnalysis,
-  AnomalyDetection
+  IVitalSigns,
+  IExerciseData,
+  IDietaryData,
+  IHealthAnalysisResult,
+  IRiskPrediction,
+  ICorrelationAnalysis,
+  IAnomalyDetection,
 } from './types';
+import { ConfigService } from '@nestjs/config';
+import { Injectable } from '@nestjs/common';
+import { Logger } from '../../infrastructure/logger/logger.service';
+import { MetricsService } from '../../infrastructure/monitoring/metrics.service';
 
-@Injectable()
+@Injecta
+ble()
 export class AdvancedAnalysisService {
   private readonly model: tf.LayersModel;
   private readonly anomalyDetector: tf.LayersModel;
@@ -21,26 +22,22 @@ export class AdvancedAnalysisService {
   constructor(
     private readonly config: ConfigService,
     private readonly logger: Logger,
-    private readonly metrics: MetricsService
+    private readonly metrics: MetricsService,
   ) {
     this.initializeModels();
   }
 
   private async initializeModels() {
     // 加载预训练模型
-    this.model = await tf.loadLayersModel(
-      this.config.get('HEALTH_MODEL_PATH')
-    );
-    this.anomalyDetector = await tf.loadLayersModel(
-      this.config.get('ANOMALY_MODEL_PATH')
-    );
+    this.model = await tf.loadLayersModel(this.config.get('HEALTH_MODEL_PATH'));
+    this.anomalyDetector = await tf.loadLayersModel(this.config.get('ANOMALY_MODEL_PATH'));
   }
 
   async analyzeHealth(
-    vitalSigns: VitalSigns[],
-    exerciseData: ExerciseData[],
-    dietaryData: DietaryData[]
-  ): Promise<HealthAnalysisResult> {
+    vitalSigns: IVitalSigns[],
+    exerciseData: IExerciseData[],
+    dietaryData: IDietaryData[],
+  ): Promise<IHealthAnalysisResult> {
     const startTime = Date.now();
 
     try {
@@ -48,19 +45,19 @@ export class AdvancedAnalysisService {
       const [predictions, correlations, anomalies] = await Promise.all([
         this.predictHealthRisks(vitalSigns, exerciseData, dietaryData),
         this.analyzeCorrelations(vitalSigns, exerciseData, dietaryData),
-        this.detectAnomalies(vitalSigns)
+        this.detectAnomalies(vitalSigns),
       ]);
 
       const trends = this.analyzeTrends(vitalSigns, exerciseData, dietaryData);
 
-      const result: HealthAnalysisResult = {
+      const result: IHealthAnalysisResult = {
         trends,
         predictions: {
           healthRisks: predictions,
-          recommendations: this.generateRecommendations(predictions, anomalies)
+          recommendations: this.generateRecommendations(predictions, anomalies),
         },
         correlations,
-        anomalies
+        anomalies,
       };
 
       // 记录分析性能指标
@@ -75,15 +72,15 @@ export class AdvancedAnalysisService {
   }
 
   private async predictHealthRisks(
-    vitalSigns: VitalSigns[],
-    exerciseData: ExerciseData[],
-    dietaryData: DietaryData[]
-  ): Promise<RiskPrediction[]> {
+    vitalSigns: IVitalSigns[],
+    exerciseData: IExerciseData[],
+    dietaryData: IDietaryData[],
+  ): Promise<IRiskPrediction[]> {
     // 准备模型输入数据
     const inputData = this.prepareModelInput(vitalSigns, exerciseData, dietaryData);
-    
+
     // 使用TensorFlow.js��行预测
-    const predictions = await this.model.predict(inputData) as tf.Tensor;
+    const predictions = (await this.model.predict(inputData)) as tf.Tensor;
     const riskScores = await predictions.array();
 
     // 解释预测结果
@@ -91,28 +88,25 @@ export class AdvancedAnalysisService {
   }
 
   private async analyzeCorrelations(
-    vitalSigns: VitalSigns[],
-    exerciseData: ExerciseData[],
-    dietaryData: DietaryData[]
-  ): Promise<CorrelationAnalysis[]> {
-    const correlations: CorrelationAnalysis[] = [];
+    vitalSigns: IVitalSigns[],
+    exerciseData: IExerciseData[],
+    dietaryData: IDietaryData[],
+  ): Promise<ICorrelationAnalysis[]> {
+    const correlations: ICorrelationAnalysis[] = [];
 
     // 分析各种健康指标之间的相关性
     const metrics = this.extractMetrics(vitalSigns, exerciseData, dietaryData);
-    
+
     for (let i = 0; i < metrics.length; i++) {
       for (let j = i + 1; j < metrics.length; j++) {
-        const correlation = this.calculateCorrelation(
-          metrics[i].values,
-          metrics[j].values
-        );
+        const correlation = this.calculateCorrelation(metrics[i].values, metrics[j].values);
 
         if (Math.abs(correlation.coefficient) > 0.5) {
           correlations.push({
             factor1: metrics[i].name,
             factor2: metrics[j].name,
             correlationCoefficient: correlation.coefficient,
-            significance: correlation.significance
+            significance: correlation.significance,
           });
         }
       }
@@ -121,10 +115,8 @@ export class AdvancedAnalysisService {
     return correlations;
   }
 
-  private async detectAnomalies(
-    vitalSigns: VitalSigns[]
-  ): Promise<AnomalyDetection[]> {
-    const anomalies: AnomalyDetection[] = [];
+  private async detectAnomalies(vitalSigns: IVitalSigns[]): Promise<IAnomalyDetection[]> {
+    const anomalies: IAnomalyDetection[] = [];
     const recentSigns = vitalSigns.slice(-100); // 分析最近的100个数据点
 
     // 使用自编码器检测异常
@@ -135,11 +127,11 @@ export class AdvancedAnalysisService {
         sign.bloodPressure.diastolic,
         sign.temperature,
         sign.respiratoryRate,
-        sign.oxygenSaturation
-      ])
+        sign.oxygenSaturation,
+      ]),
     );
 
-    const reconstruction = await this.anomalyDetector.predict(inputData) as tf.Tensor;
+    const reconstruction = (await this.anomalyDetector.predict(inputData)) as tf.Tensor;
     const reconstructionError = tf.sub(inputData, reconstruction);
     const errors = await reconstructionError.array();
 
@@ -147,17 +139,17 @@ export class AdvancedAnalysisService {
     errors.forEach((error, index) => {
       const sign = recentSigns[index];
       const meanError = tf.mean(error).arraySync() as number;
-      
+
       if (meanError > this.config.get('ANOMALY_THRESHOLD')) {
         anomalies.push({
           metric: 'vitalSigns',
           value: meanError,
           expectedRange: {
             min: -this.config.get('ANOMALY_THRESHOLD'),
-            max: this.config.get('ANOMALY_THRESHOLD')
+            max: this.config.get('ANOMALY_THRESHOLD'),
           },
           severity: this.calculateSeverity(meanError),
-          timestamp: sign.timestamp
+          timestamp: sign.timestamp,
         });
       }
     });
@@ -166,8 +158,8 @@ export class AdvancedAnalysisService {
   }
 
   private generateRecommendations(
-    predictions: RiskPrediction[],
-    anomalies: AnomalyDetection[]
+    predictions: IRiskPrediction[],
+    anomalies: IAnomalyDetection[],
   ): Recommendation[] {
     const recommendations: Recommendation[] = [];
 
@@ -178,7 +170,7 @@ export class AdvancedAnalysisService {
           category: this.determineCategory(prediction.riskType),
           action: this.generateAction(prediction),
           priority: this.calculatePriority(prediction.probability),
-          expectedBenefits: prediction.recommendedActions
+          expectedBenefits: prediction.recommendedActions,
         });
       }
     });
@@ -190,11 +182,7 @@ export class AdvancedAnalysisService {
           category: 'lifestyle',
           action: this.generateAnomalyAction(anomaly),
           priority: anomaly.severity,
-          expectedBenefits: [
-            '恢复正常生理指标',
-            '预防潜在健康风险',
-            '改善整体健康状况'
-          ]
+          expectedBenefits: ['恢复正常生理指标', '预防潜在健康风险', '改善整体健康状况'],
         });
       }
     });
@@ -203,17 +191,24 @@ export class AdvancedAnalysisService {
   }
 
   // 辅助方法...
-  private prepareModelInput(vitalSigns: VitalSigns[], exerciseData: ExerciseData[], dietaryData: DietaryData[]): tf.Tensor {
+  private prepareModelInput(
+    vitalSigns: IVitalSigns[],
+    exerciseData: IExerciseData[],
+    dietaryData: IDietaryData[],
+  ): tf.Tensor {
     // 实现数据预处理逻辑
     return tf.tensor2d([]);
   }
 
-  private interpretPredictions(riskScores: number[][]): RiskPrediction[] {
+  private interpretPredictions(riskScores: number[][]): IRiskPrediction[] {
     // 实现预测解释逻辑
     return [];
   }
 
-  private calculateCorrelation(values1: number[], values2: number[]): { coefficient: number; significance: number } {
+  private calculateCorrelation(
+    values1: number[],
+    values2: number[],
+  ): { coefficient: number; significance: number } {
     // 实现相关性计算逻辑
     return { coefficient: 0, significance: 0 };
   }
@@ -228,13 +223,13 @@ export class AdvancedAnalysisService {
     return 'lifestyle';
   }
 
-  private generateAction(prediction: RiskPrediction): string {
+  private generateAction(prediction: IRiskPrediction): string {
     // 实现建议生成逻辑
     return '';
   }
 
-  private generateAnomalyAction(anomaly: AnomalyDetection): string {
+  private generateAnomalyAction(anomaly: IAnomalyDetection): string {
     // 实现异常建议生成逻辑
     return '';
   }
-} 
+}

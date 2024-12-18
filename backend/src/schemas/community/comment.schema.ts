@@ -1,5 +1,5 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 @Schema()
 export class Comment extends Document {
@@ -21,8 +21,8 @@ export class Comment extends Document {
   @Prop({
     type: {
       likes: { type: Number, default: 0 },
-      replies: { type: Number, default: 0 }
-    }
+      replies: { type: Number, default: 0 },
+    },
   })
   metrics: {
     likes: number;
@@ -32,7 +32,7 @@ export class Comment extends Document {
   @Prop({
     type: String,
     enum: ['active', 'deleted', 'hidden'],
-    default: 'active'
+    default: 'active',
   })
   status: string;
 
@@ -52,4 +52,4 @@ export const CommentSchema = SchemaFactory.createForClass(Comment);
 CommentSchema.index({ post_id: 1, created_at: -1 });
 CommentSchema.index({ user_id: 1, created_at: -1 });
 CommentSchema.index({ parent_id: 1 });
-CommentSchema.index({ status: 1 }); 
+CommentSchema.index({ status: 1 });

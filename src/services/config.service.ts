@@ -1,20 +1,19 @@
-import { Injectable } from '@nestjs/common';
 import * as dotenv from 'dotenv';
-import * as path from 'path';
 import * as fs from 'fs';
+import * as path from 'path';
 import {
-  AppConfig,
-  DatabaseConfig,
-  RedisConfig,
-  JwtConfig,
-  StorageConfig,
-  MonitoringConfig,
-  SecurityConfig,
-  ClusterConfig,
-  AiServiceConfig,
-  configValidationRules
+  IAppConfig,
+  IDatabaseConfig,
+  IRedisConfig,
+  IJwtConfig,
+  IStorageConfig,
+  IMonitoringConfig,
+  ISecurityConfig,
+  IClusterConfig,
+  IAiServiceConfig,
+  configValidationRules,
 } from '../types/config';
-
+import { Injectable } from '@nestjs/common';
 @Injectable()
 export class ConfigService {
   private config: { [key: string]: any } = {};
@@ -50,7 +49,7 @@ export class ConfigService {
         this.config = { ...this.config, ...localConfig };
       }
     } catch (error) {
-      console.error('Error loading environment config:', error);
+      console.error('Error in config.service.ts:', 'Error loading environment config:', error);
       throw error;
     }
   }
@@ -58,13 +57,9 @@ export class ConfigService {
   // 验证配置
   private validateConfig() {
     // 验证必需的配置项
-    const missingRequired = configValidationRules.required.filter(
-      key => !this.get(key)
-    );
+    const missingRequired = configValidationRules.required.filter(key => !this.get(key));
     if (missingRequired.length) {
-      throw new Error(
-        `Missing required configuration: ${missingRequired.join(', ')}`
-      );
+      throw new Error(`Missing required configuration: ${missingRequired.join(', ')}`);
     }
 
     // 验证数字类型
@@ -179,19 +174,19 @@ export class ConfigService {
   }
 
   // 获取应用配置
-  getAppConfig(): AppConfig {
+  getAppConfig(): IAppConfig {
     return {
       name: this.get('APP_NAME'),
       env: this.get('APP_ENV'),
       port: this.getNumber('APP_PORT'),
       url: this.get('APP_URL'),
       serviceName: this.get('SERVICE_NAME'),
-      serviceVersion: this.get('SERVICE_VERSION')
+      serviceVersion: this.get('SERVICE_VERSION'),
     };
   }
 
   // 获取数据库配置
-  getDatabaseConfig(): DatabaseConfig {
+  getDatabaseConfig(): IDatabaseConfig {
     return {
       type: this.get('DB_TYPE'),
       host: this.get('DB_HOST'),
@@ -204,12 +199,12 @@ export class ConfigService {
       replicaSet: this.get('DB_REPLICA_SET'),
       minPoolSize: this.getNumber('DB_MIN_POOL_SIZE'),
       maxPoolSize: this.getNumber('DB_MAX_POOL_SIZE'),
-      connectTimeout: this.getNumber('DB_CONNECT_TIMEOUT')
+      connectTimeout: this.getNumber('DB_CONNECT_TIMEOUT'),
     };
   }
 
   // 获取Redis配置
-  getRedisConfig(): RedisConfig {
+  getRedisConfig(): IRedisConfig {
     return {
       cluster: this.getBoolean('REDIS_CLUSTER_ENABLED'),
       nodes: this.getArray('REDIS_NODES'),
@@ -220,12 +215,12 @@ export class ConfigService {
       ssl: this.getBoolean('REDIS_SSL'),
       retryTime: this.getNumber('REDIS_RETRY_TIME'),
       retryAttempts: this.getNumber('REDIS_RETRY_ATTEMPT_LIMIT'),
-      retryInterval: this.getNumber('REDIS_RETRY_INTERVAL')
+      retryInterval: this.getNumber('REDIS_RETRY_INTERVAL'),
     };
   }
 
   // 获取JWT配置
-  getJwtConfig(): JwtConfig {
+  getJwtConfig(): IJwtConfig {
     return {
       secret: this.get('JWT_SECRET'),
       privateKey: this.get('JWT_PRIVATE_KEY'),
@@ -234,12 +229,12 @@ export class ConfigService {
       expiresIn: this.get('JWT_EXPIRES_IN'),
       refreshExpiresIn: this.get('JWT_REFRESH_EXPIRES_IN'),
       blacklistEnabled: this.getBoolean('JWT_BLACKLIST_ENABLED'),
-      blacklistGracePeriod: this.getNumber('JWT_BLACKLIST_GRACE_PERIOD')
+      blacklistGracePeriod: this.getNumber('JWT_BLACKLIST_GRACE_PERIOD'),
     };
   }
 
   // 获取存储配置
-  getStorageConfig(): StorageConfig {
+  getStorageConfig(): IStorageConfig {
     return {
       driver: this.get('STORAGE_DRIVER') as 'local' | 's3',
       aws: {
@@ -248,15 +243,15 @@ export class ConfigService {
         secretAccessKey: this.get('AWS_SECRET_ACCESS_KEY'),
         bucket: this.get('AWS_S3_BUCKET'),
         endpoint: this.get('AWS_S3_ENDPOINT'),
-        ssl: this.getBoolean('AWS_S3_SSL')
+        ssl: this.getBoolean('AWS_S3_SSL'),
       },
       maxFileSize: this.getNumber('FILE_MAX_SIZE'),
-      allowedTypes: this.getArray('ALLOWED_FILE_TYPES')
+      allowedTypes: this.getArray('ALLOWED_FILE_TYPES'),
     };
   }
 
   // 获取监控配置
-  getMonitoringConfig(): MonitoringConfig {
+  getMonitoringConfig(): IMonitoringConfig {
     return {
       enabled: this.getBoolean('MONITOR_ENABLED'),
       sampleRate: this.getNumber('MONITOR_SAMPLE_RATE'),
@@ -265,21 +260,21 @@ export class ConfigService {
       sentry: {
         dsn: this.get('SENTRY_DSN'),
         environment: this.get('SENTRY_ENVIRONMENT'),
-        tracesSampleRate: this.getNumber('SENTRY_TRACES_SAMPLE_RATE')
+        tracesSampleRate: this.getNumber('SENTRY_TRACES_SAMPLE_RATE'),
       },
       logging: {
         level: this.get('LOG_LEVEL'),
         channel: this.get('LOG_CHANNEL'),
         cloudwatch: {
           group: this.get('AWS_CLOUDWATCH_GROUP'),
-          stream: this.get('AWS_CLOUDWATCH_STREAM')
-        }
-      }
+          stream: this.get('AWS_CLOUDWATCH_STREAM'),
+        },
+      },
     };
   }
 
   // 获取安全配置
-  getSecurityConfig(): SecurityConfig {
+  getSecurityConfig(): ISecurityConfig {
     return {
       securityKey: this.get('SECURITY_KEY'),
       encryptionKey: this.get('ENCRYPTION_KEY'),
@@ -290,31 +285,31 @@ export class ConfigService {
       ddos: {
         enabled: this.getBoolean('DDOS_PROTECTION_ENABLED'),
         maxRequests: this.getNumber('DDOS_MAX_REQUESTS'),
-        timeWindow: this.getNumber('DDOS_TIME_WINDOW')
+        timeWindow: this.getNumber('DDOS_TIME_WINDOW'),
       },
       xss: this.getBoolean('XSS_PROTECTION_ENABLED'),
       sqlInjection: this.getBoolean('SQL_INJECTION_PROTECTION'),
       csrf: {
         enabled: this.getBoolean('CSRF_PROTECTION'),
-        tokenExpire: this.getNumber('CSRF_TOKEN_EXPIRE')
+        tokenExpire: this.getNumber('CSRF_TOKEN_EXPIRE'),
       },
-      secureHeaders: this.getBoolean('SECURE_HEADERS_ENABLED')
+      secureHeaders: this.getBoolean('SECURE_HEADERS_ENABLED'),
     };
   }
 
   // 获取集群配置
-  getClusterConfig(): ClusterConfig {
+  getClusterConfig(): IClusterConfig {
     return {
       enabled: this.getBoolean('CLUSTER_ENABLED'),
       name: this.get('CLUSTER_NAME'),
       size: this.getNumber('CLUSTER_SIZE'),
       syncInterval: this.getNumber('CLUSTER_SYNC_INTERVAL'),
-      heartbeatInterval: this.getNumber('CLUSTER_HEARTBEAT_INTERVAL')
+      heartbeatInterval: this.getNumber('CLUSTER_HEARTBEAT_INTERVAL'),
     };
   }
 
   // 获取AI服务配置
-  getAiServiceConfig(): AiServiceConfig {
+  getAiServiceConfig(): IAiServiceConfig {
     return {
       serviceUrl: this.get('AI_SERVICE_URL'),
       serviceKey: this.get('AI_SERVICE_KEY'),
@@ -327,13 +322,13 @@ export class ConfigService {
       providers: {
         openai: {
           apiKey: this.get('OPENAI_API_KEY'),
-          orgId: this.get('OPENAI_ORG_ID')
+          orgId: this.get('OPENAI_ORG_ID'),
         },
         deepseek: {
           apiKey: this.get('DEEPSEEK_API_KEY'),
-          apiBase: this.get('DEEPSEEK_API_BASE')
-        }
-      }
+          apiBase: this.get('DEEPSEEK_API_BASE'),
+        },
+      },
     };
   }
-} 
+}

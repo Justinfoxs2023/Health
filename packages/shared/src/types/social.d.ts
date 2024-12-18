@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 social.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 declare namespace Social {
   // 社交平台类型
   type DomesticPlatform = 'wechat' | 'weibo' | 'qq' | 'alipay' | 'dingtalk';
@@ -77,4 +84,4 @@ declare namespace Social {
   }
 }
 
-export = Social; 
+export = Social;

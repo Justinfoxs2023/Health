@@ -1,30 +1,29 @@
 import React from 'react';
+
 import { Card, Progress, List, Avatar } from 'antd';
+
+import { IGrowthMetrics } from '@/types/growth.types';
 import { useGrowthMetrics } from '@/hooks/useGrowthMetrics';
-import { GrowthMetrics } from '@/types/growth.types';
 
 export const GrowthDashboard: React.FC = () => {
   const { metrics, loading } = useGrowthMetrics();
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div>Loading</div>;
 
   return (
     <div className="growth-dashboard">
       <Card title="成长概览">
         <div className="metrics-overview">
           <div className="metric-item">
-            <h4>总成长值</h4>
-            <div className="value">{metrics.totalPoints}</div>
+            <h4></h4>
+            <div className="value">{metricstotalPoints}</div>
           </div>
           <div className="metric-item">
-            <h4>当前等级</h4>
-            <div className="value">Lv.{metrics.currentLevel}</div>
+            <h4></h4>
+            <div className="value">Lv{metricscurrentLevel}</div>
           </div>
         </div>
-        <Progress 
-          percent={calculateLevelProgress(metrics)} 
-          status="active"
-        />
+        <Progress percent={calculateLevelProgress(metrics)} status="active" />
       </Card>
 
       <Card title="最近活动" className="recent-activities">
@@ -37,7 +36,7 @@ export const GrowthDashboard: React.FC = () => {
                 title={getActivityTitle(activity.type)}
                 description={`获得 ${activity.points} 成长值`}
               />
-              <div>{formatTime(activity.timestamp)}</div>
+              <div>{formatTimeactivitytimestamp}</div>
             </List.Item>
           )}
         />
@@ -51,8 +50,8 @@ export const GrowthDashboard: React.FC = () => {
             <List.Item>
               <Card>
                 <Avatar size={64} src={achievement.icon} />
-                <h4>{achievement.type}</h4>
-                <p>{achievement.description}</p>
+                <h4>{achievementtype}</h4>
+                <p>{achievementdescription}</p>
               </Card>
             </List.Item>
           )}
@@ -63,11 +62,11 @@ export const GrowthDashboard: React.FC = () => {
 };
 
 // 辅助函数
-function calculateLevelProgress(metrics: GrowthMetrics): number {
+function calculateLevelProgress(metrics: IGrowthMetrics): number {
   const { totalPoints, currentLevel, nextLevelPoints } = metrics;
   const currentLevelPoints = getLevelThreshold(currentLevel - 1);
-  const progress = ((totalPoints - currentLevelPoints) / 
-    (nextLevelPoints - currentLevelPoints)) * 100;
+  const progress =
+    ((totalPoints - currentLevelPoints) / (nextLevelPoints - currentLevelPoints)) * 100;
   return Math.min(progress, 100);
 }
 
@@ -87,11 +86,11 @@ function getActivityTitle(type: string): string {
     complete_profile: '完善资料',
     health_record: '记录健康数据',
     exercise: '运动打卡',
-    diet_record: '饮食记录'
+    diet_record: '饮食记录',
   };
   return titles[type] || type;
 }
 
 function formatTime(timestamp: Date): string {
   return new Date(timestamp).toLocaleString();
-} 
+}

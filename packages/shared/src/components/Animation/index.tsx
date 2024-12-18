@@ -1,13 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { AnimationProps, getAnimationStyle } from '../../utils/animation';
+
+import { IAnimationProps, getAnimationStyle } from '../../utils/animation';
 
 /** 动画组件 */
-export const Animation: React.FC<AnimationProps> = ({
+export const Animation: React.FC<IAnimationProps> = ({
   children,
   animation,
   visible = true,
   className,
-  style
+  style,
 }) => {
   const [isEntered, setIsEntered] = useState(visible);
   const elementRef = useRef<HTMLDivElement>(null);
@@ -46,7 +47,7 @@ export const Animation: React.FC<AnimationProps> = ({
       className={`animation ${className || ''}`}
       style={{
         ...getAnimationStyle(animation),
-        ...style
+        ...style,
       }}
     >
       {children}
@@ -61,4 +62,4 @@ style.textContent = `
     will-change: transform, opacity;
   }
 `;
-document.head.appendChild(style); 
+document.head.appendChild(style);

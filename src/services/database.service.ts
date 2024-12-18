@@ -1,9 +1,9 @@
-import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
-import { MongoClient, Db, Collection } from 'mongodb';
 import Redis from 'ioredis';
-import { databaseConfig } from '../../config/database';
+import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { Logger } from '../utils/logger';
 import { MetricsService } from './metrics.service';
+import { MongoClient, Db, Collection } from 'mongodb';
+import { databaseConfig } from '../../config/database';
 
 @Injectable()
 export class DatabaseService implements OnModuleInit, OnModuleDestroy {
@@ -28,7 +28,10 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
 
   private async connectMongo() {
     try {
-      this.mongoClient = await MongoClient.connect(databaseConfig.mongodb.uri, databaseConfig.mongodb.options);
+      this.mongoClient = await MongoClient.connect(
+        databaseConfig.mongodb.uri,
+        databaseConfig.mongodb.options,
+      );
       this.db = this.mongoClient.db(databaseConfig.mongodb.dbName);
       this.logger.info('MongoDB connected successfully');
     } catch (error) {
@@ -41,7 +44,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
     try {
       if (databaseConfig.redis.cluster.enabled) {
         this.redis = new Redis.Cluster(databaseConfig.redis.cluster.nodes, {
-          redisOptions: databaseConfig.redis.options
+          redisOptions: databaseConfig.redis.options,
         });
       } else {
         this.redis = new Redis({
@@ -49,7 +52,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
           port: databaseConfig.redis.port,
           password: databaseConfig.redis.password,
           db: databaseConfig.redis.db,
-          ...databaseConfig.redis.options
+          ...databaseConfig.redis.options,
         });
       }
       this.logger.info('Redis connected successfully');
@@ -69,7 +72,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       this.metricsService.incrementCounter('mongodb_heartbeat_succeeded');
     });
 
-    this.mongoClient.on('serverHeartbeatFailed', (error) => {
+    this.mongoClient.on('serverHeartbeatFailed', error => {
       this.metricsService.incrementCounter('mongodb_heartbeat_failed');
       this.logger.error('MongoDB heartbeat failed:', error);
     });
@@ -79,7 +82,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       this.metricsService.incrementCounter('redis_connection_established');
     });
 
-    this.redis.on('error', (error) => {
+    this.redis.on('error', error => {
       this.metricsService.incrementCounter('redis_connection_error');
       this.logger.error('Redis error:', error);
     });
@@ -104,9 +107,9 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   }
 
   // 查询缓存管理
-  async getCachedQuery(key: string, query: () => Promise<any>, ttl: number = 3600): Promise<any> {
+  async getCachedQuery(key: string, query: () => Promise<any>, ttl = 3600): Promise<any> {
     const cacheKey = `query:${key}`;
-    
+
     try {
       // 尝试从Redis获取缓存
       const cachedResult = await this.redis.get(cacheKey);
@@ -116,10 +119,10 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
 
       // 执行查询
       const result = await query();
-      
+
       // 存储到Redis
       await this.redis.setex(cacheKey, ttl, JSON.stringify(result));
-      
+
       return result;
     } catch (error) {
       this.logger.error('Cache query error:', error);
@@ -174,4 +177,4 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       return false;
     }
   }
-} 
+}

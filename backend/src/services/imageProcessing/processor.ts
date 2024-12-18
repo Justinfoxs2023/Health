@@ -2,16 +2,21 @@ import sharp from 'sharp';
 import { Image } from '../../schemas/Image';
 import { logger } from '../logger';
 
-interface ProcessResult {
+interface IProcessResult {
+  /** optimizedUrl 的描述 */
   optimizedUrl: string;
+  /** thumbnailUrl 的描述 */
   thumbnailUrl: string;
+  /** originalSize 的描述 */
   originalSize: number;
+  /** compressedSize 的描述 */
   compressedSize: number;
+  /** compressionRatio 的描述 */
   compressionRatio: number;
 }
 
 /** 处理图片 */
-export const processImage = async (imageId: string): Promise<ProcessResult> => {
+export const processImage = async (imageId: string): Promise<IProcessResult> => {
   // 获取图片信息
   const image = await Image.findById(imageId);
   if (!image) {
@@ -26,11 +31,9 @@ export const processImage = async (imageId: string): Promise<ProcessResult> => {
 
     // 创建Sharp实例
     const sharpInstance = sharp(Buffer.from(buffer));
-    
+
     // 优化图片
-    const optimized = await sharpInstance
-      .webp({ quality: 80 })
-      .toBuffer();
+    const optimized = await sharpInstance.webp({ quality: 80 }).toBuffer();
 
     // 生成缩略图
     const thumbnail = await sharpInstance
@@ -121,4 +124,4 @@ export const extractMetadata = async (buffer: Buffer) => {
     logger.error('元数据提取失败', { error });
     throw error;
   }
-}; 
+};

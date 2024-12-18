@@ -1,7 +1,8 @@
-import { Logger } from '@/utils/Logger';
-import { BatchProcessError } from '@/utils/errors';
 import * as tf from '@tensorflow/tfjs-node';
 import { chunk } from 'lodash';
+
+import { BatchProcessError } from '@/utils/errors';
+import { Logger } from '@/utils/Logger';
 
 export class BatchProcessingService {
   private logger: Logger;
@@ -22,13 +23,13 @@ export class BatchProcessingService {
       batchSize?: number;
       maxConcurrent?: number;
       onProgress?: (progress: number) => void;
-    } = {}
+    } = {},
   ): Promise<R[]> {
     try {
       const {
         batchSize = this.batchSize,
         maxConcurrent = this.maxConcurrent,
-        onProgress
+        onProgress,
       } = options;
 
       // 分批
@@ -43,13 +44,13 @@ export class BatchProcessingService {
           currentBatches.map(async batch => {
             const result = await processor(batch);
             completed += batch.length;
-            
+
             if (onProgress) {
               onProgress(completed / items.length);
             }
-            
+
             return result;
-          })
+          }),
         );
 
         results = results.concat(batchResults.flat());
@@ -71,7 +72,7 @@ export class BatchProcessingService {
     options: {
       batchSize?: number;
       onProgress?: (progress: number) => void;
-    } = {}
+    } = {},
   ): Promise<tf.Tensor[]> {
     try {
       const { batchSize = this.batchSize, onProgress } = options;
@@ -82,10 +83,10 @@ export class BatchProcessingService {
       for (const batch of batches) {
         // 合并batch中的tensor
         const batchTensor = tf.concat(batch);
-        
+
         // 执行预测
-        const predictions = await model.predict(batchTensor) as tf.Tensor;
-        
+        const predictions = (await model.predict(batchTensor)) as tf.Tensor;
+
         // 分割预测结果
         const splitPredictions = tf.split(predictions, batch.length);
         results = results.concat(splitPredictions);
@@ -106,4 +107,4 @@ export class BatchProcessingService {
       throw new BatchProcessError('BATCH_PREDICTION_FAILED', error.message);
     }
   }
-} 
+}

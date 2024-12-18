@@ -20,4 +20,4 @@ export class MiddlewareChain {
 
     executeMiddleware(0);
   }
-} 
+}

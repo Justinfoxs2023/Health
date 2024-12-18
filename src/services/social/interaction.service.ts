@@ -1,8 +1,8 @@
+import { ICommunityContent, ICommunityMember } from './community.types';
 import { Injectable } from '@nestjs/common';
 import { Logger } from '../../infrastructure/logger/logger.service';
-import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { CommunityContent, CommunityMember } from './community.types';
+import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 
 @WebSocketGateway()
 @Injectable()
@@ -10,9 +10,7 @@ export class InteractionService {
   @WebSocketServer()
   private server: Server;
 
-  constructor(
-    private readonly logger: Logger
-  ) {}
+  constructor(private readonly logger: Logger) {}
 
   // 实时消息处理
   async handleMessage(socket: Socket, message: any): Promise<void> {
@@ -40,25 +38,21 @@ export class InteractionService {
   }
 
   // 私信系统
-  async sendPrivateMessage(
-    fromUserId: string,
-    toUserId: string,
-    content: string
-  ): Promise<void> {
+  async sendPrivateMessage(fromUserId: string, toUserId: string, content: string): Promise<void> {
     try {
       // 保存消息记录
       const message = await this.saveMessage({
         fromUserId,
         toUserId,
         content,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
 
       // 发送实时通知
       this.server.to(toUserId).emit('privateMessage', {
         from: fromUserId,
         content,
-        timestamp: message.timestamp
+        timestamp: message.timestamp,
       });
 
       // 更新未读消息计数
@@ -70,11 +64,7 @@ export class InteractionService {
   }
 
   // 动态通知
-  async sendNotification(
-    userId: string,
-    type: string,
-    data: any
-  ): Promise<void> {
+  async sendNotification(userId: string, type: string, data: any): Promise<void> {
     try {
       // 创建通知记录
       const notification = await this.createNotification({
@@ -82,14 +72,14 @@ export class InteractionService {
         type,
         data,
         timestamp: new Date(),
-        read: false
+        read: false,
       });
 
       // 发送实时通知
       this.server.to(userId).emit('notification', {
         type,
         data,
-        timestamp: notification.timestamp
+        timestamp: notification.timestamp,
       });
 
       // 推送通知(如果用户启用)
@@ -101,10 +91,7 @@ export class InteractionService {
   }
 
   // 实时活动状态
-  async updateActivityStatus(
-    activityId: string,
-    status: string
-  ): Promise<void> {
+  async updateActivityStatus(activityId: string, status: string): Promise<void> {
     try {
       // 更新活动状态
       await this.updateActivity(activityId, { status });
@@ -113,7 +100,7 @@ export class InteractionService {
       this.server.to(`activity:${activityId}`).emit('activityUpdate', {
         activityId,
         status,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
     } catch (error) {
       this.logger.error('Activity status update failed:', error);
@@ -125,13 +112,13 @@ export class InteractionService {
   handleConnection(socket: Socket): void {
     try {
       const userId = socket.data.userId;
-      
+
       // 加入用户房间
       socket.join(userId);
-      
+
       // 更新在线状态
       this.updateUserStatus(userId, 'online');
-      
+
       // 广播状态变更
       this.broadcastUserStatus(userId, 'online');
     } catch (error) {
@@ -142,13 +129,13 @@ export class InteractionService {
   handleDisconnection(socket: Socket): void {
     try {
       const userId = socket.data.userId;
-      
+
       // 更新离线状态
       this.updateUserStatus(userId, 'offline');
-      
+
       // 广播状态变更
       this.broadcastUserStatus(userId, 'offline');
-      
+
       // 清理房间
       socket.leave(userId);
     } catch (error) {
@@ -186,4 +173,4 @@ export class InteractionService {
   private async broadcastUserStatus(userId: string, status: string): Promise<void> {
     // 实现状态广播逻辑
   }
-} 
+}

@@ -2,11 +2,7 @@ import { AxiosError } from 'axios';
 import { notification } from 'antd';
 
 export class APIError extends Error {
-  constructor(
-    public status: number,
-    public code: string,
-    message: string
-  ) {
+  constructor(public status: number, public code: string, message: string) {
     super(message);
     this.name = 'APIError';
   }
@@ -67,53 +63,79 @@ export const handleAPIError = (error: unknown) => {
   });
 };
 
-export interface HealthStatus {
+export interface IHealthStatus {
+  /** status 的描述 */
   status: string;
+  /** output 的描述 */
   output?: string;
+  /** checks 的描述 */
   checks?: Record<string, boolean>;
+  /** timestamp 的描述 */
   timestamp: Date;
 }
 
-export interface ServiceDefinition {
+export interface IServiceDefinition {
+  /** name 的描述 */
   name: string;
+  /** version 的描述 */
   version: string;
-  endpoints: ServiceEndpoint[];
+  /** endpoints 的描述 */
+  endpoints: IServiceEndpoint[];
 }
 
-export interface ServiceInstance {
+export interface IServiceInstance {
+  /** id 的描述 */
   id: string;
+  /** name 的描述 */
   name: string;
+  /** address 的描述 */
   address: string;
+  /** port 的描述 */
   port: number;
+  /** tags 的描述 */
   tags: string[];
 }
 
-export interface ServiceEndpoint {
+export interface IServiceEndpoint {
+  /** protocol 的描述 */
   protocol: string;
+  /** host 的描述 */
   host: string;
+  /** port 的描述 */
   port: number;
 }
 
 // 健康数据类型定义
-export interface HealthData {
+export interface IHealthData {
+  /** id 的描述 */
   id: string;
+  /** title 的描述 */
   title: string;
+  /** timestamp 的描述 */
   timestamp: string;
+  /** metrics 的描述 */
   metrics: Record<string, number>;
+  /** tags 的描述 */
   tags?: string[];
 }
 
 // 健康指标配置
-export interface HealthMetric {
+export interface IHealthMetric {
+  /** key 的描述 */
   key: string;
+  /** label 的描述 */
   label: string;
+  /** unit 的描述 */
   unit: string;
+  /** color 的描述 */
   color: string;
+  /** format 的描述 */
   format?: (value: number) => string;
 }
 
 // 详细健康数据
-export interface DetailedHealthData {
+export interface IDetailedHealthData {
+  /** overview 的描述 */
   overview: {
     summary: string;
     highlights: Array<{
@@ -122,10 +144,12 @@ export interface DetailedHealthData {
       change: number;
     }>;
   };
+  /** trends 的描述 */
   trends: Array<{
     date: string;
     [key: string]: number | string;
   }>;
+  /** analysis 的描述 */
   analysis: {
     insights: string[];
     recommendations: string[];
@@ -134,14 +158,22 @@ export interface DetailedHealthData {
 }
 
 // 健康目标类型
-export interface HealthGoal {
+export interface IHealthGoal {
+  /** id 的描述 */
   id: string;
+  /** title 的描述 */
   title: string;
+  /** description 的描述 */
   description?: string;
+  /** target 的描述 */
   target: number;
+  /** unit 的描述 */
   unit: string;
+  /** startDate 的描述 */
   startDate: string;
+  /** endDate 的描述 */
   endDate: string;
+  /** milestones 的描述 */
   milestones?: Array<{
     title: string;
     value: number;
@@ -213,4 +245,4 @@ declare namespace Health {
     action: string;
     status: 'pending' | 'completed' | 'overdue';
   }
-} 
+}

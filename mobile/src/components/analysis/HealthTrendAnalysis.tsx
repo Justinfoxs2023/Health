@@ -1,10 +1,13 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+
 import { Card, Text, useTheme } from 'react-native-paper';
 import { LineChart } from 'react-native-chart-kit';
+import { View, StyleSheet, ScrollView } from 'react-native';
 
-interface TrendData {
+interface ITrendData {
+  /** labels 的描述 */
   labels: string[];
+  /** datasets 的描述 */
   datasets: {
     data: number[];
     color?: string;
@@ -12,10 +15,14 @@ interface TrendData {
   }[];
 }
 
-interface MetricTrend {
+interface IMetricTrend {
+  /** name 的描述 */
   name: string;
-  data: TrendData;
+  /** data 的描述 */
+  data: ITrendData;
+  /** unit 的描述 */
   unit: string;
+  /** analysis 的描述 */
   analysis: {
     trend: 'up' | 'down' | 'stable';
     message: string;
@@ -23,11 +30,12 @@ interface MetricTrend {
   };
 }
 
-interface HealthTrendAnalysisProps {
-  trends: MetricTrend[];
+interface IHealthTrendAnalysisProps {
+  /** trends 的描述 */
+  trends: IMetricTrend[];
 }
 
-export const HealthTrendAnalysis = ({ trends }: HealthTrendAnalysisProps) => {
+export const HealthTrendAnalysis = ({ trends }: IHealthTrendAnalysisProps) => {
   const theme = useTheme();
 
   const getTrendColor = (trend: 'up' | 'down' | 'stable') => {
@@ -62,17 +70,20 @@ export const HealthTrendAnalysis = ({ trends }: HealthTrendAnalysisProps) => {
               bezier
               style={styles.chart}
             />
-            
+
             <View style={styles.analysisContainer}>
-              <Text style={[
-                styles.trendIndicator,
-                { color: getTrendColor(metric.analysis.trend) }
-              ]}>
-                {metric.analysis.trend === 'up' ? '↑' : metric.analysis.trend === 'down' ? '↓' : '→'}
+              <Text
+                style={[styles.trendIndicator, { color: getTrendColor(metric.analysis.trend) }]}
+              >
+                {metric.analysis.trend === 'up'
+                  ? '↑'
+                  : metric.analysis.trend === 'down'
+                  ? '↓'
+                  : '→'}
               </Text>
               <Text style={styles.analysisText}>{metric.analysis.message}</Text>
             </View>
-            
+
             <Text style={styles.suggestion}>{metric.analysis.suggestion}</Text>
           </Card.Content>
         </Card>
@@ -117,4 +128,4 @@ const styles = StyleSheet.create({
     marginTop: 8,
     fontStyle: 'italic',
   },
-}); 
+});

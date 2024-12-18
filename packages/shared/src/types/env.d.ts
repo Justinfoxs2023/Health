@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 env.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 declare namespace NodeJS {
   interface ProcessEnv {
     NODE_ENV: 'development' | 'production' | 'test';
@@ -8,7 +15,7 @@ declare namespace NodeJS {
     APP_PORT: string;
     SERVICE_NAME: string;
     SERVICE_VERSION: string;
-    
+
     // 数据库配置
     DB_TYPE: string;
     DB_HOST: string;
@@ -22,10 +29,10 @@ declare namespace NodeJS {
     REDIS_PORT: string;
     REDIS_PASSWORD: string;
     REDIS_DB: string;
-    
+
     // 其他配置...
     [key: string]: string | undefined;
   }
 }
 
-export {}; 
+export {};

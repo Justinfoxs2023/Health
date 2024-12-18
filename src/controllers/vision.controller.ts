@@ -1,8 +1,8 @@
-import { Request, Response } from 'express';
-import { RekognitionService } from '../services/vision/rekognition.service';
-import { Logger } from '../utils/logger';
 import multer from 'multer';
 import path from 'path';
+import { Logger } from '../utils/logger';
+import { RekognitionService } from '../services/vision/rekognition.service';
+import { Request, Response } from 'express';
 
 export class VisionController {
   private rekognitionService: RekognitionService;
@@ -12,7 +12,7 @@ export class VisionController {
   constructor() {
     this.rekognitionService = new RekognitionService();
     this.logger = new Logger('VisionController');
-    
+
     // 配置文件上传
     this.upload = multer({
       storage: multer.memoryStorage(),
@@ -22,20 +22,20 @@ export class VisionController {
       fileFilter: (req, file, cb) => {
         const allowedTypes = ['.jpg', '.jpeg', '.png'];
         const ext = path.extname(file.originalname).toLowerCase();
-        
+
         if (allowedTypes.includes(ext)) {
           cb(null, true);
         } else {
           cb(new Error('不支持的文件类型'));
         }
-      }
+      },
     });
   }
 
   // 分析食物图片
   async analyzeFoodImage(req: Request, res: Response) {
     try {
-      this.upload.single('image')(req, res, async (err) => {
+      this.upload.single('image')(req, res, async err => {
         if (err) {
           return res.status(400).json({ error: err.message });
         }
@@ -48,14 +48,11 @@ export class VisionController {
         // 上传图片到S3
         const imageKey = await this.rekognitionService.uploadToS3(
           file.buffer,
-          `food/${Date.now()}-${file.originalname}`
+          `food/${Date.now()}-${file.originalname}`,
         );
 
         // 分析食物图片
-        const analysis = await this.rekognitionService.analyzeFoodImage(
-          imageKey,
-          req.user.id
-        );
+        const analysis = await this.rekognitionService.analyzeFoodImage(imageKey, req.user.id);
 
         res.json(analysis);
       });
@@ -68,7 +65,7 @@ export class VisionController {
   // 分析运动姿势
   async analyzeExercisePose(req: Request, res: Response) {
     try {
-      this.upload.single('image')(req, res, async (err) => {
+      this.upload.single('image')(req, res, async err => {
         if (err) {
           return res.status(400).json({ error: err.message });
         }
@@ -81,14 +78,11 @@ export class VisionController {
         // 上传图片到S3
         const imageKey = await this.rekognitionService.uploadToS3(
           file.buffer,
-          `exercise/${Date.now()}-${file.originalname}`
+          `exercise/${Date.now()}-${file.originalname}`,
         );
 
         // 分析运动姿势
-        const analysis = await this.rekognitionService.analyzeExercisePose(
-          imageKey,
-          req.user.id
-        );
+        const analysis = await this.rekognitionService.analyzeExercisePose(imageKey, req.user.id);
 
         res.json(analysis);
       });
@@ -97,4 +91,4 @@ export class VisionController {
       res.status(500).json({ error: '分析失败' });
     }
   }
-} 
+}

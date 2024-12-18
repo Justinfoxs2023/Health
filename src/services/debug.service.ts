@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
-import { debugConfig } from '../config/debug.config';
-import { LogLevel } from '../types/debug';
 import * as winston from 'winston';
-import { Performance } from '../utils/performance';
 import { ErrorTracker } from '../utils/errorTracker';
+import { Injectable } from '@nestjs/common';
+import { LogLevel } from '../types/debug';
+import { Performance } from '../utils/performance';
+import { debugConfig } from '../config/debug.config';
 
 @Injectable()
 export class DebugService {
@@ -20,36 +20,37 @@ export class DebugService {
   // 初始化日志系统
   private initializeLogger() {
     const { logging } = debugConfig;
-    
+
     const transports = [];
-    
+
     // 控制台日志
     if (logging.console.enabled) {
-      transports.push(new winston.transports.Console({
-        format: winston.format.combine(
-          logging.console.timestamp ? winston.format.timestamp() : null,
-          logging.console.colorized ? winston.format.colorize() : null,
-          winston.format.simple()
-        )
-      }));
+      transports.push(
+        new winston.transports.Console({
+          format: winston.format.combine(
+            logging.console.timestamp ? winston.format.timestamp() : null,
+            logging.console.colorized ? winston.format.colorize() : null,
+            winston.format.simple(),
+          ),
+        }),
+      );
     }
 
     // 文件日志
     if (logging.file.enabled) {
-      transports.push(new winston.transports.File({
-        filename: logging.file.path,
-        maxsize: parseInt(logging.file.maxSize),
-        maxFiles: logging.file.maxFiles,
-        format: winston.format.combine(
-          winston.format.timestamp(),
-          winston.format.json()
-        )
-      }));
+      transports.push(
+        new winston.transports.File({
+          filename: logging.file.path,
+          maxsize: parseInt(logging.file.maxSize),
+          maxFiles: logging.file.maxFiles,
+          format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
+        }),
+      );
     }
 
     this.logger = winston.createLogger({
       level: logging.level,
-      transports
+      transports,
     });
   }
 
@@ -59,7 +60,7 @@ export class DebugService {
     this.performance = new Performance({
       enabled: monitoring.enabled,
       metrics: monitoring.metrics,
-      sampling: monitoring.sampling
+      sampling: monitoring.sampling,
     });
   }
 
@@ -71,7 +72,7 @@ export class DebugService {
       captureUnhandledRejections: errorTracking.captureUnhandledRejections,
       captureUncaughtExceptions: errorTracking.captureUncaughtExceptions,
       ignorePatterns: errorTracking.ignorePatterns,
-      breadcrumbs: errorTracking.breadcrumbs
+      breadcrumbs: errorTracking.breadcrumbs,
     });
   }
 
@@ -152,7 +153,7 @@ export class DebugService {
       redux: debugConfig.devTools.redux.enabled,
       network: debugConfig.devTools.network.enabled,
       components: debugConfig.devTools.components.enabled,
-      profiling: debugConfig.profiling.enabled
+      profiling: debugConfig.profiling.enabled,
     };
   }
 
@@ -166,7 +167,7 @@ export class DebugService {
         this.log(LogLevel.WARN, 'High memory usage detected', {
           heapUsed: memoryUsage.heapUsed,
           heapTotal: memoryUsage.heapTotal,
-          threshold: memoryWarningThreshold
+          threshold: memoryWarningThreshold,
         });
       }
     }
@@ -177,18 +178,18 @@ export class DebugService {
     if (debugConfig.debug.enabled) {
       this.log(LogLevel.INFO, 'Debug session started', {
         timestamp: new Date().toISOString(),
-        config: debugConfig
+        config: debugConfig,
       });
 
       // 设置全局错误处理
       if (debugConfig.errorTracking.captureUncaughtExceptions) {
-        process.on('uncaughtException', (error) => {
+        process.on('uncaughtException', error => {
           this.trackError(error, { type: 'uncaughtException' });
         });
       }
 
       if (debugConfig.errorTracking.captureUnhandledRejections) {
-        process.on('unhandledRejection', (reason) => {
+        process.on('unhandledRejection', reason => {
           this.trackError(reason as Error, { type: 'unhandledRejection' });
         });
       }
@@ -206,8 +207,8 @@ export class DebugService {
   endDebugSession() {
     if (debugConfig.debug.enabled) {
       this.log(LogLevel.INFO, 'Debug session ended', {
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     }
   }
-} 
+}

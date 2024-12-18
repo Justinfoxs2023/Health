@@ -1,12 +1,17 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+
 import { Card, Text, useTheme } from 'react-native-paper';
 import { LineChart, BarChart } from 'react-native-chart-kit';
+import { View, StyleSheet, ScrollView } from 'react-native';
 
-interface WorkoutStats {
+interface IWorkoutStats {
+  /** date 的描述 */
   date: string;
+  /** duration 的描述 */
   duration: number;
+  /** caloriesBurned 的描述 */
   caloriesBurned: number;
+  /** exercises 的描述 */
   exercises: {
     name: string;
     sets: number;
@@ -15,8 +20,10 @@ interface WorkoutStats {
   }[];
 }
 
-interface WorkoutTrackerProps {
-  weeklyStats: WorkoutStats[];
+interface IWorkoutTrackerProps {
+  /** weeklyStats 的描述 */
+  weeklyStats: IWorkoutStats[];
+  /** monthlyProgress 的描述 */
   monthlyProgress: {
     labels: string[];
     workoutDays: number[];
@@ -25,21 +32,25 @@ interface WorkoutTrackerProps {
   };
 }
 
-export const WorkoutTracker = ({ weeklyStats, monthlyProgress }: WorkoutTrackerProps) => {
+export const WorkoutTracker = ({ weeklyStats, monthlyProgress }: IWorkoutTrackerProps) => {
   const theme = useTheme();
 
   const caloriesData = {
     labels: monthlyProgress.labels,
-    datasets: [{
-      data: monthlyProgress.caloriesBurned
-    }]
+    datasets: [
+      {
+        data: monthlyProgress.caloriesBurned,
+      },
+    ],
   };
 
   const workoutDaysData = {
     labels: monthlyProgress.labels,
-    datasets: [{
-      data: monthlyProgress.workoutDays
-    }]
+    datasets: [
+      {
+        data: monthlyProgress.workoutDays,
+      },
+    ],
   };
 
   return (
@@ -92,12 +103,8 @@ export const WorkoutTracker = ({ weeklyStats, monthlyProgress }: WorkoutTrackerP
             <View key={index} style={styles.dayRecord}>
               <Text style={styles.date}>{day.date}</Text>
               <View style={styles.statsRow}>
-                <Text style={styles.statItem}>
-                  时长: {Math.round(day.duration / 60)}分钟
-                </Text>
-                <Text style={styles.statItem}>
-                  消耗: {day.caloriesBurned}千卡
-                </Text>
+                <Text style={styles.statItem}>时长: {Math.round(day.duration / 60)}分钟</Text>
+                <Text style={styles.statItem}>消耗: {day.caloriesBurned}千卡</Text>
               </View>
               <View style={styles.exerciseList}>
                 {day.exercises.map((exercise, exIndex) => (
@@ -159,4 +166,4 @@ const styles = StyleSheet.create({
     color: '#666',
     marginBottom: 4,
   },
-}); 
+});

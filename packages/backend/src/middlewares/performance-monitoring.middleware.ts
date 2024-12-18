@@ -1,10 +1,10 @@
-import { Request, Response, NextFunction } from 'express';
 import { PerformanceMonitor } from '../services/monitoring/performance-monitor';
+import { Request, Response, NextFunction } from 'express';
 
 export const performanceMonitoringMiddleware = (
-  req: Request, 
-  res: Response, 
-  next: NextFunction
+  req: Request,
+  res: Response,
+  next: NextFunction,
 ) => {
   const startTime = Date.now();
   const monitor = new PerformanceMonitor();
@@ -13,7 +13,7 @@ export const performanceMonitoringMiddleware = (
   monitor.startRequest({
     path: req.path,
     method: req.method,
-    userId: req.user?.id
+    userId: req.user?.id,
   });
 
   // 响应监控
@@ -22,9 +22,9 @@ export const performanceMonitoringMiddleware = (
     monitor.endRequest({
       duration,
       statusCode: res.statusCode,
-      responseSize: parseInt(res.get('Content-Length') || '0')
+      responseSize: parseInt(res.get('Content-Length') || '0'),
     });
   });
 
   next();
-}; 
+};

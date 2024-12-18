@@ -1,7 +1,7 @@
 import Bull from 'bull';
+import { ImageProcessorService } from './image-processor.service';
 import { Logger } from '../../utils/logger';
 import { RekognitionService } from './rekognition.service';
-import { ImageProcessorService } from './image-processor.service';
 
 export class DistributedProcessorService {
   private imageQueue: Bull.Queue;
@@ -20,15 +20,15 @@ export class DistributedProcessorService {
       redis: {
         host: process.env.REDIS_HOST,
         port: parseInt(process.env.REDIS_PORT),
-        password: process.env.REDIS_PASSWORD
+        password: process.env.REDIS_PASSWORD,
       },
       defaultJobOptions: {
         attempts: 3,
         backoff: {
           type: 'exponential',
-          delay: 1000
-        }
-      }
+          delay: 1000,
+        },
+      },
     });
 
     // 创建分析队列
@@ -36,8 +36,8 @@ export class DistributedProcessorService {
       redis: {
         host: process.env.REDIS_HOST,
         port: parseInt(process.env.REDIS_PORT),
-        password: process.env.REDIS_PASSWORD
-      }
+        password: process.env.REDIS_PASSWORD,
+      },
     });
 
     this.setupWorkers();
@@ -45,15 +45,15 @@ export class DistributedProcessorService {
 
   private setupWorkers() {
     // 图像预处理worker
-    this.imageQueue.process(async (job) => {
+    this.imageQueue.process(async job => {
       const { imageBuffer, options } = job.data;
       return await this.imageProcessor.preprocessImage(imageBuffer, options);
     });
 
     // 图像分析worker
-    this.analysisQueue.process(async (job) => {
+    this.analysisQueue.process(async job => {
       const { imageKey, type, userId } = job.data;
-      
+
       switch (type) {
         case 'food':
           return await this.rekognition.analyzeFoodImage(imageKey, userId);
@@ -71,7 +71,7 @@ export class DistributedProcessorService {
   async addImageProcessingJob(imageBuffer: Buffer, options: any) {
     return await this.imageQueue.add({
       imageBuffer,
-      options
+      options,
     });
   }
 
@@ -80,7 +80,7 @@ export class DistributedProcessorService {
     return await this.analysisQueue.add({
       imageKey,
       type,
-      userId
+      userId,
     });
   }
 
@@ -90,4 +90,4 @@ export class DistributedProcessorService {
     const job = await queue.getJob(jobId);
     return job ? await job.getState() : null;
   }
-} 
+}

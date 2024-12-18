@@ -1,8 +1,8 @@
+import { FamilyController } from '../controllers/family.controller';
+import { FamilyMember } from '../entities/family-member.entity';
+import { FamilyService } from '../services/family.service';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { FamilyMember } from '../entities/family-member.entity';
-import { FamilyController } from '../controllers/family.controller';
-import { FamilyService } from '../services/family.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([FamilyMember])],
@@ -10,4 +10,4 @@ import { FamilyService } from '../services/family.service';
   providers: [FamilyService],
   exports: [FamilyService],
 })
-export class FamilyModule {} 
+export class FamilyModule {}

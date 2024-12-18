@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { UserRelation, IUserRelation } from '../schemas/UserRelation';
-import { Favorite, IFavorite } from '../schemas/Favorite';
-import { Timeline, ITimeline } from '../schemas/Timeline';
 import { CacheService } from './CacheService';
+import { Favorite, IFavorite } from '../schemas/Favorite';
+import { InjectModel } from '@nestjs/mongoose';
+import { Injectable } from '@nestjs/common';
+import { Model } from 'mongoose';
+import { Timeline, ITimeline } from '../schemas/Timeline';
+import { UserRelation, IUserRelation } from '../schemas/UserRelation';
 
 @Injectable()
 export class UserInteractionService {
@@ -12,14 +12,14 @@ export class UserInteractionService {
     @InjectModel(UserRelation.name) private userRelationModel: Model<IUserRelation>,
     @InjectModel(Favorite.name) private favoriteModel: Model<IFavorite>,
     @InjectModel(Timeline.name) private timelineModel: Model<ITimeline>,
-    private cacheService: CacheService
+    private cacheService: CacheService,
   ) {}
 
   // 关注用户
   async followUser(followerId: string, followingId: string): Promise<IUserRelation> {
     const relation = await this.userRelationModel.create({
       follower: followerId,
-      following: followingId
+      following: followingId,
     });
 
     // 更新缓存
@@ -31,7 +31,7 @@ export class UserInteractionService {
       userId: followerId,
       activityType: 'follow',
       contentType: 'User',
-      contentId: followingId
+      contentId: followingId,
     });
 
     return relation;
@@ -41,7 +41,7 @@ export class UserInteractionService {
   async unfollowUser(followerId: string, followingId: string): Promise<void> {
     await this.userRelationModel.deleteOne({
       follower: followerId,
-      following: followingId
+      following: followingId,
     });
 
     // 更新缓存
@@ -53,7 +53,7 @@ export class UserInteractionService {
   async getFollowings(userId: string, page = 1, limit = 20) {
     const cacheKey = `user:${userId}:followings:${page}`;
     const cached = await this.cacheService.get(cacheKey);
-    
+
     if (cached) {
       return JSON.parse(cached);
     }
@@ -74,7 +74,7 @@ export class UserInteractionService {
   async getFollowers(userId: string, page = 1, limit = 20) {
     const cacheKey = `user:${userId}:followers:${page}`;
     const cached = await this.cacheService.get(cacheKey);
-    
+
     if (cached) {
       return JSON.parse(cached);
     }
@@ -95,7 +95,7 @@ export class UserInteractionService {
   async addFavorite(userId: string, data: Partial<IFavorite>): Promise<IFavorite> {
     const favorite = await this.favoriteModel.create({
       userId,
-      ...data
+      ...data,
     });
 
     // 创建时间线记录
@@ -103,7 +103,7 @@ export class UserInteractionService {
       userId,
       activityType: 'favorite',
       contentType: data.contentType,
-      contentId: data.contentId
+      contentId: data.contentId,
     });
 
     return favorite;
@@ -113,7 +113,7 @@ export class UserInteractionService {
   async removeFavorite(userId: string, favoriteId: string): Promise<void> {
     await this.favoriteModel.deleteOne({
       _id: favoriteId,
-      userId
+      userId,
     });
   }
 
@@ -149,7 +149,7 @@ export class UserInteractionService {
     const relation = await this.userRelationModel.findOne({
       follower: followerId,
       following: followingId,
-      status: 'active'
+      status: 'active',
     });
     return !!relation;
   }
@@ -158,7 +158,7 @@ export class UserInteractionService {
   async getInteractionStats(userId: string) {
     const cacheKey = `user:${userId}:interaction-stats`;
     const cached = await this.cacheService.get(cacheKey);
-    
+
     if (cached) {
       return JSON.parse(cached);
     }
@@ -166,16 +166,16 @@ export class UserInteractionService {
     const [followersCount, followingCount, favoritesCount] = await Promise.all([
       this.userRelationModel.countDocuments({ following: userId, status: 'active' }),
       this.userRelationModel.countDocuments({ follower: userId, status: 'active' }),
-      this.favoriteModel.countDocuments({ userId })
+      this.favoriteModel.countDocuments({ userId }),
     ]);
 
     const stats = {
       followersCount,
       followingCount,
-      favoritesCount
+      favoritesCount,
     };
 
     await this.cacheService.set(cacheKey, JSON.stringify(stats), 3600);
     return stats;
   }
-} 
+}

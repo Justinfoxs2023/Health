@@ -1,6 +1,6 @@
-import { Response } from 'express';
-import { NutritionQA } from '../models/nutrition-qa.model';
 import { IAuthRequest } from '../types/models';
+import { NutritionQA } from '../models/nutrition-qa.model';
+import { Response } from 'express';
 import { uploadImage } from '../utils/upload';
 
 export class NutritionQAController {
@@ -24,19 +24,19 @@ export class NutritionQAController {
       const question = new NutritionQA({
         ...questionData,
         userId,
-        images: imageUrls
+        images: imageUrls,
       });
 
       await question.save();
 
       res.status(201).json({
         success: true,
-        data: question
+        data: question,
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -46,14 +46,7 @@ export class NutritionQAController {
    */
   public async getQuestions(req: IAuthRequest, res: Response): Promise<void> {
     try {
-      const { 
-        category,
-        status,
-        isPrivate = false,
-        search,
-        page = 1,
-        limit = 10 
-      } = req.query;
+      const { category, status, isPrivate = false, search, page = 1, limit = 10 } = req.query;
 
       const query: any = { isPrivate };
 
@@ -86,13 +79,13 @@ export class NutritionQAController {
           total,
           page: Number(page),
           limit: Number(limit),
-          pages: Math.ceil(total / Number(limit))
-        }
+          pages: Math.ceil(total / Number(limit)),
+        },
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -112,7 +105,7 @@ export class NutritionQAController {
       if (!question) {
         res.status(404).json({
           success: false,
-          message: '未找到该问题'
+          message: '未找到该问题',
         });
         return;
       }
@@ -121,7 +114,7 @@ export class NutritionQAController {
       if (question.isPrivate && question.userId.toString() !== userId) {
         res.status(403).json({
           success: false,
-          message: '无权访问该问题'
+          message: '无权访问该问题',
         });
         return;
       }
@@ -132,12 +125,12 @@ export class NutritionQAController {
 
       res.json({
         success: true,
-        data: question
+        data: question,
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -156,7 +149,7 @@ export class NutritionQAController {
       if (!question) {
         res.status(404).json({
           success: false,
-          message: '未找到该问题'
+          message: '未找到该问题',
         });
         return;
       }
@@ -164,7 +157,7 @@ export class NutritionQAController {
       if (question.status === '已关闭') {
         res.status(400).json({
           success: false,
-          message: '该问题已关闭'
+          message: '该问题已关闭',
         });
         return;
       }
@@ -183,7 +176,7 @@ export class NutritionQAController {
         images: imageUrls,
         likes: 0,
         isAccepted: false,
-        createdAt: new Date()
+        createdAt: new Date(),
       });
 
       question.status = '已回答';
@@ -191,12 +184,12 @@ export class NutritionQAController {
 
       res.json({
         success: true,
-        data: question
+        data: question,
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -211,13 +204,13 @@ export class NutritionQAController {
 
       const question = await NutritionQA.findOne({
         _id: id,
-        userId
+        userId,
       });
 
       if (!question) {
         res.status(404).json({
           success: false,
-          message: '未找到该问题'
+          message: '未找到该问题',
         });
         return;
       }
@@ -226,7 +219,7 @@ export class NutritionQAController {
       if (!answer) {
         res.status(404).json({
           success: false,
-          message: '未找到该回答'
+          message: '未找到该回答',
         });
         return;
       }
@@ -241,12 +234,12 @@ export class NutritionQAController {
 
       res.json({
         success: true,
-        data: question
+        data: question,
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -262,7 +255,7 @@ export class NutritionQAController {
       if (!question) {
         res.status(404).json({
           success: false,
-          message: '未找到该问题'
+          message: '未找到该问题',
         });
         return;
       }
@@ -271,7 +264,7 @@ export class NutritionQAController {
       if (!answer) {
         res.status(404).json({
           success: false,
-          message: '未找到该回答'
+          message: '未找到该回答',
         });
         return;
       }
@@ -281,15 +274,15 @@ export class NutritionQAController {
 
       res.json({
         success: true,
-        data: question
+        data: question,
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
 }
 
-export const nutritionQAController = new NutritionQAController(); 
+export const nutritionQAController = new NutritionQAController();

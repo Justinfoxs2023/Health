@@ -1,4 +1,5 @@
 import React from 'react';
+
 import styled from 'styled-components';
 
 const ErrorContainer = styled.div`
@@ -22,12 +23,16 @@ const ErrorButton = styled.button`
   }
 `;
 
-interface ErrorBoundaryState {
-  hasError: boolean;
-  error: Error | null;
+interface IErrorBoundaryState {
+  /** hasError 的描述 */
+  hasError: false | true;
+  /** error 的描述 */
+  error: Error /** null 的描述 */;
+  /** null 的描述 */
+  null;
 }
 
-export class ErrorBoundary extends React.Component<{}, ErrorBoundaryState> {
+export class ErrorBoundary extends React.Component<{}, IErrorBoundaryState> {
   constructor(props: {}) {
     super(props);
     this.state = { hasError: false, error: null };
@@ -38,7 +43,7 @@ export class ErrorBoundary extends React.Component<{}, ErrorBoundaryState> {
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('Error:', error, errorInfo);
+    console.error('Error in ErrorBoundary.tsx:', 'Error:', error, errorInfo);
   }
 
   handleRetry = () => {
@@ -49,15 +54,13 @@ export class ErrorBoundary extends React.Component<{}, ErrorBoundaryState> {
     if (this.state.hasError) {
       return (
         <ErrorContainer>
-          <h2>出错了</h2>
-          <p>{this.state.error?.message}</p>
-          <ErrorButton onClick={this.handleRetry}>
-            重试
-          </ErrorButton>
+          <h2></h2>
+          <p>{thisstateerrormessage}</p>
+          <ErrorButton onClick={thishandleRetry}></ErrorButton>
         </ErrorContainer>
       );
     }
 
     return this.props.children;
   }
-} 
+}

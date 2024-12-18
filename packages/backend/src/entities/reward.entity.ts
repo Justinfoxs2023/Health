@@ -16,4 +16,4 @@ export class Reward {
 
   @Column({ default: true })
   isActive: boolean;
-} 
+}

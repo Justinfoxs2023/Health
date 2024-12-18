@@ -1,9 +1,11 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+
 import { Card, Text, useTheme, Button } from 'react-native-paper';
 import { HealthDataCard } from '../health/HealthDataCard';
+import { View, StyleSheet, ScrollView } from 'react-native';
 
-interface HealthAssessmentResultProps {
+interface IHealthAssessmentResultProps {
+  /** result 的描述 */
   result: {
     bmi: number;
     bmiCategory: string;
@@ -16,10 +18,11 @@ interface HealthAssessmentResultProps {
       sleep: string[];
     };
   };
+  /** onClose 的描述 */
   onClose: () => void;
 }
 
-export const HealthAssessmentResult = ({ result, onClose }: HealthAssessmentResultProps) => {
+export const HealthAssessmentResult = ({ result, onClose }: IHealthAssessmentResultProps) => {
   const theme = useTheme();
 
   return (
@@ -44,7 +47,9 @@ export const HealthAssessmentResult = ({ result, onClose }: HealthAssessmentResu
         <Card.Content>
           <Text style={styles.sectionTitle}>健康建议</Text>
           {result.recommendations.map((recommendation, index) => (
-            <Text key={index} style={styles.listItem}>• {recommendation}</Text>
+            <Text key={index} style={styles.listItem}>
+              • {recommendation}
+            </Text>
           ))}
         </Card.Content>
       </Card>
@@ -54,26 +59,28 @@ export const HealthAssessmentResult = ({ result, onClose }: HealthAssessmentResu
           <Text style={styles.sectionTitle}>生活方式改善建议</Text>
           <Text style={styles.subTitle}>运动建议</Text>
           {result.lifestyle.exercise.map((item, index) => (
-            <Text key={index} style={styles.listItem}>• {item}</Text>
+            <Text key={index} style={styles.listItem}>
+              • {item}
+            </Text>
           ))}
-          
+
           <Text style={styles.subTitle}>饮食建议</Text>
           {result.lifestyle.diet.map((item, index) => (
-            <Text key={index} style={styles.listItem}>• {item}</Text>
+            <Text key={index} style={styles.listItem}>
+              • {item}
+            </Text>
           ))}
-          
+
           <Text style={styles.subTitle}>睡眠建议</Text>
           {result.lifestyle.sleep.map((item, index) => (
-            <Text key={index} style={styles.listItem}>• {item}</Text>
+            <Text key={index} style={styles.listItem}>
+              • {item}
+            </Text>
           ))}
         </Card.Content>
       </Card>
 
-      <Button
-        mode="contained"
-        onPress={onClose}
-        style={styles.closeButton}
-      >
+      <Button mode="contained" onPress={onClose} style={styles.closeButton}>
         完成
       </Button>
     </ScrollView>
@@ -136,4 +143,4 @@ const styles = StyleSheet.create({
   closeButton: {
     marginVertical: 24,
   },
-}); 
+});

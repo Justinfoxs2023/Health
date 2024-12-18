@@ -1,16 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { List, Card, Image, Space, Tag, Popconfirm, Button, message } from 'antd';
-import { DeleteOutlined, EyeOutlined, DownloadOutlined } from '@ant-design/icons';
-import { useTranslation } from 'react-i18next';
+
 import dayjs from 'dayjs';
+import { DeleteOutlined, EyeOutlined, DownloadOutlined } from '@ant-design/icons';
+import { List, Card, Image, Space, Tag, Popconfirm, Button, message } from 'antd';
+import { useTranslation } from 'react-i18next';
 
 interface ImageItem {
+  /** _id 的描述 */
   _id: string;
+  /** filename 的描述 */
   filename: string;
+  /** status 的描述 */
   status: string;
+  /** optimized 的描述 */
   optimized: boolean;
+  /** optimizedUrl 的描述 */
   optimizedUrl?: string;
+  /** thumbnailUrl 的描述 */
   thumbnailUrl?: string;
+  /** metadata 的描述 */
   metadata: {
     uploadedAt: string;
     compression?: {
@@ -22,14 +30,13 @@ interface ImageItem {
 }
 
 interface ImageListProps {
+  /** onDelete 的描述 */
   onDelete?: (imageId: string) => void;
+  /** onRefresh 的描述 */
   onRefresh?: () => void;
 }
 
-export const ImageList: React.FC<ImageListProps> = ({
-  onDelete,
-  onRefresh,
-}) => {
+export const ImageList: React.FC<ImageListProps> = ({ onDelete, onRefresh }) => {
   const { t } = useTranslation();
   const [images, setImages] = useState<ImageItem[]>([]);
   const [loading, setLoading] = useState(false);
@@ -92,7 +99,10 @@ export const ImageList: React.FC<ImageListProps> = ({
       error: { color: 'error', text: '处理失败' },
     };
 
-    const { color, text } = statusMap[status as keyof typeof statusMap] || { color: 'default', text: status };
+    const { color, text } = statusMap[status as keyof typeof statusMap] || {
+      color: 'default',
+      text: status,
+    };
     return <Tag color={color}>{t(text)}</Tag>;
   };
 
@@ -107,7 +117,7 @@ export const ImageList: React.FC<ImageListProps> = ({
         total,
         onChange: setPage,
       }}
-      renderItem={(item) => (
+      renderItem={item => (
         <List.Item>
           <Card
             hoverable
@@ -130,7 +140,9 @@ export const ImageList: React.FC<ImageListProps> = ({
                 key="download"
                 type="text"
                 icon={<DownloadOutlined />}
-                onClick={() => handleDownload(item.optimizedUrl || item.thumbnailUrl || '', item.filename)}
+                onClick={() =>
+                  handleDownload(item.optimizedUrl || item.thumbnailUrl || '', item.filename)
+                }
                 disabled={!item.optimizedUrl}
               />,
               <Popconfirm
@@ -140,11 +152,7 @@ export const ImageList: React.FC<ImageListProps> = ({
                 okText={t('确定')}
                 cancelText={t('取消')}
               >
-                <Button
-                  type="text"
-                  danger
-                  icon={<DeleteOutlined />}
-                />
+                <Button type="text" danger icon={<DeleteOutlined />} />
               </Popconfirm>,
             ]}
           >
@@ -167,4 +175,4 @@ export const ImageList: React.FC<ImageListProps> = ({
       )}
     />
   );
-}; 
+};

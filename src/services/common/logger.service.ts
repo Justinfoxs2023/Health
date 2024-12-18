@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class LoggerService {
@@ -10,6 +10,6 @@ export class LoggerService {
   }
 
   error(message: string, trace?: string, context?: string) {
-    console.error(`[${context || 'APP'}] ${message}`, trace);
+    console.error('Error in logger.service.ts:', `[${context || 'APP'}] ${message}`, trace);
   }
-} 
+}

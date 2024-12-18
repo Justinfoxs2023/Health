@@ -1,2 +1,3 @@
 import { HealthTimeline } from './HealthTimeline';
-export { HealthTimeline }; 
+
+export { HealthTimeline };

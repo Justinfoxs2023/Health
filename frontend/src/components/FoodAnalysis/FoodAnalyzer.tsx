@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { Upload, Input, Button, Card, Spin } from 'antd';
+
 import { CameraOutlined, ScanOutlined, EditOutlined } from '@ant-design/icons';
-import { FoodAnalysisService, FoodAnalysisResult } from '../../services/food-analysis.service';
+import { FoodAnalysisService, IFoodAnalysisResult } from '../../services/food-analysis.service';
+import { Upload, Input, Button, Card, Spin } from 'antd';
 
 const FoodAnalyzer: React.FC = () => {
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<FoodAnalysisResult | null>(null);
+  const [result, setResult] = useState<IFoodAnalysisResult | null>(null);
   const [mode, setMode] = useState<'camera' | 'barcode' | 'text'>('camera');
-  
+
   const foodService = new FoodAnalysisService();
 
   const handleImageUpload = async (file: File) => {
@@ -16,7 +17,7 @@ const FoodAnalyzer: React.FC = () => {
       const result = await foodService.analyzeImage(file);
       setResult(result);
     } catch (error) {
-      console.error(error);
+      console.error('Error in FoodAnalyzer.tsx:', error);
     } finally {
       setLoading(false);
     }
@@ -28,7 +29,7 @@ const FoodAnalyzer: React.FC = () => {
       const result = await foodService.analyzeBarcode(barcode);
       setResult(result);
     } catch (error) {
-      console.error(error);
+      console.error('Error in FoodAnalyzer.tsx:', error);
     } finally {
       setLoading(false);
     }
@@ -40,7 +41,7 @@ const FoodAnalyzer: React.FC = () => {
       const result = await foodService.analyzeDescription(description);
       setResult(result);
     } catch (error) {
-      console.error(error);
+      console.error('Error in FoodAnalyzer.tsx:', error);
     } finally {
       setLoading(false);
     }
@@ -49,21 +50,21 @@ const FoodAnalyzer: React.FC = () => {
   return (
     <div className="food-analyzer">
       <div className="input-methods">
-        <Button 
-          icon={<CameraOutlined />} 
+        <Button
+          icon={<CameraOutlined />}
           onClick={() => setMode('camera')}
           type={mode === 'camera' ? 'primary' : 'default'}
         >
           拍照识别
         </Button>
-        <Button 
+        <Button
           icon={<ScanOutlined />}
           onClick={() => setMode('barcode')}
           type={mode === 'barcode' ? 'primary' : 'default'}
         >
           扫描条形码
         </Button>
-        <Button 
+        <Button
           icon={<EditOutlined />}
           onClick={() => setMode('text')}
           type={mode === 'text' ? 'primary' : 'default'}
@@ -76,7 +77,7 @@ const FoodAnalyzer: React.FC = () => {
         {mode === 'camera' && (
           <Upload.Dragger
             accept="image/*"
-            beforeUpload={(file) => {
+            beforeUpload={file => {
               handleImageUpload(file);
               return false;
             }}
@@ -97,7 +98,7 @@ const FoodAnalyzer: React.FC = () => {
           <Input.TextArea
             placeholder="输入食物描述"
             autoSize={{ minRows: 3 }}
-            onPressEnter={(e) => handleTextInput(e.currentTarget.value)}
+            onPressEnter={e => handleTextInput(e.currentTarget.value)}
           />
         )}
 
@@ -120,4 +121,4 @@ const FoodAnalyzer: React.FC = () => {
   );
 };
 
-export default FoodAnalyzer; 
+export default FoodAnalyzer;

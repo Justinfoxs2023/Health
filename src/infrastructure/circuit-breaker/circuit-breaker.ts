@@ -1,36 +1,36 @@
 import { Injectable } from '@nestjs/common';
-import { MetricsService } from '../monitoring/metrics.service';
 import { Logger } from '../logger/logger.service';
+import { MetricsService } from '../monitoring/metrics.service';
 
 export enum CircuitState {
-  CLOSED,
-  OPEN,
-  HALF_OPEN
+  CLOSED = "CLOSED",
+  OPEN = "OPEN",
+  HALF_OPEN = "HALF_OPEN",
 }
 
-export interface CircuitBreakerConfig {
+export interface ICircuitBreakerConfig {
+  /** failureThreshold 的描述 */
   failureThreshold: number;
+  /** resetTimeout 的描述 */
   resetTimeout: number;
+  /** halfOpenRetries 的描述 */
   halfOpenRetries: number;
 }
 
 @Injectable()
 export class CircuitBreaker {
   private state: CircuitState = CircuitState.CLOSED;
-  private failureCount: number = 0;
-  private lastFailureTime: number = 0;
-  private successCount: number = 0;
+  private failureCount = 0;
+  private lastFailureTime = 0;
+  private successCount = 0;
 
   constructor(
-    private readonly config: CircuitBreakerConfig,
+    private readonly config: ICircuitBreakerConfig,
     private readonly metrics: MetricsService,
-    private readonly logger: Logger
+    private readonly logger: Logger,
   ) {}
 
-  async execute<T>(
-    operation: () => Promise<T>,
-    fallback: () => Promise<T>
-  ): Promise<T> {
+  async execute<T>(operation: () => Promise<T>, fallback: () => Promise<T>): Promise<T> {
     if (this.isOpen()) {
       this.metrics.incrementCounter('circuit_breaker_fallback_total');
       return fallback();
@@ -73,8 +73,7 @@ export class CircuitBreaker {
     this.failureCount++;
     this.lastFailureTime = Date.now();
 
-    if (this.state === CircuitState.CLOSED && 
-        this.failureCount >= this.config.failureThreshold) {
+    if (this.state === CircuitState.CLOSED && this.failureCount >= this.config.failureThreshold) {
       this.state = CircuitState.OPEN;
       this.logger.warn('Circuit breaker state changed to OPEN');
     }
@@ -103,7 +102,7 @@ export class CircuitBreaker {
       state: this.state,
       failureCount: this.failureCount,
       successCount: this.successCount,
-      lastFailureTime: this.lastFailureTime
+      lastFailureTime: this.lastFailureTime,
     };
   }
-} 
+}

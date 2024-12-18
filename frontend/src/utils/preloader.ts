@@ -1,4 +1,5 @@
 import { ssrConfig } from '../config/ssr.config';
+
 import { logger } from '@/services/logger';
 
 class Preloader {
@@ -25,16 +26,16 @@ class Preloader {
    */
   private static async preloadApiRoutes() {
     const routes = ssrConfig.preload.apiRoutes;
-    
+
     for (const route of routes) {
       if (this.loadedResources.has(route)) continue;
 
       try {
         const response = await fetch(route, {
           method: 'HEAD',
-          credentials: 'include'
+          credentials: 'include',
         });
-        
+
         if (response.ok) {
           this.loadedResources.add(route);
         }
@@ -87,7 +88,7 @@ class Preloader {
     if (typeof window === 'undefined') return;
 
     const observer = new IntersectionObserver(
-      (entries) => {
+      entries => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
             const link = entry.target as HTMLAnchorElement;
@@ -97,7 +98,7 @@ class Preloader {
           }
         });
       },
-      { rootMargin: '50px' }
+      { rootMargin: '50px' },
     );
 
     // 观察所有链接
@@ -149,7 +150,7 @@ class Preloader {
       loadedCount: this.loadedResources.size,
       queueLength: this.preloadQueue.length,
       loadedResources: Array.from(this.loadedResources),
-      pendingResources: [...this.preloadQueue]
+      pendingResources: [...this.preloadQueue],
     };
   }
-} 
+}

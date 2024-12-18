@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+
 import { Avatar, Button, TextInput, Text } from 'react-native-paper';
-import { useUser } from '../../hooks/useUser';
 import { ImagePicker } from '../../components/ImagePicker';
+import { View, StyleSheet, ScrollView } from 'react-native';
+import { useUser } from '../../hooks/useUser';
 
 export const ProfileScreen = () => {
   const { user, updateProfile, uploadAvatar, loading } = useUser();
@@ -26,10 +27,7 @@ export const ProfileScreen = () => {
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <ImagePicker onImageSelected={handleAvatarChange}>
-          <Avatar.Image 
-            size={80} 
-            source={{ uri: user?.avatar }} 
-          />
+          <Avatar.Image size={80} source={{ uri: user?.avatar }} />
         </ImagePicker>
         <Text style={styles.username}>{user?.username}</Text>
       </View>
@@ -38,26 +36,26 @@ export const ProfileScreen = () => {
         <TextInput
           label="用户名"
           value={formData.username}
-          onChangeText={(text) => setFormData({...formData, username: text})}
+          onChangeText={text => setFormData({ ...formData, username: text })}
           disabled={!editing}
           style={styles.input}
         />
         <TextInput
           label="邮箱"
           value={formData.email}
-          onChangeText={(text) => setFormData({...formData, email: text})}
+          onChangeText={text => setFormData({ ...formData, email: text })}
           disabled={!editing}
           style={styles.input}
         />
         <TextInput
           label="手机号"
           value={formData.phone}
-          onChangeText={(text) => setFormData({...formData, phone: text})}
+          onChangeText={text => setFormData({ ...formData, phone: text })}
           disabled={!editing}
           style={styles.input}
         />
 
-        <Button 
+        <Button
           mode="contained"
           onPress={editing ? handleSave : () => setEditing(true)}
           loading={loading}
@@ -95,4 +93,4 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 16,
   },
-}); 
+});

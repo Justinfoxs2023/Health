@@ -18,12 +18,14 @@ export const healthGoalSchema = z.object({
   unit: z.string(),
   startDate: z.string().datetime(),
   endDate: z.string().datetime(),
-  milestones: z.array(
-    z.object({
-      title: z.string(),
-      value: z.number().positive(),
-    })
-  ).optional(),
+  milestones: z
+    .array(
+      z.object({
+        title: z.string(),
+        value: z.number().positive(),
+      }),
+    )
+    .optional(),
 });
 
 export const validateHealthData = (data: unknown) => {
@@ -46,4 +48,4 @@ export const validateHealthGoal = (goal: unknown) => {
     }
     throw error;
   }
-}; 
+};

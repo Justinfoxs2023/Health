@@ -1,6 +1,6 @@
+import * as prometheus from 'prom-client';
 import { Injectable } from '@nestjs/common';
 import { Logger } from '../utils/logger';
-import * as prometheus from 'prom-client';
 
 @Injectable()
 export class PerformanceMonitor {
@@ -11,14 +11,14 @@ export class PerformanceMonitor {
     name: 'model_training_duration_seconds',
     help: '模型训练耗时(秒)',
     labelNames: ['model_type'],
-    buckets: [10, 30, 60, 120, 300, 600, 1800, 3600]
+    buckets: [10, 30, 60, 120, 300, 600, 1800, 3600],
   });
 
   // 模型评估指标
   private readonly modelMetrics = new prometheus.Gauge({
     name: 'model_evaluation_metrics',
     help: '模型评估指标',
-    labelNames: ['model_type', 'metric_name']
+    labelNames: ['model_type', 'metric_name'],
   });
 
   // 数据处理时间
@@ -26,28 +26,28 @@ export class PerformanceMonitor {
     name: 'data_processing_duration_seconds',
     help: '数据处理耗时(秒)',
     labelNames: ['operation_type'],
-    buckets: [0.1, 0.5, 1, 2, 5, 10]
+    buckets: [0.1, 0.5, 1, 2, 5, 10],
   });
 
   // 数据验证错误计数
   private readonly validationErrors = new prometheus.Counter({
     name: 'data_validation_errors_total',
     help: '数据验证错误总数',
-    labelNames: ['error_type']
+    labelNames: ['error_type'],
   });
 
   // 内存使用情况
   private readonly memoryUsage = new prometheus.Gauge({
     name: 'memory_usage_bytes',
     help: '内存使用情况(字节)',
-    labelNames: ['memory_type']
+    labelNames: ['memory_type'],
   });
 
   // CPU使用情况
   private readonly cpuUsage = new prometheus.Gauge({
     name: 'cpu_usage_percent',
     help: 'CPU使用率(%)',
-    labelNames: ['cpu_type']
+    labelNames: ['cpu_type'],
   });
 
   // 模型预测延迟
@@ -55,14 +55,14 @@ export class PerformanceMonitor {
     name: 'model_prediction_latency_seconds',
     help: '模型预测延迟(秒)',
     labelNames: ['model_type'],
-    buckets: [0.01, 0.05, 0.1, 0.5, 1, 2]
+    buckets: [0.01, 0.05, 0.1, 0.5, 1, 2],
   });
 
   // 缓存命中率
   private readonly cacheHitRate = new prometheus.Gauge({
     name: 'cache_hit_rate_percent',
     help: '缓存命中率(%)',
-    labelNames: ['cache_type']
+    labelNames: ['cache_type'],
   });
 
   constructor() {
@@ -85,13 +85,16 @@ export class PerformanceMonitor {
   /**
    * 记录模型评估指��
    */
-  recordModelMetrics(modelType: string, metrics: {
-    loss: number;
-    accuracy: number;
-    precision?: number;
-    recall?: number;
-    f1Score?: number;
-  }): void {
+  recordModelMetrics(
+    modelType: string,
+    metrics: {
+      loss: number;
+      accuracy: number;
+      precision?: number;
+      recall?: number;
+      f1Score?: number;
+    },
+  ): void {
     try {
       Object.entries(metrics).forEach(([metricName, value]) => {
         this.modelMetrics.labels(modelType, metricName).set(value);
@@ -170,7 +173,7 @@ export class PerformanceMonitor {
     setInterval(() => {
       try {
         const memUsage = process.memoryUsage();
-        
+
         // 记录内存使用情况
         this.memoryUsage.labels('heap_used').set(memUsage.heapUsed);
         this.memoryUsage.labels('heap_total').set(memUsage.heapTotal);
@@ -183,7 +186,7 @@ export class PerformanceMonitor {
           const endUsage = process.cpuUsage(startUsage);
           const userCPUUsage = endUsage.user / 1000000; // 转换为秒
           const systemCPUUsage = endUsage.system / 1000000;
-          
+
           this.cpuUsage.labels('user').set(userCPUUsage);
           this.cpuUsage.labels('system').set(systemCPUUsage);
         }, 100);
@@ -203,17 +206,13 @@ export class PerformanceMonitor {
     modelType?: string;
     operationType?: string;
   }) {
-    return function (
-      target: any,
-      propertyKey: string,
-      descriptor: PropertyDescriptor
-    ) {
+    return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
       const originalMethod = descriptor.value;
       const monitor = new PerformanceMonitor();
 
       descriptor.value = async function (...args: any[]) {
         const startTime = Date.now();
-        
+
         try {
           const result = await originalMethod.apply(this, args);
           const duration = (Date.now() - startTime) / 1000;
@@ -242,4 +241,4 @@ export class PerformanceMonitor {
       return descriptor;
     };
   }
-} 
+}

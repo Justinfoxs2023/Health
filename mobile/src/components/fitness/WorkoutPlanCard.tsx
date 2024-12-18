@@ -1,33 +1,38 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Card, Text, Button, ProgressBar, useTheme } from 'react-native-paper';
 
-interface Exercise {
+import { Card, Text, Button, ProgressBar, useTheme } from 'react-native-paper';
+import { View, StyleSheet } from 'react-native';
+
+interface IExercise {
+  /** name 的描述 */
   name: string;
+  /** sets 的描述 */
   sets: number;
+  /** reps 的描述 */
   reps: number;
+  /** completed 的描述 */
   completed?: boolean;
 }
 
-interface WorkoutPlanCardProps {
+interface IWorkoutPlanCardProps {
+  /** title 的描述 */
   title: string;
-  exercises: Exercise[];
+  /** exercises 的描述 */
+  exercises: IExercise[];
+  /** progress 的描述 */
   progress: number;
+  /** onStart 的描述 */
   onStart?: () => void;
 }
 
-export const WorkoutPlanCard = ({ title, exercises, progress, onStart }: WorkoutPlanCardProps) => {
+export const WorkoutPlanCard = ({ title, exercises, progress, onStart }: IWorkoutPlanCardProps) => {
   const theme = useTheme();
 
   return (
     <Card style={styles.container}>
       <Card.Content>
         <Text style={styles.title}>{title}</Text>
-        <ProgressBar
-          progress={progress}
-          color={theme.colors.primary}
-          style={styles.progressBar}
-        />
+        <ProgressBar progress={progress} color={theme.colors.primary} style={styles.progressBar} />
         <View style={styles.exerciseList}>
           {exercises.map((exercise, index) => (
             <View key={index} style={styles.exerciseItem}>
@@ -38,11 +43,7 @@ export const WorkoutPlanCard = ({ title, exercises, progress, onStart }: Workout
             </View>
           ))}
         </View>
-        <Button
-          mode="contained"
-          onPress={onStart}
-          style={styles.button}
-        >
+        <Button mode="contained" onPress={onStart} style={styles.button}>
           开始训练
         </Button>
       </Card.Content>
@@ -85,4 +86,4 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 8,
   },
-}); 
+});

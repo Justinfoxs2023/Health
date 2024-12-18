@@ -1,20 +1,20 @@
 import React from 'react';
-import { Modal, View, Image, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
-import { Icon } from './Icon';
 
-interface Props {
+import { Icon } from './Icon';
+import { Modal, View, Image, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+
+interface IProps {
+  /** images 的描述 */
   images: string[];
+  /** initialIndex 的描述 */
   initialIndex?: number;
+  /** visible 的描述 */
   visible: boolean;
+  /** onClose 的描述 */
   onClose: () => void;
 }
 
-export const ImageViewer: React.FC<Props> = ({
-  images,
-  initialIndex = 0,
-  visible,
-  onClose
-}) => {
+export const ImageViewer: React.FC<IProps> = ({ images, initialIndex = 0, visible, onClose }) => {
   const [currentIndex, setCurrentIndex] = React.useState(initialIndex);
   const screenWidth = Dimensions.get('window').width;
   const screenHeight = Dimensions.get('window').height;
@@ -32,17 +32,9 @@ export const ImageViewer: React.FC<Props> = ({
   };
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="fade"
-      onRequestClose={onClose}
-    >
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <View style={styles.container}>
-        <TouchableOpacity 
-          style={styles.closeButton}
-          onPress={onClose}
-        >
+        <TouchableOpacity style={styles.closeButton} onPress={onClose}>
           <Icon name="close" size={24} color="#fff" />
         </TouchableOpacity>
 
@@ -51,7 +43,7 @@ export const ImageViewer: React.FC<Props> = ({
           style={{
             width: screenWidth,
             height: screenHeight * 0.7,
-            resizeMode: 'contain'
+            resizeMode: 'contain',
           }}
         />
 
@@ -90,14 +82,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.9)',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   closeButton: {
     position: 'absolute',
     top: 40,
     right: 20,
     zIndex: 1,
-    padding: 8
+    padding: 8,
   },
   navigation: {
     flexDirection: 'row',
@@ -105,15 +97,15 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     right: 0,
-    paddingHorizontal: 20
+    paddingHorizontal: 20,
   },
   navButton: {
     padding: 8,
     borderRadius: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)'
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
   },
   disabled: {
-    opacity: 0.5
+    opacity: 0.5,
   },
   counter: {
     position: 'absolute',
@@ -121,10 +113,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 16
+    borderRadius: 16,
   },
   counterText: {
     color: '#fff',
-    fontSize: 14
-  }
-}); 
+    fontSize: 14,
+  },
+});

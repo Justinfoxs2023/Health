@@ -1,4 +1,11 @@
-export interface CacheOptions {
+/**
+ * @fileoverview TS 文件 cache.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
+export interface ICacheOptions {
   /** 缓存过期时间（毫秒） */
   ttl?: number;
   /** 缓存键前缀 */
@@ -11,7 +18,7 @@ export interface CacheOptions {
   maxSize?: number;
 }
 
-export interface CacheEntry<T> {
+export interface ICacheEntry<T> {
   /** 缓存数据 */
   data: T;
   /** 过期时间戳 */
@@ -22,4 +29,4 @@ export interface CacheEntry<T> {
   lastAccessed: number;
   /** 访问次数 */
   accessCount: number;
-} 
+}

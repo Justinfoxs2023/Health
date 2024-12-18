@@ -7,11 +7,14 @@ export class PushService {
     this.logger = new Logger('PushService');
   }
 
-  async sendPushNotification(userId: string, notification: {
-    title: string;
-    body: string;
-    data?: any;
-  }) {
+  async sendPushNotification(
+    userId: string,
+    notification: {
+      title: string;
+      body: string;
+      data?: any;
+    },
+  ) {
     try {
       // 实现推送通知逻辑
       return true;
@@ -20,4 +23,4 @@ export class PushService {
       throw error;
     }
   }
-} 
+}

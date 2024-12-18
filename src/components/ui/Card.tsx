@@ -1,69 +1,72 @@
 import React from 'react';
+
 import { theme } from '../../styles/theme';
 
-interface CardProps {
-  title?: string;
-  subtitle?: string;
-  children: React.ReactNode;
-  elevation?: 'small' | 'medium' | 'large';
-  className?: string;
+interface ICardProps {
+  /** title 的描述 */
+    title: string;
+  /** subtitle 的描述 */
+    subtitle: string;
+  /** children 的描述 */
+    children: ReactReactNode;
+  /** elevation 的描述 */
+    elevation: small  medium  large;
+  className: string;
 }
 
-export const Card: React.FC<CardProps> = ({
+export const Card: React.FC<ICardProps> = ({
   title,
   subtitle,
   children,
   elevation = 'small',
-  className = ''
+  className = '',
 }) => {
   return (
     <div className={`card ${className}`}>
       {(title || subtitle) && (
         <div className="card-header">
-          {title && <h3 className="card-title">{title}</h3>}
-          {subtitle && <div className="card-subtitle">{subtitle}</div>}
+          {title && <h3 className="cardtitle">{title}</h3>}
+          {subtitle && <div className="cardsubtitle">{subtitle}</div>}
         </div>
       )}
-      <div className="card-content">
-        {children}
-      </div>
+      <div className="cardcontent">{children}</div>
 
-      <style jsx>{`
-        .card {
-          background: ${theme.colors.background.paper};
-          border-radius: ${theme.borderRadius.medium};
-          box-shadow: ${theme.shadows[elevation]};
-          overflow: hidden;
-          transition: box-shadow ${theme.transitions.short};
+      <style jsx>{
+        card {
+          background {themecolorsbackgroundpaper}
+          borderradius {themeborderRadiusmedium}
+          boxshadow {themeshadowselevation}
+          overflow hidden
+          transition boxshadow {themetransitionsshort}
         }
 
-        .card:hover {
-          box-shadow: ${theme.shadows.medium};
+        cardhover {
+          boxshadow {themeshadowsmedium}
         }
 
-        .card-header {
-          padding: ${theme.spacing(2)};
-          border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        cardheader {
+          padding {themespacing2}
+          borderbottom 1px solid rgba0 0 0 01
         }
 
-        .card-title {
-          margin: 0;
-          color: ${theme.colors.text.primary};
-          font-size: ${theme.typography.h3.fontSize};
-          font-weight: ${theme.typography.h3.fontWeight};
-          line-height: ${theme.typography.h3.lineHeight};
+        cardtitle {
+          margin 0
+          color {themecolorstextprimary}
+          fontsize {themetypographyh3fontSize}
+          fontweight {themetypographyh3fontWeight}
+          lineheight {themetypographyh3lineHeight}
         }
 
-        .card-subtitle {
-          margin-top: ${theme.spacing(1)};
-          color: ${theme.colors.text.secondary};
-          font-size: ${theme.typography.body2.fontSize};
+        cardsubtitle {
+          margintop {themespacing1}
+          color {themecolorstextsecondary}
+          fontsize {themetypographybody2fontSize}
         }
 
-        .card-content {
-          padding: ${theme.spacing(2)};
+        cardcontent {
+          padding {themespacing2}
         }
-      `}</style>
+      }</style>
     </div>
   );
-}; 
+};

@@ -1,4 +1,11 @@
-export type RootStackParamList = {
+/**
+ * @fileoverview TS 文件 types.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
+export type RootStackParamListType = {
   Home: undefined;
   ArticleDetail: { id: string };
   QuestionDetail: { id: string };
@@ -7,4 +14,4 @@ export type RootStackParamList = {
   // ... 其他路由
 };
 
-export type NavigationProp = StackNavigationProp<RootStackParamList>; 
+export type NavigationPropType = StackNavigationProp<RootStackParamListType>;

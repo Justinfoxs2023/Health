@@ -1,23 +1,33 @@
-import { BehaviorSubject } from 'rxjs';
-import * as poseDetection from '@tensorflow-models/pose-detection';
 import '@tensorflow/tfjs-backend-webgl';
+import * as poseDetection from '@tensorflow-models/pose-detection';
+import { BehaviorSubject } from 'rxjs';
 
-interface Point {
+interface IPoint {
+  /** x 的描述 */
   x: number;
+  /** y 的描述 */
   y: number;
+  /** z 的描述 */
   z?: number;
+  /** score 的描述 */
   score?: number;
 }
 
-interface Keypoint {
+interface IKeypoint {
+  /** name 的描述 */
   name: string;
-  point: Point;
+  /** point 的描述 */
+  point: IPoint;
+  /** score 的描述 */
   score: number;
 }
 
-interface Pose {
-  keypoints: Keypoint[];
+interface IPose {
+  /** keypoints 的描述 */
+  keypoints: IKeypoint[];
+  /** score 的描述 */
   score: number;
+  /** bbox 的描述 */
   bbox?: {
     x: number;
     y: number;
@@ -26,38 +36,47 @@ interface Pose {
   };
 }
 
-interface PoseAnalysisResult {
-  poses: Pose[];
+interface IPoseAnalysisResult {
+  /** poses 的描述 */
+  poses: IPose[];
+  /** analysis 的描述 */
   analysis: {
     posture: string;
     symmetry: number;
     stability: number;
     recommendations: string[];
   };
+  /** timestamp 的描述 */
   timestamp: number;
 }
 
-interface PoseState {
+interface IPoseState {
+  /** analyzing 的描述 */
   analyzing: boolean;
-  result: PoseAnalysisResult | null;
+  /** result 的描述 */
+  result: IPoseAnalysisResult | null;
+  /** error 的描述 */
   error: Error | null;
+  /** lastProcessedFrame 的描述 */
   lastProcessedFrame: number;
+  /** processingFPS 的描述 */
   processingFPS: number;
+  /** cacheSize 的描述 */
   cacheSize: number;
 }
 
 export class PoseService {
   private detector: poseDetection.PoseDetector | null = null;
-  private state$ = new BehaviorSubject<PoseState>({
+  private state$ = new BehaviorSubject<IPoseState>({
     analyzing: false,
     result: null,
     error: null,
     lastProcessedFrame: 0,
     processingFPS: 0,
-    cacheSize: 0
+    cacheSize: 0,
   });
 
-  private resultCache = new Map<string, PoseAnalysisResult>();
+  private resultCache = new Map<string, IPoseAnalysisResult>();
   private maxCacheSize = 100;
   private processingQueue: Array<() => Promise<void>> = [];
   private isProcessing = false;
@@ -76,7 +95,7 @@ export class PoseService {
       const detectorConfig = {
         runtime: 'tfjs',
         enableSmoothing: true,
-        modelType: 'full'
+        modelType: 'full',
       };
       this.detector = await poseDetection.createDetector(model, detectorConfig);
     } catch (error) {
@@ -93,7 +112,7 @@ export class PoseService {
         const fps = (this.frameCount * 1000) / elapsed;
         this.state$.next({
           ...this.state$.value,
-          processingFPS: Math.round(fps)
+          processingFPS: Math.round(fps),
         });
         this.frameCount = 0;
         this.lastFrameTime = currentTime;
@@ -120,7 +139,7 @@ export class PoseService {
     }
 
     // 添加到处理队列
-    return new Promise<PoseAnalysisResult>((resolve, reject) => {
+    return new Promise<IPoseAnalysisResult>((resolve, reject) => {
       this.processingQueue.push(async () => {
         try {
           const result = await this.processPose(image);
@@ -153,17 +172,19 @@ export class PoseService {
   }
 
   // 处理单个姿态分析任务
-  private async processPose(image: HTMLImageElement | HTMLVideoElement | HTMLCanvasElement): Promise<PoseAnalysisResult> {
+  private async processPose(
+    image: HTMLImageElement | HTMLVideoElement | HTMLCanvasElement,
+  ): Promise<IPoseAnalysisResult> {
     this.state$.next({
       ...this.state$.value,
-      analyzing: true
+      analyzing: true,
     });
 
     try {
       const poses = await this.detector!.estimatePoses(image, {
         flipHorizontal: false,
         maxPoses: 1,
-        scoreThreshold: 0.5
+        scoreThreshold: 0.5,
       });
 
       if (poses.length === 0) {
@@ -171,7 +192,7 @@ export class PoseService {
       }
 
       const analysis = await this.analyzePoseData(poses[0]);
-      const result: PoseAnalysisResult = {
+      const result: IPoseAnalysisResult = {
         poses: poses.map(pose => ({
           keypoints: pose.keypoints.map(kp => ({
             name: kp.name,
@@ -179,20 +200,22 @@ export class PoseService {
               x: kp.x,
               y: kp.y,
               z: kp.z,
-              score: kp.score
+              score: kp.score,
             },
-            score: kp.score
+            score: kp.score,
           })),
           score: pose.score || 0,
-          bbox: pose.box ? {
-            x: pose.box.xMin,
-            y: pose.box.yMin,
-            width: pose.box.width,
-            height: pose.box.height
-          } : undefined
+          bbox: pose.box
+            ? {
+                x: pose.box.xMin,
+                y: pose.box.yMin,
+                width: pose.box.width,
+                height: pose.box.height,
+              }
+            : undefined,
         })),
         analysis,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
 
       // 更新缓存
@@ -203,7 +226,7 @@ export class PoseService {
         analyzing: false,
         result,
         error: null,
-        lastProcessedFrame: Date.now()
+        lastProcessedFrame: Date.now(),
       });
 
       return result;
@@ -226,7 +249,7 @@ export class PoseService {
   }
 
   // 更新缓存
-  private updateCache(key: string, result: PoseAnalysisResult) {
+  private updateCache(key: string, result: IPoseAnalysisResult) {
     if (this.resultCache.size >= this.maxCacheSize) {
       const oldestKey = this.resultCache.keys().next().value;
       this.resultCache.delete(oldestKey);
@@ -234,7 +257,7 @@ export class PoseService {
     this.resultCache.set(key, result);
     this.state$.next({
       ...this.state$.value,
-      cacheSize: this.resultCache.size
+      cacheSize: this.resultCache.size,
     });
   }
 
@@ -243,7 +266,7 @@ export class PoseService {
     this.resultCache.clear();
     this.state$.next({
       ...this.state$.value,
-      cacheSize: 0
+      cacheSize: 0,
     });
   }
 
@@ -256,7 +279,7 @@ export class PoseService {
     }
     this.state$.next({
       ...this.state$.value,
-      cacheSize: this.resultCache.size
+      cacheSize: this.resultCache.size,
     });
   }
 
@@ -265,7 +288,7 @@ export class PoseService {
     this.state$.next({
       ...this.state$.value,
       analyzing: false,
-      error
+      error,
     });
   }
 
@@ -315,11 +338,11 @@ export class PoseService {
     if (shoulders.length === 2 && hips.length === 2) {
       const shoulderMidpoint = {
         x: (shoulders[0].x + shoulders[1].x) / 2,
-        y: (shoulders[0].y + shoulders[1].y) / 2
+        y: (shoulders[0].y + shoulders[1].y) / 2,
       };
       const hipMidpoint = {
         x: (hips[0].x + hips[1].x) / 2,
-        y: (hips[0].y + hips[1].y) / 2
+        y: (hips[0].y + hips[1].y) / 2,
       };
 
       const spinalTilt = Math.abs(shoulderMidpoint.x - hipMidpoint.x);
@@ -335,10 +358,12 @@ export class PoseService {
     if (ankles.length === 2) {
       const centerOfMass = {
         x: (ankles[0].x + ankles[1].x) / 2,
-        y: (ankles[0].y + ankles[1].y) / 2
+        y: (ankles[0].y + ankles[1].y) / 2,
       };
 
-      const balanceOffset = Math.abs(centerOfMass.x - (pose.box?.xMin || 0) - (pose.box?.width || 0) / 2);
+      const balanceOffset = Math.abs(
+        centerOfMass.x - (pose.box?.xMin || 0) - (pose.box?.width || 0) / 2,
+      );
       if (balanceOffset > 50) {
         posture = '重心偏移';
         recommendations.push('注意保持重心平衡，双脚平稳着地');
@@ -351,7 +376,7 @@ export class PoseService {
       recommendations.push(
         '建议进行定期的姿态矫正练习',
         '可以考虑寻求专业的物理治疗师帮助',
-        '工作时注意定期休息和活动'
+        '工作时注意定期休息和活动',
       );
     }
 
@@ -359,30 +384,25 @@ export class PoseService {
       posture,
       symmetry,
       stability,
-      recommendations: [...new Set(recommendations)]
+      recommendations: [...new Set(recommendations)],
     };
   }
 
   // 绘制姿态关键点
   async drawPose(
     canvas: HTMLCanvasElement,
-    pose: Pose,
+    pose: IPose,
     options: {
       pointColor?: string;
       lineColor?: string;
       pointSize?: number;
       lineWidth?: number;
-    } = {}
+    } = {},
   ) {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const {
-      pointColor = '#ff0000',
-      lineColor = '#00ff00',
-      pointSize = 5,
-      lineWidth = 2
-    } = options;
+    const { pointColor = '#ff0000', lineColor = '#00ff00', pointSize = 5, lineWidth = 2 } = options;
 
     // 绘制关键点
     ctx.fillStyle = pointColor;
@@ -414,7 +434,7 @@ export class PoseService {
       ['left_hip', 'left_knee'],
       ['right_hip', 'right_knee'],
       ['left_knee', 'left_ankle'],
-      ['right_knee', 'right_ankle']
+      ['right_knee', 'right_ankle'],
     ];
 
     connections.forEach(([from, to]) => {
@@ -431,22 +451,16 @@ export class PoseService {
   }
 
   // 获取姿态改进建议
-  async getPoseImprovements(result: PoseAnalysisResult) {
+  async getPoseImprovements(result: IPoseAnalysisResult) {
     const { analysis } = result;
     const improvements = [...analysis.recommendations];
 
     if (analysis.symmetry < 0.7) {
-      improvements.push(
-        '建议进行对称性训练',
-        '可以尝试瑜伽或普拉提来改善身体平衡'
-      );
+      improvements.push('建议进行对称性训练', '可以尝试瑜伽或普拉提来改善身体平衡');
     }
 
     if (analysis.stability < 0.7) {
-      improvements.push(
-        '建议加强核心力量训练',
-        '可以进行平衡训练来提高稳定性'
-      );
+      improvements.push('建议加强核心力量训练', '可以进行平衡训练来提高稳定性');
     }
 
     return improvements;
@@ -461,4 +475,4 @@ export class PoseService {
   }
 }
 
-export const poseService = new PoseService(); 
+export const poseService = new PoseService();

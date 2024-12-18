@@ -1,21 +1,24 @@
 import React from 'react';
-import { TouchableOpacity, Share, StyleSheet } from 'react-native';
-import { Icon } from './Icon';
 
-interface Props {
+import { Icon } from './Icon';
+import { TouchableOpacity, Share, StyleSheet } from 'react-native';
+
+interface IProps {
+  /** title 的描述 */
   title: string;
+  /** url 的描述 */
   url: string;
 }
 
-export const ShareButton: React.FC<Props> = ({ title, url }) => {
+export const ShareButton: React.FC<IProps> = ({ title, url }) => {
   const handleShare = async () => {
     try {
       await Share.share({
         message: `${title}\n${url}`,
-        title: title
+        title: title,
       });
     } catch (error) {
-      console.error('分享失败:', error);
+      console.error('Error in ShareButton.tsx:', '分享失败:', error);
     }
   };
 
@@ -28,6 +31,6 @@ export const ShareButton: React.FC<Props> = ({ title, url }) => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 8
-  }
-}); 
+    padding: 8,
+  },
+});

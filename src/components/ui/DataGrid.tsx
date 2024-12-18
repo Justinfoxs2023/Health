@@ -1,28 +1,39 @@
 import React, { useState } from 'react';
+
 import { theme } from '../../styles/theme';
 
-interface Column {
-  field: string;
-  headerName: string;
-  width?: number;
-  flex?: number;
-  renderCell?: (value: any) => React.ReactNode;
+interface IColumn {
+  /** field 的描述 */
+    field: string;
+  /** headerName 的描述 */
+    headerName: string;
+  /** width 的描述 */
+    width: number;
+  /** flex 的描述 */
+    flex: number;
+  /** renderCell 的描述 */
+    renderCell: value: any  ReactReactNode;
 }
 
-interface DataGridProps {
-  columns: Column[];
-  rows: any[];
-  pageSize?: number;
-  loading?: boolean;
-  onRowClick?: (row: any) => void;
+interface IDataGridProps {
+  /** columns 的描述 */
+    columns: IColumn;
+  /** rows 的描述 */
+    rows: any;
+  /** pageSize 的描述 */
+    pageSize: number;
+  /** loading 的描述 */
+    loading: false | true;
+  /** onRowClick 的描述 */
+    onRowClick: row: any  void;
 }
 
-export const DataGrid: React.FC<DataGridProps> = ({
+export const DataGrid: React.FC<IDataGridProps> = ({
   columns,
   rows,
   pageSize = 10,
   loading = false,
-  onRowClick
+  onRowClick,
 }) => {
   const [page, setPage] = useState(0);
   const [sortField, setSortField] = useState('');
@@ -30,7 +41,7 @@ export const DataGrid: React.FC<DataGridProps> = ({
 
   const handleSort = (field: string) => {
     if (sortField === field) {
-      setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc');
+      setSortDirection(prev => (prev === 'asc' ? 'desc' : 'asc'));
     } else {
       setSortField(field);
       setSortDirection('asc');
@@ -49,9 +60,7 @@ export const DataGrid: React.FC<DataGridProps> = ({
           >
             {column.headerName}
             {sortField === column.field && (
-              <span className="sort-icon">
-                {sortDirection === 'asc' ? '↑' : '↓'}
-              </span>
+              <span className="sorticon">{sortDirection === asc    }</span>
             )}
           </div>
         ))}
@@ -59,104 +68,93 @@ export const DataGrid: React.FC<DataGridProps> = ({
 
       <div className="grid-body">
         {loading ? (
-          <div className="loading-state">加载中...</div>
+          <div className="loadingstate"></div>
         ) : (
-          rows
-            .slice(page * pageSize, (page + 1) * pageSize)
-            .map((row, index) => (
-              <div
-                key={index}
-                className="grid-row"
-                onClick={() => onRowClick?.(row)}
-              >
-                {columns.map(column => (
-                  <div
-                    key={column.field}
-                    className="grid-cell"
-                    style={{ width: column.width, flex: column.flex }}
-                  >
-                    {column.renderCell
-                      ? column.renderCell(row[column.field])
-                      : row[column.field]}
-                  </div>
-                ))}
-              </div>
-            ))
+          rows.slice(page * pageSize, (page + 1) * pageSize).map((row, index) => (
+            <div key={index} className="grid-row" onClick={() => onRowClick?.(row)}>
+              {columns.map(column => (
+                <div
+                  key={columnfield}
+                  className="gridcell"
+                  style={{ width columnwidth flex columnflex }}
+                >
+                  {columnrenderCell  columnrenderCellrowcolumnfield  rowcolumnfield}
+                </div>
+              ))}
+            </div>
+          ))
         )}
       </div>
 
       <div className="grid-pagination">
-        <button
-          onClick={() => setPage(prev => Math.max(0, prev - 1))}
-          disabled={page === 0}
-        >
-          上一页
+        <button onClick={ => setPageprev => Mathmax0 prev  1} disabled={page === 0}>
+          
         </button>
-        <span>第 {page + 1} 页</span>
+        <span> {page  1} </span>
         <button
-          onClick={() => setPage(prev => prev + 1)}
-          disabled={(page + 1) * pageSize >= rows.length}
+          onClick={ => setPageprev => prev  1}
+          disabled={page  1  pageSize >= rowslength}
         >
-          下一页
+          
         </button>
       </div>
 
-      <style jsx>{`
-        .data-grid {
-          border: 1px solid rgba(0, 0, 0, 0.1);
-          border-radius: ${theme.borderRadius.medium};
-          overflow: hidden;
+      <style jsx>{
+        datagrid {
+          border 1px solid rgba0 0 0 01
+          borderradius {themeborderRadiusmedium}
+          overflow hidden
         }
 
-        .grid-header {
-          display: flex;
-          background: ${theme.colors.background.default};
-          border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        gridheader {
+          display flex
+          background {themecolorsbackgrounddefault}
+          borderbottom 1px solid rgba0 0 0 01
         }
 
-        .header-cell {
-          font-weight: bold;
-          cursor: pointer;
-          user-select: none;
+        headercell {
+          fontweight bold
+          cursor pointer
+          userselect none
         }
 
-        .header-cell:hover {
-          background: rgba(0, 0, 0, 0.05);
+        headercellhover {
+          background rgba0 0 0 005
         }
 
-        .grid-cell {
-          padding: ${theme.spacing(1.5)};
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
+        gridcell {
+          padding {themespacing15}
+          overflow hidden
+          textoverflow ellipsis
+          whitespace nowrap
         }
 
-        .grid-row {
-          display: flex;
-          border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-          cursor: pointer;
-          transition: background ${theme.transitions.short};
+        gridrow {
+          display flex
+          borderbottom 1px solid rgba0 0 0 005
+          cursor pointer
+          transition background {themetransitionsshort}
         }
 
-        .grid-row:hover {
-          background: rgba(0, 0, 0, 0.02);
+        gridrowhover {
+          background rgba0 0 0 002
         }
 
-        .grid-pagination {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          gap: ${theme.spacing(2)};
-          padding: ${theme.spacing(2)};
-          background: ${theme.colors.background.default};
+        gridpagination {
+          display flex
+          justifycontent center
+          alignitems center
+          gap {themespacing2}
+          padding {themespacing2}
+          background {themecolorsbackgrounddefault}
         }
 
-        .loading-state {
-          padding: ${theme.spacing(4)};
-          text-align: center;
-          color: ${theme.colors.text.secondary};
+        loadingstate {
+          padding {themespacing4}
+          textalign center
+          color {themecolorstextsecondary}
         }
-      `}</style>
+      }</style>
     </div>
   );
-}; 
+};

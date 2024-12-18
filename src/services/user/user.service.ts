@@ -1,19 +1,25 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma.service';
-import { Logger } from '../logger.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { Repository } from 'typeorm';
+import { User } from '../../entities/user.entity';
 
 @Injectable()
 export class UserService {
   constructor(
-    private readonly prisma: PrismaService,
-    private readonly logger: Logger
+    @InjectRepository()
+    private userRepo: Repository<User>,
   ) {}
 
-  async getUserById(userId: string) {
-    return this.prisma.user.findUnique({
-      where: { id: userId }
-    });
+  async findById(id: string): Promise<User> {
+    const user = await this.userRepo.findOne({ where: { id } });
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+    return user;
   }
 
-  // 其他用户相关方法...
-} 
+  async getUserLevel(userId: string): Promise<number> {
+    // 实现获取用户等级逻辑
+    return 1;
+  }
+}

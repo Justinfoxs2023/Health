@@ -1,14 +1,16 @@
 import { BehaviorSubject } from 'rxjs';
 
 interface ImageState {
+  /** progress 的描述 */
   progress: number;
+  /** error 的描述 */
   error: Error | null;
 }
 
 export class ImageService {
   private state$ = new BehaviorSubject<ImageState>({
     progress: 0,
-    error: null
+    error: null,
   });
 
   // 获取服务状态
@@ -20,7 +22,7 @@ export class ImageService {
   async compressImage(file: File, quality = 0.8): Promise<Blob> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = e => {
         const img = new Image();
         img.onload = () => {
           const canvas = document.createElement('canvas');
@@ -48,7 +50,7 @@ export class ImageService {
           ctx.drawImage(img, 0, 0, width, height);
 
           canvas.toBlob(
-            (blob) => {
+            blob => {
               if (blob) {
                 resolve(blob);
               } else {
@@ -56,7 +58,7 @@ export class ImageService {
               }
             },
             'image/jpeg',
-            quality
+            quality,
           );
         };
         img.onerror = () => reject(new Error('图片加载失败'));
@@ -71,7 +73,7 @@ export class ImageService {
   async convertToWebP(file: Blob): Promise<Blob> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = e => {
         const img = new Image();
         img.onload = () => {
           const canvas = document.createElement('canvas');
@@ -86,7 +88,7 @@ export class ImageService {
           ctx.drawImage(img, 0, 0);
 
           canvas.toBlob(
-            (blob) => {
+            blob => {
               if (blob) {
                 resolve(blob);
               } else {
@@ -94,7 +96,7 @@ export class ImageService {
               }
             },
             'image/webp',
-            0.8
+            0.8,
           );
         };
         img.onerror = () => reject(new Error('图片加载失败'));
@@ -113,7 +115,7 @@ export class ImageService {
       const optimizedBlob = await this.compressImage(new File([blob], 'image'));
       return URL.createObjectURL(optimizedBlob);
     } catch (error) {
-      console.error('图片优化失败:', error);
+      console.error('Error in index.ts:', '图片优化失败:', error);
       return src; // 如果优化失败，返回原始图片
     }
   }
@@ -127,14 +129,14 @@ export class ImageService {
   }> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = e => {
         const img = new Image();
         img.onload = () => {
           resolve({
             width: img.width,
             height: img.height,
             size: file.size,
-            type: file.type
+            type: file.type,
           });
         };
         img.onerror = () => reject(new Error('图片加载失败'));
@@ -149,7 +151,7 @@ export class ImageService {
   private updateProgress(progress: number) {
     this.state$.next({
       ...this.state$.value,
-      progress: Math.min(100, Math.max(0, progress))
+      progress: Math.min(100, Math.max(0, progress)),
     });
   }
 
@@ -157,7 +159,7 @@ export class ImageService {
   private updateError(error: Error | null) {
     this.state$.next({
       ...this.state$.value,
-      error
+      error,
     });
   }
-} 
+}

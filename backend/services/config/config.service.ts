@@ -1,20 +1,26 @@
 import { EventEmitter } from 'events';
-import { Redis } from '../../utils/redis';
 import { Logger } from '../../utils/logger';
+import { Redis } from '../../utils/redis';
 
-interface ConfigItem {
+interface IConfigItem {
+  /** key 的描述 */
   key: string;
+  /** value 的描述 */
   value: any;
+  /** version 的描述 */
   version: number;
+  /** environment 的描述 */
   environment: string;
+  /** updatedAt 的描述 */
   updatedAt: Date;
+  /** updatedBy 的描述 */
   updatedBy: string;
 }
 
 export class ConfigService extends EventEmitter {
   private redis: Redis;
   private logger: Logger;
-  private cache: Map<string, ConfigItem>;
+  private cache: Map<string, IConfigItem>;
   private watchers: Map<string, Function[]>;
 
   constructor() {
@@ -23,7 +29,7 @@ export class ConfigService extends EventEmitter {
     this.logger = new Logger('ConfigService');
     this.cache = new Map();
     this.watchers = new Map();
-    
+
     this.initializeCache();
     this.startWatching();
   }
@@ -45,19 +51,16 @@ export class ConfigService extends EventEmitter {
 
   // 设置配置
   async setConfig(key: string, value: any, updatedBy: string): Promise<void> {
-    const configItem: ConfigItem = {
+    const configItem: IConfigItem = {
       key,
       value,
       version: Date.now(),
       environment: process.env.NODE_ENV || 'development',
       updatedAt: new Date(),
-      updatedBy
+      updatedBy,
     };
 
-    await this.redis.set(
-      `config:${key}`,
-      JSON.stringify(configItem)
-    );
+    await this.redis.set(`config:${key}`, JSON.stringify(configItem));
 
     this.cache.set(key, configItem);
     this.notifyWatchers(key, value);
@@ -84,4 +87,4 @@ export class ConfigService extends EventEmitter {
   private startWatching(): void {
     // 实现配置变更监听逻辑
   }
-} 
+}

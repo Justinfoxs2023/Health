@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
 import { Logger } from '../../utils/logger';
 import { Metrics } from '../../utils/metrics';
+import { Request, Response, NextFunction } from 'express';
 
 export class PerformanceMonitorMiddleware {
   private logger: Logger;
@@ -19,12 +19,12 @@ export class PerformanceMonitorMiddleware {
     // 监控响应时间
     res.on('finish', () => {
       const duration = Date.now() - start;
-      
+
       // 记录性能指标
       this.metrics.recordTiming('api_response_time', duration, {
         path,
         method: req.method,
-        status: res.statusCode
+        status: res.statusCode,
       });
 
       // 检查性能阈值
@@ -32,7 +32,7 @@ export class PerformanceMonitorMiddleware {
         this.logger.warn('API响应时间过长', {
           path,
           duration,
-          method: req.method
+          method: req.method,
         });
       }
     });
@@ -41,4 +41,4 @@ export class PerformanceMonitorMiddleware {
   }
 }
 
-export const performanceMonitor = new PerformanceMonitorMiddleware(); 
+export const performanceMonitor = new PerformanceMonitorMiddleware();

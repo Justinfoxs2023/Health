@@ -1,13 +1,13 @@
 import React from 'react';
+
 import { Card, Select, Table } from 'antd';
-import { useQuery } from 'react-query';
 import { getHistoricalData } from '../../services/health.service';
+import { useQuery } from 'react-query';
 
 export const HistoryComparison: React.FC = () => {
   const [selectedDates, setSelectedDates] = React.useState<string[]>([]);
-  const { data: historicalData } = useQuery(
-    ['healthHistory', selectedDates],
-    () => getHistoricalData(selectedDates)
+  const { data: historicalData } = useQuery(['healthHistory', selectedDates], () =>
+    getHistoricalData(selectedDates),
   );
 
   const columns = [
@@ -20,7 +20,7 @@ export const HistoryComparison: React.FC = () => {
       title: date,
       dataIndex: date,
       key: date,
-    }))
+    })),
   ];
 
   return (
@@ -33,11 +33,7 @@ export const HistoryComparison: React.FC = () => {
       >
         {/* 日期选项 */}
       </Select>
-      <Table 
-        columns={columns} 
-        dataSource={historicalData} 
-        pagination={false}
-      />
+      <Table columns={columns} dataSource={historicalData} pagination={false} />
     </Card>
   );
-}; 
+};

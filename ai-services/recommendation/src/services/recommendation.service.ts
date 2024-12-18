@@ -1,7 +1,7 @@
-import { UserPreference } from '../models/user_preference';
 import { HealthAnalysis } from '../../../health-data-service/src/models/health-analysis.model';
 import { Logger } from '../utils/logger';
 import { Redis } from '../utils/redis';
+import { UserPreference } from '../models/user_preference';
 
 export class RecommendationService {
   private userPreference: UserPreference;
@@ -21,33 +21,24 @@ export class RecommendationService {
     try {
       // 获取用户画像
       const userProfile = await this.getUserProfile(userId);
-      
+
       // 获取健康分析
       const healthAnalysis = await this.getHealthAnalysis(userId);
-      
+
       // 生成活动推荐
-      const activityRecommendations = await this.recommendActivities(
-        userProfile,
-        healthAnalysis
-      );
-      
+      const activityRecommendations = await this.recommendActivities(userProfile, healthAnalysis);
+
       // 生成饮食推荐
-      const dietRecommendations = await this.recommendDiet(
-        userProfile,
-        healthAnalysis
-      );
-      
+      const dietRecommendations = await this.recommendDiet(userProfile, healthAnalysis);
+
       // 生成健康建议
-      const healthAdvice = await this.generateHealthAdvice(
-        userProfile,
-        healthAnalysis
-      );
+      const healthAdvice = await this.generateHealthAdvice(userProfile, healthAnalysis);
 
       const recommendations = {
         activities: activityRecommendations,
         diet: dietRecommendations,
         advice: healthAdvice,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
 
       // 缓存推荐结果
@@ -66,7 +57,7 @@ export class RecommendationService {
   private async getUserProfile(userId: string) {
     const cacheKey = `profile:${userId}`;
     const cachedProfile = await this.redis.get(cacheKey);
-    
+
     if (cachedProfile) {
       return JSON.parse(cachedProfile);
     }
@@ -79,7 +70,7 @@ export class RecommendationService {
     const profile = await this.userPreference.build_user_profile(
       healthData,
       activityHistory,
-      userFeedback
+      userFeedback,
     );
 
     // 缓存用户画像
@@ -119,4 +110,4 @@ export class RecommendationService {
     const cacheKey = `recommendations:${userId}`;
     await this.redis.setex(cacheKey, 3600, JSON.stringify(recommendations));
   }
-} 
+}

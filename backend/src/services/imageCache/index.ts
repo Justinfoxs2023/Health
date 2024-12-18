@@ -2,20 +2,25 @@ import Redis from 'ioredis';
 import { createHash } from 'crypto';
 import { logger } from '../logger';
 
-interface CacheConfig {
+interface ICacheConfig {
+  /** host 的描述 */
   host: string;
+  /** port 的描述 */
   port: number;
+  /** password 的描述 */
   password?: string;
+  /** ttl 的描述 */
   ttl: number; // 缓存过期时间（秒）
+  /** maxSize 的描述 */
   maxSize: number; // 最大缓存大小（字节）
 }
 
 class ImageCacheService {
   private redis: Redis;
-  private config: CacheConfig;
-  private currentSize: number = 0;
+  private config: ICacheConfig;
+  private currentSize = 0;
 
-  constructor(config: CacheConfig) {
+  constructor(config: ICacheConfig) {
     this.config = config;
     this.redis = new Redis({
       host: config.host,
@@ -110,7 +115,7 @@ class ImageCacheService {
         // 更新访问信息
         await this.redis.hincrby(`${key}:info`, 'accessCount', 1);
         await this.redis.hset(`${key}:info`, 'lastAccessed', Date.now());
-        
+
         logger.info('命中缓存:', { url });
         return buffer;
       }
@@ -179,7 +184,7 @@ class ImageCacheService {
     try {
       const keys = await this.redis.keys('image:*:info');
       let totalHits = 0;
-      let totalItems = keys.length;
+      const totalItems = keys.length;
 
       for (const key of keys) {
         const info = await this.redis.hgetall(key);
@@ -205,4 +210,4 @@ export const imageCache = new ImageCacheService({
   password: process.env.REDIS_PASSWORD,
   ttl: 24 * 60 * 60, // 1天
   maxSize: 1024 * 1024 * 1024, // 1GB
-}); 
+});

@@ -1,6 +1,6 @@
+import { Logger } from '../../utils/logger';
 import { S3 } from '@aws-sdk/client-s3';
 import { SageMaker } from '@aws-sdk/client-sagemaker';
-import { Logger } from '../../utils/logger';
 
 export class ModelTrainingService {
   private s3: S3;
@@ -22,35 +22,37 @@ export class ModelTrainingService {
   }) {
     try {
       const trainingJobName = `${params.modelType}-${Date.now()}`;
-      
+
       await this.sagemaker.createTrainingJob({
         TrainingJobName: trainingJobName,
         AlgorithmSpecification: {
           TrainingImage: this.getTrainingImage(params.modelType),
-          TrainingInputMode: 'File'
+          TrainingInputMode: 'File',
         },
         RoleArn: process.env.AWS_SAGEMAKER_ROLE_ARN,
-        InputDataConfig: [{
-          ChannelName: 'training',
-          DataSource: {
-            S3DataSource: {
-              S3DataType: 'S3Prefix',
-              S3Uri: params.datasetS3Uri
-            }
-          }
-        }],
+        InputDataConfig: [
+          {
+            ChannelName: 'training',
+            DataSource: {
+              S3DataSource: {
+                S3DataType: 'S3Prefix',
+                S3Uri: params.datasetS3Uri,
+              },
+            },
+          },
+        ],
         OutputDataConfig: {
-          S3OutputPath: `s3://${process.env.AWS_S3_BUCKET}/models/`
+          S3OutputPath: `s3://${process.env.AWS_S3_BUCKET}/models/`,
         },
         ResourceConfig: {
           InstanceType: params.instanceType,
           InstanceCount: 1,
-          VolumeSizeInGB: 50
+          VolumeSizeInGB: 50,
         },
         HyperParameters: params.hyperparameters,
         StoppingCondition: {
-          MaxRuntimeInSeconds: 86400
-        }
+          MaxRuntimeInSeconds: 86400,
+        },
       });
 
       return trainingJobName;
@@ -64,13 +66,13 @@ export class ModelTrainingService {
   async getTrainingStatus(trainingJobName: string) {
     try {
       const response = await this.sagemaker.describeTrainingJob({
-        TrainingJobName: trainingJobName
+        TrainingJobName: trainingJobName,
       });
-      
+
       return {
         status: response.TrainingJobStatus,
         metrics: response.FinalMetricDataList,
-        modelArtifacts: response.ModelArtifacts
+        modelArtifacts: response.ModelArtifacts,
       };
     } catch (error) {
       this.logger.error('获取训练状态失败:', error);
@@ -86,26 +88,28 @@ export class ModelTrainingService {
         ModelName: modelName,
         PrimaryContainer: {
           Image: this.getInferenceImage(modelName),
-          ModelDataUrl: modelArtifacts
+          ModelDataUrl: modelArtifacts,
         },
-        ExecutionRoleArn: process.env.AWS_SAGEMAKER_ROLE_ARN
+        ExecutionRoleArn: process.env.AWS_SAGEMAKER_ROLE_ARN,
       });
 
       // 创建端点配置
       await this.sagemaker.createEndpointConfig({
         EndpointConfigName: `${modelName}-config`,
-        ProductionVariants: [{
-          VariantName: 'AllTraffic',
-          ModelName: modelName,
-          InitialInstanceCount: 1,
-          InstanceType: 'ml.t2.medium'
-        }]
+        ProductionVariants: [
+          {
+            VariantName: 'AllTraffic',
+            ModelName: modelName,
+            InitialInstanceCount: 1,
+            InstanceType: 'ml.t2.medium',
+          },
+        ],
       });
 
       // 创建端点
       await this.sagemaker.createEndpoint({
         EndpointName: `${modelName}-endpoint`,
-        EndpointConfigName: `${modelName}-config`
+        EndpointConfigName: `${modelName}-config`,
       });
 
       return `${modelName}-endpoint`;
@@ -114,4 +118,4 @@ export class ModelTrainingService {
       throw error;
     }
   }
-} 
+}

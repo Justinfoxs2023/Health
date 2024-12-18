@@ -1,9 +1,16 @@
+/**
+ * @fileoverview TS 文件 prisma.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 declare module '@prisma/client' {
   export interface Prisma {}
 
   export class PrismaClient {
     constructor(options?: PrismaClientOptions);
-    
+
     $connect(): Promise<void>;
     $disconnect(): Promise<void>;
 
@@ -101,4 +108,4 @@ declare module '@nestjs/common' {
   export interface OnModuleInit {
     onModuleInit(): Promise<void>;
   }
-} 
+}

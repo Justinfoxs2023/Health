@@ -1,6 +1,6 @@
 import Bull from 'bull';
-import { RedisConfig } from '../../config/redis.config';
 import { Logger } from '../../utils/logger';
+import { RedisConfig } from '../../config/redis.config';
 
 export class TaskSchedulerService {
   private queues: Map<string, Bull.Queue>;
@@ -18,7 +18,7 @@ export class TaskSchedulerService {
     const queueConfigs = [
       { name: 'high-priority', concurrency: 5 },
       { name: 'normal-priority', concurrency: 3 },
-      { name: 'low-priority', concurrency: 1 }
+      { name: 'low-priority', concurrency: 1 },
     ];
 
     for (const config of queueConfigs) {
@@ -26,20 +26,20 @@ export class TaskSchedulerService {
         redis: {
           host: process.env.REDIS_HOST,
           port: parseInt(process.env.REDIS_PORT),
-          password: process.env.REDIS_PASSWORD
+          password: process.env.REDIS_PASSWORD,
         },
         defaultJobOptions: {
           attempts: 3,
           backoff: {
             type: 'exponential',
-            delay: 1000
+            delay: 1000,
           },
-          removeOnComplete: true
-        }
+          removeOnComplete: true,
+        },
       });
 
       // 设置并发处理器
-      queue.process(config.concurrency, async (job) => {
+      queue.process(config.concurrency, async job => {
         return await this.processJob(job);
       });
 
@@ -59,7 +59,7 @@ export class TaskSchedulerService {
 
     const job = await queue.add(task, {
       priority: this.getPriorityLevel(priority),
-      timeout: this.getTimeout(priority)
+      timeout: this.getTimeout(priority),
     });
 
     return job.id;
@@ -102,7 +102,7 @@ export class TaskSchedulerService {
   }
 
   private setupQueueListeners(queue: Bull.Queue) {
-    queue.on('completed', (job) => {
+    queue.on('completed', job => {
       this.logger.info(`任务完成: ${job.id}`);
     });
 
@@ -110,26 +110,34 @@ export class TaskSchedulerService {
       this.logger.error(`任务失败: ${job.id}`, error);
     });
 
-    queue.on('stalled', (job) => {
+    queue.on('stalled', job => {
       this.logger.warn(`任务停滞: ${job.id}`);
     });
   }
 
   private getPriorityLevel(priority: string): number {
     switch (priority) {
-      case 'high': return 1;
-      case 'normal': return 2;
-      case 'low': return 3;
-      default: return 2;
+      case 'high':
+        return 1;
+      case 'normal':
+        return 2;
+      case 'low':
+        return 3;
+      default:
+        return 2;
     }
   }
 
   private getTimeout(priority: string): number {
     switch (priority) {
-      case 'high': return 5000;
-      case 'normal': return 10000;
-      case 'low': return 20000;
-      default: return 10000;
+      case 'high':
+        return 5000;
+      case 'normal':
+        return 10000;
+      case 'low':
+        return 20000;
+      default:
+        return 10000;
     }
   }
-} 
+}

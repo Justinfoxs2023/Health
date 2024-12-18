@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, StyleSheet } from 'react-native';
+
 import { Card, Text, Button, LoadingSpinner } from '../common';
-import { MacroDistribution } from './MacroDistribution';
-import { MicronutrientPanel } from './MicronutrientPanel';
-import { MealTimingSchedule } from './MealTimingSchedule';
-import { PortionGuide } from './PortionGuide';
-import { usePrecisionNutrition } from '../../hooks/nutrition';
 import { ErrorMessage } from '../common/ErrorMessage';
+import { MacroDistribution } from './MacroDistribution';
+import { MealTimingSchedule } from './MealTimingSchedule';
+import { MicronutrientPanel } from './MicronutrientPanel';
+import { PortionGuide } from './PortionGuide';
+import { View, ScrollView, StyleSheet } from 'react-native';
+import { usePrecisionNutrition } from '../../hooks/nutrition';
 
 export const PrecisionNutritionPlan: React.FC = () => {
   const [plan, setPlan] = useState(null);
@@ -36,11 +37,7 @@ export const PrecisionNutritionPlan: React.FC = () => {
       <Card style={styles.header}>
         <Text style={styles.title}>精准营养方案</Text>
         <Text style={styles.subtitle}>基于您的个人特征定制的营养计划</Text>
-        <Button 
-          title="更新方案"
-          onPress={loadNutritionPlan}
-          style={styles.updateButton}
-        />
+        <Button title="更新方案" onPress={loadNutritionPlan} style={styles.updateButton} />
       </Card>
 
       {plan && (
@@ -58,23 +55,23 @@ export const PrecisionNutritionPlan: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   header: {
     padding: 15,
-    marginBottom: 10
+    marginBottom: 10,
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#2E7D32'
+    color: '#2E7D32',
   },
   subtitle: {
     fontSize: 14,
     color: '#666',
-    marginTop: 5
+    marginTop: 5,
   },
   updateButton: {
-    marginTop: 15
-  }
-}); 
+    marginTop: 15,
+  },
+});

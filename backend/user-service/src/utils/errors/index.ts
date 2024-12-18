@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 index.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export * from './base.error';
 
 export class ValidationError extends AppError {
@@ -7,13 +14,13 @@ export class ValidationError extends AppError {
 }
 
 export class UnauthorizedError extends AppError {
-  constructor(message: string = '未授权访问') {
+  constructor(message = '未授权访问') {
     super('UNAUTHORIZED', 401, message);
   }
 }
 
 export class ForbiddenError extends AppError {
-  constructor(message: string = '权限不足') {
+  constructor(message = '权限不足') {
     super('FORBIDDEN', 403, message);
   }
 }
@@ -31,7 +38,7 @@ export class ConflictError extends AppError {
 }
 
 export class InternalError extends AppError {
-  constructor(message: string = '服务器内部错误') {
+  constructor(message = '服务器内部错误') {
     super('INTERNAL_ERROR', 500, message);
   }
-} 
+}

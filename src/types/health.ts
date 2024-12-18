@@ -1,8 +1,11 @@
 import { Document } from 'mongoose';
 
-export interface HealthMetrics extends Document {
+export interface IHealthMetrics extends Document {
+  /** userId 的描述 */
   userId: string;
+  /** timestamp 的描述 */
   timestamp: Date;
+  /** metrics 的描述 */
   metrics: {
     heartRate: number;
     bloodPressure: {
@@ -15,33 +18,43 @@ export interface HealthMetrics extends Document {
     weight?: number;
     bmi?: number;
   };
+  /** source 的描述 */
   source: string;
+  /** accuracy 的描述 */
   accuracy: number;
-  validated: boolean;
+  /** validated 的描述 */
+  validated: false | true;
 }
 
-export interface ActivityData extends Document {
+export interface IActivityData extends Document {
+  /** userId 的描述 */
   userId: string;
+  /** timestamp 的描述 */
   timestamp: Date;
+  /** type 的描述 */
   type: string;
+  /** duration 的描述 */
   duration: number;
+  /** intensity 的描述 */
   intensity: string;
-  caloriesBurned?: number;
-  steps?: number;
-  distance?: number;
-  heartRateZones?: Array<{
-    zone: string;
-    duration: number;
-  }>;
-  location?: {
-    type: string;
-    coordinates: number[];
-  };
+  /** caloriesBurned 的描述 */
+  caloriesBurned?: undefined | number;
+  /** steps 的描述 */
+  steps?: undefined | number;
+  /** distance 的描述 */
+  distance?: undefined | number;
+  /** heartRateZones 的描述 */
+  heartRateZones?: undefined | { zone: string; duration: number; }[];
+  /** location 的描述 */
+  location?: undefined | { type: string; coordinates: number[]; };
 }
 
-export interface NutritionData extends Document {
+export interface INutritionData extends Document {
+  /** userId 的描述 */
   userId: string;
+  /** timestamp 的描述 */
   timestamp: Date;
+  /** meals 的描述 */
   meals: Array<{
     type: string;
     foods: Array<{
@@ -62,49 +75,51 @@ export interface NutritionData extends Document {
     imageUrl?: string;
     aiAnalyzed: boolean;
   }>;
-  waterIntake?: number;
-  supplements?: Array<{
-    name: string;
-    dose: number;
-    unit: string;
-  }>;
+  /** waterIntake 的描述 */
+  waterIntake?: undefined | number;
+  /** supplements 的描述 */
+  supplements?: undefined | { name: string; dose: number; unit: string; }[];
 }
 
-export interface SleepData extends Document {
+export interface ISleepData extends Document {
+  /** userId 的描述 */
   userId: string;
+  /** timestamp 的描述 */
   timestamp: Date;
+  /** duration 的描述 */
   duration: number;
+  /** quality 的描述 */
   quality: number;
+  /** stages 的描述 */
   stages: Array<{
     stage: string;
     duration: number;
   }>;
-  interruptions?: number;
-  environmentalFactors?: {
-    temperature?: number;
-    humidity?: number;
-    noise?: number;
-    light?: number;
-  };
-  heartRateVariability?: number;
+  /** interruptions 的描述 */
+  interruptions?: undefined | number;
+  /** environmentalFactors 的描述 */
+  environmentalFactors?: undefined | { temperature?: number | undefined; humidity?: number | undefined; noise?: number | undefined; light?: number | undefined; };
+  /** heartRateVariability 的描述 */
+  heartRateVariability?: undefined | number;
 }
 
-export interface MentalHealthData extends Document {
+export interface IMentalHealthData extends Document {
+  /** userId 的描述 */
   userId: string;
+  /** timestamp 的描述 */
   timestamp: Date;
+  /** mood 的描述 */
   mood: string;
+  /** stressLevel 的描述 */
   stressLevel: number;
-  anxiety?: number;
-  depression?: number;
-  activities?: Array<{
-    type: string;
-    duration: number;
-    impact: number;
-  }>;
-  notes?: string;
-  therapySession?: {
-    attended: boolean;
-    type?: string;
-    notes?: string;
-  };
-} 
+  /** anxiety 的描述 */
+  anxiety?: undefined | number;
+  /** depression 的描述 */
+  depression?: undefined | number;
+  /** activities 的描述 */
+  activities?: undefined | { type: string; duration: number; impact: number; }[];
+  /** notes 的描述 */
+  notes?: undefined | string;
+  /** therapySession 的描述 */
+  therapySession?: undefined | { attended: boolean; type?: string | undefined; notes?: string | undefined; };
+}

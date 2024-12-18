@@ -1,21 +1,21 @@
-import { CacheOptions, CacheEntry } from '../types/cache';
+import { ICacheOptions, ICacheEntry } from '../types/cache';
 
 export class LocalStorage {
   private readonly prefix: string;
-  private readonly options: CacheOptions;
+  private readonly options: ICacheOptions;
 
-  constructor(options: CacheOptions = {}) {
+  constructor(options: ICacheOptions = {}) {
     this.prefix = options.prefix || 'health_';
     this.options = options;
   }
 
   /** 设置缓存 */
   set<T>(key: string, value: T): void {
-    const entry: CacheEntry<T> = {
+    const entry: ICacheEntry<T> = {
       data: value,
       createdAt: Date.now(),
       lastAccessed: Date.now(),
-      accessCount: 0
+      accessCount: 0,
     };
 
     if (this.options.ttl) {
@@ -30,7 +30,10 @@ export class LocalStorage {
         try {
           localStorage.setItem(this.prefix + key, JSON.stringify(entry));
         } catch {
-          console.error('Storage quota exceeded even after clearing expired items');
+          console.error(
+            'Error in localStorage.ts:',
+            'Storage quota exceeded even after clearing expired items',
+          );
         }
       }
     }
@@ -42,7 +45,7 @@ export class LocalStorage {
     if (!item) return null;
 
     try {
-      const entry = JSON.parse(item) as CacheEntry<T>;
+      const entry = JSON.parse(item) as ICacheEntry<T>;
 
       if (entry.expireAt && entry.expireAt < Date.now()) {
         this.delete(key);
@@ -83,7 +86,7 @@ export class LocalStorage {
         try {
           const item = localStorage.getItem(key);
           if (item) {
-            const entry = JSON.parse(item) as CacheEntry<unknown>;
+            const entry = JSON.parse(item) as ICacheEntry<unknown>;
             if (entry.expireAt && entry.expireAt < Date.now()) {
               localStorage.removeItem(key);
             }
@@ -110,4 +113,4 @@ export class LocalStorage {
     });
     return size * 2; // UTF-16 编码每个字符占2字节
   }
-} 
+}

@@ -1,12 +1,21 @@
+/**
+ * @fileoverview TS 文件 metrics-chart.types.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // 图表配置
-export interface ChartConfig {
+export interface IChartConfig {
   // 时间范围选项
+  /** timeRanges 的描述 */
   timeRanges: Array<{
     value: '1h' | '24h' | '7d' | '30d';
     label: string;
   }>;
 
   // 指标配置
+  /** metrics 的描述 */
   metrics: {
     memory: {
       label: string;
@@ -47,6 +56,7 @@ export interface ChartConfig {
   };
 
   // 图表样式
+  /** style 的描述 */
   style: {
     height: number;
     padding: number;
@@ -66,6 +76,7 @@ export interface ChartConfig {
   };
 
   // 动画配置
+  /** animation 的描述 */
   animation: {
     enabled: boolean;
     duration: number;
@@ -74,8 +85,9 @@ export interface ChartConfig {
 }
 
 // 图表数据
-export interface ChartData {
+export interface IChartData {
   // 时间序列数据
+  /** series 的描述 */
   series: Array<{
     timestamp: Date;
     metrics: {
@@ -87,6 +99,7 @@ export interface ChartData {
   }>;
 
   // 基准线
+  /** baselines 的描述 */
   baselines?: {
     memory?: number;
     cpu?: number;
@@ -95,10 +108,11 @@ export interface ChartData {
   };
 
   // 标注点
+  /** annotations 的描述 */
   annotations?: Array<{
     timestamp: Date;
     type: 'event' | 'alert' | 'milestone';
-    metric: keyof ChartData['series'][0]['metrics'];
+    metric: keyof IChartData['series'][0]['metrics'];
     value: number;
     label: string;
     description?: string;
@@ -106,14 +120,17 @@ export interface ChartData {
 }
 
 // 图表交互事件
-export interface ChartEvent {
+export interface IChartEvent {
+  /** type 的描述 */
   type: 'hover' | 'click' | 'select' | 'zoom' | 'pan';
+  /** data 的描述 */
   data: {
     timestamp: Date;
-    metric: keyof ChartData['series'][0]['metrics'];
+    metric: keyof IChartData['series'][0]['metrics'];
     value: number;
     index: number;
   };
+  /** position 的描述 */
   position: {
     x: number;
     y: number;
@@ -121,10 +138,11 @@ export interface ChartEvent {
 }
 
 // 图表分析结果
-export interface ChartAnalysis {
+export interface IChartAnalysis {
   // 趋势分析
+  /** trends 的描述 */
   trends: Array<{
-    metric: keyof ChartData['series'][0]['metrics'];
+    metric: keyof IChartData['series'][0]['metrics'];
     direction: 'up' | 'down' | 'stable';
     change: number;
     period: {
@@ -135,9 +153,10 @@ export interface ChartAnalysis {
   }>;
 
   // 异常检测
+  /** anomalies 的描述 */
   anomalies: Array<{
     timestamp: Date;
-    metric: keyof ChartData['series'][0]['metrics'];
+    metric: keyof IChartData['series'][0]['metrics'];
     value: number;
     expectedValue: number;
     deviation: number;
@@ -145,18 +164,20 @@ export interface ChartAnalysis {
   }>;
 
   // 性能洞察
+  /** insights 的描述 */
   insights: Array<{
     type: 'trend' | 'anomaly' | 'correlation' | 'pattern';
-    metric: keyof ChartData['series'][0]['metrics'];
+    metric: keyof IChartData['series'][0]['metrics'];
     message: string;
     importance: number;
     timestamp?: Date;
-    relatedMetrics?: Array<keyof ChartData['series'][0]['metrics']>;
+    relatedMetrics?: Array<keyof IChartData['series'][0]['metrics']>;
   }>;
 
   // 统计摘要
+  /** summary 的描述 */
   summary: {
-    [K in keyof ChartData['series'][0]['metrics']]: {
+    [K in keyof IChartData['series'][0]['metrics']]: {
       min: number;
       max: number;
       avg: number;
@@ -169,4 +190,4 @@ export interface ChartAnalysis {
       };
     };
   };
-} 
+}

@@ -5,5 +5,5 @@ export const routes = [
     path: '/survey',
     component: HealthSurvey,
     exact: true,
-  }
-]; 
+  },
+];

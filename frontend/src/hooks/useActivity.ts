@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
-import { message } from 'antd';
+
 import axios from 'axios';
+import { message } from 'antd';
 import { useAuth } from './useAuth';
 
 export const useActivity = () => {
@@ -10,151 +11,195 @@ export const useActivity = () => {
   const api = axios.create({
     baseURL: process.env.REACT_APP_API_URL,
     headers: {
-      Authorization: `Bearer ${token}`
-    }
+      Authorization: `Bearer ${token}`,
+    },
   });
 
   // 创建活动
-  const createActivity = useCallback(async (data: any) => {
-    try {
-      setLoading(true);
-      const response = await api.post('/activities', data);
-      return response.data;
-    } catch (error) {
-      console.error('Create activity failed:', error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  }, [api]);
+  const createActivity = console.error(
+    'Error in useActivity.ts:',
+    async (data: any) => {
+      try {
+        setLoading(true);
+        const response = await api.post('/activities', data);
+        return response.data;
+      } catch (error) {
+        console.error('Error in useActivity.ts:', 'Create activity failed:', error);
+        throw error;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [api],
+  );
 
   // 更新活动
-  const updateActivity = useCallback(async (id: string, data: any) => {
-    try {
-      setLoading(true);
-      const response = await api.put(`/activities/${id}`, data);
-      return response.data;
-    } catch (error) {
-      console.error('Update activity failed:', error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  }, [api]);
+  const updateActivity = console.error(
+    'Error in useActivity.ts:',
+    async (id: string, data: any) => {
+      try {
+        setLoading(true);
+        const response = await api.put(`/activities/${id}`, data);
+        return response.data;
+      } catch (error) {
+        console.error('Error in useActivity.ts:', 'Update activity failed:', error);
+        throw error;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [api],
+  );
 
   // 获取活动详情
-  const getActivity = useCallback(async (id: string) => {
-    try {
-      setLoading(true);
-      const response = await api.get(`/activities/${id}`);
-      return response.data;
-    } catch (error) {
-      console.error('Get activity failed:', error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  }, [api]);
+  const getActivity = console.error(
+    'Error in useActivity.ts:',
+    async (id: string) => {
+      try {
+        setLoading(true);
+        const response = await api.get(`/activities/${id}`);
+        return response.data;
+      } catch (error) {
+        console.error('Error in useActivity.ts:', 'Get activity failed:', error);
+        throw error;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [api],
+  );
 
   // 获取活动列表
-  const getActivities = useCallback(async (params: any = {}) => {
-    try {
-      setLoading(true);
-      const response = await api.get('/activities', { params });
-      return response.data;
-    } catch (error) {
-      console.error('Get activities failed:', error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  }, [api]);
+  const getActivities = console.error(
+    'Error in useActivity.ts:',
+    async (params: any = {}) => {
+      try {
+        setLoading(true);
+        const response = await api.get('/activities', { params });
+        return response.data;
+      } catch (error) {
+        console.error('Error in useActivity.ts:', 'Get activities failed:', error);
+        throw error;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [api],
+  );
 
   // 参加活动
-  const joinActivity = useCallback(async (activityId: string) => {
-    try {
-      setLoading(true);
-      const response = await api.post(`/activities/${activityId}/join`);
-      return response.data;
-    } catch (error) {
-      console.error('Join activity failed:', error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  }, [api]);
+  const joinActivity = console.error(
+    'Error in useActivity.ts:',
+    async (activityId: string) => {
+      try {
+        setLoading(true);
+        const response = await api.post(`/activities/${activityId}/join`);
+        return response.data;
+      } catch (error) {
+        console.error('Error in useActivity.ts:', 'Join activity failed:', error);
+        throw error;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [api],
+  );
 
   // 更新活动进度
-  const updateProgress = useCallback(async (activityId: string, progress: any) => {
-    try {
-      setLoading(true);
-      const response = await api.post(`/activities/${activityId}/progress`, progress);
-      return response.data;
-    } catch (error) {
-      console.error('Update progress failed:', error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  }, [api]);
+  const updateProgress = console.error(
+    'Error in useActivity.ts:',
+    async (activityId: string, progress: any) => {
+      try {
+        setLoading(true);
+        const response = await api.post(`/activities/${activityId}/progress`, progress);
+        return response.data;
+      } catch (error) {
+        console.error('Error in useActivity.ts:', 'Update progress failed:', error);
+        throw error;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [api],
+  );
 
   // 获取活动排行榜
-  const getLeaderboard = useCallback(async (activityId: string, metric: string = 'points') => {
-    try {
-      setLoading(true);
-      const response = await api.get(`/activities/${activityId}/leaderboard`, {
-        params: { metric }
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Get leaderboard failed:', error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  }, [api]);
+  const getLeaderboard = console.error(
+    'Error in useActivity.ts:',
+    async (activityId: string, metric = 'points') => {
+      try {
+        setLoading(true);
+        const response = await api.get(`/activities/${activityId}/leaderboard`, {
+          params: { metric },
+        });
+        return response.data;
+      } catch (error) {
+        console.error('Error in useActivity.ts:', 'Get leaderboard failed:', error);
+        throw error;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [api],
+  );
 
   // 获取用户活动统计
-  const getUserActivityStats = useCallback(async () => {
-    try {
-      setLoading(true);
-      const response = await api.get('/activities/user/stats');
-      return response.data;
-    } catch (error) {
-      console.error('Get user activity stats failed:', error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  }, [api]);
+  const getUserActivityStats = console.error(
+    'Error in useActivity.ts:',
+    async () => {
+      try {
+        setLoading(true);
+        const response = await api.get('/activities/user/stats');
+        return response.data;
+      } catch (error) {
+        console.error('Error in useActivity.ts:', 'Get user activity stats failed:', error);
+        throw error;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [api],
+  );
 
   // 获取用户参与的活动
-  const getUserParticipatedActivities = useCallback(async (params: any = {}) => {
-    try {
-      setLoading(true);
-      const response = await api.get('/activities/user/participated', { params });
-      return response.data;
-    } catch (error) {
-      console.error('Get user participated activities failed:', error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  }, [api]);
+  const getUserParticipatedActivities = console.error(
+    'Error in useActivity.ts:',
+    async (params: any = {}) => {
+      try {
+        setLoading(true);
+        const response = await api.get('/activities/user/participated', { params });
+        return response.data;
+      } catch (error) {
+        console.error(
+          'Error in useActivity.ts:',
+          'Get user participated activities failed:',
+          error,
+        );
+        throw error;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [api],
+  );
 
   // 获取用户创建的活动
-  const getUserCreatedActivities = useCallback(async (params: any = {}) => {
-    try {
-      setLoading(true);
-      const response = await api.get('/activities/user/created', { params });
-      return response.data;
-    } catch (error) {
-      console.error('Get user created activities failed:', error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  }, [api]);
+  const getUserCreatedActivities = console.error(
+    'Error in useActivity.ts:',
+    async (params: any = {}) => {
+      try {
+        setLoading(true);
+        const response = await api.get('/activities/user/created', { params });
+        return response.data;
+      } catch (error) {
+        console.error('Error in useActivity.ts:', 'Get user created activities failed:', error);
+        throw error;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [api],
+  );
 
   return {
     loading,
@@ -167,6 +212,6 @@ export const useActivity = () => {
     getLeaderboard,
     getUserActivityStats,
     getUserParticipatedActivities,
-    getUserCreatedActivities
+    getUserCreatedActivities,
   };
-}; 
+};

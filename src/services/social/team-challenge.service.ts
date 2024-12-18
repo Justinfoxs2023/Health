@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 team-challenge.service.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export class TeamChallengeService {
   private readonly teamRepo: TeamRepository;
   private readonly challengeRepo: ChallengeRepository;
@@ -13,19 +20,19 @@ export class TeamChallengeService {
     try {
       // 验证团队
       await this.validateTeams(data.teams);
-      
+
       const challenge = await this.challengeRepo.create({
         ...data,
         status: 'recruiting',
         startTime: new Date(),
         endTime: addDays(new Date(), data.duration),
         teamScores: this.initializeTeamScores(data.teams),
-        rewards: await this.setupTeamRewards(data.type, data.difficulty)
+        rewards: await this.setupTeamRewards(data.type, data.difficulty),
       });
 
       // 创建团队排行榜
       await this.createTeamLeaderboard(challenge.id);
-      
+
       // 发送挑战通知
       await this.notifyTeamMembers(challenge);
 
@@ -37,17 +44,21 @@ export class TeamChallengeService {
   }
 
   // 更新团队进度
-  async updateTeamProgress(challengeId: string, teamId: string, progress: TeamProgress): Promise<void> {
+  async updateTeamProgress(
+    challengeId: string,
+    teamId: string,
+    progress: TeamProgress,
+  ): Promise<void> {
     try {
       // 更新团队分数
       await this.updateTeamScore(challengeId, teamId, progress);
-      
+
       // 检查团队成就
       await this.checkTeamAchievements(challengeId, teamId);
-      
+
       // 更新排行榜
       await this.updateTeamLeaderboard(challengeId);
-      
+
       // 检查挑战完成状态
       await this.checkChallengeCompletion(challengeId);
     } catch (error) {
@@ -75,4 +86,4 @@ export class TeamChallengeService {
       throw error;
     }
   }
-} 
+}

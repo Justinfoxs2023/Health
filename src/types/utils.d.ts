@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 utils.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 declare namespace Utils {
   // 通用工具类型
   type Nullable<T> = T | null;
@@ -10,8 +17,8 @@ declare namespace Utils {
   interface PaginationParams {
     page: number;
     pageSize: number;
-    sortBy?: string;
-    sortOrder?: 'ASC' | 'DESC';
+    sortBy: string;
+    sortOrder: ASC  DESC;
   }
 
   interface PaginatedResponse<T> {
@@ -26,32 +33,36 @@ declare namespace Utils {
   interface ErrorResponse {
     code: string;
     message: string;
-    details?: Record<string, any>;
+    details: Recordstring, any;
   }
 
   // 缓存配置类型
   interface CacheConfig {
     ttl: number;
     maxSize: number;
-    writePattern: 'write-through' | 'write-behind';
+    writePattern: writethrough  writebehind;
   }
 
   // 服务健康检查类型
   interface HealthCheck {
-    status: 'healthy' | 'unhealthy' | 'degraded';
-    details: Record<string, {
-      status: string;
-      message?: string;
-      lastChecked: Date;
-    }>;
+    status: healthy  unhealthy  degraded;
+    details: Record
+      string,
+      {
+        status: string;
+        message: string;
+        lastChecked: Date;
+      }
+    >;
   }
 
   // 日志类型
-  interface LogEntry {
-    level: 'debug' | 'info' | 'warn' | 'error';
+  interface ILogEntry {
+    /** level 的描述 */
+      level: debug  info  warn  error;
     message: string;
     timestamp: Date;
-    context?: Record<string, any>;
-    trace?: string;
+    context: Recordstring, any;
+    trace: string;
   }
 }

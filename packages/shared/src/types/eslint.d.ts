@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 eslint.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 declare module 'eslint' {
   export interface LintResult {
     filePath: string;
@@ -48,4 +55,4 @@ declare module 'eslint' {
       source: string;
     };
   }
-} 
+}

@@ -1,7 +1,8 @@
 import React from 'react';
-import { render, act } from '@testing-library/react';
-import { Animation } from '../index';
+
 import { ANIMATION_DURATION } from '../../../utils/animation';
+import { Animation } from '../index';
+import { render, act } from '@testing-library/react';
 
 describe('Animation', () => {
   beforeEach(() => {
@@ -16,7 +17,7 @@ describe('Animation', () => {
     const { getByText } = render(
       <Animation animation={{ type: 'fade' }}>
         <div>测试内容</div>
-      </Animation>
+      </Animation>,
     );
 
     expect(getByText('测试内容')).toBeInTheDocument();
@@ -26,13 +27,13 @@ describe('Animation', () => {
     const { container } = render(
       <Animation animation={{ type: 'fade' }}>
         <div>测试内容</div>
-      </Animation>
+      </Animation>,
     );
 
     const element = container.firstChild as HTMLElement;
     expect(element).toHaveStyle({
       opacity: '0',
-      transition: `all ${ANIMATION_DURATION.NORMAL}ms cubic-bezier(0.4, 0, 0.2, 1) 0ms`
+      transition: `all ${ANIMATION_DURATION.NORMAL}ms cubic-bezier(0.4, 0, 0.2, 1) 0ms`,
     });
 
     // 等待动画开始
@@ -51,17 +52,17 @@ describe('Animation', () => {
         animation={{
           type: 'slide-up',
           duration,
-          delay
+          delay,
         }}
       >
         <div>测试内容</div>
-      </Animation>
+      </Animation>,
     );
 
     const element = container.firstChild as HTMLElement;
     expect(element).toHaveStyle({
       transform: 'translateY(100%)',
-      transition: `all ${duration}ms cubic-bezier(0.4, 0, 0.2, 1) ${delay}ms`
+      transition: `all ${duration}ms cubic-bezier(0.4, 0, 0.2, 1) ${delay}ms`,
     });
   });
 
@@ -71,11 +72,11 @@ describe('Animation', () => {
       <Animation
         animation={{
           type: 'fade',
-          onComplete
+          onComplete,
         }}
       >
         <div>测试内容</div>
-      </Animation>
+      </Animation>,
     );
 
     const element = container.firstChild as HTMLElement;
@@ -86,12 +87,12 @@ describe('Animation', () => {
       <Animation
         animation={{
           type: 'fade',
-          onComplete
+          onComplete,
         }}
         visible={false}
       >
         <div>测试内容</div>
-      </Animation>
+      </Animation>,
     );
 
     // 等待动画完成
@@ -108,7 +109,7 @@ describe('Animation', () => {
     const { unmount } = render(
       <Animation animation={{ type: 'fade' }}>
         <div>测试内容</div>
-      </Animation>
+      </Animation>,
     );
 
     unmount();
@@ -125,18 +126,18 @@ describe('Animation', () => {
       'zoom',
       'bounce',
       'rotate',
-      'flip'
+      'flip',
     ] as const;
 
     animationTypes.forEach(type => {
       const { container } = render(
         <Animation animation={{ type }}>
           <div>测试内容</div>
-        </Animation>
+        </Animation>,
       );
 
       const element = container.firstChild as HTMLElement;
       expect(element).toHaveStyle('transition');
     });
   });
-}); 
+});

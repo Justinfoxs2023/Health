@@ -1,13 +1,14 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
-import { useMutation } from 'react-query';
-import { bindPhone, sendVerifyCode } from '../../api/user';
+
 import { FormInput, LoadingOverlay, AlertDialog } from '../../components';
+import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { bindPhone, sendVerifyCode } from '../../api/user';
+import { useMutation } from 'react-query';
 
 export const BindPhoneScreen = ({ navigation }) => {
   const [form, setForm] = React.useState({
     phone: '',
-    code: ''
+    code: '',
   });
   const [countdown, setCountdown] = React.useState(0);
   const [showAlert, setShowAlert] = React.useState(false);
@@ -21,7 +22,7 @@ export const BindPhoneScreen = ({ navigation }) => {
     onError: (error: any) => {
       setAlertMessage(error.message || '手机绑定失败');
       setShowAlert(true);
-    }
+    },
   });
 
   const codeMutation = useMutation(sendVerifyCode);
@@ -29,7 +30,7 @@ export const BindPhoneScreen = ({ navigation }) => {
   const startCountdown = () => {
     setCountdown(60);
     const timer = setInterval(() => {
-      setCountdown((prev) => {
+      setCountdown(prev => {
         if (prev <= 1) {
           clearInterval(timer);
           return 0;
@@ -80,7 +81,7 @@ export const BindPhoneScreen = ({ navigation }) => {
           placeholder="请输入手机号"
           keyboardType="phone-pad"
           value={form.phone}
-          onChangeText={(phone) => setForm(prev => ({ ...prev, phone }))}
+          onChangeText={phone => setForm(prev => ({ ...prev, phone }))}
           style={styles.field}
         />
 
@@ -90,7 +91,7 @@ export const BindPhoneScreen = ({ navigation }) => {
             placeholder="请输入验证码"
             keyboardType="number-pad"
             value={form.code}
-            onChangeText={(code) => setForm(prev => ({ ...prev, code }))}
+            onChangeText={code => setForm(prev => ({ ...prev, code }))}
             style={[styles.field, styles.codeInput]}
           />
           <TouchableOpacity
@@ -105,10 +106,7 @@ export const BindPhoneScreen = ({ navigation }) => {
         </View>
 
         <TouchableOpacity
-          style={[
-            styles.submitButton,
-            (!form.phone || !form.code) && styles.submitButtonDisabled
-          ]}
+          style={[styles.submitButton, (!form.phone || !form.code) && styles.submitButtonDisabled]}
           onPress={handleSubmit}
           disabled={!form.phone || !form.code}
         >
@@ -131,53 +129,53 @@ export const BindPhoneScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   form: {
-    padding: 15
+    padding: 15,
   },
   field: {
     marginBottom: 15,
     backgroundColor: '#fff',
     borderRadius: 8,
-    padding: 15
+    padding: 15,
   },
   codeRow: {
     flexDirection: 'row',
-    alignItems: 'flex-end'
+    alignItems: 'flex-end',
   },
   codeInput: {
     flex: 1,
-    marginRight: 10
+    marginRight: 10,
   },
   codeButton: {
     backgroundColor: '#2E7D32',
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: 8,
-    height: 54
+    height: 54,
   },
   codeButtonDisabled: {
-    backgroundColor: '#ccc'
+    backgroundColor: '#ccc',
   },
   codeButtonText: {
     color: '#fff',
     fontSize: 14,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   submitButton: {
     backgroundColor: '#2E7D32',
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',
-    marginTop: 20
+    marginTop: 20,
   },
   submitButtonDisabled: {
-    backgroundColor: '#ccc'
+    backgroundColor: '#ccc',
   },
   submitButtonText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: 'bold'
-  }
-}); 
+    fontWeight: 'bold',
+  },
+});

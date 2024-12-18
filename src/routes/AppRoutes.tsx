@@ -1,5 +1,7 @@
 import { lazy, Suspense } from 'react';
+
 import { Routes, Route, Navigate } from 'react-router-dom';
+
 import { LoadingState } from '@/components/common/LoadingState';
 
 // 懒加载页面组件
@@ -24,4 +26,4 @@ export const AppRoutes = () => {
       </Routes>
     </Suspense>
   );
-}; 
+};

@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TSX 文件 ContactManager.tsx 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export const ContactManager: React.FC = () => {
   const [contacts, setContacts] = useState<EmergencyContact[]>([]);
 
@@ -7,7 +14,7 @@ export const ContactManager: React.FC = () => {
       setContacts(prev => [...prev, newContact]);
       Toast.show({
         type: 'success',
-        text: '添加成功'
+        text: '添加成功',
       });
     } catch (error) {
       handleError(error);
@@ -16,12 +23,8 @@ export const ContactManager: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <ContactList
-        contacts={contacts}
-        onDelete={handleDelete}
-        onEdit={handleEdit}
-      />
+      <ContactList contacts={contacts} onDelete={handleDelete} onEdit={handleEdit} />
       <AddContactForm onSubmit={addContact} />
     </View>
   );
-}; 
+};

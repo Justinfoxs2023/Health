@@ -1,30 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
-import { 
-  Card, 
-  Title, 
-  Paragraph, 
-  Button,
-  List,
-  Divider 
-} from 'react-native-paper';
+
+import { Card, Title, Paragraph, Button, List, Divider } from 'react-native-paper';
+import { HealthAlertsList } from './HealthAlertsList';
 import { HealthMetricsView } from './HealthMetricsView';
 import { MedicalHistoryTimeline } from './MedicalHistoryTimeline';
-import { HealthAlertsList } from './HealthAlertsList';
 import { SharingSettingsModal } from './SharingSettingsModal';
+import { View, StyleSheet, ScrollView } from 'react-native';
 
-interface FamilyHealthRecordProps {
-  memberId: string;
-  relationship: string;
-  permissions: string[];
-  onUpdateSettings: (settings: any) => void;
+interface IFamilyHealthRecordProps {
+  /** memberId 的描述 */
+    memberId: string;
+  /** relationship 的描述 */
+    relationship: string;
+  /** permissions 的描述 */
+    permissions: string;
+  /** onUpdateSettings 的描述 */
+    onUpdateSettings: settings: any  void;
 }
 
-export const FamilyHealthRecord: React.FC<FamilyHealthRecordProps> = ({
+export const FamilyHealthRecord: React.FC<IFamilyHealthRecordProps> = ({
   memberId,
   relationship,
   permissions,
-  onUpdateSettings
+  onUpdateSettings,
 }) => {
   const [record, setRecord] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
@@ -43,14 +41,9 @@ export const FamilyHealthRecord: React.FC<FamilyHealthRecordProps> = ({
   const renderHealthOverview = () => (
     <Card style={styles.section}>
       <Card.Content>
-        <Title>健康概览</Title>
-        <HealthMetricsView 
-          metrics={record.metrics}
-          trends={record.trends}
-        />
-        {record.alerts.length > 0 && (
-          <HealthAlertsList alerts={record.alerts} />
-        )}
+        <Title></Title>
+        <HealthMetricsView metrics={record.metrics} trends={record.trends} />
+        {record.alerts.length > 0 && <HealthAlertsList alerts={record.alerts} />}
       </Card.Content>
     </Card>
   );
@@ -58,8 +51,8 @@ export const FamilyHealthRecord: React.FC<FamilyHealthRecordProps> = ({
   const renderMedicalHistory = () => (
     <Card style={styles.section}>
       <Card.Content>
-        <Title>就医记录</Title>
-        <MedicalHistoryTimeline 
+        <Title></Title>
+        <MedicalHistoryTimeline
           history={record.medicalHistory}
           onItemPress={handleHistoryItemPress}
         />
@@ -79,7 +72,7 @@ export const FamilyHealthRecord: React.FC<FamilyHealthRecordProps> = ({
           >
             {record && renderHealthOverview()}
           </List.Accordion>
-          
+
           <List.Accordion
             title="就医记录"
             expanded={activeSection === 'medical'}
@@ -87,7 +80,7 @@ export const FamilyHealthRecord: React.FC<FamilyHealthRecordProps> = ({
           >
             {record && renderMedicalHistory()}
           </List.Accordion>
-          
+
           <List.Accordion
             title="健康计划"
             expanded={activeSection === 'plan'}
@@ -98,12 +91,8 @@ export const FamilyHealthRecord: React.FC<FamilyHealthRecordProps> = ({
         </List.Section>
 
         {/* 共享设置 */}
-        <Button 
-          mode="outlined"
-          onPress={() => setShowSettings(true)}
-          style={styles.settingsButton}
-        >
-          档案共享设置
+        <Button mode="outlined" onPress={ => setShowSettingstrue} style={stylessettingsButton}>
+          
         </Button>
       </ScrollView>
 
@@ -126,5 +115,5 @@ const styles = StyleSheet.create({
   },
   settingsButton: {
     margin: 16,
-  }
-}); 
+  },
+});

@@ -1,5 +1,5 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 @Schema()
 export class ModerationRule extends Document {
@@ -23,7 +23,7 @@ export class ModerationRule extends Document {
   @Prop({
     type: String,
     enum: ['block', 'flag', 'notify'],
-    required: true
+    required: true,
   })
   action: string;
 
@@ -45,7 +45,7 @@ export class ModerationLog extends Document {
   @Prop({
     type: String,
     enum: ['post', 'comment'],
-    required: true
+    required: true,
   })
   target_type: string;
 
@@ -55,7 +55,7 @@ export class ModerationLog extends Document {
   @Prop({
     type: String,
     enum: ['auto', 'manual', 'user_report'],
-    required: true
+    required: true,
   })
   trigger_type: string;
 
@@ -65,7 +65,7 @@ export class ModerationLog extends Document {
   @Prop({
     type: String,
     enum: ['pending', 'approved', 'rejected', 'blocked'],
-    default: 'pending'
+    default: 'pending',
   })
   status: string;
 
@@ -88,4 +88,4 @@ export const ModerationLogSchema = SchemaFactory.createForClass(ModerationLog);
 // 添加索引
 ModerationRuleSchema.index({ type: 1, is_active: 1 });
 ModerationLogSchema.index({ target_type: 1, target_id: 1 });
-ModerationLogSchema.index({ status: 1, created_at: -1 }); 
+ModerationLogSchema.index({ status: 1, created_at: -1 });

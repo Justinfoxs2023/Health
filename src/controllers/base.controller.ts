@@ -1,17 +1,15 @@
-import { injectable, inject } from 'inversify';
-import { TYPES } from '../di/types';
 import { Logger } from '../types';
+import { TYPES } from '../di/types';
+import { injectable, inject } from 'inversify';
 
 @injectable()
 export abstract class BaseController {
-  constructor(
-    @inject(TYPES.Logger) protected logger: Logger
-  ) {}
+  constructor(@inject() protected logger: Logger) {}
 
   protected handleSuccess(res: Response, data: any) {
     res.json({
       success: true,
-      data
+      data,
     });
   }
 
@@ -19,7 +17,7 @@ export abstract class BaseController {
     this.logger.error('Controller error', error);
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
-} 
+}

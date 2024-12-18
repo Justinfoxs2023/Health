@@ -1,6 +1,6 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AlertService } from '../../services/monitoring/alert.service';
-import { Alert } from '../../services/monitoring/monitoring.types';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { IAlert } from '../../services/monitoring/monitoring.types';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -14,12 +14,11 @@ import { takeUntil } from 'rxjs/operators';
           <div class="stat-card" *ngFor="let stat of alertStats">
             <div class="stat-value" [class]="stat.trend">
               {{ stat.value }}
-              <i class="trend-icon" [class]="getTrendIcon(stat.trend)"></i>
+              <i class="trendicon" class="getTrendIconstattrend"></i>
             </div>
-            <div class="stat-label">{{ stat.label }}</div>
-            <div class="stat-change">
-              {{ formatChange(stat.change) }}
-              较上周期
+            <div class="statlabel">{{ statlabel }}</div>
+            <div class="statchange">
+              {{ formatChangestatchange }}
             </div>
           </div>
         </div>
@@ -28,62 +27,58 @@ import { takeUntil } from 'rxjs/operators';
       <!-- 活跃告警 -->
       <section class="active-alerts">
         <div class="section-header">
-          <h2>活跃告警</h2>
+          <h2></h2>
           <div class="filters">
             <select [(ngModel)]="currentFilter" (change)="filterAlerts()">
-              <option value="all">全部</option>
-              <option value="critical">严重</option>
-              <option value="high">高危</option>
-              <option value="medium">中等</option>
-              <option value="low">低危</option>
+              <option value="all"></option>
+              <option value="critical"></option>
+              <option value="high"></option>
+              <option value="medium"></option>
+              <option value="low"></option>
             </select>
           </div>
         </div>
 
         <div class="alerts-list">
-          <div *ngFor="let alert of filteredAlerts" 
-               class="alert-card"
-               [class]="alert.severity">
+          <div *ngFor="let alert of filteredAlerts" class="alert-card" [class]="alert.severity">
             <div class="alert-header">
-              <div class="severity-badge">{{ alert.severity }}</div>
-              <div class="alert-time">{{ formatTime(alert.createdAt) }}</div>
+              <div class="severitybadge">{{ alertseverity }}</div>
+              <div class="alerttime">{{ formatTimealertcreatedAt }}</div>
             </div>
-            
+
             <div class="alert-content">
-              <h3>{{ alert.content.title }}</h3>
-              <p>{{ alert.content.message }}</p>
-              
+              <h3>{{ alertcontenttitle }}</h3>
+              <p>{{ alertcontentmessage }}</p>
+
               <div class="alert-meta">
-                <span class="type">{{ alert.type }}</span>
-                <span class="source">{{ alert.content.source }}</span>
+                <span class="type">{{ alerttype }}</span>
+                <span class="source">{{ alertcontentsource }}</span>
               </div>
 
               <div class="impact-info" *ngIf="alert.impact">
                 <div class="impact-item">
-                  <span class="label">影响服务</span>
-                  <span class="value">{{ alert.impact.services.join(', ') }}</span>
+                  <span class="label"></span>
+                  <span class="value">{{ alertimpactservicesjoin }}</span>
                 </div>
                 <div class="impact-item" *ngIf="alert.impact.users">
-                  <span class="label">影响用户</span>
-                  <span class="value">{{ alert.impact.users }}</span>
+                  <span class="label"></span>
+                  <span class="value">{{ alertimpactusers }}</span>
                 </div>
               </div>
             </div>
 
             <div class="alert-actions">
-              <button (click)="acknowledgeAlert(alert)"
-                      *ngIf="alert.status === 'active'"
-                      class="acknowledge">
-                确认
-              </button>
-              <button (click)="resolveAlert(alert)"
-                      *ngIf="alert.status === 'acknowledged'"
-                      class="resolve">
-                解决
-              </button>
-              <button (click)="showAlertDetails(alert)" class="details">
-                详情
-              </button>
+              <button
+                click="acknowledgeAlertalert"
+                ngIf="alertstatus === active"
+                class="acknowledge"
+              ></button>
+              <button
+                click="resolveAlertalert"
+                ngIf="alertstatus === acknowledged"
+                class="resolve"
+              ></button>
+              <button click="showAlertDetailsalert" class="details"></button>
             </div>
           </div>
         </div>
@@ -92,24 +87,26 @@ import { takeUntil } from 'rxjs/operators';
       <!-- 告警趋势 -->
       <section class="alert-trends">
         <div class="section-header">
-          <h2>告警趋势</h2>
+          <h2></h2>
           <div class="period-selector">
-            <button *ngFor="let period of periods"
-                    [class.active]="currentPeriod === period.value"
-                    (click)="setPeriod(period.value)">
-              {{ period.label }}
+            <button
+              ngFor="let period of periods"
+              classactive="currentPeriod === periodvalue"
+              click="setPeriodperiodvalue"
+            >
+              {{ periodlabel }}
             </button>
           </div>
         </div>
 
         <div class="trend-charts">
           <div class="chart-container">
-            <h3>告警数量趋势</h3>
-            <canvas #alertCountChart></canvas>
+            <h3></h3>
+            <canvas alertCountChart></canvas>
           </div>
           <div class="chart-container">
-            <h3>平均恢复时间</h3>
-            <canvas #mttrChart></canvas>
+            <h3></h3>
+            <canvas mttrChart></canvas>
           </div>
         </div>
       </section>
@@ -118,31 +115,29 @@ import { takeUntil } from 'rxjs/operators';
       <section class="alert-analysis">
         <div class="analysis-cards">
           <div class="analysis-card top-issues">
-            <h3>常见问题</h3>
+            <h3></h3>
             <div class="issues-list">
               <div *ngFor="let issue of topIssues" class="issue-item">
                 <div class="issue-header">
-                  <span class="issue-type">{{ issue.type }}</span>
-                  <span class="issue-count">{{ issue.count }}次</span>
+                  <span class="issuetype">{{ issuetype }}</span>
+                  <span class="issuecount">{{ issuecount }}</span>
                 </div>
-                <div class="issue-title">{{ issue.title }}</div>
-                <div class="issue-impact">
-                  影响用户: {{ issue.impact }}
-                </div>
+                <div class="issuetitle">{{ issuetitle }}</div>
+                <div class="issueimpact">{{ issueimpact }}</div>
               </div>
             </div>
           </div>
 
           <div class="analysis-card distribution">
-            <h3>告警分布</h3>
+            <h3></h3>
             <div class="distribution-charts">
               <div class="chart-container">
-                <h4>按严重程度</h4>
-                <canvas #severityChart></canvas>
+                <h4></h4>
+                <canvas severityChart></canvas>
               </div>
               <div class="chart-container">
-                <h4>按类型</h4>
-                <canvas #typeChart></canvas>
+                <h4></h4>
+                <canvas typeChart></canvas>
               </div>
             </div>
           </div>
@@ -150,7 +145,7 @@ import { takeUntil } from 'rxjs/operators';
       </section>
     </div>
   `,
-  styleUrls: ['./alert-dashboard.component.scss']
+  styleUrls: ['./alert-dashboard.component.scss'],
 })
 export class AlertDashboardComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
@@ -160,19 +155,19 @@ export class AlertDashboardComponent implements OnInit, OnDestroy {
     { label: '活跃告警', value: 0, trend: 'up', change: 15 },
     { label: '本周告警', value: 0, trend: 'down', change: -8 },
     { label: '平均恢复时间', value: '2h 15m', trend: 'stable', change: 0 },
-    { label: '自动恢复率', value: '68%', trend: 'up', change: 5 }
+    { label: '自动恢复率', value: '68%', trend: 'up', change: 5 },
   ];
 
   periods = [
     { label: '24小时', value: '24h' },
     { label: '7天', value: '7d' },
-    { label: '30天', value: '30d' }
+    { label: '30天', value: '30d' },
   ];
   currentPeriod = '24h';
   currentFilter = 'all';
 
-  activeAlerts: Alert[] = [];
-  filteredAlerts: Alert[] = [];
+  activeAlerts: IAlert[] = [];
+  filteredAlerts: IAlert[] = [];
   topIssues: any[] = [];
 
   constructor(private alertService: AlertService) {}
@@ -204,7 +199,7 @@ export class AlertDashboardComponent implements OnInit, OnDestroy {
       this.topIssues = stats.topIssues;
       this.updateCharts(stats);
     } catch (error) {
-      console.error('Failed to load dashboard:', error);
+      console.error('Error in alert-dashboard.component.ts:', 'Failed to load dashboard:', error);
     }
   }
 
@@ -226,36 +221,33 @@ export class AlertDashboardComponent implements OnInit, OnDestroy {
   }
 
   // UI交互方法
-  async acknowledgeAlert(alert: Alert) {
+  async acknowledgeAlert(alert: IAlert) {
     try {
-      await this.alertService.updateAlertStatus(
-        alert.id,
-        'acknowledged',
-        'current-user'
-      );
+      await this.alertService.updateAlertStatus(alert.id, 'acknowledged', 'current-user');
       await this.loadDashboard();
     } catch (error) {
-      console.error('Failed to acknowledge alert:', error);
+      console.error(
+        'Error in alert-dashboard.component.ts:',
+        'Failed to acknowledge alert:',
+        error,
+      );
     }
   }
 
-  async resolveAlert(alert: Alert) {
+  async resolveAlert(alert: IAlert) {
     try {
-      await this.alertService.updateAlertStatus(
-        alert.id,
-        'resolved',
-        'current-user'
-      );
+      await this.alertService.updateAlertStatus(alert.id, 'resolved', 'current-user');
       await this.loadDashboard();
     } catch (error) {
-      console.error('Failed to resolve alert:', error);
+      console.error('Error in alert-dashboard.component.ts:', 'Failed to resolve alert:', error);
     }
   }
 
   filterAlerts() {
-    this.filteredAlerts = this.currentFilter === 'all'
-      ? this.activeAlerts
-      : this.activeAlerts.filter(alert => alert.severity === this.currentFilter);
+    this.filteredAlerts =
+      this.currentFilter === 'all'
+        ? this.activeAlerts
+        : this.activeAlerts.filter(alert => alert.severity === this.currentFilter);
   }
 
   async setPeriod(period: string) {
@@ -289,11 +281,8 @@ export class AlertDashboardComponent implements OnInit, OnDestroy {
 
   formatTime(date: Date): string {
     return new Intl.RelativeTimeFormat('zh-CN', {
-      numeric: 'auto'
-    }).format(
-      Math.round((date.getTime() - Date.now()) / (1000 * 60)),
-      'minute'
-    );
+      numeric: 'auto',
+    }).format(Math.round((date.getTime() - Date.now()) / (1000 * 60)), 'minute');
   }
 
   formatChange(change: number): string {
@@ -302,9 +291,12 @@ export class AlertDashboardComponent implements OnInit, OnDestroy {
 
   getTrendIcon(trend: string): string {
     switch (trend) {
-      case 'up': return 'arrow_upward';
-      case 'down': return 'arrow_downward';
-      default: return 'remove';
+      case 'up':
+        return 'arrow_upward';
+      case 'down':
+        return 'arrow_downward';
+      default:
+        return 'remove';
     }
   }
-} 
+}

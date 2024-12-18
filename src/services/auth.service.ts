@@ -1,14 +1,17 @@
 import { message } from 'antd';
 import { request } from '../utils/request';
 
-interface SocialLoginParams {
-  platform: Social.Platform;
+interface ISocialLoginParams {
+  /** platform 的描述 */
+  platform: SocialPlatform;
+  /** code 的描述 */
   code: string;
-  state?: string;
+  /** state 的描述 */
+  state: string;
 }
 
 class AuthService {
-  async socialLogin(params: SocialLoginParams): Promise<Social.LoginResponse> {
+  async socialLogin(params: ISocialLoginParams): Promise<Social.LoginResponse> {
     try {
       const response = await request.post<Social.LoginResponse>('/api/auth/social-login', params);
       return response;
@@ -19,4 +22,4 @@ class AuthService {
   }
 }
 
-export const authService = new AuthService(); 
+export const authService = new AuthService();

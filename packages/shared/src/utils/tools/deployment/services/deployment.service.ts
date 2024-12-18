@@ -1,7 +1,7 @@
-import { exec } from 'child_process';
-import { promisify } from 'util';
 import { Logger } from '../../utils/logger';
 import { Redis } from '../../utils/redis';
+import { exec } from 'child_process';
+import { promisify } from 'util';
 
 const execAsync = promisify(exec);
 
@@ -32,7 +32,7 @@ export class DeploymentService {
       // 记录部署开始
       await this.logDeployment({
         status: 'started',
-        ...options
+        ...options,
       });
 
       // 1. 健康检查
@@ -53,7 +53,7 @@ export class DeploymentService {
       // 记录部署成功
       await this.logDeployment({
         status: 'completed',
-        ...options
+        ...options,
       });
 
       return { success: true };
@@ -62,7 +62,7 @@ export class DeploymentService {
       await this.logDeployment({
         status: 'failed',
         error: error.message,
-        ...options
+        ...options,
       });
 
       // 执行回滚
@@ -106,15 +106,18 @@ export class DeploymentService {
   private async logDeployment(data: any) {
     this.logger.info('Deployment Event', {
       type: 'deployment',
-      ...data
+      ...data,
     });
 
     // 缓存部署记录
     const cacheKey = `deployment:history`;
-    await this.redis.lpush(cacheKey, JSON.stringify({
-      ...data,
-      timestamp: new Date()
-    }));
+    await this.redis.lpush(
+      cacheKey,
+      JSON.stringify({
+        ...data,
+        timestamp: new Date(),
+      }),
+    );
     await this.redis.ltrim(cacheKey, 0, 99); // 保留最近100次部署记录
   }
 
@@ -124,4 +127,4 @@ export class DeploymentService {
     const history = await this.redis.lrange(cacheKey, 0, -1);
     return history.map(item => JSON.parse(item));
   }
-} 
+}

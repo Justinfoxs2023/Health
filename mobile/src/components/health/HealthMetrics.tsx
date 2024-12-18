@@ -1,9 +1,11 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+
 import { Card, Text, useTheme } from 'react-native-paper';
 import { LineChart } from 'react-native-chart-kit';
+import { View, StyleSheet } from 'react-native';
 
-interface HealthMetricsProps {
+interface IHealthMetricsProps {
+  /** data 的描述 */
   data: {
     labels: string[];
     datasets: {
@@ -12,11 +14,13 @@ interface HealthMetricsProps {
       strokeWidth?: number;
     }[];
   };
+  /** title 的描述 */
   title: string;
+  /** unit 的描述 */
   unit: string;
 }
 
-export const HealthMetrics = ({ data, title, unit }: HealthMetricsProps) => {
+export const HealthMetrics = ({ data, title, unit }: IHealthMetricsProps) => {
   const theme = useTheme();
 
   return (
@@ -65,4 +69,4 @@ const styles = StyleSheet.create({
     color: '#666',
     marginTop: 4,
   },
-}); 
+});

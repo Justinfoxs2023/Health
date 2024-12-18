@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
-import { Redis } from 'ioredis';
 import { Logger } from '../utils/logger';
+import { Redis } from 'ioredis';
+import { Request, Response, NextFunction } from 'express';
 
 // Express扩展
 declare global {
@@ -36,8 +36,10 @@ declare global {
 }
 
 // 基础服务接口
-export interface BaseService {
+export interface IBaseService {
+  /** logger 的描述 */
   logger: Logger;
+  /** redis 的描述 */
   redis: Redis;
 }
 
@@ -45,4 +47,4 @@ export interface BaseService {
 export class AppError extends Error {
   status: number;
   code: string;
-} 
+}

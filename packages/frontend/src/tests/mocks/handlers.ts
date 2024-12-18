@@ -10,11 +10,11 @@ export const handlers = [
             date: '2024-03-01',
             bmi: 22.5,
             healthScore: 85,
-            exerciseScore: 75
-          }
-        ]
-      })
+            exerciseScore: 75,
+          },
+        ],
+      }),
     );
   }),
   // 添加其他 API 模拟
-]; 
+];

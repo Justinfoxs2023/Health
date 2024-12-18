@@ -1,8 +1,11 @@
 import { ssrConfig } from '../config/ssr.config';
+
 import { logger } from '@/services/logger';
 
 interface ISRCache {
+  /** data 的描述 */
   data: any;
+  /** lastRevalidated 的描述 */
   lastRevalidated: number;
 }
 
@@ -37,7 +40,7 @@ class ISRManager {
       const data = await generateFunc();
       this.cache.set(path, {
         data,
-        lastRevalidated: Date.now()
+        lastRevalidated: Date.now(),
       });
       return data;
     } catch (error) {
@@ -62,7 +65,7 @@ class ISRManager {
         const newData = await generateFunc();
         this.cache.set(path, {
           data: newData,
-          lastRevalidated: Date.now()
+          lastRevalidated: Date.now(),
         });
         break;
       } catch (error) {
@@ -95,8 +98,8 @@ class ISRManager {
       revalidating: Array.from(this.revalidating),
       paths: Array.from(this.cache.keys()).map(path => ({
         path,
-        lastRevalidated: this.cache.get(path)?.lastRevalidated
-      }))
+        lastRevalidated: this.cache.get(path)?.lastRevalidated,
+      })),
     };
   }
-} 
+}

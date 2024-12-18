@@ -1,6 +1,6 @@
-import { Logger } from '../../utils/logger';
-import { Organization, WebUser } from '../../types/web';
 import { AuthService } from '../auth/auth.service';
+import { IOrganization, IWebUser } from '../../types/web';
+import { Logger } from '../../utils/logger';
 
 export class OrganizationService {
   private logger: Logger;
@@ -13,27 +13,29 @@ export class OrganizationService {
 
   // 创建组织
   async createOrganization(
-    orgData: Partial<Organization>,
-    creator: WebUser
-  ): Promise<Organization> {
+    orgData: Partial<IOrganization>,
+    creator: IWebUser,
+  ): Promise<IOrganization> {
     try {
       // 1. 验证数据
       await this.validateOrgData(orgData);
-      
+
       // 2. 创建组织
       const organization = await this.saveOrganization({
         ...orgData,
         admins: [creator.id],
-        members: [{
-          userId: creator.id,
-          role: 'admin',
-          joinedAt: new Date()
-        }]
+        members: [
+          {
+            userId: creator.id,
+            role: 'admin',
+            joinedAt: new Date(),
+          },
+        ],
       });
-      
+
       // 3. 设置权限
       await this.setupOrgPermissions(organization);
-      
+
       return organization;
     } catch (error) {
       this.logger.error('创建组织失败', error);
@@ -45,7 +47,7 @@ export class OrganizationService {
   async manageMember(
     orgId: string,
     action: 'add' | 'remove' | 'update',
-    memberData: any
+    memberData: any,
   ): Promise<void> {
     try {
       switch (action) {
@@ -66,26 +68,23 @@ export class OrganizationService {
   }
 
   // 获取组织数据
-  async getOrganizationData(
-    orgId: string,
-    options: DataOptions
-  ): Promise<OrganizationData> {
+  async getOrganizationData(orgId: string, options: DataOptions): Promise<OrganizationData> {
     try {
       // 1. 获取成员数据
       const membersData = await this.getMembersData(orgId, options);
-      
+
       // 2. 聚合数据
       const aggregatedData = await this.aggregateOrgData(membersData);
-      
+
       // 3. 生成报告
       return {
         summary: await this.generateOrgSummary(aggregatedData),
         details: aggregatedData,
-        trends: await this.analyzeOrgTrends(aggregatedData)
+        trends: await this.analyzeOrgTrends(aggregatedData),
       };
     } catch (error) {
       this.logger.error('获取组织数据失败', error);
       throw error;
     }
   }
-} 
+}

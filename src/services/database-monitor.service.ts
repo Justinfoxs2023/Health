@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
-import { InjectConnection } from '@nestjs/mongoose';
 import { Connection } from 'mongoose';
+import { InjectConnection } from '@nestjs/mongoose';
+import { Injectable } from '@nestjs/common';
 import { Logger } from './logger.service';
 import { PerformanceService } from './performance.service';
 
@@ -21,15 +21,15 @@ export class DatabaseMonitorService {
     try {
       // 监控数据库连接状态
       this.monitorConnectionStatus();
-      
+
       // 监控查询性能
       this.monitorQueryPerformance();
-      
+
       // 监控系统资源使用
       this.monitorResourceUsage();
-      
+
       this.logger.info('Database monitoring started successfully');
-      } catch (error) {
+    } catch (error) {
       this.logger.error(`Failed to start database monitoring: ${error.message}`);
       throw error;
     }
@@ -47,7 +47,7 @@ export class DatabaseMonitorService {
       this.logger.error('Database disconnected');
     });
 
-    this.connection.on('error', (error) => {
+    this.connection.on('error', error => {
       this.logger.error(`Database connection error: ${error.message}`);
     });
   }
@@ -56,16 +56,16 @@ export class DatabaseMonitorService {
    * 监控查询性能
    */
   private monitorQueryPerformance(): void {
-    this.connection.on('query', (query) => {
+    this.connection.on('query', query => {
       const startTime = Date.now();
-      
+
       query.on('end', () => {
         const duration = Date.now() - startTime;
         this.performanceService.recordQueryPerformance({
           query: query.query,
           duration,
           collection: query.collection,
-          timestamp: new Date()
+          timestamp: new Date(),
         });
       });
     });
@@ -83,9 +83,9 @@ export class DatabaseMonitorService {
           storageSize: stats.storageSize,
           indexes: stats.indexes,
           collections: stats.collections,
-          timestamp: new Date()
+          timestamp: new Date(),
         });
-    } catch (error) {
+      } catch (error) {
         this.logger.error(`Failed to monitor resource usage: ${error.message}`);
       }
     }, 60000); // 每分钟监控一次
@@ -100,7 +100,7 @@ export class DatabaseMonitorService {
         .collection(collectionName)
         .aggregate([{ $indexStats: {} }])
         .toArray();
-      
+
       return stats;
     } catch (error) {
       this.logger.error(`Failed to get index stats: ${error.message}`);
@@ -139,9 +139,7 @@ export class DatabaseMonitorService {
    */
   async createIndex(collectionName: string, indexSpec: any): Promise<void> {
     try {
-      await this.connection.db
-        .collection(collectionName)
-        .createIndex(indexSpec);
+      await this.connection.db.collection(collectionName).createIndex(indexSpec);
     } catch (error) {
       this.logger.error(`Failed to create index: ${error.message}`);
       throw error;
@@ -153,9 +151,7 @@ export class DatabaseMonitorService {
    */
   async dropIndex(collectionName: string, indexName: string): Promise<void> {
     try {
-      await this.connection.db
-        .collection(collectionName)
-        .dropIndex(indexName);
+      await this.connection.db.collection(collectionName).dropIndex(indexName);
     } catch (error) {
       this.logger.error(`Failed to drop index: ${error.message}`);
       throw error;
@@ -167,10 +163,8 @@ export class DatabaseMonitorService {
    */
   async getCollectionStats(collectionName: string): Promise<any> {
     try {
-      const stats = await this.connection.db
-        .collection(collectionName)
-        .stats();
-      
+      const stats = await this.connection.db.collection(collectionName).stats();
+
       return stats;
     } catch (error) {
       this.logger.error(`Failed to get collection stats: ${error.message}`);
@@ -200,7 +194,7 @@ export class DatabaseMonitorService {
         .collection(collectionName)
         .explain('executionStats')
         .find(query);
-      
+
       return plan;
     } catch (error) {
       this.logger.error(`Failed to analyze query plan: ${error.message}`);
@@ -220,4 +214,4 @@ export class DatabaseMonitorService {
       throw error;
     }
   }
-} 
+}

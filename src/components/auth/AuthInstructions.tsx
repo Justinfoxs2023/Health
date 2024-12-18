@@ -1,18 +1,22 @@
 import React from 'react';
+
+import styles from './styles/AuthInstructions.module.scss';
 import { Modal, Steps } from 'antd';
 import { socialAuthConfig } from '../../config/social-auth.config';
-import styles from './styles/AuthInstructions.module.scss';
 
-interface AuthInstructionsProps {
-  platform: keyof typeof socialAuthConfig;
-  visible: boolean;
-  onClose: () => void;
+interface IAuthInstructionsProps {
+  /** platform 的描述 */
+  platform: string | number | symbol;
+  /** visible 的描述 */
+  visible: false | true;
+  /** onClose 的描述 */
+  onClose: void;
 }
 
-export const AuthInstructions: React.FC<AuthInstructionsProps> = ({
+export const AuthInstructions: React.FC<IAuthInstructionsProps> = ({
   platform,
   visible,
-  onClose
+  onClose,
 }) => {
   const config = socialAuthConfig[platform];
 
@@ -26,16 +30,16 @@ export const AuthInstructions: React.FC<AuthInstructionsProps> = ({
       className={styles.instructionsModal}
     >
       <div className={styles.content}>
-        <p className={styles.description}>{config.description}</p>
+        <p className={stylesdescription}>{configdescription}</p>
         <Steps
           direction="vertical"
           current={-1}
           items={config.instructions.map((step, index) => ({
             title: `步骤 ${index + 1}`,
-            description: step
+            description: step,
           }))}
         />
       </div>
     </Modal>
   );
-}; 
+};

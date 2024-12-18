@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
+
+import { Card } from '../Card';
 import { IHealthData } from '../../types';
-import { healthAnalysisService, HealthAdvice as IHealthAdvice } from '../../services/analysis';
 import { Loading } from '../Loading';
 import { Message } from '../Message';
+import { healthAnalysisService, IHealthAdvice as IHealthAdvice } from '../../services/analysis';
 import { useTranslation } from 'react-i18next';
-import { Card } from '../Card';
 
-export interface HealthAdviceProps {
+export interface IHealthAdviceProps {
   /** 健康数据 */
   data: IHealthData[];
   /** 自定义类名 */
@@ -16,11 +17,7 @@ export interface HealthAdviceProps {
 }
 
 /** 健康建议生成组件 */
-export const HealthAdvice: React.FC<HealthAdviceProps> = ({
-  data,
-  className,
-  style
-}) => {
+export const HealthAdvice: React.FC<IHealthAdviceProps> = ({ data, className, style }) => {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [advice, setAdvice] = useState<IHealthAdvice[]>([]);
@@ -102,34 +99,26 @@ export const HealthAdvice: React.FC<HealthAdviceProps> = ({
   return (
     <div className={`health-advice ${className || ''}`} style={style}>
       <h2 className="text-xl font-bold mb-4">{t('advice.title')}</h2>
-      
+
       {/* 分类建议 */}
       {Object.entries(groupedAdvice).map(([type, items]) => (
         <Card key={type} className="mb-4">
-          <h3 className="text-lg font-medium mb-3">
-            {t(`healthData.type.${type}`)}
-          </h3>
+          <h3 className="text-lg font-medium mb-3">{t(`healthData.type.${type}`)}</h3>
           <div className="space-y-3">
             {items.map((item, index) => (
               <div
                 key={index}
-                className={`p-4 border-l-4 rounded-lg ${getPriorityColor(
-                  item.priority
-                )}`}
+                className={`p-4 border-l-4 rounded-lg ${getPriorityColor(item.priority)}`}
               >
                 <div className="flex items-start">
-                  <span className="text-xl mr-2">
-                    {getPriorityIcon(item.priority)}
-                  </span>
+                  <span className="text-xl mr-2">{getPriorityIcon(item.priority)}</span>
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-2">
                       <div className="font-medium">
                         {t('advice.priority')}: {item.priority}
                       </div>
                       <div className="text-sm">
-                        <span className="mr-2">
-                          {t(`advice.category.${item.category}`)}
-                        </span>
+                        <span className="mr-2">{t(`advice.category.${item.category}`)}</span>
                         <span className="mr-2">
                           {t('advice.confidence')}: {(item.confidence * 100).toFixed(1)}%
                         </span>
@@ -138,9 +127,7 @@ export const HealthAdvice: React.FC<HealthAdviceProps> = ({
                         </span>
                       </div>
                     </div>
-                    <div className="whitespace-pre-line text-gray-600">
-                      {item.advice}
-                    </div>
+                    <div className="whitespace-pre-line text-gray-600">{item.advice}</div>
                   </div>
                 </div>
               </div>
@@ -152,16 +139,12 @@ export const HealthAdvice: React.FC<HealthAdviceProps> = ({
       {/* 综合建议 */}
       {advice.length > 0 && (
         <Card className="mt-6">
-          <h3 className="text-lg font-medium mb-3">
-            {t('advice.comprehensive')}
-          </h3>
+          <h3 className="text-lg font-medium mb-3">{t('advice.comprehensive')}</h3>
           <div className="p-4 bg-blue-50 rounded-lg">
             <div className="flex items-start">
               <span className="text-xl mr-2">💡</span>
               <div>
-                <div className="font-medium mb-2">
-                  {t('advice.comprehensiveTitle')}
-                </div>
+                <div className="font-medium mb-2">{t('advice.comprehensiveTitle')}</div>
                 <ul className="list-disc list-inside space-y-2 text-gray-600">
                   <li>{t('advice.lifestyle')}</li>
                   <li>{t('advice.exercise')}</li>
@@ -176,4 +159,4 @@ export const HealthAdvice: React.FC<HealthAdviceProps> = ({
       )}
     </div>
   );
-}; 
+};

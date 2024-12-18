@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
-import { Upload, message, Progress, Space } from 'antd';
-import { InboxOutlined } from '@ant-design/icons';
-import { useTranslation } from 'react-i18next';
-import { RcFile } from 'antd/lib/upload';
+
 import { ImageProcessingStatus } from '../ImageProcessingStatus';
+import { InboxOutlined } from '@ant-design/icons';
+import { RcFile } from 'antd/lib/upload';
+import { Upload, message, Progress, Space } from 'antd';
+import { useTranslation } from 'react-i18next';
 
 const { Dragger } = Upload;
 
 interface ImageUploadProps {
+  /** onSuccess 的描述 */
   onSuccess?: (imageId: string) => void;
+  /** maxSize 的描述 */
   maxSize?: number;
+  /** accept 的描述 */
   accept?: string;
 }
 
@@ -53,7 +57,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
         headers: {
           // 不设置Content-Type，让浏览器自动设置
         },
-        onUploadProgress: (event) => {
+        onUploadProgress: event => {
           if (event.total) {
             const percent = Math.round((event.loaded * 100) / event.total);
             setProgress(percent);
@@ -92,9 +96,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
         <p className="ant-upload-drag-icon">
           <InboxOutlined />
         </p>
-        <p className="ant-upload-text">
-          {t('点击或拖拽图片到此区域上传')}
-        </p>
+        <p className="ant-upload-text">{t('点击或拖拽图片到此区域上传')}</p>
         <p className="ant-upload-hint">
           {t('支持单个图片上传，文件大小不超过 {{size}}MB', { size: maxSize / 1024 / 1024 })}
         </p>
@@ -114,4 +116,4 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
       <ImageProcessingStatus />
     </Space>
   );
-}; 
+};

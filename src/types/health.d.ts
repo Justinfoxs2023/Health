@@ -2,11 +2,7 @@ import { AxiosError } from 'axios';
 import { notification } from 'antd';
 
 export class APIError extends Error {
-  constructor(
-    public status: number,
-    public code: string,
-    message: string
-  ) {
+  constructor(public status: number, public code: string, message: string) {
     super(message);
     this.name = 'APIError';
   }
@@ -67,56 +63,86 @@ export const handleAPIError = (error: unknown) => {
   });
 };
 
-export interface HealthStatus {
-  status: string;
-  output?: string;
-  checks?: Record<string, boolean>;
-  timestamp: Date;
+export interface IHealthStatus {
+  /** status 的描述 */
+    status: string;
+  /** output 的描述 */
+    output: string;
+  /** checks 的描述 */
+    checks: Recordstring, /** boolean 的描述 */
+    /** boolean 的描述 */
+    boolean;
+  /** timestamp 的描述 */
+    timestamp: Date;
 }
 
-export interface ServiceDefinition {
-  name: string;
-  version: string;
-  endpoints: ServiceEndpoint[];
+export interface IServiceDefinition {
+  /** name 的描述 */
+    name: string;
+  /** version 的描述 */
+    version: string;
+  /** endpoints 的描述 */
+    endpoints: IServiceEndpoint;
 }
 
-export interface ServiceInstance {
-  id: string;
-  name: string;
-  address: string;
-  port: number;
-  tags: string[];
+export interface IServiceInstance {
+  /** id 的描述 */
+    id: string;
+  /** name 的描述 */
+    name: string;
+  /** address 的描述 */
+    address: string;
+  /** port 的描述 */
+    port: number;
+  /** tags 的描述 */
+    tags: string;
 }
 
-export interface ServiceEndpoint {
-  protocol: string;
-  host: string;
-  port: number;
+export interface IServiceEndpoint {
+  /** protocol 的描述 */
+    protocol: string;
+  /** host 的描述 */
+    host: string;
+  /** port 的描述 */
+    port: number;
 }
 
 // 健康数据类型定义
-export interface HealthData {
-  id: string;
-  title: string;
-  timestamp: string;
-  metrics: Record<string, number>;
-  tags?: string[];
+export interface IHealthData {
+  /** id 的描述 */
+    id: string;
+  /** title 的描述 */
+    title: string;
+  /** timestamp 的描述 */
+    timestamp: string;
+  /** metrics 的描述 */
+    metrics: Recordstring, /** number 的描述 */
+    /** number 的描述 */
+    number;
+  /** tags 的描述 */
+    tags: string;
 }
 
 // 健康指标配置
-export interface HealthMetric {
-  key: string;
-  label: string;
-  unit: string;
-  color: string;
-  format?: (value: number) => string;
+export interface IHealthMetric {
+  /** key 的描述 */
+    key: string;
+  /** label 的描述 */
+    label: string;
+  /** unit 的描述 */
+    unit: string;
+  /** color 的描述 */
+    color: string;
+  /** format 的描述 */
+    format: value: number  string;
 }
 
 // 详细健康数据
-export interface DetailedHealthData {
-  overview: {
+export interface IDetailedHealthData {
+  /** overview 的描述 */
+    overview: {
     summary: string;
-    highlights: Array<{
+    highlights: Array{
       label: string;
       value: number;
       change: number;
@@ -134,15 +160,23 @@ export interface DetailedHealthData {
 }
 
 // 健康目标类型
-export interface HealthGoal {
-  id: string;
-  title: string;
-  description?: string;
-  target: number;
-  unit: string;
-  startDate: string;
-  endDate: string;
-  milestones?: Array<{
+export interface IHealthGoal {
+  /** id 的描述 */
+    id: string;
+  /** title 的描述 */
+    title: string;
+  /** description 的描述 */
+    description: string;
+  /** target 的描述 */
+    target: number;
+  /** unit 的描述 */
+    unit: string;
+  /** startDate 的描述 */
+    startDate: string;
+  /** endDate 的描述 */
+    endDate: string;
+  /** milestones 的描述 */
+    milestones: Array{
     title: string;
     value: number;
   }>;
@@ -156,7 +190,7 @@ declare namespace Health {
     points: number;
     level: number;
     lastUpdated: Date;
-    members?: FamilyMember[];
+    members: FamilyMember;
   }
 
   interface FamilyMember {
@@ -171,7 +205,7 @@ declare namespace Health {
     id: string;
     title: string;
     points: number;
-    description?: string;
+    description: string;
     isActive: boolean;
   }
 
@@ -185,32 +219,41 @@ declare namespace Health {
   interface DiseaseHistory {
     memberId: string;
     relationship: string;
-    diseases: Disease[];
+    diseases: Disease;
   }
 
   interface Disease {
     name: string;
     diagnosisAge: number;
-    severity: 'mild' | 'moderate' | 'severe';
+    severity: mild  moderate  severe;
   }
 
-  interface RiskAssessment {
-    disease: string;
-    riskLevel: 'low' | 'medium' | 'high';
-    contributingFactors: string[];
-    preventiveMeasures: PreventiveMeasure[];
+  interface IRiskAssessment {
+    /** disease 的描述 */
+      disease: string;
+    /** riskLevel 的描述 */
+      riskLevel: low  medium  high;
+    contributingFactors: string;
+    preventiveMeasures: PreventiveMeasure;
   }
 
-  interface PreventiveMeasure {
-    action: string;
-    timeline: string;
-    priority: number;
+  interface IPreventiveMeasure {
+    /** action 的描述 */
+      action: string;
+    /** timeline 的描述 */
+      timeline: string;
+    /** priority 的描述 */
+      priority: number;
   }
 
-  interface TimelineEvent {
-    id: string;
-    date: string;
-    action: string;
-    status: 'pending' | 'completed' | 'overdue';
+  interface ITimelineEvent {
+    /** id 的描述 */
+      id: string;
+    /** date 的描述 */
+      date: string;
+    /** action 的描述 */
+      action: string;
+    /** status 的描述 */
+      status: pending  completed  overdue;
   }
-} 
+}

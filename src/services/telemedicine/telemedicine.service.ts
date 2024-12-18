@@ -22,4 +22,4 @@ export class TelemedicineService {
   async updateSession(sessionId: string, data: any): Promise<void> {
     // 实现更新会话数据逻辑
   }
-} 
+}

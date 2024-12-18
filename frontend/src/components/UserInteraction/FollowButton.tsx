@@ -1,49 +1,60 @@
 import React, { useState, useEffect } from 'react';
+
 import { Button, message } from 'antd';
 import { UserOutlined, LoadingOutlined } from '@ant-design/icons';
 import { useUserInteraction } from '../../hooks/useUserInteraction';
 
-interface FollowButtonProps {
+interface IFollowButtonProps {
+  /** userId 的描述 */
   userId: string;
+  /** initialIsFollowing 的描述 */
   initialIsFollowing?: boolean;
+  /** onFollowChange 的描述 */
   onFollowChange?: (isFollowing: boolean) => void;
+  /** size 的描述 */
   size?: 'small' | 'middle' | 'large';
+  /** className 的描述 */
   className?: string;
+  /** style 的描述 */
   style?: React.CSSProperties;
 }
 
-export const FollowButton: React.FC<FollowButtonProps> = ({
+export const FollowButton: React.FC<IFollowButtonProps> = ({
   userId,
   initialIsFollowing = false,
   onFollowChange,
   size = 'middle',
   className,
-  style
+  style,
 }) => {
   const [isFollowing, setIsFollowing] = useState(initialIsFollowing);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { followUser, unfollowUser, checkFollowStatus } = useUserInteraction();
 
-  useEffect(() => {
-    const checkStatus = async () => {
-      try {
-        setLoading(true);
-        const status = await checkFollowStatus(userId);
-        setIsFollowing(status);
-        setError(null);
-      } catch (err) {
-        setError('检查关注���态失败');
-        console.error('Failed to check follow status:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  console.error(
+    'Error in FollowButton.tsx:',
+    () => {
+      const checkStatus = async () => {
+        try {
+          setLoading(true);
+          const status = await checkFollowStatus(userId);
+          setIsFollowing(status);
+          setError(null);
+        } catch (err) {
+          setError('检查关注���态失败');
+          console.error('Error in FollowButton.tsx:', 'Failed to check follow status:', err);
+        } finally {
+          setLoading(false);
+        }
+      };
 
-    if (!initialIsFollowing) {
-      checkStatus();
-    }
-  }, [userId, initialIsFollowing, checkFollowStatus]);
+      if (!initialIsFollowing) {
+        checkStatus();
+      }
+    },
+    [userId, initialIsFollowing, checkFollowStatus],
+  );
 
   const handleClick = async () => {
     try {
@@ -64,7 +75,7 @@ export const FollowButton: React.FC<FollowButtonProps> = ({
       const errorMessage = isFollowing ? '取消关注失败' : '关注失败';
       setError(errorMessage);
       message.error(`${errorMessage}，请重试`);
-      console.error('Follow operation failed:', err);
+      console.error('Error in FollowButton.tsx:', 'Follow operation failed:', err);
     } finally {
       setLoading(false);
     }
@@ -89,4 +100,4 @@ export const FollowButton: React.FC<FollowButtonProps> = ({
       {buttonText}
     </Button>
   );
-}; 
+};

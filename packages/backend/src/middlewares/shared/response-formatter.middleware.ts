@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
-import { Logger } from '../../utils/logger';
 import { BaseResponse } from '../../types/shared';
+import { Logger } from '../../utils/logger';
+import { Request, Response, NextFunction } from 'express';
 
 export class ResponseFormatterMiddleware {
   private logger: Logger;
@@ -15,13 +15,13 @@ export class ResponseFormatterMiddleware {
     const originalSend = res.json;
 
     // 重写json方法
-    res.json = function(data: any): Response {
+    res.json = function (data: any): Response {
       // 格式化响应数据
       const formattedResponse: BaseResponse = {
         code: res.statusCode >= 400 ? res.statusCode : 200,
         data: data,
         message: data.message || 'success',
-        timestamp: new Date()
+        timestamp: new Date(),
       };
 
       // 调用原始send方法
@@ -32,4 +32,4 @@ export class ResponseFormatterMiddleware {
   }
 }
 
-export const responseFormatter = new ResponseFormatterMiddleware(); 
+export const responseFormatter = new ResponseFormatterMiddleware();

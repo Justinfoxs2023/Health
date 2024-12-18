@@ -1,7 +1,7 @@
+import { HealthData } from '../../../types/health';
+import { IAuthInfo, ISyncConfig } from '../../../types/platform';
 import { Logger } from '../../../utils/logger';
 import { PlatformProvider } from './base.provider';
-import { AuthInfo, SyncConfig } from '../../../types/platform';
-import { HealthData } from '../../../types/health';
 
 export class WechatProvider implements PlatformProvider {
   private logger: Logger;
@@ -11,7 +11,7 @@ export class WechatProvider implements PlatformProvider {
   }
 
   // 获取访问令牌
-  async getAccessToken(code: string): Promise<AuthInfo> {
+  async getAccessToken(code: string): Promise<IAuthInfo> {
     try {
       const response = await fetch('https://api.weixin.qq.com/sns/oauth2/access_token', {
         method: 'POST',
@@ -19,8 +19,8 @@ export class WechatProvider implements PlatformProvider {
           appid: process.env.WECHAT_APP_ID,
           secret: process.env.WECHAT_APP_SECRET,
           code,
-          grant_type: 'authorization_code'
-        })
+          grant_type: 'authorization_code',
+        }),
       });
 
       const data = await response.json();
@@ -32,20 +32,17 @@ export class WechatProvider implements PlatformProvider {
   }
 
   // 获取运动数据
-  async getHealthData(
-    authInfo: AuthInfo,
-    config: SyncConfig
-  ): Promise<HealthData[]> {
+  async getHealthData(authInfo: IAuthInfo, config: ISyncConfig): Promise<HealthData[]> {
     try {
       const response = await fetch('https://api.weixin.qq.com/sport/getrunningrecords', {
         headers: {
-          'Authorization': `Bearer ${authInfo.accessToken}`
+          Authorization: `Bearer ${authInfo.accessToken}`,
         },
         body: JSON.stringify({
           openid: authInfo.platformUserId,
           begin_time: config.startTime?.getTime(),
-          end_time: config.endTime?.getTime()
-        })
+          end_time: config.endTime?.getTime(),
+        }),
       });
 
       const data = await response.json();
@@ -55,4 +52,4 @@ export class WechatProvider implements PlatformProvider {
       throw error;
     }
   }
-} 
+}

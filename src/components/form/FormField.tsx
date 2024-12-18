@@ -14,8 +14,8 @@ const Label = styled.label`
 const Input = styled.input<{ hasError?: boolean }>`
   width: 100%;
   padding: ${({ theme }) => theme.spacing(1.5)};
-  border: 1px solid ${({ theme, hasError }) => 
-    hasError ? theme.colors.error.main : theme.colors.text.secondary};
+  border: 1px solid
+    ${({ theme, hasError }) => (hasError ? theme.colors.error.main : theme.colors.text.secondary)};
   border-radius: 4px;
   transition: border-color 0.3s;
 
@@ -31,31 +31,35 @@ const ErrorMessage = styled.div`
   margin-top: ${({ theme }) => theme.spacing(0.5)};
 `;
 
-interface FormFieldProps {
-  label: string;
-  name: string;
-  type?: string;
-  placeholder?: string;
+interface IFormFieldProps {
+  /** label 的描述 */
+    label: string;
+  /** name 的描述 */
+    name: string;
+  /** type 的描述 */
+    type: string;
+  /** placeholder 的描述 */
+    placeholder: string;
 }
 
-export const FormField: React.FC<FormFieldProps> = ({ label, ...props }) => {
+export const FormField: React.FC<IFormFieldProps> = ({ label, ...props }) => {
   const [field, meta] = useField(props);
   const hasError = meta.touched && meta.error;
 
   return (
     <FieldWrapper>
-      <Label htmlFor={props.name}>{label}</Label>
-      <Input 
-        {...field} 
+      <Label htmlFor={propsname}>{label}</Label>
+      <Input
+        {...field}
         {...props}
         hasError={hasError}
         aria-describedby={hasError ? `${props.name}-error` : undefined}
       />
       {hasError && (
-        <ErrorMessage id={`${props.name}-error`} role="alert">
-          {meta.error}
+        <ErrorMessage id={{propsname}error} role="alert">
+          {metaerror}
         </ErrorMessage>
       )}
     </FieldWrapper>
   );
-}; 
+};

@@ -1,16 +1,18 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Modal, Space, Button, Slider as AntSlider } from 'antd';
+
 import {
   ZoomInOutlined as ZoomIn,
   ZoomOutOutlined as ZoomOut,
   RotateLeftOutlined as RotateLeft,
   RotateRightOutlined as RotateRight,
-  DownloadOutlined
+  DownloadOutlined,
 } from '@ant-design/icons';
-import { useGesture } from '@use-gesture/react';
 import { ImageService } from '../../services/image';
+import { Modal, Space, Button, Slider as AntSlider } from 'antd';
+import { useGesture } from '@use-gesture/react';
 
-interface ImagePreviewProps {
+interf
+ace ImagePreviewProps {
   visible: boolean;
   src: string;
   alt?: string;
@@ -33,7 +35,7 @@ export const ImagePreview: React.FC<ImagePreviewProps> = ({
   style,
   initialScale = 1,
   maxScale = 3,
-  minScale = 0.1
+  minScale = 0.1,
 }) => {
   const [scale, setScale] = useState(initialScale);
   const [rotate, setRotate] = useState(0);
@@ -81,22 +83,22 @@ export const ImagePreview: React.FC<ImagePreviewProps> = ({
     setRotate(prev => prev + 90);
   }, []);
 
-  const handleDownload = useCallback(async () => {
-    if (onDownload) {
-      onDownload();
-    } else {
-      try {
-        const imageService = new ImageService();
-        const optimizedImage = await imageService.optimizeForDownload(src);
-        const link = document.createElement('a');
-        link.href = optimizedImage;
-        link.download = alt || 'image';
-        link.click();
-      } catch (err) {
-        console.error('下载失败:', err);
+  const handleDownload = console.error('Error in index.tsx:', async () => {
+      if (onDownload) {
+        onDownload();
+      } else {
+        try {
+          const imageService = new ImageService();
+          const optimizedImage = await imageService.optimizeForDownload(src);
+          const link = document.createElement('a');
+          link.href = optimizedImage;
+          link.download = alt || 'image';
+          link.click();
+        } catch (err) {
+          console.error('Error in index.tsx:', '下载失败:', err);
+        }
       }
-    }
-  }, [src, alt, onDownload]);
+    }, [src, alt, onDownload]);
 
   const handleClose = useCallback(() => {
     setScale(initialScale);
@@ -122,7 +124,7 @@ export const ImagePreview: React.FC<ImagePreviewProps> = ({
       } else {
         handleZoomOut();
       }
-    }
+    },
   });
 
   return (
@@ -141,7 +143,7 @@ export const ImagePreview: React.FC<ImagePreviewProps> = ({
           position: 'relative',
           height: 'calc(80vh - 100px)',
           backgroundColor: '#000',
-          overflow: 'hidden'
+          overflow: 'hidden',
         }}
         {...bind()}
       >
@@ -162,7 +164,7 @@ export const ImagePreview: React.FC<ImagePreviewProps> = ({
               maxHeight: '100%',
               transition: 'transform 0.3s ease-in-out',
               cursor: 'grab',
-              userSelect: 'none'
+              userSelect: 'none',
             }}
             draggable={false}
           />
@@ -175,16 +177,12 @@ export const ImagePreview: React.FC<ImagePreviewProps> = ({
           padding: '16px',
           backgroundColor: '#fff',
           borderTop: '1px solid #f0f0f0',
-          textAlign: 'center'
+          textAlign: 'center',
         }}
       >
         <Space size="middle">
           <Space>
-            <Button
-              icon={<ZoomOut />}
-              onClick={handleZoomOut}
-              disabled={scale <= minScale}
-            />
+            <Button icon={<ZoomOut />} onClick={handleZoomOut} disabled={scale <= minScale} />
             <AntSlider
               min={minScale}
               max={maxScale}
@@ -193,11 +191,7 @@ export const ImagePreview: React.FC<ImagePreviewProps> = ({
               onChange={setScale}
               style={{ width: 100 }}
             />
-            <Button
-              icon={<ZoomIn />}
-              onClick={handleZoomIn}
-              disabled={scale >= maxScale}
-            />
+            <Button icon={<ZoomIn />} onClick={handleZoomIn} disabled={scale >= maxScale} />
           </Space>
 
           <Space>
@@ -210,4 +204,4 @@ export const ImagePreview: React.FC<ImagePreviewProps> = ({
       </div>
     </Modal>
   );
-}; 
+};

@@ -1,14 +1,14 @@
 import { AxiosError } from 'axios';
-import { ErrorService, ErrorType, ErrorHandler, ConsoleErrorHandler } from '../index';
+import { ErrorService, ErrorType, IErrorHandler, ConsoleErrorHandler } from '../index';
 
 describe('ErrorService', () => {
   let errorService: ErrorService;
-  let mockHandler: ErrorHandler;
+  let mockHandler: IErrorHandler;
 
   beforeEach(() => {
     errorService = ErrorService.getInstance();
     mockHandler = {
-      handle: jest.fn()
+      handle: jest.fn(),
     };
     // 清除所有处理器
     // @ts-ignore 访问私有属性
@@ -33,17 +33,14 @@ describe('ErrorService', () => {
 
   it('应该正确处理网络错误', () => {
     errorService.addHandler(mockHandler);
-    const axiosError = new AxiosError(
-      '网络错误',
-      'ECONNABORTED'
-    );
+    const axiosError = new AxiosError('网络错误', 'ECONNABORTED');
 
     errorService.handleError(axiosError);
 
     expect(mockHandler.handle).toHaveBeenCalledWith({
       type: ErrorType.NETWORK,
       message: '网络连接失败，请检查网络设置',
-      originalError: axiosError
+      originalError: axiosError,
     });
   });
 
@@ -51,14 +48,14 @@ describe('ErrorService', () => {
     errorService.addHandler(mockHandler);
     const response = {
       status: 401,
-      data: { message: '未授权访问' }
+      data: { message: '未授权访问' },
     };
     const axiosError = new AxiosError(
       '未授权',
       'ERR_BAD_REQUEST',
       undefined,
       undefined,
-      response as any
+      response as any,
     );
 
     errorService.handleError(axiosError);
@@ -67,7 +64,7 @@ describe('ErrorService', () => {
       type: ErrorType.AUTH,
       message: '未授权，请重新登录',
       code: 401,
-      originalError: axiosError
+      originalError: axiosError,
     });
   });
 
@@ -80,7 +77,7 @@ describe('ErrorService', () => {
     expect(mockHandler.handle).toHaveBeenCalledWith({
       type: ErrorType.UNKNOWN,
       message: '测试错误',
-      originalError: error
+      originalError: error,
     });
   });
 
@@ -93,7 +90,7 @@ describe('ErrorService', () => {
     expect(mockHandler.handle).toHaveBeenCalledWith({
       type: ErrorType.UNKNOWN,
       message: '字符串错误',
-      originalError: error
+      originalError: error,
     });
   });
 });
@@ -114,26 +111,22 @@ describe('ConsoleErrorHandler', () => {
     const errorInfo = {
       type: ErrorType.BUSINESS,
       message: '业务错误',
-      code: 'BIZ_001'
+      code: 'BIZ_001',
     };
 
     handler.handle(errorInfo);
 
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      '[BUSINESS] 业务错误 (BIZ_001)'
-    );
+    expect(consoleErrorSpy).toHaveBeenCalledWith('[BUSINESS] 业务错误 (BIZ_001)');
   });
 
   it('应该在没有错误码时正确记录错误信息', () => {
     const errorInfo = {
       type: ErrorType.NETWORK,
-      message: '网络错误'
+      message: '网络错误',
     };
 
     handler.handle(errorInfo);
 
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      '[NETWORK] 网络错误'
-    );
+    expect(consoleErrorSpy).toHaveBeenCalledWith('[NETWORK] 网络错误');
   });
-}); 
+});

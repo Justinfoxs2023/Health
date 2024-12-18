@@ -1,32 +1,32 @@
-import { syncService } from '../index';
-import { storage } from '../../storage';
+import { IHealthData, HealthDataType } from '../../../types';
 import { http } from '../../http';
 import { logger } from '../../logger';
-import { IHealthData, HealthDataType } from '../../../types';
+import { storage } from '../../storage';
+import { syncService } from '../index';
 
 // Mock storage
 jest.mock('../../storage', () => ({
   storage: {
     getItem: jest.fn(),
     setItem: jest.fn(),
-    removeItem: jest.fn()
-  }
+    removeItem: jest.fn(),
+  },
 }));
 
 // Mock http
 jest.mock('../../http', () => ({
   http: {
     get: jest.fn(),
-    post: jest.fn()
-  }
+    post: jest.fn(),
+  },
 }));
 
 // Mock logger
 jest.mock('../../logger', () => ({
   logger: {
     warn: jest.fn(),
-    error: jest.fn()
-  }
+    error: jest.fn(),
+  },
 }));
 
 describe('SyncService', () => {
@@ -36,7 +36,7 @@ describe('SyncService', () => {
     type: HealthDataType.BLOOD_PRESSURE,
     value: 120,
     timestamp: new Date(),
-    userId: 'user1'
+    userId: 'user1',
   };
 
   beforeEach(() => {
@@ -45,7 +45,7 @@ describe('SyncService', () => {
     // 重置网络状态
     Object.defineProperty(navigator, 'onLine', {
       configurable: true,
-      value: true
+      value: true,
     });
     // 清理事件监听
     window.dispatchEvent(new Event('online'));
@@ -64,7 +64,7 @@ describe('SyncService', () => {
         syncing: false,
         lastSyncTime: null,
         pendingCount: 0,
-        offline: false
+        offline: false,
       });
     });
 
@@ -84,14 +84,14 @@ describe('SyncService', () => {
       const newConfig = {
         autoSyncInterval: 10000,
         maxRetries: 5,
-        conflictStrategy: 'client' as const
+        conflictStrategy: 'client' as const,
       };
 
       syncService.configure(newConfig);
 
       expect(syncService['config']).toEqual({
         ...syncService['config'],
-        ...newConfig
+        ...newConfig,
       });
     });
 
@@ -113,10 +113,7 @@ describe('SyncService', () => {
       await syncService.addPendingData(mockHealthData);
 
       expect(syncService.getState().pendingCount).toBe(1);
-      expect(storage.setItem).toHaveBeenCalledWith(
-        'sync_pending_queue',
-        [mockHealthData.id]
-      );
+      expect(storage.setItem).toHaveBeenCalledWith('sync_pending_queue', [mockHealthData.id]);
     });
 
     it('应该防止重复同步', async () => {
@@ -144,7 +141,7 @@ describe('SyncService', () => {
 
       expect(http.get).toHaveBeenCalledWith('/api/health-data');
       expect(http.post).toHaveBeenCalledWith('/api/health-data/batch', {
-        data: expect.any(Array)
+        data: expect.any(Array),
       });
     });
 
@@ -164,7 +161,7 @@ describe('SyncService', () => {
     it('应该检测到离线状态', () => {
       Object.defineProperty(navigator, 'onLine', {
         configurable: true,
-        value: false
+        value: false,
       });
       window.dispatchEvent(new Event('offline'));
 
@@ -177,7 +174,7 @@ describe('SyncService', () => {
       // 模拟离线状态
       Object.defineProperty(navigator, 'onLine', {
         configurable: true,
-        value: false
+        value: false,
       });
       window.dispatchEvent(new Event('offline'));
 
@@ -187,7 +184,7 @@ describe('SyncService', () => {
       // 恢复在线
       Object.defineProperty(navigator, 'onLine', {
         configurable: true,
-        value: true
+        value: true,
       });
       window.dispatchEvent(new Event('online'));
 
@@ -214,9 +211,7 @@ describe('SyncService', () => {
       syncService.configure({ conflictStrategy: 'manual' });
       const eventSpy = jest.spyOn(window, 'dispatchEvent');
       await syncService['resolveConflicts'](localData, serverData);
-      expect(eventSpy).toHaveBeenCalledWith(
-        expect.any(CustomEvent)
-      );
+      expect(eventSpy).toHaveBeenCalledWith(expect.any(CustomEvent));
     });
   });
 
@@ -226,10 +221,7 @@ describe('SyncService', () => {
       await syncService.clearPendingData();
 
       expect(syncService.getState().pendingCount).toBe(0);
-      expect(storage.setItem).toHaveBeenCalledWith(
-        'sync_pending_queue',
-        []
-      );
+      expect(storage.setItem).toHaveBeenCalledWith('sync_pending_queue', []);
     });
 
     it('应该正确清除已同步的数据', async () => {
@@ -239,4 +231,4 @@ describe('SyncService', () => {
       expect(syncService.getState().pendingCount).toBe(0);
     });
   });
-}); 
+});

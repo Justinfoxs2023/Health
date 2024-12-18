@@ -1,13 +1,17 @@
+import fs from 'fs';
 import mongoose from 'mongoose';
 import path from 'path';
-import fs from 'fs';
 import { logger } from '../logger';
 import { transactionService } from '../transaction';
 
-interface Migration {
+interface IMigration {
+  /** version 的描述 */
   version: string;
+  /** description 的描述 */
   description: string;
+  /** up 的描述 */
   up: (session: mongoose.ClientSession) => Promise<void>;
+  /** down 的描述 */
   down: (session: mongoose.ClientSession) => Promise<void>;
 }
 
@@ -27,20 +31,21 @@ class MigrationService {
    */
   private async getAppliedMigrations(): Promise<string[]> {
     const db = mongoose.connection.db;
-    const migrations = await db.collection(this.migrationCollection)
+    const migrations = await db
+      .collection(this.migrationCollection)
       .find({})
       .sort({ version: 1 })
       .toArray();
-    
+
     return migrations.map(m => m.version);
   }
 
   /**
    * 获取所有迁移文件
    */
-  private async getAllMigrations(): Promise<Migration[]> {
+  private async getAllMigrations(): Promise<IMigration[]> {
     const files = await fs.promises.readdir(this.migrationsDir);
-    const migrations: Migration[] = [];
+    const migrations: IMigration[] = [];
 
     for (const file of files) {
       if (file.endsWith('.js') || file.endsWith('.ts')) {
@@ -49,9 +54,7 @@ class MigrationService {
       }
     }
 
-    return migrations.sort((a, b) => 
-      parseInt(a.version) - parseInt(b.version)
-    );
+    return migrations.sort((a, b) => parseInt(a.version) - parseInt(b.version));
   }
 
   /**
@@ -61,9 +64,10 @@ class MigrationService {
     const appliedMigrations = await this.getAppliedMigrations();
     const allMigrations = await this.getAllMigrations();
 
-    const pendingMigrations = allMigrations.filter(migration =>
-      !appliedMigrations.includes(migration.version) &&
-      (!targetVersion || migration.version <= targetVersion)
+    const pendingMigrations = allMigrations.filter(
+      migration =>
+        !appliedMigrations.includes(migration.version) &&
+        (!targetVersion || migration.version <= targetVersion),
     );
 
     if (pendingMigrations.length === 0) {
@@ -79,7 +83,7 @@ class MigrationService {
   /**
    * 回滚迁移
    */
-  async rollback(steps: number = 1): Promise<void> {
+  async rollback(steps = 1): Promise<void> {
     const appliedMigrations = await this.getAppliedMigrations();
     const allMigrations = await this.getAllMigrations();
 
@@ -100,11 +104,11 @@ class MigrationService {
   /**
    * 执行单个迁移
    */
-  private async executeMigration(migration: Migration): Promise<void> {
+  private async executeMigration(migration: IMigration): Promise<void> {
     logger.info(`开始执行迁移 ${migration.version}: ${migration.description}`);
 
     try {
-      await transactionService.executeTransactionWithRetry(async (session) => {
+      await transactionService.executeTransactionWithRetry(async session => {
         await migration.up(session);
         await this.recordMigration(migration, session);
       });
@@ -119,11 +123,11 @@ class MigrationService {
   /**
    * 回滚单个迁移
    */
-  private async rollbackMigration(migration: Migration): Promise<void> {
+  private async rollbackMigration(migration: IMigration): Promise<void> {
     logger.info(`开始回滚迁移 ${migration.version}: ${migration.description}`);
 
     try {
-      await transactionService.executeTransactionWithRetry(async (session) => {
+      await transactionService.executeTransactionWithRetry(async session => {
         await migration.down(session);
         await this.removeMigrationRecord(migration, session);
       });
@@ -139,28 +143,34 @@ class MigrationService {
    * 记录迁移执行
    */
   private async recordMigration(
-    migration: Migration,
-    session: mongoose.ClientSession
+    migration: IMigration,
+    session: mongoose.ClientSession,
   ): Promise<void> {
     const db = mongoose.connection.db;
-    await db.collection(this.migrationCollection).insertOne({
-      version: migration.version,
-      description: migration.description,
-      executed_at: new Date()
-    }, { session });
+    await db.collection(this.migrationCollection).insertOne(
+      {
+        version: migration.version,
+        description: migration.description,
+        executed_at: new Date(),
+      },
+      { session },
+    );
   }
 
   /**
    * 删除迁移记录
    */
   private async removeMigrationRecord(
-    migration: Migration,
-    session: mongoose.ClientSession
+    migration: IMigration,
+    session: mongoose.ClientSession,
   ): Promise<void> {
     const db = mongoose.connection.db;
-    await db.collection(this.migrationCollection).deleteOne({
-      version: migration.version
-    }, { session });
+    await db.collection(this.migrationCollection).deleteOne(
+      {
+        version: migration.version,
+      },
+      { session },
+    );
   }
 
   /**
@@ -208,18 +218,21 @@ export async function down(session: mongoose.ClientSession): Promise<void> {
     const allMigrations = await this.getAllMigrations();
 
     const db = mongoose.connection.db;
-    const lastMigration = await db.collection(this.migrationCollection)
+    const lastMigration = await db
+      .collection(this.migrationCollection)
       .findOne({}, { sort: { executed_at: -1 } });
 
     return {
       total: allMigrations.length,
       applied: appliedMigrations.length,
       pending: allMigrations.length - appliedMigrations.length,
-      lastMigration: lastMigration ? {
-        version: lastMigration.version,
-        description: lastMigration.description,
-        executed_at: lastMigration.executed_at
-      } : undefined
+      lastMigration: lastMigration
+        ? {
+            version: lastMigration.version,
+            description: lastMigration.description,
+            executed_at: lastMigration.executed_at,
+          }
+        : undefined,
     };
   }
 
@@ -229,7 +242,7 @@ export async function down(session: mongoose.ClientSession): Promise<void> {
   async validateMigrations(): Promise<boolean> {
     try {
       const allMigrations = await this.getAllMigrations();
-      
+
       // 检查版本号唯一性
       const versions = allMigrations.map(m => m.version);
       const uniqueVersions = new Set(versions);
@@ -255,4 +268,4 @@ export async function down(session: mongoose.ClientSession): Promise<void> {
   }
 }
 
-export const migrationService = new MigrationService(); 
+export const migrationService = new MigrationService();

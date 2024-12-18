@@ -1,38 +1,58 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Image } from 'react-native';
-import { Card, Text, Chip, Button, useTheme, Divider } from 'react-native-paper';
 
-interface Recipe {
+import { Card, Text, Chip, Button, useTheme, Divider } from 'react-native-paper';
+import { View, StyleSheet, ScrollView, Image } from 'react-native';
+
+interface IRecipe {
+  /** id 的描述 */
   id: string;
+  /** name 的描述 */
   name: string;
+  /** image 的描述 */
   image: string;
+  /** prepTime 的描述 */
   prepTime: number;
+  /** cookTime 的描述 */
   cookTime: number;
+  /** difficulty 的描述 */
   difficulty: 'easy' | 'medium' | 'hard';
+  /** calories 的描述 */
   calories: number;
+  /** nutrition 的描述 */
   nutrition: {
     protein: number;
     carbs: number;
     fat: number;
     fiber: number;
   };
+  /** ingredients 的描述 */
   ingredients: Array<{
     name: string;
     amount: number;
     unit: string;
   }>;
+  /** steps 的描述 */
   steps: string[];
+  /** tags 的描述 */
   tags: string[];
+  /** healthScore 的描述 */
   healthScore: number;
+  /** suitableFor 的描述 */
   suitableFor: string[];
 }
 
-interface UserPreferences {
+interface IUserPreferences {
+  /** dietaryRestrictions 的描述 */
   dietaryRestrictions: string[];
+  /** allergies 的描述 */
   allergies: string[];
+  /** cuisinePreferences 的描述 */
   cuisinePreferences: string[];
+  /** cookingSkill 的描述 */
   cookingSkill: 'beginner' | 'intermediate' | 'advanced';
+  /** timeConstraint 的描述 */
   timeConstraint: number;
+  /** nutritionGoals 的描述 */
   nutritionGoals: {
     calories: number;
     protein: number;
@@ -41,14 +61,16 @@ interface UserPreferences {
   };
 }
 
-interface RecipeRecommenderProps {
-  userPreferences: UserPreferences;
-  onSelectRecipe: (recipe: Recipe) => void;
+interface IRecipeRecommenderProps {
+  /** userPreferences 的描述 */
+  userPreferences: IUserPreferences;
+  /** onSelectRecipe 的描述 */
+  onSelectRecipe: (recipe: IRecipe) => void;
 }
 
-export const RecipeRecommender = ({ userPreferences, onSelectRecipe }: RecipeRecommenderProps) => {
+export const RecipeRecommender = ({ userPreferences, onSelectRecipe }: IRecipeRecommenderProps) => {
   const theme = useTheme();
-  const [recommendations, setRecommendations] = useState<Recipe[]>([]);
+  const [recommendations, setRecommendations] = useState<IRecipe[]>([]);
   const [loading, setLoading] = useState(false);
 
   const generateRecommendations = async () => {
@@ -66,7 +88,7 @@ export const RecipeRecommender = ({ userPreferences, onSelectRecipe }: RecipeRec
       const recipes = await response.json();
       setRecommendations(recipes);
     } catch (error) {
-      console.error('获取推荐食谱失败:', error);
+      console.error('Error in RecipeRecommender.tsx:', '获取推荐食谱失败:', error);
       alert('获取推荐失败，请重试');
     } finally {
       setLoading(false);
@@ -104,11 +126,7 @@ export const RecipeRecommender = ({ userPreferences, onSelectRecipe }: RecipeRec
       </Button>
 
       {recommendations.map(recipe => (
-        <Card 
-          key={recipe.id} 
-          style={styles.recipeCard}
-          onPress={() => onSelectRecipe(recipe)}
-        >
+        <Card key={recipe.id} style={styles.recipeCard} onPress={() => onSelectRecipe(recipe)}>
           <Card.Cover source={{ uri: recipe.image }} style={styles.recipeImage} />
           <Card.Content>
             <View style={styles.recipeHeader}>
@@ -278,4 +296,4 @@ const styles = StyleSheet.create({
     color: '#666',
     marginTop: 4,
   },
-}); 
+});

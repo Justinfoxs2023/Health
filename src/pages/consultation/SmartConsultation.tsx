@@ -1,10 +1,11 @@
 import { useState } from 'react';
+
 import styled from 'styled-components';
-import { SymptomAnalysis } from './components/SymptomAnalysis';
 import { DiagnosisSuggestion } from './components/DiagnosisSuggestion';
 import { DoctorMatching } from './components/DoctorMatching';
-import { VideoConsultation } from './components/VideoConsultation';
 import { FollowUpManager } from './components/FollowUpManager';
+import { SymptomAnalysis } from './components/SymptomAnalysis';
+import { VideoConsultation } from './components/VideoConsultation';
 
 const ConsultationContainer = styled.div`
   display: flex;
@@ -31,7 +32,9 @@ const SideSection = styled.div`
 `;
 
 export const SmartConsultation: React.FC = () => {
-  const [currentStep, setCurrentStep] = useState<'analysis' | 'diagnosis' | 'consultation'>('analysis');
+  const [currentStep, setCurrentStep] = useState<'analysis' | 'diagnosis' | 'consultation'>(
+    'analysis',
+  );
   const [consultationData, setConsultationData] = useState({});
 
   const handleSymptomAnalysis = (symptoms: any) => {
@@ -50,20 +53,18 @@ export const SmartConsultation: React.FC = () => {
     <ConsultationContainer>
       <MainSection>
         {currentStep === 'analysis' && (
-          <SymptomAnalysis 
-            onAnalysisComplete={handleSymptomAnalysis}
-          />
+          <SymptomAnalysis onAnalysisComplete={handleSymptomAnalysis} />
         )}
-        
+
         {currentStep === 'diagnosis' && (
-          <DiagnosisSuggestion 
+          <DiagnosisSuggestion
             symptoms={consultationData.symptoms}
             onDiagnosisComplete={handleDiagnosis}
           />
         )}
-        
+
         {currentStep === 'consultation' && (
-          <VideoConsultation 
+          <VideoConsultation
             doctorId={consultationData.matchedDoctor.id}
             diagnosis={consultationData.diagnosis}
           />
@@ -71,16 +72,13 @@ export const SmartConsultation: React.FC = () => {
       </MainSection>
 
       <SideSection>
-        <DoctorMatching 
-          specialties={consultationData.requiredSpecialties}
-          availability={true}
-        />
-        
-        <FollowUpManager 
+        <DoctorMatching specialties={consultationData.requiredSpecialties} availability={true} />
+
+        <FollowUpManager
           consultationHistory={consultationData.history}
           upcomingFollowUps={consultationData.followUps}
         />
       </SideSection>
     </ConsultationContainer>
   );
-}; 
+};

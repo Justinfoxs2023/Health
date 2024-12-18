@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 disease-management.service.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 @Injectable()
 export class DiseaseManagementService {
   // 疾病监控
@@ -45,4 +52,4 @@ export class DiseaseManagementService {
       qualityOfLife: number;
     };
   };
-} 
+}

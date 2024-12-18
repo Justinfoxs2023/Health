@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { healthTrackingController } from '../controllers/health-tracking.controller';
 import { auth } from '../middleware/auth';
+import { healthTrackingController } from '../controllers/health-tracking.controller';
 
 const router = Router();
 
@@ -13,4 +13,4 @@ router.get('/', auth.required, healthTrackingController.getHealthRecords);
 // 获取健康统计数据
 router.get('/stats', auth.required, healthTrackingController.getHealthStats);
 
-export default router; 
+export default router;

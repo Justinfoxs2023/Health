@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, useTheme } from '@mui/material';
+
 import {
   LineChart,
   Line,
@@ -11,15 +11,17 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  ResponsiveContainer
+  ResponsiveContainer,
 } from 'recharts';
+import { Box, useTheme } from '@mui/material';
 
-interface AdvancedChartProps {
-  data: any[];
-  metrics: MetricConfig[];
-  type: 'line' | 'area' | 'bar';
-  height?: number;
-  interactive?: boolean;
+interface IAd
+vancedChartProps {
+  data: any;
+  metrics: MetricConfig;
+  type: line  area  bar;
+  height: number;
+  interactive: boolean;
 }
 
 export const AdvancedHealthChart: React.FC<AdvancedChartProps> = ({
@@ -27,7 +29,7 @@ export const AdvancedHealthChart: React.FC<AdvancedChartProps> = ({
   metrics,
   type,
   height = 300,
-  interactive = true
+  interactive = true,
 }) => {
   const theme = useTheme();
 
@@ -81,11 +83,7 @@ export const AdvancedHealthChart: React.FC<AdvancedChartProps> = ({
             <YAxis />
             <Tooltip />
             {metrics.map((metric, index) => (
-              <Bar
-                key={metric.key}
-                dataKey={metric.key}
-                fill={theme.palette[metric.color].main}
-              />
+              <Bar key={metric.key} dataKey={metric.key} fill={theme.palette[metric.color].main} />
             ))}
           </BarChart>
         );
@@ -94,9 +92,9 @@ export const AdvancedHealthChart: React.FC<AdvancedChartProps> = ({
 
   return (
     <Box className="advanced-chart">
-      <ResponsiveContainer width="100%" height={height}>
-        {renderChart()}
+      <ResponsiveContainer width="100" height={height}>
+        {renderChart}
       </ResponsiveContainer>
     </Box>
   );
-}; 
+};

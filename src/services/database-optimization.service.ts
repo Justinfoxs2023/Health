@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { DatabaseMonitorService } from './database-monitor.service';
 import { InjectModel } from '@nestjs/mongoose';
+import { Injectable } from '@nestjs/common';
+import { Logger } from './logger.service';
 import { Model } from 'mongoose';
 import { MongoClient } from 'mongodb';
-import { Logger } from './logger.service';
 import { PerformanceService } from './performance.service';
-import { DatabaseMonitorService } from './database-monitor.service';
 
 @Injectable()
 export class DatabaseOptimizationService {
@@ -21,10 +21,10 @@ export class DatabaseOptimizationService {
     try {
       // 获取集合的索引使用统计
       const indexStats = await this.databaseMonitorService.getIndexStats(collectionName);
-      
+
       // 分析未使用的索引
       const unusedIndexes = indexStats.filter(stat => stat.accesses.ops === 0);
-      
+
       // 删除未使用的索引
       for (const index of unusedIndexes) {
         await this.dropUnusedIndex(collectionName, index.name);
@@ -32,10 +32,10 @@ export class DatabaseOptimizationService {
 
       // 分析查询模式
       const queryPatterns = await this.analyzeQueryPatterns(collectionName);
-      
+
       // 创建推荐的索引
       await this.createRecommendedIndexes(collectionName, queryPatterns);
-      
+
       this.logger.info(`Completed index optimization for collection: ${collectionName}`);
     } catch (error) {
       this.logger.error(`Failed to optimize indexes: ${error.message}`);
@@ -50,19 +50,19 @@ export class DatabaseOptimizationService {
     try {
       // 获取慢查询日志
       const slowQueries = await this.databaseMonitorService.getSlowQueries(collectionName);
-      
+
       // 分析查询模式
       const queryPatterns = await this.analyzeQueryPatterns(collectionName);
-      
+
       // 生成查询优化建议
       const optimizationSuggestions = await this.generateQueryOptimizations(
         slowQueries,
-        queryPatterns
+        queryPatterns,
       );
 
       // 应用优化建议
       await this.applyQueryOptimizations(collectionName, optimizationSuggestions);
-      
+
       this.logger.info(`Completed query optimization for collection: ${collectionName}`);
     } catch (error) {
       this.logger.error(`Failed to optimize queries: ${error.message}`);
@@ -77,7 +77,7 @@ export class DatabaseOptimizationService {
     try {
       // 获取查询历史
       const queryHistory = await this.databaseMonitorService.getQueryHistory(collectionName);
-      
+
       // 分析查询频率和模式
       const patterns = queryHistory.reduce((acc, query) => {
         const pattern = this.extractQueryPattern(query);
@@ -123,7 +123,7 @@ export class DatabaseOptimizationService {
    */
   private async generateQueryOptimizations(
     slowQueries: any[],
-    queryPatterns: any[]
+    queryPatterns: any[],
   ): Promise<any[]> {
     const optimizations = [];
 
@@ -135,7 +135,7 @@ export class DatabaseOptimizationService {
         optimizations.push({
           query: query,
           frequency: matchingPattern.frequency,
-          suggestions: this.generateOptimizationSuggestions(query)
+          suggestions: this.generateOptimizationSuggestions(query),
         });
       }
     }
@@ -172,7 +172,7 @@ export class DatabaseOptimizationService {
    */
   private async applyQueryOptimizations(
     collectionName: string,
-    optimizations: any[]
+    optimizations: any[],
   ): Promise<void> {
     for (const optimization of optimizations) {
       // 创建推荐的索引
@@ -231,4 +231,4 @@ export class DatabaseOptimizationService {
       throw error;
     }
   }
-} 
+}

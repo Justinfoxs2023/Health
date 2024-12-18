@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
+
 import {
   IntegrationList,
   IntegrationConfig,
   IntegrationMonitor,
   IntegrationLogs,
   IntegrationAnalytics,
-  IntegrationDocs
+  IntegrationDocs,
 } from './components';
 import { useIntegrationManagement } from '../../../hooks/useIntegrationManagement';
 
-export const IntegrationManager: React.FC = () => {
+export 
+const IntegrationManager: React.FC = () => {
   const [activeTab, setActiveTab] = useState('list');
   const [selectedIntegration, setSelectedIntegration] = useState(null);
   const { integrations, operations } = useIntegrationManagement();
@@ -17,26 +19,26 @@ export const IntegrationManager: React.FC = () => {
   return (
     <div className="integration-manager">
       <div className="integration-header">
-        <h2>集成管理</h2>
+        <h2></h2>
         <div className="integration-status">
           <div className="status-item">
-            <span>已启用</span>
-            <strong>{integrations.stats.enabled}</strong>
+            <span></span>
+            <strong>{integrationsstatsenabled}</strong>
           </div>
           <div className="status-item">
-            <span>已禁用</span>
-            <strong>{integrations.stats.disabled}</strong>
+            <span></span>
+            <strong>{integrationsstatsdisabled}</strong>
           </div>
           <div className="status-item">
-            <span>出错</span>
-            <strong>{integrations.stats.error}</strong>
+            <span></span>
+            <strong>{integrationsstatserror}</strong>
           </div>
         </div>
       </div>
 
       <div className="integration-content">
         <div className="integration-sidebar">
-          <IntegrationList 
+          <IntegrationList
             integrations={integrations.list}
             selectedId={selectedIntegration?.id}
             onSelect={setSelectedIntegration}
@@ -46,43 +48,43 @@ export const IntegrationManager: React.FC = () => {
 
         <div className="integration-main">
           <div className="tab-nav">
-            <button onClick={() => setActiveTab('config')}>配置</button>
-            <button onClick={() => setActiveTab('monitor')}>监控</button>
-            <button onClick={() => setActiveTab('logs')}>日志</button>
-            <button onClick={() => setActiveTab('analytics')}>分析</button>
-            <button onClick={() => setActiveTab('docs')}>文档</button>
+            <button onClick={ => setActiveTabconfig}></button>
+            <button onClick={ => setActiveTabmonitor}></button>
+            <button onClick={ => setActiveTablogs}></button>
+            <button onClick={ => setActiveTabanalytics}></button>
+            <button onClick={ => setActiveTabdocs}></button>
           </div>
 
           <div className="tab-content">
             {activeTab === 'config' && (
-              <IntegrationConfig 
+              <IntegrationConfig
                 integration={selectedIntegration}
                 onSave={operations.handleConfigSave}
               />
             )}
             {activeTab === 'monitor' && (
-              <IntegrationMonitor 
+              <IntegrationMonitor
                 integration={selectedIntegration}
                 metrics={integrations.metrics}
                 onAction={operations.handleMonitorAction}
               />
             )}
             {activeTab === 'logs' && (
-              <IntegrationLogs 
+              <IntegrationLogs
                 integration={selectedIntegration}
                 logs={integrations.logs}
                 onAction={operations.handleLogAction}
               />
             )}
             {activeTab === 'analytics' && (
-              <IntegrationAnalytics 
+              <IntegrationAnalytics
                 integration={selectedIntegration}
                 analytics={integrations.analytics}
                 onAction={operations.handleAnalyticsAction}
               />
             )}
             {activeTab === 'docs' && (
-              <IntegrationDocs 
+              <IntegrationDocs
                 integration={selectedIntegration}
                 docs={integrations.docs}
                 onAction={operations.handleDocsAction}
@@ -93,4 +95,4 @@ export const IntegrationManager: React.FC = () => {
       </div>
     </div>
   );
-}; 
+};

@@ -1,10 +1,10 @@
-import { injectable } from 'inversify';
 import jwt from 'jsonwebtoken';
+import { IJwtService } from './types';
 import { config } from '../../config';
-import { JwtService } from './types';
+import { injectable } from 'inversify';
 
 @injectable()
-export class JwtServiceImpl implements JwtService {
+export class JwtServiceImpl implements IJwtService {
   async generateAccessToken(payload: any): Promise<string> {
     return jwt.sign(payload, config.jwt.secret, { expiresIn: '1h' });
   }
@@ -20,4 +20,4 @@ export class JwtServiceImpl implements JwtService {
   async verifyRefreshToken(token: string): Promise<any> {
     return jwt.verify(token, config.jwt.refreshSecret);
   }
-} 
+}

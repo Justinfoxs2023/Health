@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 tcm.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 declare namespace TCM {
   interface AssessmentResult {
     id: string;
@@ -103,4 +110,4 @@ declare namespace TCM {
   }
 }
 
-export = TCM; 
+export = TCM;

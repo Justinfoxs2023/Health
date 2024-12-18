@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 ant-design-icons.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 declare module '@ant-design/icons' {
   import React from 'react';
 
@@ -18,4 +25,4 @@ declare module '@ant-design/icons' {
   export const GithubOutlined: React.FC<IconProps>;
   export const ShareAltOutlined: React.FC<IconProps>;
   export const ReloadOutlined: React.FC<IconProps>;
-} 
+}

@@ -1,15 +1,23 @@
+/**
+ * @fileoverview TS 文件 ui-layout.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // 界面布局配置
-export interface UILayoutConfig {
-  // 主题配置
-  theme: {
-    mode: 'light' | 'dark' | 'system';
+export interface UILayout {
+   
+  /** theme 的描述 */
+    theme: {
+    mode: light  dark  system;
     colors: {
       primary: string;
       secondary: string;
       background: string;
       surface: string;
       text: string;
-      accent: string[];
+      accent: string;
     };
     typography: {
       fontSize: {
@@ -34,7 +42,7 @@ export interface UILayoutConfig {
       maxItems: number;
       style: 'icon' | 'card' | 'list';
     };
-    
+
     // 主要功能区
     mainContent: {
       style: 'grid' | 'list' | 'card';
@@ -78,4 +86,4 @@ export interface UILayoutConfig {
       visual: boolean;
     };
   };
-} 
+}

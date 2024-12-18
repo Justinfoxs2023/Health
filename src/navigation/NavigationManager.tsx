@@ -1,5 +1,6 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+
 import { RootState } from '@/store';
 
 export const useNavigationManager = () => {
@@ -51,4 +52,4 @@ export const useNavigationManager = () => {
     handleNavigation,
     currentPath: location.pathname,
   };
-}; 
+};

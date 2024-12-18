@@ -1,30 +1,41 @@
 import React from 'react';
-import { View, FlatList, StyleSheet, Text, TouchableOpacity, Image } from 'react-native';
-import { useQuery } from '@tanstack/react-query';
-import { getExerciseGroups } from '../../api/exercise';
-import { LoadingSpinner, Icon } from '../../components';
 
-interface ExerciseGroup {
+import { LoadingSpinner, Icon } from '../../components';
+import { View, FlatList, StyleSheet, Text, TouchableOpacity, Image } from 'react-native';
+import { getExerciseGroups } from '../../api/exercise';
+import { useQuery } from '@tanstack/react-query';
+
+interface IExerciseGroup {
+  /** id 的描述 */
   id: string;
+  /** name 的描述 */
   name: string;
+  /** description 的描述 */
   description: string;
+  /** coverImage 的描述 */
   coverImage: string;
+  /** memberCount 的描述 */
   memberCount: number;
+  /** postCount 的描述 */
   postCount: number;
+  /** tags 的描述 */
   tags: string[];
+  /** lastActive 的描述 */
   lastActive: string;
+  /** isJoined 的描述 */
   isJoined: boolean;
 }
 
 export const ExerciseSocialScreen = ({ navigation }) => {
   const [selectedTab, setSelectedTab] = React.useState<'all' | 'joined'>('all');
-  const { data: groups, isLoading } = useQuery<ExerciseGroup[]>('exerciseGroups', getExerciseGroups);
-
-  const filteredGroups = groups?.filter(group => 
-    selectedTab === 'all' || group.isJoined
+  const { data: groups, isLoading } = useQuery<IExerciseGroup[]>(
+    'exerciseGroups',
+    getExerciseGroups,
   );
 
-  const renderGroup = ({ item: group }: { item: ExerciseGroup }) => (
+  const filteredGroups = groups?.filter(group => selectedTab === 'all' || group.isJoined);
+
+  const renderGroup = ({ item: group }: { item: IExerciseGroup }) => (
     <TouchableOpacity
       style={styles.groupCard}
       onPress={() => navigation.navigate('GroupDetail', { id: group.id })}
@@ -101,75 +112,75 @@ export const ExerciseSocialScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   header: {
     flexDirection: 'row',
     backgroundColor: '#fff',
     paddingHorizontal: 15,
-    paddingVertical: 10
+    paddingVertical: 10,
   },
   tab: {
     flex: 1,
     alignItems: 'center',
-    paddingVertical: 8
+    paddingVertical: 8,
   },
   activeTab: {
     borderBottomWidth: 2,
-    borderBottomColor: '#2E7D32'
+    borderBottomColor: '#2E7D32',
   },
   tabText: {
     fontSize: 14,
-    color: '#666'
+    color: '#666',
   },
   activeTabText: {
     color: '#2E7D32',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   list: {
-    padding: 15
+    padding: 15,
   },
   groupCard: {
     backgroundColor: '#fff',
     borderRadius: 12,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   groupImage: {
     width: '100%',
-    height: 120
+    height: 120,
   },
   groupContent: {
-    padding: 15
+    padding: 15,
   },
   groupName: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 4
+    marginBottom: 4,
   },
   groupDesc: {
     fontSize: 14,
     color: '#666',
     lineHeight: 20,
-    marginBottom: 8
+    marginBottom: 8,
   },
   groupStats: {
     flexDirection: 'row',
-    marginBottom: 8
+    marginBottom: 8,
   },
   statItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginRight: 15
+    marginRight: 15,
   },
   statText: {
     fontSize: 12,
     color: '#666',
-    marginLeft: 4
+    marginLeft: 4,
   },
   tagsContainer: {
     flexDirection: 'row',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
   },
   tag: {
     backgroundColor: '#E8F5E9',
@@ -177,14 +188,14 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 12,
     marginRight: 8,
-    marginBottom: 4
+    marginBottom: 4,
   },
   tagText: {
     fontSize: 12,
-    color: '#2E7D32'
+    color: '#2E7D32',
   },
   separator: {
-    height: 15
+    height: 15,
   },
   createButton: {
     position: 'absolute',
@@ -200,12 +211,12 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
-    shadowRadius: 4
+    shadowRadius: 4,
   },
   createButtonText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
-    marginLeft: 8
-  }
-}); 
+    marginLeft: 8,
+  },
+});

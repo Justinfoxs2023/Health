@@ -25,7 +25,7 @@ export default defineConfig({
     setupNodeEvents(on, config) {
       // 配置代码覆盖率收集
       require('@cypress/code-coverage/task')(on, config);
-      
+
       // 配置性能监控
       on('before:browser:launch', (browser, launchOptions) => {
         if (browser.name === 'chrome' && browser.isHeadless) {
@@ -37,7 +37,7 @@ export default defineConfig({
       });
 
       // 配置截图和视频压缩
-      on('after:screenshot', (details) => {
+      on('after:screenshot', details => {
         // 处理截图
         return details;
       });
@@ -72,4 +72,4 @@ export default defineConfig({
       mochaFile: 'reports/cypress/results-[hash].xml',
     },
   },
-}); 
+});

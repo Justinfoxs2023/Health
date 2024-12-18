@@ -1,81 +1,89 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { SkeletonConfig } from './skeleton.types';
+import { ISkeletonConfig } from './skeleton.types';
 
 @Component({
   selector: 'app-skeleton',
   template: `
-    <div class="skeleton-container"
-         [class]="config.animation"
-         [style.--animation-duration]="config.duration + 'ms'"
-         [style.--animation-delay]="config.delay + 'ms'"
-         [style.--background-color]="config.style.backgroundColor"
-         [style.--highlight-color]="config.style.highlightColor"
-         [style.--border-radius]="config.style.borderRadius + 'px'"
-         [style.gap]="config.layout.gap + 'px'">
+    <div
+      class="skeleton-container"
+      [class]="config.animation"
+      [style.--animation-duration]="config.duration + 'ms'"
+      [style.--animation-delay]="config.delay + 'ms'"
+      [style.--background-color]="config.style.backgroundColor"
+      [style.--highlight-color]="config.style.highlightColor"
+      [style.--border-radius]="config.style.borderRadius + 'px'"
+      [style.gap]="config.layout.gap + 'px'"
+    >
       <ng-container *ngFor="let row of rows">
-        <div class="skeleton-item"
-             *ngFor="let col of columns"
-             [style.width]="getWidth()"
-             [style.height]="getHeight()"
-             [style.aspectRatio]="config.layout.aspectRatio">
-        </div>
+        <div
+          class="skeleton-item"
+          *ngFor="let col of columns"
+          [style.width]="getWidth()"
+          [style.height]="getHeight()"
+          [style.aspectRatio]="config.layout.aspectRatio"
+        ></div>
       </ng-container>
     </div>
   `,
-  styles: [`
-    .skeleton-container {
-      display: grid;
-      grid-template-columns: repeat(var(--columns), 1fr);
-      gap: var(--gap);
-    }
-
-    .skeleton-item {
-      background-color: var(--background-color);
-      border-radius: var(--border-radius);
-      overflow: hidden;
-      position: relative;
-    }
-
-    .pulse {
-      animation: pulse var(--animation-duration) var(--animation-delay) 
-                infinite ease-in-out;
-    }
-
-    .wave {
-      &::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(
-          90deg,
-          transparent,
-          var(--highlight-color),
-          transparent
-        );
-        animation: wave var(--animation-duration) var(--animation-delay) 
-                  infinite linear;
-        transform: translateX(-100%);
+  styles: [
+    `
+      .skeleton-container {
+        display: grid;
+        grid-template-columns: repeat(var(--columns), 1fr);
+        gap: var(--gap);
       }
-    }
 
-    @keyframes pulse {
-      0% { opacity: 1; }
-      50% { opacity: 0.4; }
-      100% { opacity: 1; }
-    }
+      .skeleton-item {
+        background-color: var(--background-color);
+        border-radius: var(--border-radius);
+        overflow: hidden;
+        position: relative;
+      }
 
-    @keyframes wave {
-      0% { transform: translateX(-100%); }
-      100% { transform: translateX(100%); }
-    }
-  `]
+      .pulse {
+        animation: pulse var(--animation-duration) var(--animation-delay) infinite ease-in-out;
+      }
+
+      .wave {
+        &::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: linear-gradient(90deg, transparent, var(--highlight-color), transparent);
+          animation: wave var(--animation-duration) var(--animation-delay) infinite linear;
+          transform: translateX(-100%);
+        }
+      }
+
+      @keyframes pulse {
+        0% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.4;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+
+      @keyframes wave {
+        0% {
+          transform: translateX(-100%);
+        }
+        100% {
+          transform: translateX(100%);
+        }
+      }
+    `,
+  ],
 })
 export class SkeletonComponent implements OnInit {
-  @Input() config: SkeletonConfig;
-  
+  @Input() config: ISkeletonConfig;
+
   rows: number[];
   columns: number[];
 
@@ -95,4 +103,4 @@ export class SkeletonComponent implements OnInit {
       ? `${this.config.style.height}px`
       : this.config.style.height;
   }
-} 
+}

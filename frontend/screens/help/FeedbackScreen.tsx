@@ -1,27 +1,23 @@
 import React from 'react';
+
+import { FormInput, ImageUploader, LoadingOverlay, AlertDialog } from '../../components';
 import { View, ScrollView, StyleSheet, TouchableOpacity, Text } from 'react-native';
-import { useMutation } from 'react-query';
 import { submitFeedback } from '../../api/help';
-import {
-  FormInput,
-  ImageUploader,
-  LoadingOverlay,
-  AlertDialog
-} from '../../components';
+import { useMutation } from 'react-query';
 
 export const FeedbackScreen = ({ navigation }) => {
   const [form, setForm] = React.useState({
     type: '',
     content: '',
     images: [],
-    contact: ''
+    contact: '',
   });
   const [showAlert, setShowAlert] = React.useState(false);
 
   const mutation = useMutation(submitFeedback, {
     onSuccess: () => {
       setShowAlert(true);
-    }
+    },
   });
 
   const handleSubmit = () => {
@@ -33,13 +29,7 @@ export const FeedbackScreen = ({ navigation }) => {
     mutation.mutate(form);
   };
 
-  const feedbackTypes = [
-    '功能建议',
-    '内容纠错',
-    '操作问题',
-    '界面优化',
-    '其他问题'
-  ];
+  const feedbackTypes = ['功能建议', '内容纠错', '操作问题', '界面优化', '其他问题'];
 
   return (
     <ScrollView style={styles.container}>
@@ -50,17 +40,11 @@ export const FeedbackScreen = ({ navigation }) => {
             {feedbackTypes.map((type, index) => (
               <TouchableOpacity
                 key={index}
-                style={[
-                  styles.typeButton,
-                  form.type === type && styles.typeButtonActive
-                ]}
+                style={[styles.typeButton, form.type === type && styles.typeButtonActive]}
                 onPress={() => setForm(prev => ({ ...prev, type }))}
               >
                 <Text
-                  style={[
-                    styles.typeButtonText,
-                    form.type === type && styles.typeButtonTextActive
-                  ]}
+                  style={[styles.typeButtonText, form.type === type && styles.typeButtonTextActive]}
                 >
                   {type}
                 </Text>
@@ -75,13 +59,13 @@ export const FeedbackScreen = ({ navigation }) => {
           multiline
           numberOfLines={6}
           value={form.content}
-          onChangeText={(content) => setForm(prev => ({ ...prev, content }))}
+          onChangeText={content => setForm(prev => ({ ...prev, content }))}
           style={styles.field}
         />
 
         <ImageUploader
           images={form.images}
-          onImagesChange={(images) => setForm(prev => ({ ...prev, images }))}
+          onImagesChange={images => setForm(prev => ({ ...prev, images }))}
           maxImages={3}
           title="添加截图(选填,最多3张)"
           style={styles.field}
@@ -91,12 +75,15 @@ export const FeedbackScreen = ({ navigation }) => {
           label="联系方式(选填)"
           placeholder="请留下您的邮箱或手机号,方便我们回复您"
           value={form.contact}
-          onChangeText={(contact) => setForm(prev => ({ ...prev, contact }))}
+          onChangeText={contact => setForm(prev => ({ ...prev, contact }))}
           style={styles.field}
         />
 
         <TouchableOpacity
-          style={[styles.submitButton, (!form.type || !form.content) && styles.submitButtonDisabled]}
+          style={[
+            styles.submitButton,
+            (!form.type || !form.content) && styles.submitButtonDisabled,
+          ]}
           onPress={handleSubmit}
           disabled={!form.type || !form.content}
         >
@@ -122,27 +109,27 @@ export const FeedbackScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   form: {
-    padding: 15
+    padding: 15,
   },
   typeSection: {
     backgroundColor: '#fff',
     borderRadius: 8,
     padding: 15,
-    marginBottom: 15
+    marginBottom: 15,
   },
   label: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 10
+    marginBottom: 10,
   },
   typeGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginHorizontal: -5
+    marginHorizontal: -5,
   },
   typeButton: {
     paddingHorizontal: 15,
@@ -150,38 +137,38 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderWidth: 1,
     borderColor: '#E0E0E0',
-    margin: 5
+    margin: 5,
   },
   typeButtonActive: {
     backgroundColor: '#E8F5E9',
-    borderColor: '#2E7D32'
+    borderColor: '#2E7D32',
   },
   typeButtonText: {
     fontSize: 14,
-    color: '#666'
+    color: '#666',
   },
   typeButtonTextActive: {
-    color: '#2E7D32'
+    color: '#2E7D32',
   },
   field: {
     marginBottom: 15,
     backgroundColor: '#fff',
     borderRadius: 8,
-    padding: 15
+    padding: 15,
   },
   submitButton: {
     backgroundColor: '#2E7D32',
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',
-    marginTop: 20
+    marginTop: 20,
   },
   submitButtonDisabled: {
-    backgroundColor: '#ccc'
+    backgroundColor: '#ccc',
   },
   submitButtonText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: 'bold'
-  }
-}); 
+    fontWeight: 'bold',
+  },
+});

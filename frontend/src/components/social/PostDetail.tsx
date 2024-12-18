@@ -1,19 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Avatar, Space, Tag, Button, message, Divider } from 'antd';
-import { LikeOutlined, StarOutlined, ShareAltOutlined } from '@ant-design/icons';
-import { useTranslation } from 'react-i18next';
-import { formatDistance } from 'date-fns';
-import { zhCN } from 'date-fns/locale';
-import { PostService } from '@/services/PostService';
-import { Post } from '@/types/community';
-import { CommentList } from './CommentList';
-import { CommentForm } from './CommentForm';
 
-interface PostDetailProps {
+import { Card, Avatar, Space, Tag, Button, message, Divider } from 'antd';
+import { CommentForm } from './CommentForm';
+import { CommentList } from './CommentList';
+import { LikeOutlined, StarOutlined, ShareAltOutlined } from '@ant-design/icons';
+import { formatDistance } from 'date-fns';
+import { useTranslation } from 'react-i18next';
+import { zhCN } from 'date-fns/locale';
+
+import { Post } from '@/types/community';
+import { PostService } from '@/services/PostService';
+
+interface IPostDetailProps {
+  /** postId 的描述 */
   postId: string;
 }
 
-export const PostDetail: React.FC<PostDetailProps> = ({ postId }) => {
+export const PostDetail: React.FC<IPostDetailProps> = ({ postId }) => {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [post, setPost] = useState<Post | null>(null);
@@ -38,13 +41,17 @@ export const PostDetail: React.FC<PostDetailProps> = ({ postId }) => {
     if (!post) return;
     try {
       await PostService.likePost(post.id);
-      setPost(prev => prev ? {
-        ...prev,
-        metrics: {
-          ...prev.metrics,
-          likes: prev.metrics.likes + 1
-        }
-      } : null);
+      setPost(prev =>
+        prev
+          ? {
+              ...prev,
+              metrics: {
+                ...prev.metrics,
+                likes: prev.metrics.likes + 1,
+              },
+            }
+          : null,
+      );
       message.success(t('posts.likeSuccess'));
     } catch (error) {
       message.error(t('posts.likeError'));
@@ -108,7 +115,7 @@ export const PostDetail: React.FC<PostDetailProps> = ({ postId }) => {
               <ShareAltOutlined />
               {t('posts.share')}
             </Space>
-          </Button>
+          </Button>,
         ]}
       >
         <Card.Meta
@@ -127,15 +134,13 @@ export const PostDetail: React.FC<PostDetailProps> = ({ postId }) => {
               <span>
                 {formatDistance(new Date(post.created_at), new Date(), {
                   locale: zhCN,
-                  addSuffix: true
+                  addSuffix: true,
                 })}
               </span>
             </Space>
           }
         />
-        <div className="post-content">
-          {post.content}
-        </div>
+        <div className="post-content">{post.content}</div>
         {post.media?.map((media, index) => (
           <div key={index} className="post-media">
             {media.type === 'image' ? (
@@ -148,10 +153,10 @@ export const PostDetail: React.FC<PostDetailProps> = ({ postId }) => {
       </Card>
 
       <Divider orientation="left">{t('comments.title')}</Divider>
-      
+
       <CommentForm onSubmit={handleCommentSubmit} />
-      
+
       <CommentList postId={post.id} />
     </div>
   );
-}; 
+};

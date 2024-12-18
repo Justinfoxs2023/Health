@@ -1,5 +1,5 @@
-import { Dict } from '../types';
 import * as tf from '@tensorflow/tfjs';
+import { Dict } from '../types';
 import { FoodRecognitionModel } from '../models/food.model';
 import { ImageProcessor } from '../utils/image.processor';
 import { Logger } from '../utils/logger';
@@ -22,10 +22,10 @@ export class RecognitionService {
     try {
       // 图像预处理
       const processedImage = await this.imageProcessor.preprocess(imageData);
-      
+
       // 执行食物识别
       const predictions = await this.foodModel.predict(processedImage);
-      
+
       // 获取营养信息
       const nutritionInfo = await this.getNutritionInfo(predictions);
 
@@ -33,9 +33,8 @@ export class RecognitionService {
         predictions,
         nutritionInfo,
         // 识别时间戳
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
-
     } catch (error) {
       this.logger.error('食物识别失败:', error);
       throw error;
@@ -49,7 +48,7 @@ export class RecognitionService {
     try {
       // 查询营养数据库
       const nutritionData = await this.queryNutritionDatabase(predictions);
-      
+
       // 计算营养成分
       const nutrients = this.calculateNutrients(nutritionData);
 
@@ -58,9 +57,8 @@ export class RecognitionService {
         // 置信度
         confidence: predictions.confidence,
         // 营养建议
-        recommendations: this.generateRecommendations(nutrients)
+        recommendations: this.generateRecommendations(nutrients),
       };
-
     } catch (error) {
       this.logger.error('获取营养信息失败:', error);
       throw error;
@@ -109,7 +107,7 @@ export class RecognitionService {
       carbs: nutritionData.carbs,
       fiber: nutritionData.fiber,
       vitamins: nutritionData.vitamins,
-      minerals: nutritionData.minerals
+      minerals: nutritionData.minerals,
     };
   }
 

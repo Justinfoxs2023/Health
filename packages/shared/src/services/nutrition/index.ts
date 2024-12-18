@@ -1,13 +1,19 @@
-import { BehaviorSubject } from 'rxjs';
-import * as tf from '@tensorflow/tfjs';
 import '@tensorflow/tfjs-backend-webgl';
+import * as tf from '@tensorflow/tfjs';
+import { BehaviorSubject } from 'rxjs';
 
-interface NutritionInfo {
+interface INutritionInfo {
+  /** calories 的描述 */
   calories: number;
+  /** protein 的描述 */
   protein: number;
+  /** carbs 的描述 */
   carbs: number;
+  /** fat 的描述 */
   fat: number;
+  /** fiber 的描述 */
   fiber: number;
+  /** vitamins 的描述 */
   vitamins: {
     a: number;
     b1: number;
@@ -20,6 +26,7 @@ interface NutritionInfo {
     e: number;
     k: number;
   };
+  /** minerals 的描述 */
   minerals: {
     calcium: number;
     iron: number;
@@ -31,27 +38,45 @@ interface NutritionInfo {
   };
 }
 
-interface FoodItem {
+interface IFoodItem {
+  /** name 的描述 */
   name: string;
-  nutrition: NutritionInfo;
+  /** nutrition 的描述 */
+  nutrition: INutritionInfo;
+  /** portion 的描述 */
   portion: number;
+  /** unit 的描述 */
   unit: string;
+  /** image 的描述 */
   image?: string;
+  /** category 的描述 */
   category: string;
+  /** tags 的描述 */
   tags: string[];
+  /** seasonality 的描述 */
   seasonality?: string[];
+  /** allergens 的描述 */
   allergens?: string[];
+  /** alternatives 的描述 */
   alternatives?: string[];
 }
 
-interface NutritionAnalysisResult {
-  foods: FoodItem[];
-  totalNutrition: NutritionInfo;
+interface INutritionAnalysisResult {
+  /** foods 的描述 */
+  foods: IFoodItem[];
+  /** totalNutrition 的描述 */
+  totalNutrition: INutritionInfo;
+  /** recommendations 的描述 */
   recommendations: string[];
+  /** score 的描述 */
   score: number;
+  /** timestamp 的描述 */
   timestamp: number;
+  /** mealType 的描述 */
   mealType?: 'breakfast' | 'lunch' | 'dinner' | 'snack';
-  healthyAlternatives: FoodItem[];
+  /** healthyAlternatives 的描述 */
+  healthyAlternatives: IFoodItem[];
+  /** nutritionBalance 的描述 */
   nutritionBalance: {
     [key: string]: {
       current: number;
@@ -61,27 +86,32 @@ interface NutritionAnalysisResult {
   };
 }
 
-interface NutritionState {
+interface INutritionState {
+  /** analyzing 的描述 */
   analyzing: boolean;
-  result: NutritionAnalysisResult | null;
+  /** result 的描述 */
+  result: INutritionAnalysisResult | null;
+  /** error 的描述 */
   error: Error | null;
+  /** lastAnalysis 的描述 */
   lastAnalysis: Date | null;
+  /** dailyNutrition 的描述 */
   dailyNutrition: {
-    current: NutritionInfo;
-    target: NutritionInfo;
-    remaining: NutritionInfo;
+    current: INutritionInfo;
+    target: INutritionInfo;
+    remaining: INutritionInfo;
   } | null;
 }
 
 export class NutritionService {
   private model: tf.GraphModel | null = null;
-  private foodDatabase: Map<string, FoodItem> = new Map();
-  private state$ = new BehaviorSubject<NutritionState>({
+  private foodDatabase: Map<string, IFoodItem> = new Map();
+  private state$ = new BehaviorSubject<INutritionState>({
     analyzing: false,
     result: null,
     error: null,
     lastAnalysis: null,
-    dailyNutrition: null
+    dailyNutrition: null,
   });
 
   private userPreferences: {
@@ -93,7 +123,7 @@ export class NutritionService {
     dietaryRestrictions: [],
     allergies: [],
     preferences: [],
-    goals: []
+    goals: [],
   };
 
   constructor() {
@@ -107,7 +137,7 @@ export class NutritionService {
   }
 
   // 获取每日营养目标
-  private getDailyNutritionTargets(): NutritionInfo {
+  private getDailyNutritionTargets(): INutritionInfo {
     // 基于用户目标和偏好计算推荐值
     return {
       calories: 2000,
@@ -125,7 +155,7 @@ export class NutritionService {
         c: 90,
         d: 15,
         e: 15,
-        k: 120
+        k: 120,
       },
       minerals: {
         calcium: 1000,
@@ -134,15 +164,15 @@ export class NutritionService {
         phosphorus: 700,
         potassium: 3500,
         sodium: 2300,
-        zinc: 11
-      }
+        zinc: 11,
+      },
     };
   }
 
   // 分析图片中的食物
   async analyzeImage(
     image: HTMLImageElement | HTMLVideoElement | HTMLCanvasElement,
-    mealType?: 'breakfast' | 'lunch' | 'dinner' | 'snack'
+    mealType?: 'breakfast' | 'lunch' | 'dinner' | 'snack',
   ) {
     if (!this.model) {
       throw new Error('模型未初始化');
@@ -150,20 +180,21 @@ export class NutritionService {
 
     this.state$.next({
       ...this.state$.value,
-      analyzing: true
+      analyzing: true,
     });
 
     try {
       // 预处理图像
       const tensor = tf.tidy(() => {
-        return tf.browser.fromPixels(image)
+        return tf.browser
+          .fromPixels(image)
           .resizeNearestNeighbor([224, 224])
           .toFloat()
           .expandDims();
       });
 
       // 运行模型
-      const predictions = await this.model.predict(tensor) as tf.Tensor;
+      const predictions = (await this.model.predict(tensor)) as tf.Tensor;
       const results = await this.processPredictions(predictions);
 
       // 计算总营养成分
@@ -181,7 +212,7 @@ export class NutritionService {
       // 计算营养评分
       const score = this.calculateNutritionScore(totalNutrition, nutritionBalance);
 
-      const result: NutritionAnalysisResult = {
+      const result: INutritionAnalysisResult = {
         foods: results,
         totalNutrition,
         recommendations,
@@ -189,7 +220,7 @@ export class NutritionService {
         timestamp: Date.now(),
         mealType,
         healthyAlternatives,
-        nutritionBalance
+        nutritionBalance,
       };
 
       // 更新每日营养摄入
@@ -200,7 +231,7 @@ export class NutritionService {
         result,
         error: null,
         lastAnalysis: new Date(),
-        dailyNutrition: this.state$.value.dailyNutrition
+        dailyNutrition: this.state$.value.dailyNutrition,
       });
 
       // 清理张量
@@ -215,9 +246,9 @@ export class NutritionService {
   }
 
   // 分析营养平衡
-  private analyzeNutritionBalance(nutrition: NutritionInfo) {
+  private analyzeNutritionBalance(nutrition: INutritionInfo) {
     const targets = this.getDailyNutritionTargets();
-    const balance: NutritionAnalysisResult['nutritionBalance'] = {};
+    const balance: INutritionAnalysisResult['nutritionBalance'] = {};
 
     // 分析主要营养素
     const nutrients = {
@@ -225,7 +256,7 @@ export class NutritionService {
       protein: { min: 0.8, max: 1.2 },
       carbs: { min: 0.8, max: 1.2 },
       fat: { min: 0.8, max: 1.2 },
-      fiber: { min: 0.8, max: 1.2 }
+      fiber: { min: 0.8, max: 1.2 },
     };
 
     for (const [nutrient, range] of Object.entries(nutrients)) {
@@ -236,7 +267,7 @@ export class NutritionService {
       balance[nutrient] = {
         current,
         recommended,
-        status: ratio < range.min ? 'low' : ratio > range.max ? 'high' : 'good'
+        status: ratio < range.min ? 'low' : ratio > range.max ? 'high' : 'good',
       };
     }
 
@@ -244,23 +275,23 @@ export class NutritionService {
   }
 
   // 生成健康替代品建议
-  private async generateHealthyAlternatives(foods: FoodItem[]): Promise<FoodItem[]> {
-    const alternatives: FoodItem[] = [];
+  private async generateHealthyAlternatives(foods: IFoodItem[]): Promise<IFoodItem[]> {
+    const alternatives: IFoodItem[] = [];
 
     for (const food of foods) {
       // 查找营养更好的替代品
       const betterOptions = Array.from(this.foodDatabase.values())
-        .filter(item => 
-          item.category === food.category &&
-          item.nutrition.calories < food.nutrition.calories &&
-          item.nutrition.protein >= food.nutrition.protein &&
-          !this.userPreferences.allergies.some(allergen => 
-            item.allergens?.includes(allergen)
-          )
+        .filter(
+          item =>
+            item.category === food.category &&
+            item.nutrition.calories < food.nutrition.calories &&
+            item.nutrition.protein >= food.nutrition.protein &&
+            !this.userPreferences.allergies.some(allergen => item.allergens?.includes(allergen)),
         )
-        .sort((a, b) => 
-          this.calculateNutritionScore(b.nutrition, {}) - 
-          this.calculateNutritionScore(a.nutrition, {})
+        .sort(
+          (a, b) =>
+            this.calculateNutritionScore(b.nutrition, {}) -
+            this.calculateNutritionScore(a.nutrition, {}),
         )
         .slice(0, 3);
 
@@ -271,7 +302,7 @@ export class NutritionService {
   }
 
   // 更新每日营养摄入
-  private updateDailyNutrition(nutrition: NutritionInfo) {
+  private updateDailyNutrition(nutrition: INutritionInfo) {
     const target = this.getDailyNutritionTargets();
     const current = this.state$.value.dailyNutrition?.current || this.getEmptyNutritionInfo();
 
@@ -286,13 +317,13 @@ export class NutritionService {
       dailyNutrition: {
         current: updatedCurrent,
         target,
-        remaining
-      }
+        remaining,
+      },
     });
   }
 
   // 获取空的营养信息对象
-  private getEmptyNutritionInfo(): NutritionInfo {
+  private getEmptyNutritionInfo(): INutritionInfo {
     return {
       calories: 0,
       protein: 0,
@@ -309,7 +340,7 @@ export class NutritionService {
         c: 0,
         d: 0,
         e: 0,
-        k: 0
+        k: 0,
       },
       minerals: {
         calcium: 0,
@@ -318,8 +349,8 @@ export class NutritionService {
         phosphorus: 0,
         potassium: 0,
         sodium: 0,
-        zinc: 0
-      }
+        zinc: 0,
+      },
     };
 
     foods.forEach(food => {
@@ -347,7 +378,7 @@ export class NutritionService {
   }
 
   // 生成营养建议
-  private generateRecommendations(nutrition: NutritionInfo): string[] {
+  private generateRecommendations(nutrition: INutritionInfo): string[] {
     const recommendations: string[] = [];
 
     // 卡路里建议
@@ -389,7 +420,7 @@ export class NutritionService {
   }
 
   // 计算营养评分
-  private calculateNutritionScore(nutrition: NutritionInfo): number {
+  private calculateNutritionScore(nutrition: INutritionInfo): number {
     let score = 100;
 
     // 扣分规则
@@ -415,13 +446,13 @@ export class NutritionService {
   }
 
   // 获取食物详细信息
-  async getFoodDetails(foodName: string): Promise<FoodItem | null> {
+  async getFoodDetails(foodName: string): Promise<IFoodItem | null> {
     return this.foodDatabase.get(foodName) || null;
   }
 
   // 搜索食物
-  async searchFood(query: string): Promise<FoodItem[]> {
-    const results: FoodItem[] = [];
+  async searchFood(query: string): Promise<IFoodItem[]> {
+    const results: IFoodItem[] = [];
     this.foodDatabase.forEach(food => {
       if (
         food.name.toLowerCase().includes(query.toLowerCase()) ||
@@ -434,7 +465,7 @@ export class NutritionService {
   }
 
   // 获取营养建议
-  async getNutritionAdvice(nutrition: NutritionInfo) {
+  async getNutritionAdvice(nutrition: INutritionInfo) {
     return this.generateRecommendations(nutrition);
   }
 
@@ -450,9 +481,9 @@ export class NutritionService {
     this.state$.next({
       ...this.state$.value,
       analyzing: false,
-      error
+      error,
     });
   }
 }
 
-export const nutritionService = new NutritionService(); 
+export const nutritionService = new NutritionService();

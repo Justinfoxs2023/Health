@@ -1,6 +1,6 @@
-import { Request, Response } from 'express';
-import { Logger } from '../utils/logger';
 import { BaseService } from '../services/base.service';
+import { Logger } from '../utils/logger';
+import { Request, Response } from 'express';
 
 export abstract class BaseController {
   protected service: BaseService;
@@ -11,10 +11,7 @@ export abstract class BaseController {
     this.logger = new Logger(this.constructor.name);
   }
 
-  protected async handleRequest(
-    req: Request,
-    handler: () => Promise<any>
-  ): Promise<Response> {
+  protected async handleRequest(req: Request, handler: () => Promise<any>): Promise<Response> {
     try {
       const result = await handler();
       return this.success(result);
@@ -27,14 +24,14 @@ export abstract class BaseController {
     return {
       code: 200,
       data,
-      message
+      message,
     };
   }
 
   protected error(error: any) {
     return {
       code: error.status || 500,
-      message: error.message || '服务器错误'
+      message: error.message || '服务器错误',
     };
   }
-} 
+}

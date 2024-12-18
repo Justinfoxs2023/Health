@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+
 import {
   Box,
   Card,
@@ -8,27 +9,23 @@ import {
   Avatar,
   Chip,
   Dialog,
-  CircularProgress
+  CircularProgress,
 } from '@mui/material';
-import {
-  Restaurant,
-  LocalDining,
-  Timeline,
-  Warning
-} from '@mui/icons-material';
+import { Restaurant, LocalDining, Timeline, Warning } from '@mui/icons-material';
 
-interface SmartDietManagerProps {
+interface 
+SmartDietManagerProps {
   userId: string;
-  dietaryRestrictions: string[];
-  healthConditions: string[];
-  onMealLog: (meal: MealRecord) => Promise<void>;
+  dietaryRestrictions: string;
+  healthConditions: string;
+  onMealLog: meal: MealRecord  Promisevoid;
 }
 
 export const SmartDietManager: React.FC<SmartDietManagerProps> = ({
   userId,
   dietaryRestrictions,
   healthConditions,
-  onMealLog
+  onMealLog,
 }) => {
   const [mealSuggestions, setMealSuggestions] = useState<MealSuggestion[]>([]);
   const [nutritionStats, setNutritionStats] = useState<NutritionStats | null>(null);
@@ -39,7 +36,7 @@ export const SmartDietManager: React.FC<SmartDietManagerProps> = ({
       <Card className="nutrition-overview">
         <Grid container spacing={2}>
           <Grid item xs={12} md={6}>
-            <Typography variant="h6">今日营养摄入</Typography>
+            <Typography variant="h6"></Typography>
             <Box className="nutrition-metrics">
               <NutritionMetric
                 label="热���"
@@ -56,11 +53,11 @@ export const SmartDietManager: React.FC<SmartDietManagerProps> = ({
               {/* 其他营养指标 */}
             </Box>
           </Grid>
-          
+
           <Grid item xs={12} md={6}>
-            <Typography variant="h6">饮食建议</Typography>
-            <Box className="dietary-alerts">
-              {generateDietaryAlerts(nutritionStats, healthConditions)}
+            <Typography variant="h6"></Typography>
+            <Box className="dietaryalerts">
+              {generateDietaryAlertsnutritionStats healthConditions}
             </Box>
           </Grid>
         </Grid>
@@ -69,34 +66,23 @@ export const SmartDietManager: React.FC<SmartDietManagerProps> = ({
       {/* 智能膳食推荐 */}
       <Card className="meal-suggestions">
         <Box className="section-header">
-          <Typography variant="h6">个性化膳食推荐</Typography>
-          <Button
-            startIcon={<LocalDining />}
-            onClick={() => generateNewSuggestions()}
-          >
-            重新生成
+          <Typography variant="h6"></Typography>
+          <Button startIcon={<LocalDining />} onClick={ => generateNewSuggestions}>
+            
           </Button>
         </Box>
 
         <Grid container spacing={2}>
           {mealSuggestions.map(suggestion => (
             <Grid item xs={12} md={4} key={suggestion.id}>
-              <MealCard
-                suggestion={suggestion}
-                onSelect={() => handleMealSelection(suggestion)}
-              />
+              <MealCard suggestion={suggestion} onSelect={() => handleMealSelection(suggestion)} />
             </Grid>
           ))}
         </Grid>
       </Card>
 
       {/* 食谱详情与营养分析 */}
-      <Dialog
-        open={!!selectedMeal}
-        onClose={() => setSelectedMeal(null)}
-        maxWidth="md"
-        fullWidth
-      >
+      <Dialog open={!!selectedMeal} onClose={() => setSelectedMeal(null)} maxWidth="md" fullWidth>
         <RecipeAnalysis
           meal={selectedMeal}
           dietaryRestrictions={dietaryRestrictions}
@@ -115,7 +101,7 @@ const NutritionMetric: React.FC<{
   unit: string;
 }> = ({ label, current, target, unit }) => {
   const progress = (current / target) * 100;
-  
+
   return (
     <Box className="nutrition-metric">
       <Typography variant="subtitle2">{label}</Typography>
@@ -131,4 +117,4 @@ const NutritionMetric: React.FC<{
       </Box>
     </Box>
   );
-}; 
+};

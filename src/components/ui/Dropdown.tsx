@@ -1,27 +1,37 @@
 import React, { useState, useRef, useEffect } from 'react';
+
 import { theme } from '../../styles/theme';
 
-interface DropdownItem {
-  key: string;
-  label: string;
-  icon?: React.ReactNode;
-  disabled?: boolean;
-  danger?: boolean;
-  divider?: boolean;
+interface IDropdownItem {
+  /** key 的描述 */
+    key: string;
+  /** label 的描述 */
+    label: string;
+  /** icon 的描述 */
+    icon: ReactReactNode;
+  /** disabled 的描述 */
+    disabled: false | true;
+  /** danger 的描述 */
+    danger: false | true;
+  /** divider 的描述 */
+    divider: false | true;
 }
 
-interface DropdownProps {
-  trigger: React.ReactNode;
-  items: DropdownItem[];
-  placement?: 'bottomLeft' | 'bottomRight' | 'topLeft' | 'topRight';
-  onSelect?: (key: string) => void;
+interface IDropdownProps {
+  /** trigger 的描述 */
+    trigger: ReactReactNode;
+  /** items 的描述 */
+    items: IDropdownItem;
+  /** placement 的描述 */
+    placement: bottomLeft  bottomRight  topLeft  topRight;
+  onSelect: key: string  void;
 }
 
-export const Dropdown: React.FC<DropdownProps> = ({
+export const Dropdown: React.FC<IDropdownProps> = ({
   trigger,
   items,
   placement = 'bottomLeft',
-  onSelect
+  onSelect,
 }) => {
   const [visible, setVisible] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -39,7 +49,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
 
   return (
     <div className="dropdown-container" ref={containerRef}>
-      <div onClick={() => setVisible(!visible)} className="trigger">
+      <div onClick={ => setVisiblevisible} className="trigger">
         {trigger}
       </div>
       {visible && (
@@ -61,7 +71,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
                   }}
                   disabled={item.disabled}
                 >
-                  {item.icon && <span className="item-icon">{item.icon}</span>}
+                  {item.icon && <span className="itemicon">{itemicon}</span>}
                   {item.label}
                 </button>
               )}
@@ -70,101 +80,101 @@ export const Dropdown: React.FC<DropdownProps> = ({
         </div>
       )}
 
-      <style jsx>{`
-        .dropdown-container {
-          position: relative;
-          display: inline-block;
+      <style jsx>{
+        dropdowncontainer {
+          position relative
+          display inlineblock
         }
 
-        .trigger {
-          cursor: pointer;
+        trigger {
+          cursor pointer
         }
 
-        .dropdown-menu {
-          position: absolute;
-          min-width: 160px;
-          background: ${theme.colors.background.paper};
-          border-radius: ${theme.borderRadius.medium};
-          box-shadow: ${theme.shadows.medium};
-          padding: ${theme.spacing(1)} 0;
-          z-index: 1000;
-          animation: slideIn 0.2s ease-out;
+        dropdownmenu {
+          position absolute
+          minwidth 160px
+          background {themecolorsbackgroundpaper}
+          borderradius {themeborderRadiusmedium}
+          boxshadow {themeshadowsmedium}
+          padding {themespacing1} 0
+          zindex 1000
+          animation slideIn 02s easeout
         }
 
-        .dropdown-menu.bottomLeft {
-          top: 100%;
-          left: 0;
-          margin-top: ${theme.spacing(1)};
+        dropdownmenubottomLeft {
+          top 100
+          left 0
+          margintop {themespacing1}
         }
 
-        .dropdown-menu.bottomRight {
-          top: 100%;
-          right: 0;
-          margin-top: ${theme.spacing(1)};
+        dropdownmenubottomRight {
+          top 100
+          right 0
+          margintop {themespacing1}
         }
 
-        .dropdown-menu.topLeft {
-          bottom: 100%;
-          left: 0;
-          margin-bottom: ${theme.spacing(1)};
+        dropdownmenutopLeft {
+          bottom 100
+          left 0
+          marginbottom {themespacing1}
         }
 
-        .dropdown-menu.topRight {
-          bottom: 100%;
-          right: 0;
-          margin-bottom: ${theme.spacing(1)};
+        dropdownmenutopRight {
+          bottom 100
+          right 0
+          marginbottom {themespacing1}
         }
 
-        .menu-item {
-          display: flex;
-          align-items: center;
-          width: 100%;
-          padding: ${theme.spacing(1)} ${theme.spacing(2)};
-          border: none;
-          background: none;
-          text-align: left;
-          cursor: pointer;
-          color: ${theme.colors.text.primary};
-          font-size: ${theme.typography.body1.fontSize};
-          transition: background ${theme.transitions.short};
+        menuitem {
+          display flex
+          alignitems center
+          width 100
+          padding {themespacing1} {themespacing2}
+          border none
+          background none
+          textalign left
+          cursor pointer
+          color {themecolorstextprimary}
+          fontsize {themetypographybody1fontSize}
+          transition background {themetransitionsshort}
         }
 
-        .menu-item:hover:not(.disabled) {
-          background: rgba(0, 0, 0, 0.04);
+        menuitemhovernotdisabled {
+          background rgba0 0 0 004
         }
 
-        .menu-item.disabled {
-          color: ${theme.colors.text.disabled};
-          cursor: not-allowed;
+        menuitemdisabled {
+          color {themecolorstextdisabled}
+          cursor notallowed
         }
 
-        .menu-item.danger {
-          color: ${theme.colors.error};
+        menuitemdanger {
+          color {themecolorserror}
         }
 
-        .item-icon {
-          margin-right: ${theme.spacing(1)};
-          display: flex;
-          align-items: center;
+        itemicon {
+          marginright {themespacing1}
+          display flex
+          alignitems center
         }
 
-        .divider {
-          height: 1px;
-          background: rgba(0, 0, 0, 0.1);
-          margin: ${theme.spacing(1)} 0;
+        divider {
+          height 1px
+          background rgba0 0 0 01
+          margin {themespacing1} 0
         }
 
-        @keyframes slideIn {
+        keyframes slideIn {
           from {
-            opacity: 0;
-            transform: translateY(-10px);
+            opacity 0
+            transform translateY10px
           }
           to {
-            opacity: 1;
-            transform: translateY(0);
+            opacity 1
+            transform translateY0
           }
         }
-      `}</style>
+      }</style>
     </div>
   );
-}; 
+};

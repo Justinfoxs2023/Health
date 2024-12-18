@@ -1,7 +1,7 @@
-import { Router, Request, Response, NextFunction } from 'express';
-import { nutritionistController } from '../controllers/nutritionist.controller';
-import { auth } from '../middleware/auth.tsx';
 import { IAuthRequest } from '../types/models';
+import { Router, Request, Response, NextFunction } from 'express';
+import { auth } from '../middleware/auth.tsx';
+import { nutritionistController } from '../controllers/nutritionist.controller';
 
 const router = Router();
 
@@ -17,7 +17,8 @@ const convertToAuthRequest = (req: Request): IAuthRequest => {
 };
 
 // 更新营养师资料(需要营养师权限)
-router.put('/profile', 
+router.put(
+  '/profile',
   async (req: Request, res: Response, next: NextFunction) => {
     const authReq = convertToAuthRequest(req);
     await auth.nutritionistRequired(authReq, res, next);
@@ -25,11 +26,12 @@ router.put('/profile',
   async (req: Request, res: Response) => {
     const authReq = convertToAuthRequest(req);
     await nutritionistController.updateNutritionistProfile(authReq, res);
-  }
+  },
 );
 
 // 更新工作时间(需要营养师权限)
-router.put('/availability',
+router.put(
+  '/availability',
   async (req: Request, res: Response, next: NextFunction) => {
     const authReq = convertToAuthRequest(req);
     await auth.nutritionistRequired(authReq, res, next);
@@ -37,7 +39,7 @@ router.put('/availability',
   async (req: Request, res: Response) => {
     const authReq = convertToAuthRequest(req);
     await nutritionistController.updateAvailability(authReq, res);
-  }
+  },
 );
 
-export default router; 
+export default router;

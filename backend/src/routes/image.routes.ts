@@ -1,15 +1,14 @@
-import { Router } from 'express';
 import multer from 'multer';
-import { 
-  uploadImage, 
-  getImageStatus, 
+import {
+  uploadImage,
+  getImageStatus,
   getProcessingStatus,
   getImages,
   deleteImage,
 } from '../controllers/image.controller';
+import { Router } from 'express';
 import { authMiddleware } from '../middleware/auth';
 import { rateLimitMiddleware } from '../middleware/security';
-
 const router = Router();
 
 // 配置文件上传
@@ -28,41 +27,19 @@ const upload = multer({
 });
 
 // 图片上传路由
-router.post(
-  '/upload',
-  authMiddleware,
-  rateLimitMiddleware,
-  upload.single('image'),
-  uploadImage
-);
+router.post('/upload', authMiddleware, rateLimitMiddleware, upload.single('image'), uploadImage);
 
 // 获取图片状态
-router.get(
-  '/status/:imageId',
-  authMiddleware,
-  getImageStatus
-);
+router.get('/status/:imageId', authMiddleware, getImageStatus);
 
 // 获取处理队列状态
-router.get(
-  '/processing/status',
-  authMiddleware,
-  getProcessingStatus
-);
+router.get('/processing/status', authMiddleware, getProcessingStatus);
 
 // 获取图片列表
-router.get(
-  '/list',
-  authMiddleware,
-  getImages
-);
+router.get('/list', authMiddleware, getImages);
 
 // 删除图片
-router.delete(
-  '/:imageId',
-  authMiddleware,
-  deleteImage
-);
+router.delete('/:imageId', authMiddleware, deleteImage);
 
 // 错误处理
 router.use((err: Error, _req: any, res: any, _next: any) => {
@@ -74,4 +51,4 @@ router.use((err: Error, _req: any, res: any, _next: any) => {
   res.status(500).json({ error: err.message });
 });
 
-export default router; 
+export default router;

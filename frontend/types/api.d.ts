@@ -1,10 +1,21 @@
+/**
+ * @fileoverview TS 文件 api.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 declare module '../../api/user' {
   import { ApiResponse, NotificationSettings, PrivacySettings } from './types';
 
   export function getNotificationSettings(): Promise<ApiResponse<NotificationSettings>>;
-  export function updateNotificationSettings(settings: Partial<NotificationSettings>): Promise<ApiResponse<NotificationSettings>>;
+  export function updateNotificationSettings(
+    settings: Partial<NotificationSettings>,
+  ): Promise<ApiResponse<NotificationSettings>>;
   export function getPrivacySettings(): Promise<ApiResponse<PrivacySettings>>;
-  export function updatePrivacySettings(settings: Partial<PrivacySettings>): Promise<ApiResponse<PrivacySettings>>;
+  export function updatePrivacySettings(
+    settings: Partial<PrivacySettings>,
+  ): Promise<ApiResponse<PrivacySettings>>;
 }
 
 declare module '../../api/types' {
@@ -41,4 +52,4 @@ declare module '../../components' {
   }
 
   export const LoadingSpinner: ComponentType<LoadingSpinnerProps>;
-} 
+}

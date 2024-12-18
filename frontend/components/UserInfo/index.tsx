@@ -1,27 +1,29 @@
 import React from 'react';
+
 import { View, Text, Image, StyleSheet } from 'react-native';
 
-interface Props {
+interface IProps {
+  /** user 的描述 */
   user: {
     id: string;
     name: string;
     avatar: string;
     role?: string;
   };
+  /** showRole 的描述 */
   showRole?: boolean;
+  /** timestamp 的描述 */
   timestamp?: string;
 }
 
-export const UserInfo: React.FC<Props> = ({ user, showRole, timestamp }) => {
+export const UserInfo: React.FC<IProps> = ({ user, showRole, timestamp }) => {
   return (
     <View style={styles.container}>
       <Image source={{ uri: user.avatar }} style={styles.avatar} />
       <View style={styles.info}>
         <View style={styles.nameRow}>
           <Text style={styles.name}>{user.name}</Text>
-          {showRole && user.role && (
-            <Text style={styles.role}>{user.role}</Text>
-          )}
+          {showRole && user.role && <Text style={styles.role}>{user.role}</Text>}
         </View>
         {timestamp && <Text style={styles.time}>{timestamp}</Text>}
       </View>
@@ -33,25 +35,25 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 12
+    padding: 12,
   },
   avatar: {
     width: 40,
     height: 40,
-    borderRadius: 20
+    borderRadius: 20,
   },
   info: {
     marginLeft: 12,
-    flex: 1
+    flex: 1,
   },
   nameRow: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   name: {
     fontSize: 15,
     fontWeight: '500',
-    color: '#333'
+    color: '#333',
   },
   role: {
     fontSize: 12,
@@ -60,11 +62,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 10,
-    marginLeft: 8
+    marginLeft: 8,
   },
   time: {
     fontSize: 12,
     color: '#999',
-    marginTop: 4
-  }
-}); 
+    marginTop: 4,
+  },
+});

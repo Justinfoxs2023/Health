@@ -1,6 +1,6 @@
-import { Request as ExpressRequest, Response as ExpressResponse, NextFunction } from 'express';
 import { ParamsDictionary } from 'express-serve-static-core';
 import { ParsedQs } from 'qs';
+import { Request as ExpressRequest, Response as ExpressResponse, NextFunction } from 'express';
 
 declare global {
   namespace Express {
@@ -29,26 +29,22 @@ declare global {
 
     interface Response extends ExpressResponse {
       status(code: number): this;
-      json(body: {
-        code: number;
-        data?: any;
-        message?: string;
-      }): this;
+      json(body: { code: number; data?: any; message?: string }): this;
     }
   }
 }
 
-export type RequestHandler = (
+export type RequestHandlerType = (
   req: Express.Request,
   res: Express.Response,
-  next: NextFunction
+  next: NextFunction,
 ) => Promise<void> | void;
 
-export type ErrorRequestHandler = (
+export type ErrorRequestHandlerType = (
   err: any,
   req: Express.Request,
   res: Express.Response,
-  next: NextFunction
+  next: NextFunction,
 ) => void;
 
-export type Middleware = RequestHandler | ErrorRequestHandler; 
+export type MiddlewareType = RequestHandlerType | ErrorRequestHandlerType;

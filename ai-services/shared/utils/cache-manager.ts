@@ -1,15 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { Logger } from './logger';
 
-interface CacheItem<T> {
+interface ICacheItem<T> {
+  /** value 的描述 */
   value: T;
+  /** expiry 的描述 */
   expiry: number;
 }
 
 @Injectable()
 export class CacheManager {
   private readonly logger = new Logger(CacheManager.name);
-  private readonly cache: Map<string, CacheItem<any>> = new Map();
+  private readonly cache: Map<string, ICacheItem<any>> = new Map();
 
   constructor() {
     // 定期清理过期缓存
@@ -36,7 +38,7 @@ export class CacheManager {
   async get<T>(key: string): Promise<T | null> {
     try {
       const item = this.cache.get(key);
-      
+
       if (!item) {
         return null;
       }
@@ -104,7 +106,7 @@ export class CacheManager {
       return {
         size: this.cache.size,
         activeItems,
-        expiredItems
+        expiredItems,
       };
     } catch (error) {
       this.logger.error('获取缓存统计信息失败', error);
@@ -134,4 +136,4 @@ export class CacheManager {
       this.logger.error('清理过期缓存失败', error);
     }
   }
-} 
+}

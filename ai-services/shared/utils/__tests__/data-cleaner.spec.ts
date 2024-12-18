@@ -1,6 +1,6 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { DataCleaner } from '../data-cleaner';
-import { HealthData } from '../../types/health.types';
+import { IHealthData } from '../../types/health.types';
+import { Test, TestingModule } from '@nestjs/testing';
 
 describe('DataCleaner', () => {
   let cleaner: DataCleaner;
@@ -15,7 +15,7 @@ describe('DataCleaner', () => {
 
   describe('cleanHealthData', () => {
     it('应该清洗物理数据中的异常值', () => {
-      const dirtyData: HealthData = {
+      const dirtyData: IHealthData = {
         userId: 'test-user',
         timestamp: new Date(),
         physicalData: {
@@ -23,27 +23,27 @@ describe('DataCleaner', () => {
           weight: -10, // 无效值
           bloodPressure: {
             systolic: 250, // 超出范围
-            diastolic: 20 // 低于范围
+            diastolic: 20, // 低于范围
           },
           heartRate: 300, // 超出范围
           bodyTemperature: 45, // 超出范围
-          bloodOxygen: 70 // 低于范围
+          bloodOxygen: 70, // 低于范围
         },
         mentalData: {
           stressLevel: 3,
           moodScore: 8,
-          sleepQuality: 7
+          sleepQuality: 7,
         },
         nutritionData: {
           calorieIntake: 2000,
           waterIntake: 2500,
-          meals: []
+          meals: [],
         },
         lifestyleData: {
           sleepHours: 8,
           activityLevel: 7,
-          activities: []
-        }
+          activities: [],
+        },
       };
 
       const cleanedData = cleaner.cleanHealthData(dirtyData);
@@ -58,7 +58,7 @@ describe('DataCleaner', () => {
     });
 
     it('应该标准化评分数据', () => {
-      const dirtyData: HealthData = {
+      const dirtyData: IHealthData = {
         userId: 'test-user',
         timestamp: new Date(),
         physicalData: {
@@ -66,27 +66,27 @@ describe('DataCleaner', () => {
           weight: 65,
           bloodPressure: {
             systolic: 120,
-            diastolic: 80
+            diastolic: 80,
           },
           heartRate: 75,
           bodyTemperature: 36.5,
-          bloodOxygen: 98
+          bloodOxygen: 98,
         },
         mentalData: {
           stressLevel: 15, // 超出范围
           moodScore: -5, // 无效值
-          sleepQuality: 12 // 超出范围
+          sleepQuality: 12, // 超出范围
         },
         nutritionData: {
           calorieIntake: 2000,
           waterIntake: 2500,
-          meals: []
+          meals: [],
         },
         lifestyleData: {
           sleepHours: 8,
           activityLevel: 7,
-          activities: []
-        }
+          activities: [],
+        },
       };
 
       const cleanedData = cleaner.cleanHealthData(dirtyData);
@@ -97,7 +97,7 @@ describe('DataCleaner', () => {
     });
 
     it('应该清洗和标准化餐食数据', () => {
-      const dirtyData: HealthData = {
+      const dirtyData: IHealthData = {
         userId: 'test-user',
         timestamp: new Date(),
         physicalData: {
@@ -105,16 +105,16 @@ describe('DataCleaner', () => {
           weight: 65,
           bloodPressure: {
             systolic: 120,
-            diastolic: 80
+            diastolic: 80,
           },
           heartRate: 75,
           bodyTemperature: 36.5,
-          bloodOxygen: 98
+          bloodOxygen: 98,
         },
         mentalData: {
           stressLevel: 3,
           moodScore: 8,
-          sleepQuality: 7
+          sleepQuality: 7,
         },
         nutritionData: {
           calorieIntake: 2000,
@@ -128,28 +128,28 @@ describe('DataCleaner', () => {
                   name: '牛奶',
                   amount: -250, // 无效值
                   unit: 'ml',
-                  calories: -150 // 无效值
+                  calories: -150, // 无效值
                 },
                 {
                   name: '', // 无效项目
                   amount: 0,
                   unit: '',
-                  calories: 0
-                }
-              ]
+                  calories: 0,
+                },
+              ],
             },
             {
               type: 'invalid-type', // 无效类型
               time: new Date(),
-              items: []
-            }
-          ]
+              items: [],
+            },
+          ],
         },
         lifestyleData: {
           sleepHours: 8,
           activityLevel: 7,
-          activities: []
-        }
+          activities: [],
+        },
       };
 
       const cleanedData = cleaner.cleanHealthData(dirtyData);
@@ -162,7 +162,7 @@ describe('DataCleaner', () => {
     });
 
     it('应该清洗和标准化活动数据', () => {
-      const dirtyData: HealthData = {
+      const dirtyData: IHealthData = {
         userId: 'test-user',
         timestamp: new Date(),
         physicalData: {
@@ -170,21 +170,21 @@ describe('DataCleaner', () => {
           weight: 65,
           bloodPressure: {
             systolic: 120,
-            diastolic: 80
+            diastolic: 80,
           },
           heartRate: 75,
           bodyTemperature: 36.5,
-          bloodOxygen: 98
+          bloodOxygen: 98,
         },
         mentalData: {
           stressLevel: 3,
           moodScore: 8,
-          sleepQuality: 7
+          sleepQuality: 7,
         },
         nutritionData: {
           calorieIntake: 2000,
           waterIntake: 2500,
-          meals: []
+          meals: [],
         },
         lifestyleData: {
           sleepHours: 8,
@@ -194,22 +194,22 @@ describe('DataCleaner', () => {
               type: '跑步', // 中文类型
               duration: 1500, // 超出范围
               intensity: 15, // 超出范围
-              caloriesBurned: -100 // 无效值
+              caloriesBurned: -100, // 无效值
             },
             {
               type: 'invalid-type', // 无效类型
               duration: -30, // 无效值
               intensity: -5, // 无效值
-              caloriesBurned: 150
-            }
-          ]
-        }
+              caloriesBurned: 150,
+            },
+          ],
+        },
       };
 
       const cleanedData = cleaner.cleanHealthData(dirtyData);
 
       expect(cleanedData.lifestyleData.activities).toHaveLength(2);
-      
+
       const runningActivity = cleanedData.lifestyleData.activities[0];
       expect(runningActivity.type).toBe('running');
       expect(runningActivity.duration).toBe(1440); // 最大值
@@ -223,4 +223,4 @@ describe('DataCleaner', () => {
       expect(otherActivity.caloriesBurned).toBe(150);
     });
   });
-}); 
+});

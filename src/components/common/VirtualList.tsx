@@ -1,12 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react';
+
 import styled from 'styled-components';
 
-interface VirtualListProps<T> {
-  items: T[];
-  itemHeight: number;
-  windowHeight: number;
-  renderItem: (item: T, index: number) => React.ReactNode;
-  onEndReached?: () => void;
+interface IVirtualListProps<T> {
+  /** items 的描述 */
+    items: T[];
+  /** itemHeight 的描述 */
+    itemHeight: number;
+  /** windowHeight 的描述 */
+    windowHeight: number;
+  /** renderItem 的描述 */
+    renderItem: (item: T, index: number) => React.ReactNode;
+  /** onEndReached 的描述 */
+    onEndReached?: undefined | () => void;
 }
 
 const ListContainer = styled.div`
@@ -24,8 +30,8 @@ export function VirtualList<T>({
   itemHeight,
   windowHeight,
   renderItem,
-  onEndReached
-}: VirtualListProps<T>) {
+  onEndReached,
+}: IVirtualListProps<T>): import("D:/Health/node_modules/@types/react/jsx-runtime").JSX.Element {
   const containerRef = useRef<HTMLDivElement>(null);
   const [scrollTop, setScrollTop] = useState(0);
   const [visibleItems, setVisibleItems] = useState<T[]>([]);
@@ -37,7 +43,7 @@ export function VirtualList<T>({
   useEffect(() => {
     const handleScroll = () => {
       if (!containerRef.current) return;
-      
+
       const newScrollTop = containerRef.current.scrollTop;
       setScrollTop(newScrollTop);
 
@@ -55,7 +61,7 @@ export function VirtualList<T>({
     const startIndex = Math.max(0, Math.floor(scrollTop / itemHeight) - bufferCount);
     const endIndex = Math.min(
       items.length,
-      Math.ceil((scrollTop + windowHeight) / itemHeight) + bufferCount
+      Math.ceil((scrollTop + windowHeight) / itemHeight) + bufferCount,
     );
 
     setVisibleItems(items.slice(startIndex, endIndex));
@@ -68,15 +74,15 @@ export function VirtualList<T>({
           <div
             key={index}
             style={{
-              position: 'absolute',
-              top: `${index * itemHeight}px`,
-              height: itemHeight
+              position absolute
+              top {index  itemHeight}px
+              height itemHeight
             }}
           >
-            {renderItem(item, index)}
+            {renderItemitem index}
           </div>
         ))}
       </ListContent>
     </ListContainer>
   );
-} 
+}

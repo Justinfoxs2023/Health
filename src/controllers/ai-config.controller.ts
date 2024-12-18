@@ -1,31 +1,24 @@
-import { 
-  Controller, 
-  Get, 
-  Put, 
-  Post, 
-  Body, 
-  Param, 
-  Query,
-  UseGuards 
-} from '@nestjs/common';
-import { 
-  AIFeatureConfig, 
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { Controller, Get, Put, Post, Body, Param, Query, UseGuards } from '@nestjs/common';
+
+import {
+  IAIFeatureConfig,
   AIFeatureType,
-  AIPerformanceMetrics,
-  AIUsageStats 
+  IAIPerformanceMetrics,
+  IAIUsageStats,
 } from '@/types/ai-config';
 import { AIConfigService } from '@/services/ai/ai-config.service';
 import { AdminGuard } from '@/guards/admin.guard';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
-@ApiTags('AI Configuration')
-@Controller('api/ai-config')
+@ApiT
+ags()
+@Controller()
 export class AIConfigController {
   constructor(private readonly aiConfigService: AIConfigService) {}
 
-  @Get('features')
-  @ApiOperation({ summary: '获取所有AI功能配置' })
-  async getAllFeatures(): Promise<{[key in AIFeatureType]?: AIFeatureConfig}> {
+  @Get()
+  @ApiOperation()
+  async getAllFeatures(): Promise<{ [key in AIFeatureType]?: IAIFeatureConfig }> {
     const features = {};
     for (const type of Object.values(AIFeatureType)) {
       features[type] = await this.aiConfigService.getFeatureConfig(type);
@@ -33,48 +26,42 @@ export class AIConfigController {
     return features;
   }
 
-  @Get('feature/:type')
-  @ApiOperation({ summary: '获取指定AI功能配置' })
-  async getFeatureConfig(
-    @Param('type') type: AIFeatureType
-  ): Promise<AIFeatureConfig> {
+  @Get()
+  @ApiOperation()
+  async getFeatureConfig(@Param() type: AIFeatureType): Promise<IAIFeatureConfig> {
     return this.aiConfigService.getFeatureConfig(type);
   }
 
-  @Put('feature/:type')
-  @UseGuards(AdminGuard)
-  @ApiOperation({ summary: '更新AI功能配置' })
+  @Put()
+  @UseGuards()
+  @ApiOperation()
   async updateFeatureConfig(
-    @Param('type') type: AIFeatureType,
-    @Body() config: Partial<AIFeatureConfig>
+    @Param() type: AIFeatureType,
+    @Body() config: Partial<IAIFeatureConfig>,
   ): Promise<boolean> {
     return this.aiConfigService.updateFeatureConfig(type, config);
   }
 
-  @Get('metrics/:type')
-  @ApiOperation({ summary: '获取AI功能性能指标' })
-  async getMetrics(
-    @Param('type') type: AIFeatureType
-  ): Promise<AIPerformanceMetrics> {
+  @Get()
+  @ApiOperation()
+  async getMetrics(@Param() type: AIFeatureType): Promise<IAIPerformanceMetrics> {
     return this.aiConfigService.getPerformanceMetrics(type);
   }
 
-  @Get('usage/:type')
-  @ApiOperation({ summary: '获取AI功能使用统计' })
+  @Get()
+  @ApiOperation()
   async getUsageStats(
-    @Param('type') type: AIFeatureType,
-    @Query('startDate') startDate?: string,
-    @Query('endDate') endDate?: string
-  ): Promise<AIUsageStats> {
+    @Param() type: AIFeatureType,
+    @Query() startDate?: string,
+    @Query() endDate?: string,
+  ): Promise<IAIUsageStats> {
     return this.aiConfigService.getUsageStats(type);
   }
 
-  @Post('test/:type')
-  @UseGuards(AdminGuard)
-  @ApiOperation({ summary: '测试AI功能' })
-  async testFeature(
-    @Param('type') type: AIFeatureType
-  ): Promise<{
+  @Post()
+  @UseGuards()
+  @ApiOperation()
+  async testFeature(@Param() type: AIFeatureType): Promise<{
     success: boolean;
     latency: number;
     error?: string;
@@ -85,11 +72,11 @@ export class AIConfigController {
       const latency = Date.now() - startTime;
       return { success: true, latency };
     } catch (error) {
-      return { 
-        success: false, 
-        latency: 0, 
-        error: error.message 
+      return {
+        success: false,
+        latency: 0,
+        error: error.message,
       };
     }
   }
-} 
+}

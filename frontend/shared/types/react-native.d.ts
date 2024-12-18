@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 react-native.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 declare module 'react-native' {
   import { ViewStyle, TextStyle, ImageStyle } from 'react-native';
 
@@ -29,4 +36,4 @@ declare module 'react-native' {
   export const Dimensions: Dimensions;
   export const AsyncStorage: AsyncStorage;
   export const useWindowDimensions: () => { width: number; height: number };
-} 
+}

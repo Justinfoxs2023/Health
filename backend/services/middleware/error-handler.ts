@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from 'express';
 import { Logger } from '../../utils/logger';
+import { Request, Response, NextFunction } from 'express';
 
 export class ErrorHandler {
   constructor(private logger: Logger) {}
@@ -10,20 +10,23 @@ export class ErrorHandler {
 
       const response = {
         success: false,
-        message: process.env.NODE_ENV === 'production' 
-          ? '服务器内部错误' 
-          : error.message,
-        errors: process.env.NODE_ENV === 'production' ? undefined : [{
-          type: error.name,
-          stack: error.stack
-        }],
+        message: process.env.NODE_ENV === 'production' ? '服务器内部错误' : error.message,
+        errors:
+          process.env.NODE_ENV === 'production'
+            ? undefined
+            : [
+                {
+                  type: error.name,
+                  stack: error.stack,
+                },
+              ],
         meta: {
           timestamp: Date.now(),
-          path: req.path
-        }
+          path: req.path,
+        },
       };
 
       res.status(500).json(response);
     };
   }
-} 
+}

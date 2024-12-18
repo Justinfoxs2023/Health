@@ -1,9 +1,16 @@
+/**
+ * @fileoverview TS 文件 config.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 declare module 'config-types' {
   export interface Config {
     redis: {
       host: string;
       port: number;
-      password?: string;
+      password: string;
       db: number;
     };
     jwt: {
@@ -23,4 +30,4 @@ declare module 'config-types' {
       userTTL: number;
     };
   }
-} 
+}

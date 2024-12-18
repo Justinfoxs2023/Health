@@ -1,10 +1,6 @@
-import { OpenAI } from 'openai';
 import { Logger } from '../utils/logger';
-import { 
-  PerformanceMetrics, 
-  SystemAnomaly, 
-  OptimizationPlan 
-} from '../types/monitoring';
+import { OpenAI } from 'openai';
+import { PerformanceMetrics, SystemAnomaly, OptimizationPlan } from '../types/monitoring';
 
 export class MonitoringAIService {
   private openai: OpenAI;
@@ -12,7 +8,7 @@ export class MonitoringAIService {
 
   constructor() {
     this.openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY
+      apiKey: process.env.OPENAI_API_KEY,
     });
     this.logger = new Logger('MonitoringAI');
   }
@@ -22,13 +18,13 @@ export class MonitoringAIService {
     try {
       // 1. 收集系统指标
       const systemMetrics = await this.collectSystemMetrics();
-      
+
       // 2. 收集应用指标
       const appMetrics = await this.collectApplicationMetrics();
-      
+
       // 3. 收集数据库指标
       const dbMetrics = await this.collectDatabaseMetrics();
-      
+
       // 4. 收集网络指标
       const networkMetrics = await this.collectNetworkMetrics();
 
@@ -37,7 +33,7 @@ export class MonitoringAIService {
         system: systemMetrics,
         application: appMetrics,
         database: dbMetrics,
-        network: networkMetrics
+        network: networkMetrics,
       };
     } catch (error) {
       this.logger.error('性能监控失败', error);
@@ -49,14 +45,17 @@ export class MonitoringAIService {
   async detectAnomalies(metrics: PerformanceMetrics): Promise<SystemAnomaly[]> {
     try {
       const response = await this.openai.chat.completions.create({
-        model: "gpt-4",
-        messages: [{
-          role: "system",
-          content: "分析系统性能指标，检测异常并提供建议"
-        }, {
-          role: "user",
-          content: JSON.stringify(metrics)
-        }]
+        model: 'gpt-4',
+        messages: [
+          {
+            role: 'system',
+            content: '分析系统性能指标，检测异常并提供建议',
+          },
+          {
+            role: 'user',
+            content: JSON.stringify(metrics),
+          },
+        ],
       });
 
       return this.parseAnomalies(response.choices[0].message.content);
@@ -71,10 +70,10 @@ export class MonitoringAIService {
     try {
       // 1. 分析资源使用情况
       const analysis = await this.analyzeResourceUsage(metrics);
-      
+
       // 2. 识别优化机会
       const opportunities = await this.identifyOptimizationOpportunities(analysis);
-      
+
       // 3. 生成优化计划
       return await this.generateOptimizationPlan(opportunities);
     } catch (error) {
@@ -87,14 +86,17 @@ export class MonitoringAIService {
   async predictMaintenance(metrics: PerformanceMetrics[]): Promise<MaintenancePrediction> {
     try {
       const response = await this.openai.chat.completions.create({
-        model: "gpt-4",
-        messages: [{
-          role: "system",
-          content: "基于历史性能数据，预测系统维护需求"
-        }, {
-          role: "user",
-          content: JSON.stringify(metrics)
-        }]
+        model: 'gpt-4',
+        messages: [
+          {
+            role: 'system',
+            content: '基于历史性能数据，预测系统维护需求',
+          },
+          {
+            role: 'user',
+            content: JSON.stringify(metrics),
+          },
+        ],
       });
 
       return this.parsePrediction(response.choices[0].message.content);
@@ -103,4 +105,4 @@ export class MonitoringAIService {
       throw error;
     }
   }
-} 
+}

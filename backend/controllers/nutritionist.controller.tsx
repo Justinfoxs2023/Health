@@ -1,6 +1,6 @@
+import { IAuthRequest } from '../types/models';
 import { Request, Response } from 'express';
 import { User } from '../models/user.model';
-import { IAuthRequest } from '../types/models';
 
 export class NutritionistController {
   /**
@@ -30,13 +30,13 @@ export class NutritionistController {
           total,
           page: Number(page),
           limit: Number(limit),
-          pages: Math.ceil(total / Number(limit))
-        }
+          pages: Math.ceil(total / Number(limit)),
+        },
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -50,25 +50,25 @@ export class NutritionistController {
 
       const nutritionist = await User.findOne({
         _id: id,
-        role: 'nutritionist'
+        role: 'nutritionist',
       }).select('name avatar nutritionistProfile');
 
       if (!nutritionist) {
         res.status(404).json({
           success: false,
-          message: '未找到该营养师'
+          message: '未找到该营养师',
         });
         return;
       }
 
       res.json({
         success: true,
-        data: nutritionist
+        data: nutritionist,
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -83,32 +83,32 @@ export class NutritionistController {
 
       const nutritionist = await User.findOne({
         _id: userId,
-        role: 'nutritionist'
+        role: 'nutritionist',
       });
 
       if (!nutritionist) {
         res.status(404).json({
           success: false,
-          message: '未找到该营养师'
+          message: '未找到该营养师',
         });
         return;
       }
 
       nutritionist.nutritionistProfile = {
         ...nutritionist.nutritionistProfile,
-        ...nutritionistProfile
+        ...nutritionistProfile,
       };
 
       await nutritionist.save();
 
       res.json({
         success: true,
-        data: nutritionist.nutritionistProfile
+        data: nutritionist.nutritionistProfile,
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -123,13 +123,13 @@ export class NutritionistController {
 
       const nutritionist = await User.findOne({
         _id: userId,
-        role: 'nutritionist'
+        role: 'nutritionist',
       });
 
       if (!nutritionist) {
         res.status(404).json({
           success: false,
-          message: '未找到该营养师'
+          message: '未找到该营养师',
         });
         return;
       }
@@ -139,15 +139,15 @@ export class NutritionistController {
 
       res.json({
         success: true,
-        data: nutritionist.nutritionistProfile.availability
+        data: nutritionist.nutritionistProfile.availability,
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
 }
 
-export const nutritionistController = new NutritionistController(); 
+export const nutritionistController = new NutritionistController();

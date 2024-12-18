@@ -1,6 +1,7 @@
 import { BehaviorSubject } from 'rxjs';
 
-interface HealthData {
+interface IHealthData {
+  /** vitals 的描述 */
   vitals: {
     heartRate: number;
     bloodPressure: {
@@ -11,6 +12,7 @@ interface HealthData {
     oxygenSaturation: number;
     respiratoryRate: number;
   };
+  /** bodyMetrics 的描述 */
   bodyMetrics: {
     height: number;
     weight: number;
@@ -18,6 +20,7 @@ interface HealthData {
     bodyFat: number;
     muscleMass: number;
   };
+  /** nutrition 的描述 */
   nutrition: {
     calories: number;
     protein: number;
@@ -26,12 +29,14 @@ interface HealthData {
     fiber: number;
     water: number;
   };
+  /** activity 的描述 */
   activity: {
     steps: number;
     distance: number;
     activeMinutes: number;
     caloriesBurned: number;
   };
+  /** sleep 的描述 */
   sleep: {
     duration: number;
     quality: number;
@@ -40,6 +45,7 @@ interface HealthData {
     lightSleep: number;
     awakeTime: number;
   };
+  /** stress 的描述 */
   stress: {
     level: number;
     variability: number;
@@ -47,44 +53,56 @@ interface HealthData {
   };
 }
 
-interface HealthRisk {
+interface IHealthRisk {
+  /** type 的描述 */
   type: string;
+  /** level 的描述 */
   level: 'low' | 'medium' | 'high';
+  /** description 的描述 */
   description: string;
+  /** recommendations 的描述 */
   recommendations: string[];
 }
 
-interface HealthMonitor {
+interface IHealthMonitor {
+  /** threshold 的描述 */
   threshold: number;
-  callback: (data: HealthData) => void;
+  /** callback 的描述 */
+  callback: (data: IHealthData) => void;
 }
 
-interface HealthState {
-  data: HealthData | null;
-  risks: HealthRisk[];
+interface IHealthState {
+  /** data 的描述 */
+  data: IHealthData | null;
+  /** risks 的描述 */
+  risks: IHealthRisk[];
+  /** analyzing 的描述 */
   analyzing: boolean;
+  /** error 的描述 */
   error: Error | null;
-  monitors: Map<string, HealthMonitor>;
+  /** monitors 的描述 */
+  monitors: Map<string, IHealthMonitor>;
+  /** lastUpdate 的描述 */
   lastUpdate: Date | null;
 }
 
 export class HealthService {
-  private state$ = new BehaviorSubject<HealthState>({
+  private state$ = new BehaviorSubject<IHealthState>({
     data: null,
     risks: [],
     analyzing: false,
     error: null,
     monitors: new Map(),
-    lastUpdate: null
+    lastUpdate: null,
   });
 
   // 添加健康监控器
-  addMonitor(type: string, threshold: number, callback: (data: HealthData) => void) {
+  addMonitor(type: string, threshold: number, callback: (data: IHealthData) => void) {
     const monitors = this.state$.value.monitors;
     monitors.set(type, { threshold, callback });
     this.state$.next({
       ...this.state$.value,
-      monitors
+      monitors,
     });
   }
 
@@ -94,12 +112,12 @@ export class HealthService {
     monitors.delete(type);
     this.state$.next({
       ...this.state$.value,
-      monitors
+      monitors,
     });
   }
 
   // 更新健康数据时检查监控器
-  private checkMonitors(data: HealthData) {
+  private checkMonitors(data: IHealthData) {
     this.state$.value.monitors.forEach((monitor, type) => {
       const value = this.getValueByType(data, type);
       if (value && Math.abs(value - monitor.threshold) > monitor.threshold * 0.1) {
@@ -109,7 +127,7 @@ export class HealthService {
   }
 
   // 根据类型获取健康数据值
-  private getValueByType(data: HealthData, type: string): number | null {
+  private getValueByType(data: IHealthData, type: string): number | null {
     const paths = type.split('.');
     let value: any = data;
     for (const path of paths) {
@@ -125,17 +143,17 @@ export class HealthService {
   }
 
   // 更新健康数据
-  async updateHealthData(data: Partial<HealthData>) {
+  async updateHealthData(data: Partial<IHealthData>) {
     try {
       const currentData = this.state$.value.data || {};
       const newData = {
         ...currentData,
-        ...data
-      } as HealthData;
+        ...data,
+      } as IHealthData;
 
       this.state$.next({
         ...this.state$.value,
-        data: newData
+        data: newData,
       });
 
       // 分析健康风险
@@ -146,22 +164,22 @@ export class HealthService {
   }
 
   // 优化健康风险分析
-  private async analyzeHealthRisks(data: HealthData) {
+  private async analyzeHealthRisks(data: IHealthData) {
     this.state$.next({
       ...this.state$.value,
       analyzing: true,
-      lastUpdate: new Date()
+      lastUpdate: new Date(),
     });
 
     try {
-      const risks: HealthRisk[] = [];
+      const risks: IHealthRisk[] = [];
       const analysisPromises = [
         this.analyzeVitalsAsync(data.vitals, risks),
         this.analyzeBodyMetricsAsync(data.bodyMetrics, risks),
         this.analyzeNutritionAsync(data.nutrition, risks),
         this.analyzeActivityAsync(data.activity, risks),
         this.analyzeSleepAsync(data.sleep, risks),
-        this.analyzeStressAsync(data.stress, risks)
+        this.analyzeStressAsync(data.stress, risks),
       ];
 
       await Promise.all(analysisPromises);
@@ -172,7 +190,7 @@ export class HealthService {
       this.state$.next({
         ...this.state$.value,
         risks,
-        analyzing: false
+        analyzing: false,
       });
     } catch (error) {
       this.updateError(error as Error);
@@ -180,8 +198,8 @@ export class HealthService {
   }
 
   // 异步分析生命体征
-  private async analyzeVitalsAsync(vitals: HealthData['vitals'], risks: HealthRisk[]) {
-    return new Promise<void>((resolve) => {
+  private async analyzeVitalsAsync(vitals: IHealthData['vitals'], risks: IHealthRisk[]) {
+    return new Promise<void>(resolve => {
       setTimeout(() => {
         this.analyzeVitals(vitals, risks);
         resolve();
@@ -190,8 +208,8 @@ export class HealthService {
   }
 
   // 异步分析身体指标
-  private async analyzeBodyMetricsAsync(metrics: HealthData['bodyMetrics'], risks: HealthRisk[]) {
-    return new Promise<void>((resolve) => {
+  private async analyzeBodyMetricsAsync(metrics: IHealthData['bodyMetrics'], risks: IHealthRisk[]) {
+    return new Promise<void>(resolve => {
       setTimeout(() => {
         this.analyzeBodyMetrics(metrics, risks);
         resolve();
@@ -200,8 +218,8 @@ export class HealthService {
   }
 
   // 异步分析营养状况
-  private async analyzeNutritionAsync(nutrition: HealthData['nutrition'], risks: HealthRisk[]) {
-    return new Promise<void>((resolve) => {
+  private async analyzeNutritionAsync(nutrition: IHealthData['nutrition'], risks: IHealthRisk[]) {
+    return new Promise<void>(resolve => {
       setTimeout(() => {
         this.analyzeNutrition(nutrition, risks);
         resolve();
@@ -210,8 +228,8 @@ export class HealthService {
   }
 
   // 异步分析活动水平
-  private async analyzeActivityAsync(activity: HealthData['activity'], risks: HealthRisk[]) {
-    return new Promise<void>((resolve) => {
+  private async analyzeActivityAsync(activity: IHealthData['activity'], risks: IHealthRisk[]) {
+    return new Promise<void>(resolve => {
       setTimeout(() => {
         this.analyzeActivity(activity, risks);
         resolve();
@@ -220,8 +238,8 @@ export class HealthService {
   }
 
   // 异步分析睡眠质量
-  private async analyzeSleepAsync(sleep: HealthData['sleep'], risks: HealthRisk[]) {
-    return new Promise<void>((resolve) => {
+  private async analyzeSleepAsync(sleep: IHealthData['sleep'], risks: IHealthRisk[]) {
+    return new Promise<void>(resolve => {
       setTimeout(() => {
         this.analyzeSleep(sleep, risks);
         resolve();
@@ -230,8 +248,8 @@ export class HealthService {
   }
 
   // 异步分析压力水平
-  private async analyzeStressAsync(stress: HealthData['stress'], risks: HealthRisk[]) {
-    return new Promise<void>((resolve) => {
+  private async analyzeStressAsync(stress: IHealthData['stress'], risks: IHealthRisk[]) {
+    return new Promise<void>(resolve => {
       setTimeout(() => {
         this.analyzeStress(stress, risks);
         resolve();
@@ -240,19 +258,14 @@ export class HealthService {
   }
 
   // 分析生命体征
-  private analyzeVitals(vitals: HealthData['vitals'], risks: HealthRisk[]) {
+  private analyzeVitals(vitals: IHealthData['vitals'], risks: IHealthRisk[]) {
     // 心率分析
     if (vitals.heartRate < 60 || vitals.heartRate > 100) {
       risks.push({
         type: 'heartRate',
         level: vitals.heartRate < 50 || vitals.heartRate > 120 ? 'high' : 'medium',
         description: '心率异常',
-        recommendations: [
-          '保持规律运动',
-          '避免剧烈运动',
-          '注意休息',
-          '必要时就医'
-        ]
+        recommendations: ['保持规律运动', '避免剧烈运动', '注意休息', '必要时就医'],
       });
     }
 
@@ -262,12 +275,7 @@ export class HealthService {
         type: 'bloodPressure',
         level: 'high',
         description: '血压偏高',
-        recommendations: [
-          '限制盐分摄入',
-          '规律运动',
-          '保持健康饮食',
-          '定期监测血压'
-        ]
+        recommendations: ['限制盐分摄入', '规律运动', '保持健康饮食', '定期监测血压'],
       });
     }
 
@@ -277,11 +285,7 @@ export class HealthService {
         type: 'temperature',
         level: vitals.temperature > 38.5 ? 'high' : 'medium',
         description: '体温偏高',
-        recommendations: [
-          '多休息',
-          '保持水分摄入',
-          '必要时就医'
-        ]
+        recommendations: ['多休息', '保持水分摄入', '必要时就医'],
       });
     }
 
@@ -291,28 +295,20 @@ export class HealthService {
         type: 'oxygenSaturation',
         level: vitals.oxygenSaturation < 90 ? 'high' : 'medium',
         description: '血氧饱和度偏低',
-        recommendations: [
-          '保持呼吸顺畅',
-          '避免剧烈运动',
-          '必要时就医'
-        ]
+        recommendations: ['保持呼吸顺畅', '避免剧烈运动', '必要时就医'],
       });
     }
   }
 
   // 分析身体指标
-  private analyzeBodyMetrics(metrics: HealthData['bodyMetrics'], risks: HealthRisk[]) {
+  private analyzeBodyMetrics(metrics: IHealthData['bodyMetrics'], risks: IHealthRisk[]) {
     // BMI分析
     if (metrics.bmi < 18.5 || metrics.bmi > 25) {
       risks.push({
         type: 'bmi',
         level: metrics.bmi < 16 || metrics.bmi > 30 ? 'high' : 'medium',
         description: metrics.bmi < 18.5 ? 'BMI偏低' : 'BMI偏高',
-        recommendations: [
-          '调整饮食结构',
-          '规律运动',
-          '咨询营养师'
-        ]
+        recommendations: ['调整饮食结构', '规律运动', '咨询营养师'],
       });
     }
 
@@ -322,17 +318,13 @@ export class HealthService {
         type: 'bodyFat',
         level: metrics.bodyFat > 30 ? 'high' : 'medium',
         description: '体脂率偏高',
-        recommendations: [
-          '增加有氧运动',
-          '控制热量摄入',
-          '增加蛋白质摄入'
-        ]
+        recommendations: ['增加有氧运动', '控制热量摄入', '增加蛋白质摄入'],
       });
     }
   }
 
   // 分析营养状况
-  private analyzeNutrition(nutrition: HealthData['nutrition'], risks: HealthRisk[]) {
+  private analyzeNutrition(nutrition: IHealthData['nutrition'], risks: IHealthRisk[]) {
     // 卡路���摄入分析
     const recommendedCalories = 2000; // 这里应该根据用户情况动态计算
     if (Math.abs(nutrition.calories - recommendedCalories) > 500) {
@@ -340,11 +332,7 @@ export class HealthService {
         type: 'calories',
         level: 'medium',
         description: nutrition.calories < recommendedCalories ? '热量摄入不足' : '热量摄入过多',
-        recommendations: [
-          '均衡饮食',
-          '控制食量',
-          '选择健康食物'
-        ]
+        recommendations: ['均衡饮食', '控制食量', '选择健康食物'],
       });
     }
 
@@ -354,11 +342,7 @@ export class HealthService {
         type: 'protein',
         level: 'medium',
         description: '蛋白质摄入不足',
-        recommendations: [
-          '增加优质蛋白摄入',
-          '食用瘦肉、鱼类、蛋类',
-          '考虑补充蛋白粉'
-        ]
+        recommendations: ['增加优质蛋白摄入', '食用瘦肉、鱼类、蛋类', '考虑补充蛋白粉'],
       });
     }
 
@@ -368,28 +352,20 @@ export class HealthService {
         type: 'water',
         level: 'medium',
         description: '水分摄入不足',
-        recommendations: [
-          '增加饮水量',
-          '定时饮水',
-          '监控尿液颜色'
-        ]
+        recommendations: ['增加饮水量', '定时饮水', '监控尿液颜色'],
       });
     }
   }
 
   // 分析活动水平
-  private analyzeActivity(activity: HealthData['activity'], risks: HealthRisk[]) {
+  private analyzeActivity(activity: IHealthData['activity'], risks: IHealthRisk[]) {
     // 步数分析
     if (activity.steps < 8000) {
       risks.push({
         type: 'steps',
         level: activity.steps < 5000 ? 'high' : 'medium',
         description: '日常活动量不足',
-        recommendations: [
-          '增加步行时间',
-          '使用楼梯代替电梯',
-          '工作时定时起身活动'
-        ]
+        recommendations: ['增加步行时间', '使用楼梯代替电梯', '工作时定时起身活动'],
       });
     }
 
@@ -399,28 +375,20 @@ export class HealthService {
         type: 'activeMinutes',
         level: 'medium',
         description: '运动时间不足',
-        recommendations: [
-          '每天保持30分钟中等强度运动',
-          '参加运动课程',
-          '找到喜欢的运动方式'
-        ]
+        recommendations: ['每天保持30分钟中等强度运动', '参加运动课程', '找到喜欢的运动方式'],
       });
     }
   }
 
   // 分析睡眠质量
-  private analyzeSleep(sleep: HealthData['sleep'], risks: HealthRisk[]) {
+  private analyzeSleep(sleep: IHealthData['sleep'], risks: IHealthRisk[]) {
     // 睡眠时长分析
     if (sleep.duration < 7 || sleep.duration > 9) {
       risks.push({
         type: 'sleepDuration',
         level: sleep.duration < 6 || sleep.duration > 10 ? 'high' : 'medium',
         description: sleep.duration < 7 ? '睡眠时间不足' : '睡眠时间过长',
-        recommendations: [
-          '保持规律作息',
-          '创造良好睡眠环境',
-          '避免睡前使用电子设备'
-        ]
+        recommendations: ['保持规律作息', '创造良好睡眠环境', '避免睡前使用电子设备'],
       });
     }
 
@@ -430,27 +398,19 @@ export class HealthService {
         type: 'sleepQuality',
         level: sleep.quality < 60 ? 'high' : 'medium',
         description: '睡眠质量欠佳',
-        recommendations: [
-          '保持规律作息',
-          '睡前放松',
-          '避免咖啡因摄入'
-        ]
+        recommendations: ['保持规律作息', '睡前放松', '避免咖啡因摄入'],
       });
     }
   }
 
   // 分析压力水平
-  private analyzeStress(stress: HealthData['stress'], risks: HealthRisk[]) {
+  private analyzeStress(stress: IHealthData['stress'], risks: IHealthRisk[]) {
     if (stress.level > 7) {
       risks.push({
         type: 'stress',
         level: stress.level > 8 ? 'high' : 'medium',
         description: '压力水平较高',
-        recommendations: [
-          '进行放松训练',
-          '保持规律运动',
-          '寻求心理咨询'
-        ]
+        recommendations: ['进行放松训练', '保持规律运动', '寻求心理咨询'],
       });
     }
 
@@ -459,11 +419,7 @@ export class HealthService {
         type: 'recovery',
         level: 'high',
         description: '恢复能力下降',
-        recommendations: [
-          '增加休息时间',
-          '改善睡眠质量',
-          '适当运动'
-        ]
+        recommendations: ['增加休息时间', '改善睡眠质量', '适当运动'],
       });
     }
   }
@@ -474,7 +430,7 @@ export class HealthService {
     return risks.map(risk => ({
       type: risk.type,
       level: risk.level,
-      recommendations: risk.recommendations
+      recommendations: risk.recommendations,
     }));
   }
 
@@ -487,7 +443,7 @@ export class HealthService {
       summary: {
         overallHealth: this.calculateOverallHealth(risks),
         mainRisks: risks.filter(r => r.level === 'high'),
-        improvements: risks.filter(r => r.level === 'medium')
+        improvements: risks.filter(r => r.level === 'medium'),
       },
       details: {
         vitals: data.vitals,
@@ -495,17 +451,17 @@ export class HealthService {
         nutrition: data.nutrition,
         activity: data.activity,
         sleep: data.sleep,
-        stress: data.stress
+        stress: data.stress,
       },
       recommendations: risks.reduce((acc, risk) => {
         acc[risk.type] = risk.recommendations;
         return acc;
-      }, {} as Record<string, string[]>)
+      }, {} as Record<string, string[]>),
     };
   }
 
   // 计算整体健康状况
-  private calculateOverallHealth(risks: HealthRisk[]) {
+  private calculateOverallHealth(risks: IHealthRisk[]) {
     const highRisks = risks.filter(r => r.level === 'high').length;
     const mediumRisks = risks.filter(r => r.level === 'medium').length;
 
@@ -520,12 +476,12 @@ export class HealthService {
     this.state$.next({
       ...this.state$.value,
       analyzing: false,
-      error
+      error,
     });
   }
 
   // 获取健康趋势分析
-  async getHealthTrends(days: number = 7) {
+  async getHealthTrends(days = 7) {
     // 实现健康趋势分析逻辑
     return {
       vitals: this.calculateTrends(days, 'vitals'),
@@ -533,7 +489,7 @@ export class HealthService {
       nutrition: this.calculateTrends(days, 'nutrition'),
       activity: this.calculateTrends(days, 'activity'),
       sleep: this.calculateTrends(days, 'sleep'),
-      stress: this.calculateTrends(days, 'stress')
+      stress: this.calculateTrends(days, 'stress'),
     };
   }
 
@@ -543,9 +499,9 @@ export class HealthService {
     return {
       trend: 'stable',
       change: 0,
-      data: []
+      data: [],
     };
   }
 }
 
-export const healthService = new HealthService(); 
+export const healthService = new HealthService();

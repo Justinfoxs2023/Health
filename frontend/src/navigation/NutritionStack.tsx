@@ -1,9 +1,10 @@
 import React from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
-import { PrecisionNutritionPlan } from '../components/nutrition/PrecisionNutritionPlan';
+
 import { FunctionalNutritionPlan } from '../components/nutrition/FunctionalNutritionPlan';
+import { PrecisionNutritionPlan } from '../components/nutrition/PrecisionNutritionPlan';
 import { SupplementPlan } from '../components/nutrition/SupplementPlan';
 import { TherapeuticDiet } from '../components/nutrition/TherapeuticDiet';
+import { createStackNavigator } from '@react-navigation/stack';
 
 const Stack = createStackNavigator();
 
@@ -17,7 +18,7 @@ export const NutritionStack = () => {
         headerTintColor: '#fff',
       }}
     >
-      <Stack.Screen 
+      <Stack.Screen
         name="PrecisionNutrition"
         component={PrecisionNutritionPlan}
         options={{ title: '精准营养方案' }}
@@ -39,4 +40,4 @@ export const NutritionStack = () => {
       />
     </Stack.Navigator>
   );
-}; 
+};

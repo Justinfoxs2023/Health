@@ -1,30 +1,29 @@
 import React from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Form, FormItem } from '../Form';
-import { Input } from '../Input';
+
 import { Button } from '../Button';
-import { IHealthData, HealthDataType } from '../../types';
+import { Form, FormItem } from '../Form';
 import { HEALTH_THRESHOLDS } from '../../constants';
+import { IHealthData, HealthDataType } from '../../types';
+import { Input } from '../Input';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 const healthDataSchema = z.object({
   type: z.nativeEnum(HealthDataType),
-  value: z.number()
-    .min(0, '数值必须大于0')
-    .max(1000, '数值超出合理范围'),
+  value: z.number().min(0, '数值必须大于0').max(1000, '数值超出合理范围'),
   unit: z.string(),
   note: z.string().optional(),
-  timestamp: z.date().default(() => new Date())
+  timestamp: z.date().default(() => new Date()),
 });
 
-export type HealthDataFormData = z.infer<typeof healthDataSchema>;
+export type HealthDataFormDataType = z.infer<typeof healthDataSchema>;
 
-export interface HealthDataFormProps {
+export interface IHealthDataFormProps {
   /** 初始数据 */
   initialData?: Partial<IHealthData>;
   /** 提交回调 */
-  onSubmit: (data: HealthDataFormData) => Promise<void>;
+  onSubmit: (data: HealthDataFormDataType) => Promise<void>;
   /** 取消回调 */
   onCancel?: () => void;
   /** 加载状态 */
@@ -32,11 +31,11 @@ export interface HealthDataFormProps {
 }
 
 /** 健康数据录入表单 */
-export const HealthDataForm: React.FC<HealthDataFormProps> = ({
+export const HealthDataForm: React.FC<IHealthDataFormProps> = ({
   initialData,
   onSubmit,
   onCancel,
-  loading = false
+  loading = false,
 }) => {
   const getThresholdMessage = (type: HealthDataType, value: number): string => {
     const threshold = HEALTH_THRESHOLDS[type];
@@ -57,7 +56,7 @@ export const HealthDataForm: React.FC<HealthDataFormProps> = ({
   };
 
   return (
-    <Form<HealthDataFormData>
+    <Form<HealthDataFormDataType>
       defaultValues={initialData}
       schema={healthDataSchema}
       onSubmit={onSubmit}
@@ -68,7 +67,7 @@ export const HealthDataForm: React.FC<HealthDataFormProps> = ({
           className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
           name="type"
         >
-          {Object.values(HealthDataType).map((type) => (
+          {Object.values(HealthDataType).map(type => (
             <option key={type} value={type}>
               {type.replace(/_/g, ' ')}
             </option>
@@ -84,44 +83,29 @@ export const HealthDataForm: React.FC<HealthDataFormProps> = ({
           block
           helpText={getThresholdMessage(
             initialData?.type || HealthDataType.BLOOD_PRESSURE,
-            Number(initialData?.value) || 0
+            Number(initialData?.value) || 0,
           )}
         />
       </FormItem>
 
       <FormItem label="单位" required>
-        <Input
-          name="unit"
-          placeholder="请输入单位"
-          block
-        />
+        <Input name="unit" placeholder="请输入单位" block />
       </FormItem>
 
       <FormItem label="备注">
-        <Input
-          name="note"
-          placeholder="请输入备注信息"
-          block
-        />
+        <Input name="note" placeholder="请输入备注信息" block />
       </FormItem>
 
       <div className="flex justify-end space-x-3">
         {onCancel && (
-          <Button
-            variant="secondary"
-            onClick={onCancel}
-            disabled={loading}
-          >
+          <Button variant="secondary" onClick={onCancel} disabled={loading}>
             取消
           </Button>
         )}
-        <Button
-          type="submit"
-          loading={loading}
-        >
+        <Button type="submit" loading={loading}>
           提交
         </Button>
       </div>
     </Form>
   );
-}; 
+};

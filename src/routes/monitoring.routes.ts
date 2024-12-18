@@ -1,5 +1,5 @@
-import { Router } from 'express';
 import { MonitoringController } from '../controllers/monitoring.controller';
+import { Router } from 'express';
 import { auth } from '../middleware/auth.middleware';
 import { rateLimit } from '../middleware/rate-limit.middleware';
 
@@ -11,7 +11,7 @@ router.get(
   '/metrics',
   auth.verifyToken,
   rateLimit.standard,
-  monitoringController.getPerformanceMetrics.bind(monitoringController)
+  monitoringController.getPerformanceMetrics.bind(monitoringController),
 );
 
 // 检测系统异常
@@ -19,7 +19,7 @@ router.get(
   '/anomalies',
   auth.verifyToken,
   rateLimit.standard,
-  monitoringController.detectAnomalies.bind(monitoringController)
+  monitoringController.detectAnomalies.bind(monitoringController),
 );
 
 // 获取优化建议
@@ -27,7 +27,7 @@ router.get(
   '/optimization',
   auth.verifyToken,
   rateLimit.standard,
-  monitoringController.getOptimizationPlan.bind(monitoringController)
+  monitoringController.getOptimizationPlan.bind(monitoringController),
 );
 
-export default router; 
+export default router;

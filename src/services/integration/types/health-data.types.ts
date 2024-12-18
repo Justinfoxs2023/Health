@@ -1,7 +1,15 @@
+/**
+ * @fileoverview TS 文件 health-data.types.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // 健康数据集成
-export interface HealthDataIntegration extends BaseHealthData {
+export interface IHealthDataIntegration extends BaseHealthData {
   // 基础健康数据
-  basicHealth: {
+  /** basicHealth 的描述 */
+    basicHealth: {
     height: number;
     weight: number;
     bmi: number;
@@ -11,7 +19,8 @@ export interface HealthDataIntegration extends BaseHealthData {
   };
 
   // 生命体征数据
-  vitalSigns: {
+  /** vitalSigns 的描述 */
+    vitalSigns: {
     bloodPressure: {
       systolic: number;
       diastolic: number;
@@ -36,7 +45,8 @@ export interface HealthDataIntegration extends BaseHealthData {
   };
 
   // 运动数据
-  exerciseData: {
+  /** exerciseData 的描述 */
+    exerciseData: {
     dailySteps: number;
     activeMinutes: number;
     caloriesBurned: number;
@@ -50,7 +60,8 @@ export interface HealthDataIntegration extends BaseHealthData {
   };
 
   // 睡眠数据
-  sleepData: {
+  /** sleepData 的描述 */
+    sleepData: {
     totalDuration: number;
     deepSleep: number;
     lightSleep: number;
@@ -62,7 +73,8 @@ export interface HealthDataIntegration extends BaseHealthData {
   };
 
   // 营养数据
-  nutritionData: {
+  /** nutritionData 的描述 */
+    nutritionData: {
     caloriesIntake: number;
     macronutrients: {
       protein: number;
@@ -80,7 +92,8 @@ export interface HealthDataIntegration extends BaseHealthData {
   };
 
   // 情绪数据
-  moodData: {
+  /** moodData 的描述 */
+    moodData: {
     currentMood: string;
     stressLevel: number;
     energyLevel: number;
@@ -90,18 +103,20 @@ export interface HealthDataIntegration extends BaseHealthData {
 }
 
 // 健康数据分析
-export interface HealthDataAnalysis {
-  // 趋势分析
-  trends: {
-    vitalSigns: TrendAnalysis;
-    exercise: TrendAnalysis;
-    nutrition: TrendAnalysis;
-    sleep: TrendAnalysis;
-    mood: TrendAnalysis;
+export interface IHealthDataAnalysis {
+   
+  /** trends 的描述 */
+    trends: {
+    vitalSigns: ITrendAnalysis;
+    exercise: ITrendAnalysis;
+    nutrition: ITrendAnalysis;
+    sleep: ITrendAnalysis;
+    mood: ITrendAnalysis;
   };
 
   // 相关性分析
-  correlations: Array<{
+  /** correlations 的描述 */
+    correlations: Array<{
     factors: string[];
     strength: number;
     direction: 'positive' | 'negative';
@@ -109,7 +124,8 @@ export interface HealthDataAnalysis {
   }>;
 
   // 健康评分
-  healthScores: {
+  /** healthScores 的描述 */
+    healthScores: {
     overall: number;
     physical: number;
     mental: number;
@@ -118,54 +134,61 @@ export interface HealthDataAnalysis {
   };
 
   // 风险评估
-  riskAssessment: {
+  /** riskAssessment 的描述 */
+    riskAssessment: {
     currentRisks: HealthRisk[];
     potentialRisks: HealthRisk[];
     preventiveMeasures: string[];
   };
 
   // 建议
-  recommendations: {
-    immediate: ActionRecommendation[];
-    shortTerm: ActionRecommendation[];
-    longTerm: ActionRecommendation[];
+  /** recommendations 的描述 */
+    recommendations: {
+    immediate: IActionRecommendation[];
+    shortTerm: IActionRecommendation[];
+    longTerm: IActionRecommendation[];
   };
 }
 
 // 趋势分析
-export interface TrendAnalysis {
-  period: string;
-  data: Array<{
+export interface ITrendAnalysis {
+  /** period 的描述 */
+    period: string;
+  /** data 的描述 */
+    data: Array{
     metric: string;
-    values: number[];
-    trend: 'increasing' | 'decreasing' | 'stable';
+    values: number;
+    trend: increasing  decreasing  stable;
     significance: number;
   }>;
   insights: string[];
 }
 
 // 行动建议
-export interface ActionRecommendation {
-  category: string;
-  priority: 'high' | 'medium' | 'low';
+export interface IActionRecommendation {
+  /** category 的描述 */
+    category: string;
+  /** priority 的描述 */
+    priority: high  medium  low;
   action: string;
   reason: string;
-  expectedBenefits: string[];
+  expectedBenefits: string;
   timeframe: string;
-  difficulty: 'easy' | 'moderate' | 'challenging';
-  resources: string[];
+  difficulty: easy  moderate  challenging;
+  resources: string;
 }
 
 // 健康数据同步配置
-export interface HealthDataSyncConfig {
-  sources: Array<{
+export interface IHealthDataSyncConfig {
+  /** sources 的描述 */
+    sources: Array{
     type: string;
     provider: string;
     lastSync: Date;
     syncFrequency: string;
-    dataTypes: string[];
+    dataTypes: string;
   }>;
-  
+
   preferences: {
     autoSync: boolean;
     syncInterval: number;
@@ -180,13 +203,15 @@ export interface HealthDataSyncConfig {
 }
 
 // 数据验证规则
-export interface ValidationRule {
-  dataType: string;
-  conditions: Array<{
+export interface IValidationRule {
+  /** dataType 的描述 */
+    dataType: string;
+  /** conditions 的描述 */
+    conditions: Array{
     field: string;
     operator: string;
     value: any;
   }>;
   action: 'accept' | 'reject' | 'flag';
   message?: string;
-} 
+}

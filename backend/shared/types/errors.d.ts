@@ -1,11 +1,13 @@
+/**
+ * @fileoverview TS 文件 errors.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // 基础错误类型
 export class AppError extends Error {
-  constructor(
-    public code: string,
-    public status: number,
-    message: string,
-    public data?: any
-  ) {
+  constructor(public code: string, public status: number, message: string, public data?: any) {
     super(message);
     this.name = this.constructor.name;
   }
@@ -49,6 +51,6 @@ export class NotFoundError extends AppError {
 }
 
 // 错误处理器类型
-export interface ErrorHandler {
+export interface IErrorHandler {
   (err: Error, req: Express.Request, res: Express.Response, next: NextFunction): void;
-} 
+}

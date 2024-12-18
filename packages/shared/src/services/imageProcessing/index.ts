@@ -1,23 +1,36 @@
 import { BehaviorSubject } from 'rxjs';
-import { ImageService } from '../image';
 import { HttpService } from '../http';
+import { ImageService } from '../image';
 
 interface ImageProcessingTask {
+  /** id 的描述 */
   id: string;
+  /** imageId 的描述 */
   imageId: string;
+  /** type 的描述 */
   type: 'compress' | 'convert' | 'resize';
+  /** status 的描述 */
   status: 'pending' | 'processing' | 'completed' | 'failed';
+  /** progress 的描述 */
   progress: number;
+  /** result 的描述 */
   result?: any;
+  /** error 的描述 */
   error?: string;
+  /** createdAt 的描述 */
   createdAt: Date;
+  /** completedAt 的描述 */
   completedAt?: Date;
 }
 
 interface ImageProcessingState {
+  /** tasks 的描述 */
   tasks: ImageProcessingTask[];
+  /** currentTask 的描述 */
   currentTask: ImageProcessingTask | null;
+  /** processing 的描述 */
   processing: boolean;
+  /** error 的描述 */
   error: Error | null;
 }
 
@@ -26,7 +39,7 @@ export class ImageProcessingService {
     tasks: [],
     currentTask: null,
     processing: false,
-    error: null
+    error: null,
   });
 
   private imageService: ImageService;
@@ -34,20 +47,13 @@ export class ImageProcessingService {
   private taskQueue: ImageProcessingTask[] = [];
   private processing = false;
 
-  constructor(
-    imageService = new ImageService(),
-    httpService = new HttpService()
-  ) {
+  constructor(imageService = new ImageService(), httpService = new HttpService()) {
     this.imageService = imageService;
     this.httpService = httpService;
   }
 
   // 添加处理任务
-  async addTask(
-    file: File,
-    type: ImageProcessingTask['type'],
-    options?: any
-  ): Promise<string> {
+  async addTask(file: File, type: ImageProcessingTask['type'], options?: any): Promise<string> {
     try {
       // 上传原始图片
       const formData = new FormData();
@@ -62,13 +68,13 @@ export class ImageProcessingService {
         type,
         status: 'pending',
         progress: 0,
-        createdAt: new Date()
+        createdAt: new Date(),
       };
 
       // 添加到任务队列
       this.taskQueue.push(task);
       this.updateState({
-        tasks: [...this.state$.value.tasks, task]
+        tasks: [...this.state$.value.tasks, task],
       });
 
       // 开始处理队列
@@ -91,7 +97,7 @@ export class ImageProcessingService {
     const task = this.taskQueue[0];
     this.updateState({
       currentTask: task,
-      processing: true
+      processing: true,
     });
 
     try {
@@ -204,7 +210,7 @@ export class ImageProcessingService {
     if (taskIndex > -1) {
       this.taskQueue.splice(taskIndex, 1);
       this.updateState({
-        tasks: this.state$.value.tasks.filter(task => task.id !== taskId)
+        tasks: this.state$.value.tasks.filter(task => task.id !== taskId),
       });
     }
   }
@@ -212,7 +218,9 @@ export class ImageProcessingService {
   // 清理已完成的任务
   clearCompletedTasks() {
     this.updateState({
-      tasks: this.state$.value.tasks.filter(task => task.status === 'pending' || task.status === 'processing')
+      tasks: this.state$.value.tasks.filter(
+        task => task.status === 'pending' || task.status === 'processing',
+      ),
     });
   }
 
@@ -220,16 +228,14 @@ export class ImageProcessingService {
   private updateState(partial: Partial<ImageProcessingState>) {
     this.state$.next({
       ...this.state$.value,
-      ...partial
+      ...partial,
     });
   }
 
   // 更新任务状态
   private updateTaskState(updatedTask: ImageProcessingTask) {
     this.updateState({
-      tasks: this.state$.value.tasks.map(task =>
-        task.id === updatedTask.id ? updatedTask : task
-      )
+      tasks: this.state$.value.tasks.map(task => (task.id === updatedTask.id ? updatedTask : task)),
     });
   }
 
@@ -237,4 +243,4 @@ export class ImageProcessingService {
   destroy() {
     this.state$.complete();
   }
-} 
+}

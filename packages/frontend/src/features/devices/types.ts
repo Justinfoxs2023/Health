@@ -1,5 +1,12 @@
+/**
+ * @fileoverview TS 文件 types.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // 设备集成类型定义
-interface DeviceIntegrationTypes {
+interface IDeviceIntegrationTypes {
   // 设备配置
   DeviceConfig {
     id: string;

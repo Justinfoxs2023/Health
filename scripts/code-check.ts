@@ -1,5 +1,5 @@
-import { ESLint } from 'eslint';
-import { Logger } from '../utils/logger';
+import { ESLint, Linter } from 'eslint';
+import { Logger } from '@nestjs/common';
 import { cwd, exit } from 'process';
 
 /** 代码检查器类 */
@@ -13,7 +13,9 @@ class CodeChecker {
     this.logger = new Logger('CodeCheck');
     this.eslint = new ESLint({
       fix: true,
-      extensions: ['.ts', '.tsx']
+      overrideConfig: {
+        files: ['**/*.ts', '**/*.tsx'],
+      },
     });
   }
 
@@ -25,7 +27,7 @@ class CodeChecker {
 
       const formatter = await this.eslint.loadFormatter('stylish');
       const resultText = await formatter.format(results);
-      
+
       if (resultText) {
         console.log(resultText);
       }
@@ -46,8 +48,9 @@ class CodeChecker {
   }
 }
 
+// 运行检查
 const checker = new CodeChecker();
-checker.runLinter().catch(error => {
-  console.error('Code check failed:', error);
+console.error('Error in code-check.ts:', error => {
+  console.error('Error in code-check.ts:', 'Code check failed:', error);
   exit(1);
-}); 
+});

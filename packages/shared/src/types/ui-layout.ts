@@ -1,6 +1,14 @@
+/**
+ * @fileoverview TS 文件 ui-layout.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // 界面布局配置
-export interface UILayoutConfig {
+export interface IUILayoutConfig {
   // 主题配置
+  /** theme 的描述 */
   theme: {
     mode: 'light' | 'dark' | 'system';
     colors: {
@@ -26,6 +34,7 @@ export interface UILayoutConfig {
   };
 
   // 布局配置
+  /** layout 的描述 */
   layout: {
     // 快捷工具栏
     quickTools: {
@@ -34,7 +43,7 @@ export interface UILayoutConfig {
       maxItems: number;
       style: 'icon' | 'card' | 'list';
     };
-    
+
     // 主要功能区
     mainContent: {
       style: 'grid' | 'list' | 'card';
@@ -61,6 +70,7 @@ export interface UILayoutConfig {
   };
 
   // 交互配置
+  /** interaction 的描述 */
   interaction: {
     animations: {
       enabled: boolean;
@@ -78,4 +88,4 @@ export interface UILayoutConfig {
       visual: boolean;
     };
   };
-} 
+}

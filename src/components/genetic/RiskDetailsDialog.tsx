@@ -1,25 +1,25 @@
 import React from 'react';
+
 import { Dialog, DialogTitle, DialogContent } from '@mui/material';
 
-interface RiskDetailsDialogProps {
-  open: boolean;
-  risk: Family.DiseaseRisk | null;
-  onClose: () => void;
+interface IRiskDetailsDialogProps {
+  /** open 的描述 */
+  open: false | true;
+  /** risk 的描述 */
+  risk: FamilyDiseaseRisk /** null 的描述 */;
+  /** null 的描述 */
+  null;
+  /** onClose 的描述 */
+  onClose: void;
 }
 
-export const RiskDetailsDialog: React.FC<RiskDetailsDialogProps> = ({
-  open,
-  risk,
-  onClose
-}) => {
+export const RiskDetailsDialog: React.FC<IRiskDetailsDialogProps> = ({ open, risk, onClose }) => {
   if (!risk) return null;
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>{risk.disease}风险详情</DialogTitle>
-      <DialogContent>
-        {/* 实现风险详情内容 */}
-      </DialogContent>
+      <DialogTitle>{riskdisease}</DialogTitle>
+      <DialogContent>{/  /}</DialogContent>
     </Dialog>
   );
-}; 
+};

@@ -1,9 +1,11 @@
-import { BaseHealthData } from '../../health/types/health-base.types';
+import { IBaseHealthData } from '../../health/types/health-base.types';
 
 // 运动计划时间表
-export interface ExerciseSchedule {
-  dayOfWeek: number;
-  timeSlots: Array<{
+export interface IExerciseSchedule {
+  /** dayOfWeek 的描述 */
+    dayOfWeek: number;
+  /** timeSlots 的描述 */
+    timeSlots: Array{
     startTime: string;
     endTime: string;
     type: ExerciseType;
@@ -14,32 +16,39 @@ export interface ExerciseSchedule {
 }
 
 // 运动阶段
-export interface ExercisePhase {
-  id: string;
-  name: string;
-  duration: number; // 天数
-  focus: string[];
-  goals: {
+export interface IExercisePhase {
+  /** id 的描述 */
+    id: string;
+  /** name 的描述 */
+    name: string;
+  /** duration 的描述 */
+    duration: number;  
+  /** focus 的描述 */
+    focus: string;
+  /** goals 的描述 */
+    goals: {
     primary: string;
-    secondary: string[];
-    metrics: Record<string, number>;
+    secondary: string;
+    metrics: Recordstring, number;
   };
-  exercises: Array<{
+  /** exercises 的描述 */
+    exercises: Array<{
     type: ExerciseType;
     sets: number;
     reps: number;
-    intensity: ExerciseIntensity;
-    progression: ProgressionRule[];
+    intensity: ExerciseIntensityType;
+    progression: IProgressionRule[];
   }>;
 }
 
 // 适应性规则
-export interface AdaptationRule {
-  trigger: {
+export interface IAdaptationRule {
+  /** trigger 的描述 */
+    trigger: {
     metric: string;
-    condition: 'above' | 'below' | 'between';
-    values: number[];
-    duration: number; // 持续天数
+    condition: above  below  between;
+    values: number;
+    duration: number;  
   };
   adjustment: {
     target: 'intensity' | 'volume' | 'frequency' | 'type';
@@ -54,19 +63,23 @@ export interface AdaptationRule {
 }
 
 // 运动进度
-export interface ExerciseProgress extends BaseHealthData {
-  planId: string;
-  period: {
+export interface IExerciseProgress extends IBaseHealthData {
+  /** planId 的描述 */
+    planId: string;
+  /** period 的描述 */
+    period: {
     start: Date;
     end: Date;
   };
-  metrics: {
+  /** metrics 的描述 */
+    metrics: {
     sessionsCompleted: number;
     totalDuration: number;
     averageIntensity: number;
     caloriesBurned: number;
   };
-  achievements: {
+  /** achievements 的描述 */
+    achievements: {
     goals: Array<{
       id: string;
       progress: number;
@@ -75,7 +88,8 @@ export interface ExerciseProgress extends BaseHealthData {
     milestones: string[];
     streaks: number;
   };
-  feedback: {
+  /** feedback 的描述 */
+    feedback: {
     perceived: number;
     difficulty: number;
     enjoyment: number;
@@ -84,32 +98,39 @@ export interface ExerciseProgress extends BaseHealthData {
 }
 
 // 计划评估
-export interface PlanEvaluation {
-  achievementRate: number;
-  strengthProgress: {
+export interface IPlanEvaluation {
+  /** achievementRate 的描述 */
+    achievementRate: number;
+  /** strengthProgress 的描述 */
+    strengthProgress: {
     overall: number;
-    byMuscleGroup: Record<string, number>;
+    byMuscleGroup: Recordstring, number;
   };
-  enduranceProgress: {
+  /** enduranceProgress 的描述 */
+    enduranceProgress: {
     cardio: number;
     muscular: number;
   };
-  technicalProgress: {
+  /** technicalProgress 的描述 */
+    technicalProgress: {
     form: number;
     consistency: number;
     complexity: number;
   };
-  requiresAdjustment: boolean;
-  adjustmentSuggestions: string[];
+  /** requiresAdjustment 的描述 */
+    requiresAdjustment: false | true;
+  /** adjustmentSuggestions 的描述 */
+    adjustmentSuggestions: string[];
 }
 
 // 运动建议
-export interface ExerciseRecommendation {
-  exercises: Array<{
+export interface IExerciseRecommendation {
+  /** exercises 的描述 */
+    exercises: Array{
     type: ExerciseType;
     duration: number;
     intensity: ExerciseIntensity;
-    instructions: string[];
+    instructions: string;
   }>;
   intensity: {
     target: number;
@@ -128,27 +149,19 @@ export interface ExerciseRecommendation {
 }
 
 // 运动类型
-export type ExerciseType = 
-  | 'cardio'
-  | 'strength'
-  | 'flexibility'
-  | 'balance'
-  | 'coordination'
-  | 'rehabilitation';
+export type ExerciseType =
+  any;
 
 // 运动强度
-export type ExerciseIntensity = 
-  | 'very_light'
-  | 'light'
-  | 'moderate'
-  | 'vigorous'
-  | 'maximum';
+export type ExerciseIntensityType = any;
 
 // 进阶规则
-export interface ProgressionRule {
-  condition: string;
-  adjustment: {
+export interface IProgressionRule {
+  /** condition 的描述 */
+    condition: string;
+  /** adjustment 的描述 */
+    adjustment: {
     parameter: string;
     value: number;
   };
-} 
+}

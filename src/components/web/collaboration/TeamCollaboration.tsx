@@ -1,10 +1,6 @@
 import React, { useState } from 'react';
-import { 
-  TeamChat,
-  TaskBoard,
-  SharedCalendar,
-  ActivityStream 
-} from './components';
+
+import { TeamChat, TaskBoard, SharedCalendar, ActivityStream } from './components';
 import { useTeamCollaboration } from '../../../hooks/useTeamCollaboration';
 
 export const TeamCollaboration: React.FC<{
@@ -17,16 +13,10 @@ export const TeamCollaboration: React.FC<{
   const renderContent = () => {
     switch (activeTab) {
       case 'chat':
-        return (
-          <TeamChat 
-            messages={data.messages}
-            onSend={sendMessage}
-            config={config.chat}
-          />
-        );
+        return <TeamChat messages={data.messages} onSend={sendMessage} config={config.chat} />;
       case 'tasks':
         return (
-          <TaskBoard 
+          <TaskBoard
             tasks={data.tasks}
             onCreate={createTask}
             onUpdate={updateTask}
@@ -34,19 +24,9 @@ export const TeamCollaboration: React.FC<{
           />
         );
       case 'calendar':
-        return (
-          <SharedCalendar 
-            events={data.events}
-            config={config.calendar}
-          />
-        );
+        return <SharedCalendar events={data.events} config={config.calendar} />;
       case 'activity':
-        return (
-          <ActivityStream 
-            activities={data.activities}
-            config={config.activity}
-          />
-        );
+        return <ActivityStream activities={data.activities} config={config.activity} />;
       default:
         return null;
     }
@@ -58,17 +38,15 @@ export const TeamCollaboration: React.FC<{
         {config.enabledFeatures.map(feature => (
           <button
             key={feature}
-            className={`tab ${activeTab === feature ? 'active' : ''}`}
-            onClick={() => setActiveTab(feature)}
+            className={tab {activeTab === feature  active  }}
+            onClick={ => setActiveTabfeature}
           >
             {feature}
           </button>
         ))}
       </div>
 
-      <div className="content">
-        {renderContent()}
-      </div>
+      <div className="content">{renderContent}</div>
     </div>
   );
-}; 
+};

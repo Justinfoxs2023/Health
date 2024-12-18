@@ -1,33 +1,44 @@
 import * as tf from '@tensorflow/tfjs';
-import { VoicePrintService } from './voice-print.service';
-import { LocalDatabase } from '../utils/local-database';
 import { CryptoService } from './crypto.service';
+import { ILocalDatabase } from '../utils/local-database';
+import { VoicePrintService } from './voice-print.service';
 
-interface BiometricTemplate {
+interface IBiometricTemplate {
+  /** id 的描述 */
   id: string;
+  /** userId 的描述 */
   userId: string;
+  /** type 的描述 */
   type: BiometricType;
+  /** features 的描述 */
   features: Float32Array;
-  metadata: BiometricMetadata;
+  /** metadata 的描述 */
+  metadata: IBiometricMetadata;
+  /** createdAt 的描述 */
   createdAt: Date;
+  /** lastVerified 的描述 */
   lastVerified: Date;
 }
 
-interface BiometricMetadata {
+interface IBiometricMetadata {
+  /** quality 的描述 */
   quality: number;
+  /** livenessScore 的描述 */
   livenessScore: number;
+  /** updateCount 的描述 */
   updateCount: number;
+  /** securityLevel 的描述 */
   securityLevel: 'low' | 'medium' | 'high';
 }
 
 type BiometricType = 'voice' | 'face' | 'fingerprint' | 'behavioral';
 
 export class BiometricVerificationService {
-  private db: LocalDatabase;
+  private db: ILocalDatabase;
   private voicePrintService: VoicePrintService;
   private model: tf.LayersModel | null = null;
   private crypto: CryptoService;
-  private templates: Map<string, BiometricTemplate> = new Map();
+  private templates: Map<string, IBiometricTemplate> = new Map();
 
   constructor() {
     this.db = new LocalDatabase('biometric-verification');
@@ -45,7 +56,7 @@ export class BiometricVerificationService {
     try {
       this.model = await tf.loadLayersModel('/models/biometric/model.json');
     } catch (error) {
-      console.error('加载生物特征模型失败:', error);
+      console.error('Error in biometric-verification.service.ts:', '加载生物特征模型失败:', error);
     }
   }
 
@@ -57,20 +68,16 @@ export class BiometricVerificationService {
         this.templates = new Map(decryptedTemplates);
       }
     } catch (error) {
-      console.error('加载生物特征模板失败:', error);
+      console.error('Error in biometric-verification.service.ts:', '加载生物特征模板失败:', error);
     }
   }
 
   // 注册生物特征
-  async enrollBiometric(
-    userId: string,
-    type: BiometricType,
-    data: Float32Array
-  ): Promise<string> {
+  async enrollBiometric(userId: string, type: BiometricType, data: Float32Array): Promise<string> {
     try {
       // 特征提取
       const features = await this.extractFeatures(type, data);
-      
+
       // 质量评估
       const quality = await this.assessQuality(type, features);
       if (quality < 0.8) {
@@ -84,7 +91,7 @@ export class BiometricVerificationService {
       }
 
       // 创建模板
-      const template: BiometricTemplate = {
+      const template: IBiometricTemplate = {
         id: `bio_${Date.now()}`,
         userId,
         type,
@@ -93,17 +100,17 @@ export class BiometricVerificationService {
           quality,
           livenessScore,
           updateCount: 0,
-          securityLevel: 'high'
+          securityLevel: 'high',
         },
         createdAt: new Date(),
-        lastVerified: new Date()
+        lastVerified: new Date(),
       };
 
       // 加密存储
       await this.saveTemplate(template);
       return template.id;
     } catch (error) {
-      console.error('注册生物特征失败:', error);
+      console.error('Error in biometric-verification.service.ts:', '注册生物特征失败:', error);
       throw error;
     }
   }
@@ -112,7 +119,7 @@ export class BiometricVerificationService {
   async verifyBiometric(
     userId: string,
     type: BiometricType,
-    data: Float32Array
+    data: Float32Array,
   ): Promise<{
     verified: boolean;
     confidence: number;
@@ -121,10 +128,11 @@ export class BiometricVerificationService {
     try {
       // 提取特征
       const features = await this.extractFeatures(type, data);
-      
+
       // 获取用户模板
-      const templates = Array.from(this.templates.values())
-        .filter(t => t.userId === userId && t.type === type);
+      const templates = Array.from(this.templates.values()).filter(
+        t => t.userId === userId && t.type === type,
+      );
 
       if (templates.length === 0) {
         throw new Error('未找到生物特征模板');
@@ -138,13 +146,11 @@ export class BiometricVerificationService {
 
       // 特征匹配
       const matchResults = await Promise.all(
-        templates.map(template => this.matchFeatures(features, template))
+        templates.map(template => this.matchFeatures(features, template)),
       );
 
       // 获取最佳匹配
-      const bestMatch = matchResults.reduce((a, b) => 
-        a.confidence > b.confidence ? a : b
-      );
+      const bestMatch = matchResults.reduce((a, b) => (a.confidence > b.confidence ? a : b));
 
       // 更新验证记录
       if (bestMatch.verified) {
@@ -154,32 +160,29 @@ export class BiometricVerificationService {
       return {
         verified: bestMatch.verified,
         confidence: bestMatch.confidence,
-        securityLevel: bestMatch.securityLevel
+        securityLevel: bestMatch.securityLevel,
       };
     } catch (error) {
-      console.error('生物特征验证失败:', error);
+      console.error('Error in biometric-verification.service.ts:', '生物特征验证失败:', error);
       throw error;
     }
   }
 
   // 特征提取
-  private async extractFeatures(
-    type: BiometricType,
-    data: Float32Array
-  ): Promise<Float32Array> {
+  private async extractFeatures(type: BiometricType, data: Float32Array): Promise<Float32Array> {
     if (!this.model) throw new Error('模型未加载');
 
     const preprocessed = await this.preprocessBiometricData(type, data);
     const tensor = tf.tensor(preprocessed).expandDims(0);
-    const features = await this.model.predict(tensor) as tf.Tensor;
-    
+    const features = (await this.model.predict(tensor)) as tf.Tensor;
+
     return new Float32Array(await features.data());
   }
 
   // 预处理生物特征数据
   private async preprocessBiometricData(
     type: BiometricType,
-    data: Float32Array
+    data: Float32Array,
   ): Promise<Float32Array> {
     switch (type) {
       case 'voice':
@@ -198,7 +201,7 @@ export class BiometricVerificationService {
   // 特征匹配
   private async matchFeatures(
     features: Float32Array,
-    template: BiometricTemplate
+    template: IBiometricTemplate,
   ): Promise<{
     verified: boolean;
     confidence: number;
@@ -207,7 +210,7 @@ export class BiometricVerificationService {
   }> {
     // 计算特征相似度
     const similarity = await this.calculateSimilarity(features, template.features);
-    
+
     // 获取阈值
     const threshold = this.getVerificationThreshold(template.metadata.securityLevel);
 
@@ -215,14 +218,14 @@ export class BiometricVerificationService {
       verified: similarity >= threshold,
       confidence: similarity,
       templateId: template.id,
-      securityLevel: template.metadata.securityLevel
+      securityLevel: template.metadata.securityLevel,
     };
   }
 
   // 计算相似度
   private async calculateSimilarity(
     features1: Float32Array,
-    features2: Float32Array
+    features2: Float32Array,
   ): Promise<number> {
     // 实现相似度计算
     return 0;
@@ -233,38 +236,30 @@ export class BiometricVerificationService {
     const thresholds = {
       low: 0.75,
       medium: 0.85,
-      high: 0.95
+      high: 0.95,
     };
     return thresholds[securityLevel as keyof typeof thresholds];
   }
 
   // 质量评估
-  private async assessQuality(
-    type: BiometricType,
-    features: Float32Array
-  ): Promise<number> {
+  private async assessQuality(type: BiometricType, features: Float32Array): Promise<number> {
     // 实现质量评估
     return 1.0;
   }
 
   // 活体检测
-  private async performLivenessDetection(
-    type: BiometricType,
-    data: Float32Array
-  ): Promise<number> {
+  private async performLivenessDetection(type: BiometricType, data: Float32Array): Promise<number> {
     // 实现活体检测
     return 1.0;
   }
 
   // 保存模板
-  private async saveTemplate(template: BiometricTemplate): Promise<void> {
+  private async saveTemplate(template: IBiometricTemplate): Promise<void> {
     // 加密模板
     const encryptedTemplate = await this.crypto.encryptData(template);
-    
+
     this.templates.set(template.id, template);
-    await this.db.put('biometric-templates', 
-      Array.from(this.templates.entries())
-    );
+    await this.db.put('biometric-templates', Array.from(this.templates.entries()));
   }
 
   // 更新验证记录
@@ -280,26 +275,20 @@ export class BiometricVerificationService {
   // 删除生物特征
   async deleteBiometric(templateId: string): Promise<void> {
     this.templates.delete(templateId);
-    await this.db.put('biometric-templates', 
-      Array.from(this.templates.entries())
-    );
+    await this.db.put('biometric-templates', Array.from(this.templates.entries()));
   }
 
   // 获取���户生物特征列表
-  async getUserBiometrics(userId: string): Promise<BiometricTemplate[]> {
-    return Array.from(this.templates.values())
-      .filter(template => template.userId === userId);
+  async getUserBiometrics(userId: string): Promise<IBiometricTemplate[]> {
+    return Array.from(this.templates.values()).filter(template => template.userId === userId);
   }
 
   // 更新安全级别
-  async updateSecurityLevel(
-    templateId: string,
-    level: 'low' | 'medium' | 'high'
-  ): Promise<void> {
+  async updateSecurityLevel(templateId: string, level: 'low' | 'medium' | 'high'): Promise<void> {
     const template = this.templates.get(templateId);
     if (template) {
       template.metadata.securityLevel = level;
       await this.saveTemplate(template);
     }
   }
-} 
+}

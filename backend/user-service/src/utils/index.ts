@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 index.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export * from './logger';
 export * from './redis';
 export * from './errors';
@@ -17,6 +24,6 @@ export * from './helpers/array.helper';
 export * from './helpers/object.helper';
 
 // 类型定义
-export type Logger = import('./logger').Logger;
-export type Redis = import('./redis').Redis;
-export type Validator = import('./validators').Validator; 
+export type LoggerType = import('./logger').Logger;
+export type RedisType = import('./redis').Redis;
+export type ValidatorType = import('./validators').Validator;

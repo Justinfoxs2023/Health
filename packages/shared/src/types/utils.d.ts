@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 utils.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 declare namespace Utils {
   // 通用工具类型
   type Nullable<T> = T | null;
@@ -39,11 +46,14 @@ declare namespace Utils {
   // 服务健康检查类型
   interface HealthCheck {
     status: 'healthy' | 'unhealthy' | 'degraded';
-    details: Record<string, {
-      status: string;
-      message?: string;
-      lastChecked: Date;
-    }>;
+    details: Record<
+      string,
+      {
+        status: string;
+        message?: string;
+        lastChecked: Date;
+      }
+    >;
   }
 
   // 日志类型

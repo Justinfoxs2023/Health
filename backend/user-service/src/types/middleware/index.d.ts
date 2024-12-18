@@ -5,12 +5,16 @@ export interface IMiddleware {
 }
 
 export interface IRateLimitMiddleware {
+  /** standard 的描述 */
   standard: IMiddleware;
+  /** upload 的描述 */
   upload: IMiddleware;
+  /** api 的描述 */
   api: IMiddleware;
 }
 
 export interface IAuthMiddleware {
+  /** verifyToken 的描述 */
   verifyToken: IMiddleware;
   checkRole(role: string): IMiddleware;
   checkPermission(permission: string): IMiddleware;
@@ -24,4 +28,4 @@ export interface IValidationMiddleware {
 
 export interface IErrorMiddleware {
   handle(err: Error, req: Request, res: Response, next: NextFunction): void;
-} 
+}

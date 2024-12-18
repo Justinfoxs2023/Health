@@ -5,8 +5,8 @@ const request = axios.create({
   baseURL: process.env.REACT_APP_API_URL,
   timeout: 10000,
   headers: {
-    'Content-Type': 'application/json'
-  }
+    'Content-Type': 'application/json',
+  },
 });
 
 // 请求拦截器
@@ -20,7 +20,7 @@ request.interceptors.request.use(
   },
   error => {
     return Promise.reject(error);
-  }
+  },
 );
 
 // 响应拦截器
@@ -50,7 +50,7 @@ request.interceptors.response.use(
       message.error('网络错误，请检查网络连接');
     }
     return Promise.reject(error);
-  }
+  },
 );
 
-export { request }; 
+export { request };

@@ -1,8 +1,6 @@
-import { Express } from 'express';
 import promClient from 'prom-client';
-import { Logger } from '@utils/logger';
-
-const logger = new Logger('Monitoring');
+import { Express } from 'express';
+import logger from '../utils/logger';
 
 // 创建指标收集器
 const collectDefaultMetrics = promClient.collectDefaultMetrics;
@@ -14,32 +12,32 @@ const httpRequestDurationMicroseconds = new promClient.Histogram({
   name: 'http_request_duration_seconds',
   help: 'HTTP请求持续时间',
   labelNames: ['method', 'route', 'code'],
-  buckets: [0.1, 0.5, 1, 1.5, 2, 3, 5, 10]
+  buckets: [0.1, 0.5, 1, 1.5, 2, 3, 5, 10],
 });
 
 const httpRequestTotal = new promClient.Counter({
   name: 'http_request_total',
   help: 'HTTP请求总数',
-  labelNames: ['method', 'route', 'code']
+  labelNames: ['method', 'route', 'code'],
 });
 
 const aiModelPredictionDuration = new promClient.Histogram({
   name: 'ai_model_prediction_duration_seconds',
   help: 'AI模型预测持续时间',
   labelNames: ['model_type', 'status'],
-  buckets: [0.1, 0.5, 1, 2, 5, 10, 20, 30]
+  buckets: [0.1, 0.5, 1, 2, 5, 10, 20, 30],
 });
 
 const aiModelPredictionTotal = new promClient.Counter({
   name: 'ai_model_prediction_total',
   help: 'AI模型预测总数',
-  labelNames: ['model_type', 'status']
+  labelNames: ['model_type', 'status'],
 });
 
 const cacheHitRatio = new promClient.Gauge({
   name: 'cache_hit_ratio',
   help: '缓存命中率',
-  labelNames: ['cache_type']
+  labelNames: ['cache_type'],
 });
 
 export function setupMonitoring(app: Express): void {
@@ -47,7 +45,7 @@ export function setupMonitoring(app: Express): void {
     // 启用默认指标收集
     collectDefaultMetrics({ register });
 
-    // 注册自定义指标
+    // 注册��定义指标
     register.registerMetric(httpRequestDurationMicroseconds);
     register.registerMetric(httpRequestTotal);
     register.registerMetric(aiModelPredictionDuration);
@@ -81,9 +79,7 @@ export function setupMonitoring(app: Express): void {
           .observe(duration / 1000);
 
         // 增加请求计数
-        httpRequestTotal
-          .labels(method, route, code.toString())
-          .inc();
+        httpRequestTotal.labels(method, route, code.toString()).inc();
       });
 
       next();
@@ -96,26 +92,17 @@ export function setupMonitoring(app: Express): void {
   }
 }
 
-// 导出指标记录函数
+// 导出指标记��函数
 export function recordAiModelPrediction(
   modelType: string,
   duration: number,
-  status: 'success' | 'failure'
+  status: 'success' | 'failure',
 ): void {
-  aiModelPredictionDuration
-    .labels(modelType, status)
-    .observe(duration / 1000);
+  aiModelPredictionDuration.labels(modelType, status).observe(duration / 1000);
 
-  aiModelPredictionTotal
-    .labels(modelType, status)
-    .inc();
+  aiModelPredictionTotal.labels(modelType, status).inc();
 }
 
-export function updateCacheHitRatio(
-  cacheType: string,
-  ratio: number
-): void {
-  cacheHitRatio
-    .labels(cacheType)
-    .set(ratio);
-} 
+export function updateCacheHitRatio(cacheType: string, ratio: number): void {
+  cacheHitRatio.labels(cacheType).set(ratio);
+}

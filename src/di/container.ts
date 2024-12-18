@@ -1,10 +1,6 @@
 import { Container } from 'inversify';
+import { LoggerImpl, MetricsImpl, AlertServiceImpl } from '../infrastructure';
 import { TYPES } from './types';
-import { 
-  LoggerImpl, 
-  MetricsImpl, 
-  AlertServiceImpl 
-} from '../infrastructure';
 
 const container = new Container();
 
@@ -18,4 +14,4 @@ container.bind(TYPES.ExerciseService).to(ExerciseService);
 container.bind(TYPES.NutritionService).to(NutritionService);
 container.bind(TYPES.PaymentService).to(PaymentService);
 
-export { container }; 
+export { container };

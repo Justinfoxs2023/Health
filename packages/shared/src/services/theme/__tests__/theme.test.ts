@@ -1,6 +1,6 @@
-import { renderHook, act } from '@testing-library/react';
-import { themeService, useTheme, ThemeMode } from '../index';
 import { STORAGE_KEYS } from '../../../constants';
+import { renderHook, act } from '@testing-library/react';
+import { themeService, useTheme, ThemeModeType } from '../index';
 
 describe('ThemeService', () => {
   beforeEach(() => {
@@ -30,7 +30,7 @@ describe('ThemeService', () => {
   });
 
   it('应该正确设置主题模式', () => {
-    const modes: ThemeMode[] = ['light', 'dark', 'system'];
+    const modes: ThemeModeType[] = ['light', 'dark', 'system'];
     modes.forEach(mode => {
       themeService.setMode(mode);
       expect(themeService.getMode()).toBe(mode);
@@ -65,7 +65,7 @@ describe('ThemeService', () => {
     // 模拟系统主题变化
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     themeService.setMode('system');
-    
+
     // 模拟暗色主题
     Object.defineProperty(mediaQuery, 'matches', { value: true });
     mediaQuery.dispatchEvent(new MediaQueryListEvent('change', { matches: true }));
@@ -87,11 +87,11 @@ describe('useTheme Hook', () => {
 
   it('应该响应主题变化', () => {
     const { result } = renderHook(() => useTheme());
-    
+
     act(() => {
       result.current.setMode('dark');
     });
-    
+
     expect(result.current.mode).toBe('dark');
     expect(result.current.config).toEqual(themeService.getConfig());
   });
@@ -99,23 +99,20 @@ describe('useTheme Hook', () => {
   it('应该支持主题切换', () => {
     const { result } = renderHook(() => useTheme());
     const initialMode = result.current.mode;
-    
+
     act(() => {
       result.current.toggleMode();
     });
-    
+
     expect(result.current.mode).not.toBe(initialMode);
   });
 
   it('应该在组件卸载时清理事件监听', () => {
     const removeEventListenerSpy = jest.spyOn(window, 'removeEventListener');
     const { unmount } = renderHook(() => useTheme());
-    
+
     unmount();
-    
-    expect(removeEventListenerSpy).toHaveBeenCalledWith(
-      'themeChange',
-      expect.any(Function)
-    );
+
+    expect(removeEventListenerSpy).toHaveBeenCalledWith('themeChange', expect.any(Function));
   });
-}); 
+});

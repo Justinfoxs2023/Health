@@ -1,5 +1,5 @@
-import { IsString, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsString, IsOptional } from 'class-validator';
 
 export class CreateCommentDto {
   @ApiProperty({ description: '评论内容' })
@@ -26,4 +26,4 @@ export class UpdateCommentDto {
   @IsString({ each: true })
   @IsOptional()
   mentions?: string[];
-} 
+}

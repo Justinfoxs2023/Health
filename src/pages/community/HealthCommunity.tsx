@@ -1,9 +1,10 @@
 import { useEffect } from 'react';
+
 import styled from 'styled-components';
-import { HealthMoments } from './components/HealthMoments';
 import { ExperienceSharing } from './components/ExperienceSharing';
 import { ExpertColumns } from './components/ExpertColumns';
 import { HealthChallenges } from './components/HealthChallenges';
+import { HealthMoments } from './components/HealthMoments';
 import { TeamCompetitions } from './components/TeamCompetitions';
 
 const CommunityContainer = styled.div`
@@ -40,32 +41,32 @@ export const HealthCommunity: React.FC = () => {
   return (
     <CommunityContainer>
       <MainFeed>
-        <HealthMoments 
+        <HealthMoments
           posts={posts}
           onPostCreate={handlePostCreate}
           onPostInteract={handlePostInteract}
         />
-        
-        <ExperienceSharing 
+
+        <ExperienceSharing
           experiences={posts.filter(p => p.type === 'experience')}
           onShare={handleExperienceShare}
         />
       </MainFeed>
 
       <SideContent>
-        <ExpertColumns 
+        <ExpertColumns
           experts={experts}
           onFollow={handleExpertFollow}
           onConsult={handleExpertConsult}
         />
-        
-        <HealthChallenges 
+
+        <HealthChallenges
           challenges={challenges}
           onJoinChallenge={handleJoinChallenge}
           onCreateChallenge={handleCreateChallenge}
         />
-        
-        <TeamCompetitions 
+
+        <TeamCompetitions
           competitions={challenges.filter(c => c.type === 'team')}
           onJoinTeam={handleJoinTeam}
           onCreateTeam={handleCreateTeam}
@@ -73,4 +74,4 @@ export const HealthCommunity: React.FC = () => {
       </SideContent>
     </CommunityContainer>
   );
-}; 
+};

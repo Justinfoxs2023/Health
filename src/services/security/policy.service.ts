@@ -1,10 +1,6 @@
+import { ISecurityPolicy, ISecurityRule, IRuleCondition } from '../../types/security/policy';
 import { Logger } from '../../utils/logger';
 import { Redis } from '../../utils/redis';
-import { 
-  SecurityPolicy, 
-  SecurityRule,
-  RuleCondition 
-} from '../../types/security/policy';
 
 export class SecurityPolicyService {
   private logger: Logger;
@@ -20,10 +16,10 @@ export class SecurityPolicyService {
     try {
       // 1. 获取适用的策略
       const policies = await this.getApplicablePolicies(context);
-      
+
       // 2. 按优先级排序
       const sortedPolicies = this.sortPoliciesByPriority(policies);
-      
+
       // 3. 评估策略
       for (const policy of sortedPolicies) {
         const result = await this.evaluatePolicyRules(policy, context);
@@ -40,17 +36,15 @@ export class SecurityPolicyService {
   }
 
   // 验证规则条件
-  private async evaluateCondition(condition: RuleCondition, context: any): Promise<boolean> {
+  private async evaluateCondition(condition: IRuleCondition, context: any): Promise<boolean> {
     try {
       // 处理子条件
       if (condition.subConditions) {
         const subResults = await Promise.all(
-          condition.subConditions.map(sub => this.evaluateCondition(sub, context))
+          condition.subConditions.map(sub => this.evaluateCondition(sub, context)),
         );
-        
-        return condition.logic === 'and'
-          ? subResults.every(r => r)
-          : subResults.some(r => r);
+
+        return condition.logic === 'and' ? subResults.every(r => r) : subResults.some(r => r);
       }
 
       // 评估单个条件
@@ -74,4 +68,4 @@ export class SecurityPolicyService {
       // ... 其他动作处理
     }
   }
-} 
+}

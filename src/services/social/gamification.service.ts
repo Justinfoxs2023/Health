@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 gamification.service.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export class GamificationService {
   private readonly challengeRepo: ChallengeRepository;
   private readonly badgeRepo: BadgeRepository;
@@ -11,12 +18,12 @@ export class GamificationService {
         participants: [],
         leaderboard: [],
         status: 'active',
-        createTime: new Date()
+        createTime: new Date(),
       });
 
       // 设置奖励
       await this.setupChallengeRewards(challenge.id);
-      
+
       // 发送挑战邀请
       await this.sendChallengeInvitations(challenge);
 
@@ -31,13 +38,13 @@ export class GamificationService {
   async updateProgress(userId: string, challengeId: string, progress: number): Promise<void> {
     try {
       await this.progressRepo.update(userId, challengeId, progress);
-      
+
       // 检查是否达成里程碑
       await this.checkMilestones(userId, challengeId, progress);
-      
+
       // 更新排行榜
       await this.updateLeaderboard(challengeId);
-      
+
       // 检查徽章解锁
       await this.checkBadgeUnlock(userId, challengeId);
     } catch (error) {
@@ -45,4 +52,4 @@ export class GamificationService {
       throw error;
     }
   }
-} 
+}

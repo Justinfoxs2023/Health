@@ -1,6 +1,6 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { ActivityService } from '../services/ActivityService';
+import { AuthGuard } from '@nestjs/passport';
+import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards } from '@nestjs/common';
 import { CurrentUser } from '../decorators/current-user.decorator';
 import { Roles } from '../decorators/roles.decorator';
 import { RolesGuard } from '../guards/roles.guard';
@@ -13,23 +13,17 @@ export class ActivityController {
   // 创建活动（仅管理员）
   @Post()
   @Roles('admin')
-  async createActivity(
-    @CurrentUser() currentUser: any,
-    @Body() data: any
-  ) {
+  async createActivity(@CurrentUser() currentUser: any, @Body() data: any) {
     return this.activityService.createActivity({
       ...data,
-      createdBy: currentUser.id
+      createdBy: currentUser.id,
     });
   }
 
   // 更新活动（仅管理员）
   @Put(':id')
   @Roles('admin')
-  async updateActivity(
-    @Param('id') id: string,
-    @Body() data: any
-  ) {
+  async updateActivity(@Param('id') id: string, @Body() data: any) {
     return this.activityService.updateActivity(id, data);
   }
 
@@ -45,8 +39,8 @@ export class ActivityController {
     @Query('type') type: string,
     @Query('category') category: string,
     @Query('status') status: string,
-    @Query('page') page: number = 1,
-    @Query('limit') limit: number = 20
+    @Query('page') page = 1,
+    @Query('limit') limit = 20,
   ) {
     const query: any = {};
     if (type) query.type = type;
@@ -58,10 +52,7 @@ export class ActivityController {
 
   // 参加活动
   @Post(':id/join')
-  async joinActivity(
-    @CurrentUser() currentUser: any,
-    @Param('id') activityId: string
-  ) {
+  async joinActivity(@CurrentUser() currentUser: any, @Param('id') activityId: string) {
     return this.activityService.joinActivity(activityId, currentUser.id);
   }
 
@@ -70,25 +61,20 @@ export class ActivityController {
   async updateProgress(
     @CurrentUser() currentUser: any,
     @Param('id') activityId: string,
-    @Body() progress: any
+    @Body() progress: any,
   ) {
     return this.activityService.updateProgress(activityId, currentUser.id, progress);
   }
 
   // 获取活动排行榜
   @Get(':id/leaderboard')
-  async getLeaderboard(
-    @Param('id') activityId: string,
-    @Query('metric') metric: string = 'points'
-  ) {
+  async getLeaderboard(@Param('id') activityId: string, @Query('metric') metric = 'points') {
     return this.activityService.getLeaderboard(activityId, metric);
   }
 
   // 获取用户活动统计
   @Get('user/stats')
-  async getUserActivityStats(
-    @CurrentUser() currentUser: any
-  ) {
+  async getUserActivityStats(@CurrentUser() currentUser: any) {
     return this.activityService.getUserActivityStats(currentUser.id);
   }
 
@@ -97,11 +83,11 @@ export class ActivityController {
   async getUserParticipatedActivities(
     @CurrentUser() currentUser: any,
     @Query('status') status: string,
-    @Query('page') page: number = 1,
-    @Query('limit') limit: number = 20
+    @Query('page') page = 1,
+    @Query('limit') limit = 20,
   ) {
     const query = {
-      participants: currentUser.id
+      participants: currentUser.id,
     };
     if (status) {
       query['status'] = status;
@@ -115,11 +101,11 @@ export class ActivityController {
   async getUserCreatedActivities(
     @CurrentUser() currentUser: any,
     @Query('status') status: string,
-    @Query('page') page: number = 1,
-    @Query('limit') limit: number = 20
+    @Query('page') page = 1,
+    @Query('limit') limit = 20,
   ) {
     const query = {
-      createdBy: currentUser.id
+      createdBy: currentUser.id,
     };
     if (status) {
       query['status'] = status;
@@ -134,4 +120,4 @@ export class ActivityController {
     // 这里应该添加软删除功能
     return this.activityService.updateActivity(id, { status: 'cancelled' });
   }
-} 
+}

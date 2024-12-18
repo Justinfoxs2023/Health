@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TSX 文件 HealthGroup.tsx 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export const HealthGroup: React.FC<HealthGroupProps> = ({ group }) => {
   const [activeTab, setActiveTab] = useState('topics');
   const { user } = useAuth();
@@ -9,17 +16,17 @@ export const HealthGroup: React.FC<HealthGroupProps> = ({ group }) => {
       <View style={styles.header}>
         <Image source={{ uri: group.coverImage }} style={styles.coverImage} />
         <View style={styles.groupInfo}>
-          <Text style={styles.groupName}>{group.name}</Text>
-          <Text style={styles.memberCount}>{group.members.length}成员</Text>
+          <Text style={stylesgroupName}>{groupname}</Text>
+          <Text style={stylesmemberCount}>{groupmemberslength}</Text>
           {!group.members.includes(user.id) ? (
-            <Button 
-              title="加入小组" 
+            <Button
+              title="加入小组"
               onPress={() => joinGroup(group.id)}
               style={styles.joinButton}
             />
           ) : (
-            <Button 
-              title="退出小组" 
+            <Button
+              title="退出小组"
               onPress={() => leaveGroup(group.id)}
               style={styles.leaveButton}
             />
@@ -36,4 +43,4 @@ export const HealthGroup: React.FC<HealthGroupProps> = ({ group }) => {
       />
     </View>
   );
-}; 
+};

@@ -1,20 +1,29 @@
-import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Injectable } from '@nestjs/common';
 import { Logger } from './logger.service';
+import { Model } from 'mongoose';
 
-interface QueryPerformance {
+interface IQueryPerformance {
+  /** query 的描述 */
   query: any;
+  /** duration 的描述 */
   duration: number;
+  /** collection 的描述 */
   collection: string;
+  /** timestamp 的描述 */
   timestamp: Date;
 }
 
-interface ResourceUsage {
+interface IResourceUsage {
+  /** dataSize 的描述 */
   dataSize: number;
+  /** storageSize 的描述 */
   storageSize: number;
+  /** indexes 的描述 */
   indexes: number;
+  /** collections 的描述 */
   collections: number;
+  /** timestamp 的描述 */
   timestamp: Date;
 }
 
@@ -22,23 +31,21 @@ interface ResourceUsage {
 export class PerformanceService {
   private readonly SLOW_QUERY_THRESHOLD = 100; // 100ms
   private readonly MAX_HISTORY_SIZE = 1000;
-  private queryHistory: Map<string, QueryPerformance[]> = new Map();
-  private resourceHistory: ResourceUsage[] = [];
+  private queryHistory: Map<string, IQueryPerformance[]> = new Map();
+  private resourceHistory: IResourceUsage[] = [];
 
-  constructor(
-    private readonly logger: Logger,
-  ) {}
+  constructor(private readonly logger: Logger) {}
 
   /**
    * 记录查询性能
    */
-  recordQueryPerformance(data: QueryPerformance): void {
+  recordQueryPerformance(data: IQueryPerformance): void {
     try {
       // 记录查询历史
       if (!this.queryHistory.has(data.collection)) {
         this.queryHistory.set(data.collection, []);
       }
-      
+
       const history = this.queryHistory.get(data.collection);
       history.push(data);
 
@@ -51,7 +58,7 @@ export class PerformanceService {
       if (data.duration > this.SLOW_QUERY_THRESHOLD) {
         this.logger.warn(`Slow query detected in collection ${data.collection}:`, {
           query: data.query,
-          duration: data.duration
+          duration: data.duration,
         });
       }
     } catch (error) {
@@ -62,7 +69,7 @@ export class PerformanceService {
   /**
    * 记录资源使用情况
    */
-  recordResourceUsage(data: ResourceUsage): void {
+  recordResourceUsage(data: IResourceUsage): void {
     try {
       this.resourceHistory.push(data);
 
@@ -81,7 +88,7 @@ export class PerformanceService {
   /**
    * 获取慢查询
    */
-  async getSlowQueries(collectionName: string): Promise<QueryPerformance[]> {
+  async getSlowQueries(collectionName: string): Promise<IQueryPerformance[]> {
     try {
       const history = this.queryHistory.get(collectionName) || [];
       return history.filter(query => query.duration > this.SLOW_QUERY_THRESHOLD);
@@ -94,7 +101,7 @@ export class PerformanceService {
   /**
    * 获取查询历史
    */
-  async getQueryHistory(collectionName: string): Promise<QueryPerformance[]> {
+  async getQueryHistory(collectionName: string): Promise<IQueryPerformance[]> {
     try {
       return this.queryHistory.get(collectionName) || [];
     } catch (error) {
@@ -122,9 +129,12 @@ export class PerformanceService {
       }
 
       // 分析存储大小变化
-      const storageSizeChange = ((current.storageSize - previous.storageSize) / previous.storageSize) * 100;
+      const storageSizeChange =
+        ((current.storageSize - previous.storageSize) / previous.storageSize) * 100;
       if (Math.abs(storageSizeChange) > 10) {
-        this.logger.warn(`Significant storage size change detected: ${storageSizeChange.toFixed(2)}%`);
+        this.logger.warn(
+          `Significant storage size change detected: ${storageSizeChange.toFixed(2)}%`,
+        );
       }
 
       // 分析索引数量变化
@@ -145,7 +155,8 @@ export class PerformanceService {
       const slowQueries = queryHistory.filter(query => query.duration > this.SLOW_QUERY_THRESHOLD);
 
       // 计算平均查询时间
-      const averageQueryTime = queryHistory.reduce((acc, curr) => acc + curr.duration, 0) / queryHistory.length;
+      const averageQueryTime =
+        queryHistory.reduce((acc, curr) => acc + curr.duration, 0) / queryHistory.length;
 
       // 计算查询分布
       const queryDistribution = this.calculateQueryDistribution(queryHistory);
@@ -158,7 +169,7 @@ export class PerformanceService {
         slowQueryCount: slowQueries.length,
         queryDistribution,
         resourceUsage: recentResourceUsage,
-        recommendations: this.generateRecommendations(queryHistory, recentResourceUsage)
+        recommendations: this.generateRecommendations(queryHistory, recentResourceUsage),
       };
     } catch (error) {
       this.logger.error(`Failed to generate performance report: ${error.message}`);
@@ -169,7 +180,7 @@ export class PerformanceService {
   /**
    * 计算查询时间分布
    */
-  private calculateQueryDistribution(queries: QueryPerformance[]): any {
+  private calculateQueryDistribution(queries: IQueryPerformance[]): any {
     const distribution = {
       fast: 0, // <10ms
       normal: 0, // 10-100ms
@@ -193,15 +204,20 @@ export class PerformanceService {
    * 生成性能优化建议
    */
   private generateRecommendations(
-    queries: QueryPerformance[],
-    resourceUsage: ResourceUsage
+    queries: IQueryPerformance[],
+    resourceUsage: IResourceUsage,
   ): string[] {
     const recommendations = [];
 
     // 分析查询性能
-    const slowQueryPercentage = (queries.filter(q => q.duration > this.SLOW_QUERY_THRESHOLD).length / queries.length) * 100;
+    const slowQueryPercentage =
+      (queries.filter(q => q.duration > this.SLOW_QUERY_THRESHOLD).length / queries.length) * 100;
     if (slowQueryPercentage > 10) {
-      recommendations.push(`High percentage of slow queries (${slowQueryPercentage.toFixed(2)}%). Consider optimizing indexes.`);
+      recommendations.push(
+        `High percentage of slow queries (${slowQueryPercentage.toFixed(
+          2,
+        )}%). Consider optimizing indexes.`,
+      );
     }
 
     // 分析资源使用
@@ -242,4 +258,4 @@ export class PerformanceService {
       throw error;
     }
   }
-} 
+}

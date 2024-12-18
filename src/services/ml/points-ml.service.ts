@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 points-ml.service.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export class PointsMLService {
   private readonly modelManager: MLModelManager;
   private readonly dataProcessor: DataProcessor;
@@ -13,10 +20,10 @@ export class PointsMLService {
     try {
       // 获取历史行为数据
       const behaviorData = await this.dataProcessor.getUserBehaviorData(userId);
-      
+
       // 特征工程
       const features = await this.extractBehaviorFeatures(behaviorData);
-      
+
       // 运行预测模型
       const prediction = await this.modelManager.runBehaviorModel(features);
 
@@ -24,7 +31,7 @@ export class PointsMLService {
         nextActions: prediction.predictedActions,
         probability: prediction.confidence,
         timeframe: prediction.timeWindow,
-        recommendations: await this.generateActionRecommendations(prediction)
+        recommendations: await this.generateActionRecommendations(prediction),
       };
     } catch (error) {
       this.logger.error('预测用户行为失败', error);
@@ -37,10 +44,10 @@ export class PointsMLService {
     try {
       // 获取用户积分数据
       const pointsData = await this.dataProcessor.getPointsValueData(userId);
-      
+
       // 运行优化模型
       const optimization = await this.modelManager.runValueOptimizationModel(pointsData);
-      
+
       // 生成优化建议
       const suggestions = await this.generateValueSuggestions(optimization);
 
@@ -48,7 +55,7 @@ export class PointsMLService {
         optimalUse: optimization.recommendations,
         expectedValue: optimization.predictedValue,
         timing: optimization.bestTiming,
-        suggestions
+        suggestions,
       };
     } catch (error) {
       this.logger.error('优化积分价值失败', error);
@@ -61,10 +68,10 @@ export class PointsMLService {
     try {
       // 获取健康数据
       const healthData = await this.dataProcessor.getHealthData(userId);
-      
+
       // 运行预测模型
       const prediction = await this.modelManager.runHealthPredictionModel(healthData);
-      
+
       // 生成目标建议
       const goals = await this.generateHealthGoals(prediction);
 
@@ -72,11 +79,11 @@ export class PointsMLService {
         predictedOutcomes: prediction.outcomes,
         recommendedGoals: goals,
         achievabilityScore: prediction.achievability,
-        timeline: prediction.expectedTimeline
+        timeline: prediction.expectedTimeline,
       };
     } catch (error) {
       this.logger.error('预测健康目标失败', error);
       throw error;
     }
   }
-} 
+}

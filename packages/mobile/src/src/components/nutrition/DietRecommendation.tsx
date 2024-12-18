@@ -1,16 +1,23 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
-import { Card, Text, useTheme, Button } from 'react-native-paper';
 
-interface NutrientGoal {
+import { Card, Text, useTheme, Button } from 'react-native-paper';
+import { View, StyleSheet, ScrollView } from 'react-native';
+
+interface INutrientGoal {
+  /** name 的描述 */
   name: string;
+  /** current 的描述 */
   current: number;
+  /** target 的描述 */
   target: number;
+  /** unit 的描述 */
   unit: string;
 }
 
-interface MealSuggestion {
+interface IMealSuggestion {
+  /** type 的描述 */
   type: '早餐' | '午餐' | '晚餐' | '加餐';
+  /** foods 的描述 */
   foods: Array<{
     name: string;
     portion: string;
@@ -21,16 +28,24 @@ interface MealSuggestion {
       fat: number;
     };
   }>;
+  /** totalCalories 的描述 */
   totalCalories: number;
 }
 
-interface DietRecommendationProps {
-  goals: NutrientGoal[];
-  suggestions: MealSuggestion[];
+interface IDietRecommendationProps {
+  /** goals 的描述 */
+  goals: INutrientGoal[];
+  /** suggestions 的描述 */
+  suggestions: IMealSuggestion[];
+  /** onSaveMealPlan 的描述 */
   onSaveMealPlan: () => void;
 }
 
-export const DietRecommendation = ({ goals, suggestions, onSaveMealPlan }: DietRecommendationProps) => {
+export const DietRecommendation = ({
+  goals,
+  suggestions,
+  onSaveMealPlan,
+}: IDietRecommendationProps) => {
   const theme = useTheme();
 
   return (
@@ -46,14 +61,14 @@ export const DietRecommendation = ({ goals, suggestions, onSaveMealPlan }: DietR
                   {goal.current}/{goal.target} {goal.unit}
                 </Text>
                 <View style={styles.progressBar}>
-                  <View 
+                  <View
                     style={[
                       styles.progressFill,
-                      { 
+                      {
                         width: `${Math.min(100, (goal.current / goal.target) * 100)}%`,
-                        backgroundColor: theme.colors.primary
-                      }
-                    ]} 
+                        backgroundColor: theme.colors.primary,
+                      },
+                    ]}
                   />
                 </View>
               </View>
@@ -67,24 +82,18 @@ export const DietRecommendation = ({ goals, suggestions, onSaveMealPlan }: DietR
           <Card.Content>
             <Text style={styles.mealTitle}>{meal.type}</Text>
             <Text style={styles.calories}>{meal.totalCalories} 千卡</Text>
-            
+
             {meal.foods.map((food, foodIndex) => (
               <View key={foodIndex} style={styles.foodItem}>
                 <View style={styles.foodHeader}>
                   <Text style={styles.foodName}>{food.name}</Text>
                   <Text style={styles.portion}>{food.portion}</Text>
                 </View>
-                
+
                 <View style={styles.nutrients}>
-                  <Text style={styles.nutrientItem}>
-                    蛋白质: {food.nutrients.protein}g
-                  </Text>
-                  <Text style={styles.nutrientItem}>
-                    碳水: {food.nutrients.carbs}g
-                  </Text>
-                  <Text style={styles.nutrientItem}>
-                    脂肪: {food.nutrients.fat}g
-                  </Text>
+                  <Text style={styles.nutrientItem}>蛋白质: {food.nutrients.protein}g</Text>
+                  <Text style={styles.nutrientItem}>碳水: {food.nutrients.carbs}g</Text>
+                  <Text style={styles.nutrientItem}>脂肪: {food.nutrients.fat}g</Text>
                 </View>
               </View>
             ))}
@@ -92,11 +101,7 @@ export const DietRecommendation = ({ goals, suggestions, onSaveMealPlan }: DietR
         </Card>
       ))}
 
-      <Button
-        mode="contained"
-        onPress={onSaveMealPlan}
-        style={styles.saveButton}
-      >
+      <Button mode="contained" onPress={onSaveMealPlan} style={styles.saveButton}>
         保存膳食计划
       </Button>
     </ScrollView>
@@ -181,4 +186,4 @@ const styles = StyleSheet.create({
   saveButton: {
     marginVertical: 24,
   },
-}); 
+});

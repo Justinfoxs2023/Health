@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 points-realtime.service.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export class PointsRealtimeService {
   private readonly websocketManager: WebSocketManager;
   private readonly realtimeProcessor: RealtimeProcessor;
@@ -12,15 +19,15 @@ export class PointsRealtimeService {
     try {
       // 建立WebSocket连接
       const connection = await this.websocketManager.createConnection(userId);
-      
+
       // 设置实时更新处理器
-      connection.onMessage(async (data) => {
+      connection.onMessage(async data => {
         const update = await this.realtimeProcessor.processPointsUpdate(data);
         await this.broadcastPointsUpdate(userId, update);
       });
 
       // 设置错误处理
-      connection.onError(async (error) => {
+      connection.onError(async error => {
         await this.handleConnectionError(userId, error);
       });
     } catch (error) {
@@ -34,15 +41,15 @@ export class PointsRealtimeService {
     try {
       // 初始化活动追踪
       const tracker = await this.realtimeProcessor.initializeActivityTracker(userId);
-      
+
       // 设置活动监听器
-      tracker.onActivity(async (activity) => {
+      tracker.onActivity(async activity => {
         const processed = await this.processRealtimeActivity(activity);
         await this.updateActivityStatus(userId, processed);
       });
 
       // 设置目标监控
-      tracker.onGoalProgress(async (progress) => {
+      tracker.onGoalProgress(async progress => {
         await this.updateGoalProgress(userId, progress);
       });
     } catch (error) {
@@ -56,10 +63,10 @@ export class PointsRealtimeService {
     try {
       // 获取实时数据流
       const dataStream = await this.realtimeProcessor.getDataStream(userId);
-      
+
       // 实时分析处理
       const analysis = await this.processRealtimeAnalysis(dataStream);
-      
+
       // 更新分析结果
       await this.updateAnalysisResults(userId, analysis);
 
@@ -67,11 +74,11 @@ export class PointsRealtimeService {
         currentStatus: analysis.status,
         trends: analysis.trends,
         alerts: analysis.alerts,
-        recommendations: await this.generateRealtimeRecommendations(analysis)
+        recommendations: await this.generateRealtimeRecommendations(analysis),
       };
     } catch (error) {
       this.logger.error('分析实时数据失败', error);
       throw error;
     }
   }
-} 
+}

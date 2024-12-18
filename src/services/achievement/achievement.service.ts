@@ -1,19 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../common/prisma.service';
 import { LoggerService } from '../common/logger.service';
+import { PrismaService } from '../common/prisma.service';
 
 @Injectable()
 export class AchievementService {
-  constructor(
-    private prisma: PrismaService,
-    private logger: LoggerService
-  ) {}
+  constructor(private prisma: PrismaService, private logger: LoggerService) {}
 
   async checkAchievements(userId: string, points: number): Promise<void> {
     try {
       // 获取用户当前成就
       const achievements = await this.prisma.achievement.findMany({
-        where: { userId }
+        where: { userId },
       });
 
       // 检查是否达成新成就
@@ -25,8 +22,8 @@ export class AchievementService {
           data: newAchievements.map(achievement => ({
             userId,
             type: achievement.type,
-            points: achievement.points
-          }))
+            points: achievement.points,
+          })),
         });
       }
     } catch (error) {
@@ -39,4 +36,4 @@ export class AchievementService {
     // 实现成就评估逻辑
     return [];
   }
-} 
+}

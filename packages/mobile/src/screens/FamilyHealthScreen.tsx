@@ -1,21 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  View, 
-  ScrollView, 
-  StyleSheet,
-  TouchableOpacity 
-} from 'react-native';
-import { 
-  Surface,
-  Text,
-  Avatar,
-  Button,
-  Searchbar,
-  FAB 
-} from 'react-native-paper';
+
+import { Surface, Text, Avatar, Button, Searchbar, FAB } from 'react-native-paper';
+import { View, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+
+import { AddMemberModal } from '@/components/AddMemberModal';
 import { FamilyMemberCard } from '@/components/FamilyMemberCard';
 import { HealthMetricsChart } from '@/components/HealthMetricsChart';
-import { AddMemberModal } from '@/components/AddMemberModal';
 import { PermissionSettings } from '@/components/PermissionSettings';
 import { useFamily } from '@/hooks/useFamily';
 
@@ -23,20 +13,15 @@ export const FamilyHealthScreen = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedMember, setSelectedMember] = useState(null);
-  
-  const { 
-    familyMembers,
-    familyReport,
-    loadFamilyData,
-    addMember,
-    updateMemberSettings
-  } = useFamily();
+
+  const { familyMembers, familyReport, loadFamilyData, addMember, updateMemberSettings } =
+    useFamily();
 
   useEffect(() => {
     loadFamilyData();
   }, []);
 
-  const handleAddMember = async (memberInfo) => {
+  const handleAddMember = async memberInfo => {
     try {
       await addMember(memberInfo);
       setShowAddModal(false);
@@ -46,7 +31,7 @@ export const FamilyHealthScreen = () => {
     }
   };
 
-  const handleMemberPress = (member) => {
+  const handleMemberPress = member => {
     setSelectedMember(member);
   };
 
@@ -81,7 +66,9 @@ export const FamilyHealthScreen = () => {
             <View style={styles.alerts}>
               <Text style={styles.alertTitle}>需要关注</Text>
               {familyReport.riskFactors.map((factor, index) => (
-                <Text key={index} style={styles.alertText}>{factor}</Text>
+                <Text key={index} style={styles.alertText}>
+                  {factor}
+                </Text>
               ))}
             </View>
           )}
@@ -89,11 +76,7 @@ export const FamilyHealthScreen = () => {
       )}
 
       {/* 添加成员按钮 */}
-      <FAB
-        style={styles.fab}
-        icon="plus"
-        onPress={() => setShowAddModal(true)}
-      />
+      <FAB style={styles.fab} icon="plus" onPress={() => setShowAddModal(true)} />
 
       {/* 添加成员模态框 */}
       <AddMemberModal
@@ -159,4 +142,4 @@ const styles = StyleSheet.create({
     right: 16,
     bottom: 16,
   },
-}); 
+});

@@ -1,10 +1,17 @@
+/**
+ * @fileoverview TS 文件 PerformanceMonitor.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export class PerformanceMonitor {
   private static metrics = {
-    FCP: 0,    // First Contentful Paint
-    LCP: 0,    // Largest Contentful Paint
-    FID: 0,    // First Input Delay
-    CLS: 0,    // Cumulative Layout Shift
-    TTI: 0     // Time to Interactive
+    FCP: 0, // First Contentful Paint
+    LCP: 0, // Largest Contentful Paint
+    FID: 0, // First Input Delay
+    CLS: 0, // Cumulative Layout Shift
+    TTI: 0, // Time to Interactive
   };
 
   static init() {
@@ -34,7 +41,7 @@ export class PerformanceMonitor {
   }
 
   private static observeLCP() {
-    new PerformanceObserver((entryList) => {
+    new PerformanceObserver(entryList => {
       const entries = entryList.getEntries();
       const lastEntry = entries[entries.length - 1];
       this.metrics.LCP = lastEntry.startTime;
@@ -47,4 +54,4 @@ export class PerformanceMonitor {
     console.log(`Performance Metric - ${name}: ${value}`);
     // TODO: 实现实际的报告逻辑
   }
-} 
+}

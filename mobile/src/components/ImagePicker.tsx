@@ -1,9 +1,12 @@
 import React from 'react';
-import { TouchableOpacity, StyleSheet } from 'react-native';
+
 import * as ExpoImagePicker from 'expo-image-picker';
+import { TouchableOpacity, StyleSheet } from 'react-native';
 
 interface ImagePickerProps {
+  /** children 的描述 */
   children: React.ReactNode;
+  /** onImageSelected 的描述 */
   onImageSelected: (image: any) => void;
 }
 
@@ -40,4 +43,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-}); 
+});

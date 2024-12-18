@@ -1,31 +1,86 @@
+/**
+ * @fileoverview TS 文件 professional-services.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // 医生服务类型
-export interface DoctorService {
-  getPatientList(doctorId: string, page: number, limit: number, status?: string): Promise<any>;
-  getPatientDetail(doctorId: string, patientId: string): Promise<any>;
-  createPrescription(data: any): Promise<any>;
-  createConsultation(data: any): Promise<any>;
+export interface IDoctorService {
+  /** getPatientListdoctorId 的描述 */
+    getPatientListdoctorId: string, /** page 的描述 */
+    /** page 的描述 */
+    page: number, /** limit 的描述 */
+    /** limit 的描述 */
+    limit: number, /** status 的描述 */
+    /** status 的描述 */
+    status: string: /** Promiseany 的描述 */
+    /** Promiseany 的描述 */
+    Promiseany;
+  /** getPatientDetaildoctorId 的描述 */
+    getPatientDetaildoctorId: string, /** patientId 的描述 */
+    /** patientId 的描述 */
+    patientId: string: /** Promiseany 的描述 */
+    /** Promiseany 的描述 */
+    Promiseany;
+  /** createPrescriptiondata 的描述 */
+    createPrescriptiondata: any: /** Promiseany 的描述 */
+    /** Promiseany 的描述 */
+    Promiseany;
+  /** createConsultationdata 的描述 */
+    createConsultationdata: any: /** Promiseany 的描述 */
+    /** Promiseany 的描述 */
+    Promiseany;
 }
 
 // 营养师服务类型
-export interface NutritionistService {
-  createDietPlan(data: any): Promise<any>;
-  getClientList(nutritionistId: string, page: number, limit: number): Promise<any>;
+export interface INutritionistService {
+  /** createDietPlandata 的描述 */
+    createDietPlandata: any: /** Promiseany 的描述 */
+    /** Promiseany 的描述 */
+    Promiseany;
+  /** getClientListnutritionistId 的描述 */
+    getClientListnutritionistId: string, /** page 的描述 */
+    /** page 的描述 */
+    page: number, /** limit 的描述 */
+    /** limit 的描述 */
+    limit: number: /** Promiseany 的描述 */
+    /** Promiseany 的描述 */
+    Promiseany;
 }
 
 // 健身教练服务类型
-export interface FitnessService {
-  createTrainingPlan(data: any): Promise<any>;
-  getClientProgress(clientId: string): Promise<any>;
+export interface IFitnessService {
+  /** createTrainingPlandata 的描述 */
+    createTrainingPlandata: any: /** Promiseany 的描述 */
+    /** Promiseany 的描述 */
+    Promiseany;
+  /** getClientProgressclientId 的描述 */
+    getClientProgressclientId: string: /** Promiseany 的描述 */
+    /** Promiseany 的描述 */
+    Promiseany;
 }
 
 // 中医服务类型
-export interface TCMService {
-  createPrescription(data: any): Promise<any>;
-  createWellnessPlan(data: any): Promise<any>;
+export interface ITCMService {
+  /** createPrescriptiondata 的描述 */
+    createPrescriptiondata: any: /** Promiseany 的描述 */
+    /** Promiseany 的描述 */
+    Promiseany;
+  /** createWellnessPlandata 的描述 */
+    createWellnessPlandata: any: /** Promiseany 的描述 */
+    /** Promiseany 的描述 */
+    Promiseany;
 }
 
 // 心理咨询师服务类型
-export interface PsychologistService {
-  createCounselingRecord(data: any): Promise<any>;
-  createInterventionPlan(data: any): Promise<any>;
-} 
+export interface IPsychologistService {
+  /** createCounselingRecorddata 的描述 */
+    createCounselingRecorddata: any: /** Promiseany 的描述 */
+    /** Promiseany 的描述 */
+    Promiseany;
+  /** createInterventionPlandata 的描述 */
+    createInterventionPlandata: any: /** Promiseany 的描述 */
+    /** Promiseany 的描述 */
+    Promiseany;
+}

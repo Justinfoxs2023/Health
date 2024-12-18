@@ -1,12 +1,22 @@
+/**
+ * @fileoverview TS 文件 types.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // 主题类型定义
-export interface Theme {
-  id: string;
-  name: string;
-  type: 'light' | 'dark' | 'custom';
-  
-  // 颜色系统
+export interface ITheme {
+  /** id 的描述 */
+    id: string;
+  /** name 的描述 */
+    name: string;
+  /** type 的描述 */
+    type: light  dark  custom;
+
+   
   colors: {
-    // 主要颜色
+     
     primary: {
       main: string;
       light: string;
@@ -174,27 +184,28 @@ export interface Theme {
 }
 
 // 无障碍配置类型
-export interface AccessibilityConfig {
-  // 视觉设置
-  visual: {
-    // 高对比度
+export interface IAccessibilityConfig {
+   
+  /** visual 的描述 */
+    visual: {
+     
     highContrast: boolean;
     contrastLevel: number;
-    
-    // 字体设置
+
+     
     fontSize: number;
     fontScaling: boolean;
     lineSpacing: number;
-    
-    // 颜色设置
-    colorBlindnessMode: 'none' | 'protanopia' | 'deuteranopia' | 'tritanopia';
-    customColors: Record<string, string>;
-    
-    // 动效设置
+
+     
+    colorBlindnessMode: none  protanopia  deuteranopia  tritanopia;
+    customColors: Recordstring, string;
+
+     
     reducedMotion: boolean;
     animationSpeed: number;
-    
-    // 焦点设置
+
+     
     focusIndicators: boolean;
     focusHighlightColor: string;
   };
@@ -294,29 +305,39 @@ export interface AccessibilityConfig {
 }
 
 // 组件变体类型
-export interface ComponentVariant {
-  name: string;
-  styles: Partial<{
-    colors: Partial<Theme['colors']>;
-    typography: Partial<Theme['typography']>;
-    spacing: Partial<Theme['spacing']>;
-    borderRadius: Partial<Theme['borderRadius']>;
-    shadows: Partial<Theme['shadows']>;
+export interface IComponentVariant {
+  /** name 的描述 */
+    name: string;
+  /** styles 的描述 */
+    styles: Partial{
+    colors: PartialThemecolors;
+    typography: PartialThemetypography;
+    spacing: PartialThemespacing;
+    borderRadius: PartialThemeborderRadius;
+    shadows: PartialThemeshadows;
   }>;
 }
 
 // 主题变更事件类型
-export interface ThemeChangeEvent {
-  previousTheme: Theme;
-  newTheme: Theme;
-  timestamp: Date;
-  source: 'user' | 'system' | 'auto';
+export interface IThemeChangeEvent {
+  /** previousTheme 的描述 */
+    previousTheme: ITheme;
+  /** newTheme 的描述 */
+    newTheme: ITheme;
+  /** timestamp 的描述 */
+    timestamp: Date;
+  /** source 的描述 */
+    source: user  system  auto;
 }
 
 // 无障碍配置变更事件类型
-export interface AccessibilityChangeEvent {
-  previousConfig: Partial<AccessibilityConfig>;
-  newConfig: Partial<AccessibilityConfig>;
-  timestamp: Date;
-  source: 'user' | 'system' | 'auto';
-} 
+export interface IAccessibilityChangeEvent {
+  /** previousConfig 的描述 */
+    previousConfig: PartialAccessibilityConfig;
+  /** newConfig 的描述 */
+    newConfig: PartialAccessibilityConfig;
+  /** timestamp 的描述 */
+    timestamp: Date;
+  /** source 的描述 */
+    source: user  system  auto;
+}

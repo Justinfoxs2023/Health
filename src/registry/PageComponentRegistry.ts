@@ -1,21 +1,29 @@
-type ComponentType = React.ComponentType<any>;
+/**
+ * @fileoverview TS 文件 PageComponentRegistry.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
 
-interface ComponentRegistry {
-  [key: string]: {
+type ComponentType = any;
+
+interface IComponentRegistry {
+  /** key 的描述 */
+    key: string: {
     component: ComponentType;
-    preload?: boolean;
-    dependencies?: string[];
+    preload: boolean;
+    dependencies: string;
   };
 }
 
 export class PageComponentRegistry {
-  private static registry: ComponentRegistry = {};
+  private static registry: IComponentRegistry = {};
 
   // 注册组件
   static register(name: string, component: ComponentType, options = {}) {
     this.registry[name] = {
       component,
-      ...options
+      ...options,
     };
   }
 
@@ -32,7 +40,7 @@ export class PageComponentRegistry {
         if (config.dependencies) {
           return Promise.all([
             ...config.dependencies.map(dep => this.getComponent(dep)),
-            config.component
+            config.component,
           ]);
         }
         return Promise.resolve(config.component);
@@ -43,7 +51,18 @@ export class PageComponentRegistry {
 }
 
 // 注册核心组件
-PageComponentRegistry.register('VitalsDisplay', lazy(() => import('@/components/health/VitalsDisplay')), { preload: true });
-PageComponentRegistry.register('HealthMetrics', lazy(() => import('@/components/health/HealthMetrics')), { preload: true });
-PageComponentRegistry.register('AlertPanel', lazy(() => import('@/components/health/AlertPanel')));
-// ... 注册其他组件 
+PageComponentRegistry.register(
+  'VitalsDisplay',
+  lazy(() => import('@/components/health/VitalsDisplay')),
+  { preload: true },
+);
+PageComponentRegistry.register(
+  'HealthMetrics',
+  lazy(() => import('@/components/health/HealthMetrics')),
+  { preload: true },
+);
+PageComponentRegistry.register(
+  'AlertPanel',
+  lazy(() => import('@/components/health/AlertPanel')),
+);
+// ... 注册其他组件

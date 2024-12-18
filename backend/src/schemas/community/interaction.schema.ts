@@ -1,5 +1,5 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 @Schema()
 export class Interaction extends Document {
@@ -12,14 +12,14 @@ export class Interaction extends Document {
   @Prop({
     type: String,
     enum: ['post', 'comment'],
-    required: true
+    required: true,
   })
   target_type: string;
 
   @Prop({
     type: String,
     enum: ['like', 'favorite', 'share', 'report'],
-    required: true
+    required: true,
   })
   interaction_type: string;
 
@@ -30,4 +30,4 @@ export class Interaction extends Document {
   created_at: Date;
 }
 
-export const InteractionSchema = SchemaFactory.createForClass(Interaction); 
+export const InteractionSchema = SchemaFactory.createForClass(Interaction);

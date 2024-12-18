@@ -1,22 +1,32 @@
 import * as tf from '@tensorflow/tfjs';
-import { LocalDatabase, createDatabase } from '../utils/local-database';
+import { ILocalDatabase, createDatabase } from '../utils/local-database';
 
-interface TaskMemory {
+interface ITaskMemory {
+  /** id 的描述 */
   id: string;
+  /** type 的描述 */
   type: string;
-  samples: Array<{x: tf.Tensor, y: tf.Tensor}>;
+  /** samples 的描述 */
+  samples: Array<{ x: tf.Tensor; y: tf.Tensor }>;
+  /** importance 的描述 */
   importance: number;
+  /** performance 的描述 */
   performance: {
     accuracy: number;
     loss: number;
   };
 }
 
-interface LifelongConfig {
+interface ILifelongConfig {
+  /** maxTaskMemory 的描述 */
   maxTaskMemory: number;
+  /** replayBufferSize 的描述 */
   replayBufferSize: number;
+  /** consolidationRate 的描述 */
   consolidationRate: number;
+  /** forgettingThreshold 的描述 */
   forgettingThreshold: number;
+  /** adaptiveParams 的描述 */
   adaptiveParams: {
     learningRate: number;
     regularization: number;
@@ -24,10 +34,10 @@ interface LifelongConfig {
 }
 
 export class LifelongLearningService {
-  private db: LocalDatabase;
+  private db: ILocalDatabase;
   private model: tf.LayersModel | null = null;
-  private taskMemories: Map<string, TaskMemory> = new Map();
-  private config: LifelongConfig;
+  private taskMemories: Map<string, ITaskMemory> = new Map();
+  private config: ILifelongConfig;
   private elasticWeights: Map<string, tf.Tensor> = new Map();
 
   constructor() {
@@ -39,8 +49,8 @@ export class LifelongLearningService {
       forgettingThreshold: 0.2,
       adaptiveParams: {
         learningRate: 0.001,
-        regularization: 0.1
-      }
+        regularization: 0.1,
+      },
     };
     this.initialize();
   }
@@ -54,7 +64,7 @@ export class LifelongLearningService {
   async learnNewTask(
     taskId: string,
     taskType: string,
-    data: {x: tf.Tensor, y: tf.Tensor}[]
+    data: { x: tf.Tensor; y: tf.Tensor }[],
   ): Promise<void> {
     // 检查是否需要遗忘旧任务
     await this.manageTaskMemory();
@@ -76,8 +86,9 @@ export class LifelongLearningService {
   private async manageTaskMemory(): Promise<void> {
     if (this.taskMemories.size >= this.config.maxTaskMemory) {
       // 找到最不重要的任务
-      const leastImportantTask = Array.from(this.taskMemories.entries())
-        .sort((a, b) => a[1].importance - b[1].importance)[0];
+      const leastImportantTask = Array.from(this.taskMemories.entries()).sort(
+        (a, b) => a[1].importance - b[1].importance,
+      )[0];
 
       // 执行选择性遗忘
       await this.forgetTask(leastImportantTask[0]);
@@ -86,8 +97,8 @@ export class LifelongLearningService {
 
   // 准备任务数据
   private prepareTaskData(
-    data: {x: tf.Tensor, y: tf.Tensor}[]
-  ): {x: tf.Tensor, y: tf.Tensor}[] {
+    data: { x: tf.Tensor; y: tf.Tensor }[],
+  ): { x: tf.Tensor; y: tf.Tensor }[] {
     // 添加回放缓冲区的数据
     const replayData = this.sampleFromReplayBuffer();
     return [...data, ...replayData];
@@ -95,7 +106,7 @@ export class LifelongLearningService {
 
   // 使用弹性权重正则化进行训练
   private async trainWithElasticRegularization(
-    data: {x: tf.Tensor, y: tf.Tensor}[]
+    data: { x: tf.Tensor; y: tf.Tensor }[],
   ): Promise<void> {
     if (!this.model) {
       this.model = await this.buildModel();
@@ -112,16 +123,12 @@ export class LifelongLearningService {
     };
 
     // 训练模型
-    await this.model.fit(
-      tf.concat(data.map(d => d.x)),
-      tf.concat(data.map(d => d.y)),
-      {
-        epochs: 10,
-        batchSize: 32,
-        validationSplit: 0.2,
-        callbacks: this.createCallbacks()
-      }
-    );
+    await this.model.fit(tf.concat(data.map(d => d.x)), tf.concat(data.map(d => d.y)), {
+      epochs: 10,
+      batchSize: 32,
+      validationSplit: 0.2,
+      callbacks: this.createCallbacks(),
+    });
 
     // 更新弹性权重
     this.updateElasticWeights(referenceWeights);
@@ -151,10 +158,7 @@ export class LifelongLearningService {
   }
 
   // 计算参数重要性
-  private computeParameterImportance(
-    current: tf.Tensor,
-    reference: tf.Tensor
-  ): tf.Tensor {
+  private computeParameterImportance(current: tf.Tensor, reference: tf.Tensor): tf.Tensor {
     return tf.tidy(() => {
       const diff = current.sub(reference);
       return diff.square().reciprocal();
@@ -190,11 +194,13 @@ export class LifelongLearningService {
 
   // 创建回调
   private createCallbacks(): tf.CustomCallbackArgs[] {
-    return [{
-      onEpochEnd: async (epoch, logs) => {
-        console.log(`Epoch ${epoch}: loss = ${logs?.loss}`);
-      }
-    }];
+    return [
+      {
+        onEpochEnd: async (epoch, logs) => {
+          console.log(`Epoch ${epoch}: loss = ${logs?.loss}`);
+        },
+      },
+    ];
   }
 
   // 保存和加载
@@ -217,7 +223,7 @@ export class LifelongLearningService {
         this.elasticWeights = new Map(weights);
       }
     } catch (error) {
-      console.error('加载终身学习模型失败:', error);
+      console.error('Error in lifelong-learning.service.ts:', '加载终身学习模型失败:', error);
     }
   }
-} 
+}

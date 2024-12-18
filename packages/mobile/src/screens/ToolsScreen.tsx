@@ -1,23 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  View, 
-  ScrollView, 
-  StyleSheet,
-  TouchableOpacity,
-  RefreshControl 
-} from 'react-native';
-import { 
-  Text,
-  Card,
-  Icon,
-  Button,
-  Divider 
-} from 'react-native-paper';
+
+import { Text, Card, Icon, Button, Divider } from 'react-native-paper';
+import { View, ScrollView, StyleSheet, TouchableOpacity, RefreshControl } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
+
+import { CategoryFilter } from '@/components/CategoryFilter';
+import { ToolCard } from '@/components/ToolCard';
 import { ToolType, ToolCategory } from '@/types/tool-features';
 import { fetchUserTools, updateToolUsage } from '@/store/actions/tools';
-import { ToolCard } from '@/components/ToolCard';
-import { CategoryFilter } from '@/components/CategoryFilter';
 import { useTheme } from '@/hooks/useTheme';
 
 export const ToolsScreen = () => {
@@ -25,7 +15,7 @@ export const ToolsScreen = () => {
   const theme = useTheme();
   const [selectedCategory, setSelectedCategory] = useState<ToolCategory | null>(null);
   const [refreshing, setRefreshing] = useState(false);
-  
+
   const { tools, loading } = useSelector(state => state.tools);
   const userProfile = useSelector(state => state.user.profile);
 
@@ -46,11 +36,11 @@ export const ToolsScreen = () => {
     try {
       // 记录工具使用
       await dispatch(updateToolUsage(tool.type));
-      
+
       // 导航到对应工具页面
       navigation.navigate('ToolDetail', { tool });
     } catch (error) {
-      console.error('Failed to use tool:', error);
+      console.error('Error in ToolsScreen.tsx:', 'Failed to use tool:', error);
     }
   };
 
@@ -65,12 +55,8 @@ export const ToolsScreen = () => {
         selected={selectedCategory}
         onSelect={setSelectedCategory}
       />
-      
-      <ScrollView
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={loadTools} />
-        }
-      >
+
+      <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadTools} />}>
         {filteredTools.map(tool => (
           <ToolCard
             key={tool.type}
@@ -87,9 +73,9 @@ export const ToolsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   toolCard: {
-    margin: 8
-  }
-}); 
+    margin: 8,
+  },
+});

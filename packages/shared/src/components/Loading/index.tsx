@@ -1,8 +1,9 @@
 import React from 'react';
+
 import ReactDOM from 'react-dom';
 
 /** 加载状态Props */
-interface LoadingProps {
+interface ILoadingProps {
   /** 是否可见 */
   visible: boolean;
   /** 加载提示文本 */
@@ -12,11 +13,7 @@ interface LoadingProps {
 }
 
 /** 加载状态组件 */
-const Loading: React.FC<LoadingProps> = ({
-  visible,
-  tip = '加载中...',
-  fullscreen = false
-}) => {
+const Loading: React.FC<ILoadingProps> = ({ visible, tip = '加载中...', fullscreen = false }) => {
   if (!visible) return null;
 
   const content = (
@@ -48,17 +45,13 @@ const Loading: React.FC<LoadingProps> = ({
               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
             />
           </svg>
-          {tip && (
-            <div className="text-sm font-medium text-gray-700">{tip}</div>
-          )}
+          {tip && <div className="text-sm font-medium text-gray-700">{tip}</div>}
         </div>
       </div>
     </div>
   );
 
-  return fullscreen
-    ? ReactDOM.createPortal(content, document.body)
-    : content;
+  return fullscreen ? ReactDOM.createPortal(content, document.body) : content;
 };
 
 /** 加载状态容器 */
@@ -104,7 +97,7 @@ class LoadingContainer {
         tip={this.count > 0 ? `加载中...(${this.count})` : undefined}
         fullscreen={true}
       />,
-      this.container
+      this.container,
     );
   }
 }
@@ -118,7 +111,7 @@ export const loading = {
   /** 隐藏所有加载状态 */
   hideAll() {
     LoadingContainer.getInstance().hideAll();
-  }
+  },
 };
 
-export default Loading; 
+export default Loading;

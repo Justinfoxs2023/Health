@@ -1,8 +1,8 @@
+import { ILocalDatabase } from '../utils/local-database';
 import { compress, decompress } from 'lz-string';
-import { LocalDatabase } from '../utils/local-database';
 
 export class DataCompressionService {
-  private db: LocalDatabase;
+  private db: ILocalDatabase;
 
   constructor() {
     this.db = new LocalDatabase('health-data');
@@ -26,8 +26,8 @@ export class DataCompressionService {
         originalSize,
         compressedSize,
         compressionRatio: ratio,
-        timestamp: new Date()
-      }
+        timestamp: new Date(),
+      },
     });
   }
 
@@ -43,7 +43,7 @@ export class DataCompressionService {
   // 批量压缩
   async batchCompress(dataMap: Map<string, any>): Promise<void> {
     const operations = Array.from(dataMap.entries()).map(([key, data]) =>
-      this.compressAndStore(key, data)
+      this.compressAndStore(key, data),
     );
     await Promise.all(operations);
   }
@@ -52,7 +52,7 @@ export class DataCompressionService {
   async cleanupExpiredData(maxAge: number): Promise<void> {
     const now = Date.now();
     const records = await this.db.getAllKeys('compressed-data');
-    
+
     for (const key of records) {
       const metadata = await this.db.get(`metadata:${key}`);
       if (now - metadata.timestamp > maxAge) {
@@ -60,4 +60,4 @@ export class DataCompressionService {
       }
     }
   }
-} 
+}

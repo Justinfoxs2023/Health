@@ -8,16 +8,18 @@ import {
   Param,
   Query,
   UseGuards,
-  Request
+  Request,
 } from '@nestjs/common';
-import { AuthGuard } from '@/guards/auth.guard';
-import { PostService } from '@/services/community/post.service';
-import { CreatePostDto, UpdatePostDto } from '@/dto/community/post.dto';
-import { CreateCommentDto } from '@/dto/community/comment.dto';
-import { PaginationDto } from '@/dto/common/pagination.dto';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
-@ApiTags('社区帖子')
+@ApiTags('社
+import { AuthGuard } from '@/guards/auth.guard';
+import { CreateCommentDto } from '@/dto/community/comment.dto';
+import { CreatePostDto, UpdatePostDto } from '@/dto/community/post.dto';
+import { PaginationDto } from '@/dto/common/pagination.dto';
+import { PostService } from '@/services/community/post.service';
+
+区帖子')
 @Controller('posts')
 export class PostController {
   constructor(private readonly postService: PostService) {}
@@ -48,11 +50,7 @@ export class PostController {
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: '更新帖子' })
   @ApiResponse({ status: 200, description: '帖子更新成功' })
-  async updatePost(
-    @Request() req,
-    @Param('id') id: string,
-    @Body() updatePostDto: UpdatePostDto
-  ) {
+  async updatePost(@Request() req, @Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
     return this.postService.updatePost(id, req.user.id, updatePostDto);
   }
 
@@ -71,7 +69,7 @@ export class PostController {
   async createComment(
     @Request() req,
     @Param('id') postId: string,
-    @Body() createCommentDto: CreateCommentDto
+    @Body() createCommentDto: CreateCommentDto,
   ) {
     return this.postService.createComment(req.user.id, postId, createCommentDto);
   }
@@ -106,4 +104,4 @@ export class PostController {
   async favoritePost(@Request() req, @Param('id') postId: string) {
     return this.postService.favoritePost(req.user.id, postId);
   }
-} 
+}

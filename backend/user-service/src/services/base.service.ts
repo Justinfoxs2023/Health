@@ -1,5 +1,5 @@
-import { Redis } from '../utils/redis';
 import { Logger } from '../utils/logger';
+import { Redis } from '../utils/redis';
 
 export class BaseService {
   protected redis: Redis;
@@ -32,4 +32,4 @@ export class BaseService {
       this.logger.error('Cache set error', error);
     }
   }
-} 
+}

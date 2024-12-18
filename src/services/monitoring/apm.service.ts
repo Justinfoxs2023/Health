@@ -1,27 +1,28 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
-import { Logger } from '../../infrastructure/logger/logger.service';
-import { ConfigService } from '@nestjs/config';
-import { 
-  TraceSpan,
-  PerformanceMetrics,
-  UserExperience,
-  MonitoringConfig 
+import * as opentelemetry from '@opentelemetry/api';
+import {
+  ITraceSpan,
+  IPerformanceMetrics,
+  IUserExperience,
+  IMonitoringConfig,
 } from './monitoring.types';
 import { AlertService } from './alert.service';
-import * as opentelemetry from '@opentelemetry/api';
-import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
+import { ConfigService } from '@nestjs/config';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { JaegerExporter } from '@opentelemetry/exporter-jaeger';
+import { Logger } from '../../infrastructure/logger/logger.service';
+import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
 
-@Injectable()
+@Inje
+ctable()
 export class APMService implements OnModuleInit {
-  private readonly config: MonitoringConfig;
+  private readonly config: IMonitoringConfig;
   private tracer: opentelemetry.Tracer;
   private meter: opentelemetry.Meter;
 
   constructor(
     private readonly logger: Logger,
     private readonly configService: ConfigService,
-    private readonly alertService: AlertService
+    private readonly alertService: AlertService,
   ) {
     this.config = {
       sampleRate: 0.1,
@@ -30,8 +31,8 @@ export class APMService implements OnModuleInit {
         error: 0.01,
         latency: 1000,
         memory: 85,
-        cpu: 80
-      }
+        cpu: 80,
+      },
     };
   }
 
@@ -46,15 +47,15 @@ export class APMService implements OnModuleInit {
   }
 
   // 性能指标收集
-  async collectMetrics(): Promise<PerformanceMetrics> {
+  async collectMetrics(): Promise<IPerformanceMetrics> {
     try {
       const systemMetrics = await this.collectSystemMetrics();
       const applicationMetrics = await this.collectApplicationMetrics();
 
-      const metrics: PerformanceMetrics = {
+      const metrics: IPerformanceMetrics = {
         timestamp: new Date(),
         system: systemMetrics,
-        application: applicationMetrics
+        application: applicationMetrics,
       };
 
       // 检查是否需要触发告警
@@ -68,7 +69,7 @@ export class APMService implements OnModuleInit {
   }
 
   // 用户体验监控
-  async trackUserExperience(data: UserExperience): Promise<void> {
+  async trackUserExperience(data: IUserExperience): Promise<void> {
     try {
       // 保存用户体验数据
       await this.saveUserExperience(data);
@@ -82,8 +83,8 @@ export class APMService implements OnModuleInit {
           content: {
             title: 'User Experience Issues Detected',
             message: this.formatIssuesMessage(issues),
-            source: data.sessionId
-          }
+            source: data.sessionId,
+          },
         });
       }
 
@@ -99,10 +100,10 @@ export class APMService implements OnModuleInit {
   async monitorResources(): Promise<void> {
     try {
       const resources = await this.collectResourceMetrics();
-      
+
       // 检查资源使用情况
       const issues = await this.analyzeResourceUsage(resources);
-      
+
       // 触发自动扩缩容
       if (this.shouldScale(resources)) {
         await this.triggerAutoScaling(resources);
@@ -117,8 +118,8 @@ export class APMService implements OnModuleInit {
           content: {
             title: 'Resource Optimization Opportunities',
             message: this.formatOptimizations(optimizations),
-            metadata: { optimizations }
-          }
+            metadata: { optimizations },
+          },
         });
       }
     } catch (error) {
@@ -146,15 +147,15 @@ export class APMService implements OnModuleInit {
     return {};
   }
 
-  private async checkMetricsThresholds(metrics: PerformanceMetrics): Promise<void> {
+  private async checkMetricsThresholds(metrics: IPerformanceMetrics): Promise<void> {
     // 实现阈值检查逻辑
   }
 
-  private async saveUserExperience(data: UserExperience): Promise<void> {
+  private async saveUserExperience(data: IUserExperience): Promise<void> {
     // 实现用户体验数据保存逻辑
   }
 
-  private async analyzePerformanceIssues(data: UserExperience): Promise<any[]> {
+  private async analyzePerformanceIssues(data: IUserExperience): Promise<any[]> {
     // 实现性能问题分析逻辑
     return [];
   }
@@ -169,7 +170,7 @@ export class APMService implements OnModuleInit {
     return '';
   }
 
-  private async updatePerformanceMetrics(data: UserExperience): Promise<void> {
+  private async updatePerformanceMetrics(data: IUserExperience): Promise<void> {
     // 实现性能指标更新逻辑
   }
 
@@ -201,4 +202,4 @@ export class APMService implements OnModuleInit {
     // 实现优化建议格式化逻辑
     return '';
   }
-} 
+}

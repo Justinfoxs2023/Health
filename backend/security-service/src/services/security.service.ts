@@ -1,7 +1,7 @@
 import crypto from 'crypto';
-import { Redis } from '../utils/redis';
-import { Logger } from '../utils/logger';
 import { AuditService } from './audit.service';
+import { Logger } from '../utils/logger';
+import { Redis } from '../utils/redis';
 
 export class SecurityService {
   private redis: Redis;
@@ -26,7 +26,7 @@ export class SecurityService {
       const cipher = crypto.createCipheriv(
         'aes-256-gcm',
         Buffer.from(this.ENCRYPTION_KEY, 'hex'),
-        iv
+        iv,
       );
 
       let encrypted = cipher.update(JSON.stringify(data), 'utf8', 'hex');
@@ -36,7 +36,7 @@ export class SecurityService {
       return JSON.stringify({
         iv: iv.toString('hex'),
         encryptedData: encrypted,
-        authTag: authTag.toString('hex')
+        authTag: authTag.toString('hex'),
       });
     } catch (error) {
       this.logger.error('数据加密失败', error);
@@ -53,7 +53,7 @@ export class SecurityService {
       const decipher = crypto.createDecipheriv(
         'aes-256-gcm',
         Buffer.from(this.ENCRYPTION_KEY, 'hex'),
-        Buffer.from(iv, 'hex')
+        Buffer.from(iv, 'hex'),
       );
 
       decipher.setAuthTag(Buffer.from(authTag, 'hex'));
@@ -99,8 +99,8 @@ export class SecurityService {
       }
 
       const userPermissions = JSON.parse(permissions);
-      return userPermissions.some((p: any) => 
-        p.resource === resource && p.actions.includes(action)
+      return userPermissions.some(
+        (p: any) => p.resource === resource && p.actions.includes(action),
       );
     } catch (error) {
       this.logger.error('权限检查失败', error);
@@ -124,7 +124,7 @@ export class SecurityService {
       await this.auditService.logSecurityEvent({
         ...data,
         timestamp: new Date(),
-        type: 'security_audit'
+        type: 'security_audit',
       });
     } catch (error) {
       this.logger.error('记录安全审计日志失败', error);
@@ -139,7 +139,7 @@ export class SecurityService {
     try {
       const key = `user:actions:${userId}`;
       const actions = await this.redis.lrange(key, 0, -1);
-      
+
       // 实现异常检测逻辑
       // 例如：检查操作频率、异常时间、异常位置等
 
@@ -149,4 +149,4 @@ export class SecurityService {
       return false;
     }
   }
-} 
+}

@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+
 import { Result, Button } from 'antd';
 import { useNavigate } from 'react-router-dom';
 
@@ -22,8 +23,8 @@ export const RegistrationComplete: React.FC = () => {
       extra={[
         <Button type="primary" key="survey" onClick={() => navigate('/survey')}>
           立即填写问卷
-        </Button>
+        </Button>,
       ]}
     />
   );
-}; 
+};

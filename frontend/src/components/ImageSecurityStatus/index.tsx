@@ -1,30 +1,33 @@
 import React from 'react';
-import { Card, Timeline, Tag, Space, Typography, Tooltip } from 'antd';
-import { 
+
+import dayjs from 'dayjs';
+import {
   SafetyCertificateOutlined,
   WarningOutlined,
   CloseCircleOutlined,
   CheckCircleOutlined,
 } from '@ant-design/icons';
+import { Card, Timeline, Tag, Space, Typography, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
-import dayjs from 'dayjs';
-
 const { Text } = Typography;
 
-interface SecurityCheck {
+interface ISecurityCheck {
+  /** type 的描述 */
   type: string;
+  /** status 的描述 */
   status: 'success' | 'error' | 'warning';
+  /** message 的描述 */
   message: string;
+  /** timestamp 的描述 */
   timestamp: number;
 }
 
 interface ImageSecurityStatusProps {
-  checks: SecurityCheck[];
+  /** checks 的描述 */
+  checks: ISecurityCheck[];
 }
 
-export const ImageSecurityStatus: React.FC<ImageSecurityStatusProps> = ({
-  checks,
-}) => {
+export const ImageSecurityStatus: React.FC<ImageSecurityStatusProps> = ({ checks }) => {
   const { t } = useTranslation();
 
   const getStatusIcon = (status: string) => {
@@ -88,13 +91,17 @@ export const ImageSecurityStatus: React.FC<ImageSecurityStatusProps> = ({
               <Space>
                 <Text strong>{t(getCheckTypeLabel(check.type))}</Text>
                 <Tag color={getStatusColor(check.status)}>
-                  {t(check.status === 'success' ? '通过' : check.status === 'warning' ? '警告' : '失败')}
+                  {t(
+                    check.status === 'success'
+                      ? '通过'
+                      : check.status === 'warning'
+                      ? '警告'
+                      : '失败',
+                  )}
                 </Tag>
               </Space>
               <Tooltip title={dayjs(check.timestamp).format('YYYY-MM-DD HH:mm:ss')}>
-                <Text type="secondary">
-                  {check.message}
-                </Text>
+                <Text type="secondary">{check.message}</Text>
               </Tooltip>
             </Space>
           </Timeline.Item>
@@ -114,4 +121,4 @@ export const ImageSecurityStatus: React.FC<ImageSecurityStatusProps> = ({
       )}
     </Card>
   );
-}; 
+};

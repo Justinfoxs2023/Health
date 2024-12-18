@@ -1,9 +1,9 @@
+import * as argon2 from 'argon2';
+import * as crypto from 'crypto';
+import * as jwt from 'jsonwebtoken';
 import { Injectable } from '@nestjs/common';
 import { Logger } from '../utils/logger';
 import { SecurityConfig } from './security.config';
-import * as crypto from 'crypto';
-import * as argon2 from 'argon2';
-import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class SecurityService {
@@ -12,7 +12,10 @@ export class SecurityService {
   /**
    * 加密数据
    */
-  async encrypt(data: string, key: string): Promise<{
+  async encrypt(
+    data: string,
+    key: string,
+  ): Promise<{
     encrypted: string;
     iv: string;
     tag: string;
@@ -20,7 +23,7 @@ export class SecurityService {
     try {
       // 生成随机IV
       const iv = crypto.randomBytes(SecurityConfig.ENCRYPTION.ivLength);
-      
+
       // 从密码派生密钥
       const salt = crypto.randomBytes(SecurityConfig.ENCRYPTION.saltLength);
       const derivedKey = crypto.pbkdf2Sync(
@@ -28,16 +31,13 @@ export class SecurityService {
         salt,
         SecurityConfig.ENCRYPTION.iterations,
         SecurityConfig.ENCRYPTION.keyLength,
-        SecurityConfig.ENCRYPTION.keyDerivation.digest
+        SecurityConfig.ENCRYPTION.keyDerivation.digest,
       );
 
       // 创建加密器
-      const cipher = crypto.createCipheriv(
-        SecurityConfig.ENCRYPTION.algorithm,
-        derivedKey,
-        iv,
-        { authTagLength: SecurityConfig.ENCRYPTION.tagLength }
-      );
+      const cipher = crypto.createCipheriv(SecurityConfig.ENCRYPTION.algorithm, derivedKey, iv, {
+        authTagLength: SecurityConfig.ENCRYPTION.tagLength,
+      });
 
       // 加密数据
       let encrypted = cipher.update(data, 'utf8', 'hex');
@@ -49,7 +49,7 @@ export class SecurityService {
       return {
         encrypted,
         iv: iv.toString('hex'),
-        tag: tag.toString('hex')
+        tag: tag.toString('hex'),
       };
     } catch (error) {
       this.logger.error('数据加密失败', error);
@@ -60,12 +60,7 @@ export class SecurityService {
   /**
    * 解密数据
    */
-  async decrypt(
-    encrypted: string,
-    key: string,
-    iv: string,
-    tag: string
-  ): Promise<string> {
+  async decrypt(encrypted: string, key: string, iv: string, tag: string): Promise<string> {
     try {
       // 从密码派生密钥
       const salt = crypto.randomBytes(SecurityConfig.ENCRYPTION.saltLength);
@@ -74,7 +69,7 @@ export class SecurityService {
         salt,
         SecurityConfig.ENCRYPTION.iterations,
         SecurityConfig.ENCRYPTION.keyLength,
-        SecurityConfig.ENCRYPTION.keyDerivation.digest
+        SecurityConfig.ENCRYPTION.keyDerivation.digest,
       );
 
       // 创建解密器
@@ -82,7 +77,7 @@ export class SecurityService {
         SecurityConfig.ENCRYPTION.algorithm,
         derivedKey,
         Buffer.from(iv, 'hex'),
-        { authTagLength: SecurityConfig.ENCRYPTION.tagLength }
+        { authTagLength: SecurityConfig.ENCRYPTION.tagLength },
       );
 
       // 设置认证标签
@@ -110,7 +105,7 @@ export class SecurityService {
         timeCost: SecurityConfig.HASH.argon2.timeCost,
         parallelism: SecurityConfig.HASH.argon2.parallelism,
         saltLength: SecurityConfig.HASH.argon2.saltLength,
-        hashLength: SecurityConfig.HASH.argon2.hashLength
+        hashLength: SecurityConfig.HASH.argon2.hashLength,
       });
     } catch (error) {
       this.logger.error('密码哈希失败', error);
@@ -138,7 +133,7 @@ export class SecurityService {
       return jwt.sign(payload, SecurityConfig.JWT.accessToken.secret, {
         expiresIn: SecurityConfig.JWT.accessToken.expiresIn,
         issuer: SecurityConfig.JWT.issuer,
-        audience: SecurityConfig.JWT.audience
+        audience: SecurityConfig.JWT.audience,
       });
     } catch (error) {
       this.logger.error('生成访问令牌失败', error);
@@ -154,7 +149,7 @@ export class SecurityService {
       return jwt.sign(payload, SecurityConfig.JWT.refreshToken.secret, {
         expiresIn: SecurityConfig.JWT.refreshToken.expiresIn,
         issuer: SecurityConfig.JWT.issuer,
-        audience: SecurityConfig.JWT.audience
+        audience: SecurityConfig.JWT.audience,
       });
     } catch (error) {
       this.logger.error('生成刷新令牌失败', error);
@@ -169,7 +164,7 @@ export class SecurityService {
     try {
       return jwt.verify(token, SecurityConfig.JWT.accessToken.secret, {
         issuer: SecurityConfig.JWT.issuer,
-        audience: SecurityConfig.JWT.audience
+        audience: SecurityConfig.JWT.audience,
       });
     } catch (error) {
       this.logger.error('验证访问令牌失败', error);
@@ -184,7 +179,7 @@ export class SecurityService {
     try {
       return jwt.verify(token, SecurityConfig.JWT.refreshToken.secret, {
         issuer: SecurityConfig.JWT.issuer,
-        audience: SecurityConfig.JWT.audience
+        audience: SecurityConfig.JWT.audience,
       });
     } catch (error) {
       this.logger.error('验证刷新令牌失败', error);
@@ -219,19 +214,26 @@ export class SecurityService {
     if (SecurityConfig.PASSWORD_POLICY.requireNumbers && !/\d/.test(password)) {
       errors.push('密码必须包含数字');
     }
-    if (SecurityConfig.PASSWORD_POLICY.requireSpecialChars && !/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+    if (
+      SecurityConfig.PASSWORD_POLICY.requireSpecialChars &&
+      !/[!@#$%^&*(),.?":{}|<>]/.test(password)
+    ) {
       errors.push('密码必须包含特殊字符');
     }
 
     // 检查重复字符
-    const repeatingChars = new RegExp(`(.)\\1{${SecurityConfig.PASSWORD_POLICY.maxRepeatingChars},}`);
+    const repeatingChars = new RegExp(
+      `(.)\\1{${SecurityConfig.PASSWORD_POLICY.maxRepeatingChars},}`,
+    );
     if (repeatingChars.test(password)) {
-      errors.push(`密码不能包含${SecurityConfig.PASSWORD_POLICY.maxRepeatingChars + 1}个以上连续重复的字符`);
+      errors.push(
+        `密码不能包含${SecurityConfig.PASSWORD_POLICY.maxRepeatingChars + 1}个以上连续重复的字符`,
+      );
     }
 
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
@@ -332,7 +334,11 @@ export class SecurityService {
         })
         .join('; ');
 
-      headers[SecurityConfig.CSP.reportOnly ? 'Content-Security-Policy-Report-Only' : 'Content-Security-Policy'] = csp;
+      headers[
+        SecurityConfig.CSP.reportOnly
+          ? 'Content-Security-Policy-Report-Only'
+          : 'Content-Security-Policy'
+      ] = csp;
     }
 
     return headers;
@@ -341,7 +347,7 @@ export class SecurityService {
   /**
    * 生成随机令牌
    */
-  generateRandomToken(length: number = 32): string {
+  generateRandomToken(length = 32): string {
     try {
       return crypto.randomBytes(length).toString('hex');
     } catch (error) {
@@ -361,4 +367,4 @@ export class SecurityService {
       throw error;
     }
   }
-} 
+}

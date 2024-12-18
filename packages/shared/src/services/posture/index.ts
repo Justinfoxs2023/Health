@@ -18,11 +18,11 @@ export enum KeyPointType {
   LEFT_KNEE = 'leftKnee',
   RIGHT_KNEE = 'rightKnee',
   LEFT_ANKLE = 'leftAnkle',
-  RIGHT_ANKLE = 'rightAnkle'
+  RIGHT_ANKLE = 'rightAnkle',
 }
 
 /** 关键点数据 */
-export interface KeyPoint {
+export interface IKeyPoint {
   /** 类型 */
   type: KeyPointType;
   /** x坐标 */
@@ -34,11 +34,11 @@ export interface KeyPoint {
 }
 
 /** 姿态数据 */
-export interface PostureData {
+export interface IPostureData {
   /** 时间戳 */
   timestamp: Date;
   /** 关键点数据 */
-  keyPoints: KeyPoint[];
+  keyPoints: IKeyPoint[];
   /** 角度数据 */
   angles: {
     /** 左肘角度 */
@@ -59,9 +59,9 @@ export interface PostureData {
 }
 
 /** 姿态分析结果 */
-export interface PostureAnalysis {
+export interface IPostureAnalysis {
   /** 姿态数据 */
-  data: PostureData;
+  data: IPostureData;
   /** 标准差异 */
   deviations: {
     keyPoint: KeyPointType;
@@ -96,24 +96,24 @@ export class PostureService {
   /** 分析姿态 */
   public async analyzePosture(
     imageData: ImageData,
-    exerciseType: string
-  ): Promise<PostureAnalysis> {
+    exerciseType: string,
+  ): Promise<IPostureAnalysis> {
     try {
       // 检测关键点
       const keyPoints = await this.detectKeyPoints(imageData);
-      
+
       // 计算角度
       const angles = this.calculateAngles(keyPoints);
-      
+
       // 评估姿态
       const score = this.evaluatePosture(keyPoints, angles, exerciseType);
-      
+
       // 构建姿���数据
-      const postureData: PostureData = {
+      const postureData: IPostureData = {
         timestamp: new Date(),
         keyPoints,
         angles,
-        score
+        score,
       };
 
       // 分析与标准姿态的差异
@@ -125,7 +125,7 @@ export class PostureService {
       return {
         data: postureData,
         deviations,
-        evaluation
+        evaluation,
       };
     } catch (error) {
       logger.error('Failed to analyze posture', { error });
@@ -134,12 +134,12 @@ export class PostureService {
   }
 
   /** 检测关键点 */
-  private async detectKeyPoints(imageData: ImageData): Promise<KeyPoint[]> {
+  private async detectKeyPoints(imageData: ImageData): Promise<IKeyPoint[]> {
     try {
       // 调用姿态检测API
       const response = await fetch('/api/posture/detect', {
         method: 'POST',
-        body: imageData
+        body: imageData,
       });
 
       if (!response.ok) {
@@ -154,25 +154,24 @@ export class PostureService {
   }
 
   /** 计算角度 */
-  private calculateAngles(keyPoints: KeyPoint[]): PostureData['angles'] {
-    const angles: PostureData['angles'] = {};
+  private calculateAngles(keyPoints: IKeyPoint[]): IPostureData['angles'] {
+    const angles: IPostureData['angles'] = {};
 
     // 获取关键点
-    const getPoint = (type: KeyPointType): KeyPoint | undefined =>
+    const getPoint = (type: KeyPointType): IKeyPoint | undefined =>
       keyPoints.find(p => p.type === type);
 
     // 计算角度
-    const calculateAngle = (p1?: KeyPoint, p2?: KeyPoint, p3?: KeyPoint): number | undefined => {
+    const calculateAngle = (p1?: IKeyPoint, p2?: IKeyPoint, p3?: IKeyPoint): number | undefined => {
       if (!p1 || !p2 || !p3) return undefined;
 
-      const radians = Math.atan2(p3.y - p2.y, p3.x - p2.x) -
-                     Math.atan2(p1.y - p2.y, p1.x - p2.x);
-      let angle = Math.abs(radians * 180.0 / Math.PI);
-      
+      const radians = Math.atan2(p3.y - p2.y, p3.x - p2.x) - Math.atan2(p1.y - p2.y, p1.x - p2.x);
+      let angle = Math.abs((radians * 180.0) / Math.PI);
+
       if (angle > 180.0) {
         angle = 360 - angle;
       }
-      
+
       return angle;
     };
 
@@ -180,42 +179,42 @@ export class PostureService {
     angles.leftElbow = calculateAngle(
       getPoint(KeyPointType.LEFT_SHOULDER),
       getPoint(KeyPointType.LEFT_ELBOW),
-      getPoint(KeyPointType.LEFT_WRIST)
+      getPoint(KeyPointType.LEFT_WRIST),
     );
 
     // 计算右肘角度
     angles.rightElbow = calculateAngle(
       getPoint(KeyPointType.RIGHT_SHOULDER),
       getPoint(KeyPointType.RIGHT_ELBOW),
-      getPoint(KeyPointType.RIGHT_WRIST)
+      getPoint(KeyPointType.RIGHT_WRIST),
     );
 
     // 计算左膝角度
     angles.leftKnee = calculateAngle(
       getPoint(KeyPointType.LEFT_HIP),
       getPoint(KeyPointType.LEFT_KNEE),
-      getPoint(KeyPointType.LEFT_ANKLE)
+      getPoint(KeyPointType.LEFT_ANKLE),
     );
 
     // 计算右膝角度
     angles.rightKnee = calculateAngle(
       getPoint(KeyPointType.RIGHT_HIP),
       getPoint(KeyPointType.RIGHT_KNEE),
-      getPoint(KeyPointType.RIGHT_ANKLE)
+      getPoint(KeyPointType.RIGHT_ANKLE),
     );
 
     // 计算左髋角度
     angles.leftHip = calculateAngle(
       getPoint(KeyPointType.LEFT_SHOULDER),
       getPoint(KeyPointType.LEFT_HIP),
-      getPoint(KeyPointType.LEFT_KNEE)
+      getPoint(KeyPointType.LEFT_KNEE),
     );
 
     // 计算右髋角度
     angles.rightHip = calculateAngle(
       getPoint(KeyPointType.RIGHT_SHOULDER),
       getPoint(KeyPointType.RIGHT_HIP),
-      getPoint(KeyPointType.RIGHT_KNEE)
+      getPoint(KeyPointType.RIGHT_KNEE),
     );
 
     return angles;
@@ -223,9 +222,9 @@ export class PostureService {
 
   /** 评估姿态 */
   private evaluatePosture(
-    keyPoints: KeyPoint[],
-    angles: PostureData['angles'],
-    exerciseType: string
+    keyPoints: IKeyPoint[],
+    angles: IPostureData['angles'],
+    exerciseType: string,
   ): number {
     let score = 100;
 
@@ -271,10 +270,10 @@ export class PostureService {
 
   /** 分析差异 */
   private analyzeDeviations(
-    postureData: PostureData,
-    exerciseType: string
-  ): PostureAnalysis['deviations'] {
-    const deviations: PostureAnalysis['deviations'] = [];
+    postureData: IPostureData,
+    exerciseType: string,
+  ): IPostureAnalysis['deviations'] {
+    const deviations: IPostureAnalysis['deviations'] = [];
 
     // 获取标准姿态数据
     const standardPosture = this.getStandardPosture(exerciseType);
@@ -284,15 +283,14 @@ export class PostureService {
       const standardPoint = standardPosture.keyPoints.find(p => p.type === point.type);
       if (standardPoint) {
         const deviation = Math.sqrt(
-          Math.pow(point.x - standardPoint.x, 2) +
-          Math.pow(point.y - standardPoint.y, 2)
+          Math.pow(point.x - standardPoint.x, 2) + Math.pow(point.y - standardPoint.y, 2),
         );
 
         if (deviation > 0.1) {
           deviations.push({
             keyPoint: point.type,
             deviation,
-            suggestion: this.generateSuggestion(point.type, deviation, exerciseType)
+            suggestion: this.generateSuggestion(point.type, deviation, exerciseType),
           });
         }
       }
@@ -302,14 +300,14 @@ export class PostureService {
   }
 
   /** 获取标准姿态 */
-  private getStandardPosture(exerciseType: string): PostureData {
+  private getStandardPosture(exerciseType: string): IPostureData {
     // 从数据库或配置中获取标准姿态数据
     // 这里使用模拟数据
     return {
       timestamp: new Date(),
       keyPoints: [],
       angles: {},
-      score: 100
+      score: 100,
     };
   }
 
@@ -317,7 +315,7 @@ export class PostureService {
   private generateSuggestion(
     keyPoint: KeyPointType,
     deviation: number,
-    exerciseType: string
+    exerciseType: string,
   ): string {
     // 根据关键点类型和偏差生成具体建议
     switch (keyPoint) {
@@ -328,9 +326,7 @@ export class PostureService {
           : '请注意膝盖的位置，保持稳定';
       case KeyPointType.LEFT_ELBOW:
       case KeyPointType.RIGHT_ELBOW:
-        return deviation > 0.2
-          ? '手臂弯曲角度不足，请加大弯曲幅度'
-          : '请保持手臂稳定性';
+        return deviation > 0.2 ? '手臂弯曲角度不足，请加大弯曲幅度' : '请保持手臂稳定性';
       // ... 其他关键点的建议
       default:
         return '请保持标准姿态';
@@ -339,9 +335,9 @@ export class PostureService {
 
   /** 生成评估结果 */
   private generateEvaluation(
-    postureData: PostureData,
-    deviations: PostureAnalysis['deviations']
-  ): PostureAnalysis['evaluation'] {
+    postureData: IPostureData,
+    deviations: IPostureAnalysis['deviations'],
+  ): IPostureAnalysis['evaluation'] {
     const issues: string[] = [];
     const suggestions: string[] = [];
 
@@ -380,9 +376,9 @@ export class PostureService {
     return {
       score: postureData.score,
       issues,
-      suggestions
+      suggestions,
     };
   }
 }
 
-export const postureService = PostureService.getInstance(); 
+export const postureService = PostureService.getInstance();

@@ -1,35 +1,38 @@
-import { Router } from 'express';
-import { dietPlanController } from '../controllers/diet-plan.controller';
-import { auth } from '../middleware/auth.tsx';
 import { IAuthRequest } from '../types/models';
+import { Router } from 'express';
+import { auth } from '../middleware/auth.tsx';
+import { dietPlanController } from '../controllers/diet-plan.controller';
 
 const router = Router();
 
 // 生成饮食计划
-router.post('/',
+router.post(
+  '/',
   async (req, res, next) => {
     const authReq = req as IAuthRequest;
     await auth.required(authReq, res, next);
   },
-  dietPlanController.generateDietPlan
+  dietPlanController.generateDietPlan,
 );
 
 // 获取用户的饮食计划列表
-router.get('/user-plans',
+router.get(
+  '/user-plans',
   async (req, res, next) => {
     const authReq = req as IAuthRequest;
     await auth.required(authReq, res, next);
   },
-  dietPlanController.getUserPlans
+  dietPlanController.getUserPlans,
 );
 
 // 更新饮食计划状态
-router.patch('/:id/status',
+router.patch(
+  '/:id/status',
   async (req, res, next) => {
     const authReq = req as IAuthRequest;
     await auth.required(authReq, res, next);
   },
-  dietPlanController.updatePlanStatus
+  dietPlanController.updatePlanStatus,
 );
 
-export default router; 
+export default router;

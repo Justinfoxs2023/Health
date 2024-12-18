@@ -1,10 +1,11 @@
 import React from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
-import { Card, Text, useTheme, Button, Avatar } from 'react-native-paper';
+
 import { AppLayout } from '../../components/layout/AppLayout';
+import { Card, Text, useTheme, Button, Avatar } from 'react-native-paper';
 import { HealthMetrics } from '../../components/client/HealthMetrics';
-import { ProgressChart } from '../../components/client/ProgressChart';
 import { PlanOverview } from '../../components/client/PlanOverview';
+import { ProgressChart } from '../../components/client/ProgressChart';
+import { ScrollView, StyleSheet, View } from 'react-native';
 
 export const ClientDetailScreen = () => {
   const theme = useTheme();
@@ -35,17 +36,21 @@ export const ClientDetailScreen = () => {
         </View>
 
         <View style={styles.actions}>
-          <Button 
-            mode="contained" 
+          <Button
+            mode="contained"
             style={styles.button}
-            onPress={() => {/* 导航到计划编辑页面 */}}
+            onPress={() => {
+              /* 导航到计划编辑页面 */
+            }}
           >
             调整计划
           </Button>
-          <Button 
-            mode="outlined" 
+          <Button
+            mode="outlined"
             style={styles.button}
-            onPress={() => {/* 导航到反馈页面 */}}
+            onPress={() => {
+              /* 导航到反馈页面 */
+            }}
           >
             发送反馈
           </Button>
@@ -95,4 +100,4 @@ const styles = StyleSheet.create({
     flex: 1,
     marginHorizontal: 8,
   },
-}); 
+});

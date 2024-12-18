@@ -1,11 +1,11 @@
 import * as tf from '@tensorflow/tfjs';
-import { LocalDatabase } from '../utils/local-database';
-import { NutritionInfo, FoodRecord } from './food-nutrition-analysis.service';
+import { ILocalDatabase } from '../utils/local-database';
+import { INutritionInfo, IFoodRecord } from './food-nutrition-analysis.service';
 
 export class OfflineFoodAnalysisService {
-  private db: LocalDatabase;
+  private db: ILocalDatabase;
   private model: tf.LayersModel | null = null;
-  private foodDatabase: Map<string, NutritionInfo> = new Map();
+  private foodDatabase: Map<string, INutritionInfo> = new Map();
 
   constructor() {
     this.db = new LocalDatabase('offline-food-analysis');
@@ -46,16 +46,18 @@ export class OfflineFoodAnalysisService {
       // 保存到本地
       await this.db.put('food-database', Array.from(this.foodDatabase.entries()));
     } catch (error) {
-      console.error('加载食物数据库失败:', error);
+      console.error('Error in offline-food-analysis.service.ts:', '加载食物数据库失败:', error);
     }
   }
 
   // 离线分析食物
-  async analyzeOffline(foodItems: Array<{
-    name: string;
-    quantity: number;
-    unit: string;
-  }>): Promise<FoodRecord> {
+  async analyzeOffline(
+    foodItems: Array<{
+      name: string;
+      quantity: number;
+      unit: string;
+    }>,
+  ): Promise<IFoodRecord> {
     if (!this.model) {
       throw new Error('模型未加载');
     }
@@ -79,15 +81,15 @@ export class OfflineFoodAnalysisService {
       timestamp: new Date(),
       items: foodItems.map((item, index) => ({
         ...item,
-        nutrition: results[index]
+        nutrition: results[index],
       })),
       totalNutrition,
       mealType: this.inferMealType(new Date()),
-      aiSuggestions: this.generateOfflineSuggestions(totalNutrition)
+      aiSuggestions: this.generateOfflineSuggestions(totalNutrition),
     };
   }
 
-  private adjustNutrition(base: NutritionInfo, quantity: number, unit: string): NutritionInfo {
+  private adjustNutrition(base: INutritionInfo, quantity: number, unit: string): INutritionInfo {
     const factor = this.convertToGrams(quantity, unit) / 100; // 基于100g的转换
     return {
       calories: base.calories * factor,
@@ -95,28 +97,24 @@ export class OfflineFoodAnalysisService {
       carbs: base.carbs * factor,
       fat: base.fat * factor,
       fiber: base.fiber * factor,
-      vitamins: Object.fromEntries(
-        Object.entries(base.vitamins).map(([k, v]) => [k, v * factor])
-      ),
-      minerals: Object.fromEntries(
-        Object.entries(base.minerals).map(([k, v]) => [k, v * factor])
-      )
+      vitamins: Object.fromEntries(Object.entries(base.vitamins).map(([k, v]) => [k, v * factor])),
+      minerals: Object.fromEntries(Object.entries(base.minerals).map(([k, v]) => [k, v * factor])),
     };
   }
 
   private convertToGrams(quantity: number, unit: string): number {
     const conversionTable: { [key: string]: number } = {
-      'g': 1,
-      'kg': 1000,
-      'ml': 1,
-      'l': 1000,
-      '份': 250,
-      '个': 150
+      g: 1,
+      kg: 1000,
+      ml: 1,
+      l: 1000,
+      份: 250,
+      个: 150,
     };
     return quantity * (conversionTable[unit] || 1);
   }
 
-  private calculateTotalNutrition(items: NutritionInfo[]): NutritionInfo {
+  private calculateTotalNutrition(items: INutritionInfo[]): INutritionInfo {
     return items.reduce((total, item) => ({
       calories: total.calories + item.calories,
       protein: total.protein + item.protein,
@@ -124,17 +122,11 @@ export class OfflineFoodAnalysisService {
       fat: total.fat + item.fat,
       fiber: total.fiber + item.fiber,
       vitamins: Object.fromEntries(
-        Object.entries(item.vitamins).map(([k, v]) => [
-          k,
-          (total.vitamins[k] || 0) + v
-        ])
+        Object.entries(item.vitamins).map(([k, v]) => [k, (total.vitamins[k] || 0) + v]),
       ),
       minerals: Object.fromEntries(
-        Object.entries(item.minerals).map(([k, v]) => [
-          k,
-          (total.minerals[k] || 0) + v
-        ])
-      )
+        Object.entries(item.minerals).map(([k, v]) => [k, (total.minerals[k] || 0) + v]),
+      ),
     }));
   }
 
@@ -146,9 +138,9 @@ export class OfflineFoodAnalysisService {
     return 'snack';
   }
 
-  private generateOfflineSuggestions(nutrition: NutritionInfo): string[] {
+  private generateOfflineSuggestions(nutrition: INutritionInfo): string[] {
     const suggestions: string[] = [];
-    
+
     // 基于营养值生成简单建议
     if (nutrition.calories > 800) {
       suggestions.push('当前餐次热量偏高，建议适当减少食用量');
@@ -160,4 +152,4 @@ export class OfflineFoodAnalysisService {
 
     return suggestions;
   }
-} 
+}

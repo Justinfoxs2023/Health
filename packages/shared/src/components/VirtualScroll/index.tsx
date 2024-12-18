@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
+
 import { debounce } from '../../utils';
 
-export interface VirtualScrollProps<T = any> {
+export interface IVirtualScrollProps<T = any> {
   /** 数据源 */
   items: T[];
   /** 行高 */
@@ -37,8 +38,8 @@ export function VirtualScroll<T>({
   style,
   onScroll,
   onReachBottom,
-  bottomThreshold = 100
-}: VirtualScrollProps<T>) {
+  bottomThreshold = 100,
+}: IVirtualScrollProps<T>): import('D:/Health/node_modules/@types/react/jsx-runtime').JSX.Element {
   const containerRef = useRef<HTMLDivElement>(null);
   const [scrollTop, setScrollTop] = useState(0);
 
@@ -50,7 +51,7 @@ export function VirtualScroll<T>({
     const endIndex = Math.min(items.length, start + visibleCount + overscan);
     return {
       visibleStartIndex: startIndex,
-      visibleEndIndex: endIndex
+      visibleEndIndex: endIndex,
     };
   }, [scrollTop, height, itemHeight, items.length, overscan]);
 
@@ -68,27 +69,21 @@ export function VirtualScroll<T>({
 
         // 检查是否到达底部
         const { scrollHeight, clientHeight } = e.currentTarget;
-        if (
-          scrollHeight - (newScrollTop + clientHeight) <= bottomThreshold &&
-          onReachBottom
-        ) {
+        if (scrollHeight - (newScrollTop + clientHeight) <= bottomThreshold && onReachBottom) {
           onReachBottom();
         }
       }, 16),
-    [onScroll, onReachBottom, bottomThreshold]
+    [onScroll, onReachBottom, bottomThreshold],
   );
 
   // 监听容器大小变化
   useEffect(() => {
     if (!containerRef.current) return;
 
-    const resizeObserver = new ResizeObserver((entries) => {
+    const resizeObserver = new ResizeObserver(entries => {
       const { height } = entries[0].contentRect;
       const visibleCount = Math.ceil(height / itemHeight);
-      const endIndex = Math.min(
-        items.length,
-        visibleStartIndex + visibleCount + overscan
-      );
+      const endIndex = Math.min(items.length, visibleStartIndex + visibleCount + overscan);
       if (endIndex !== visibleEndIndex) {
         setScrollTop(containerRef.current?.scrollTop || 0);
       }
@@ -106,7 +101,7 @@ export function VirtualScroll<T>({
         height,
         overflow: 'auto',
         position: 'relative',
-        ...style
+        ...style,
       }}
       onScroll={handleScroll}
     >
@@ -114,7 +109,7 @@ export function VirtualScroll<T>({
         className="virtual-scroll__inner"
         style={{
           height: totalHeight,
-          position: 'relative'
+          position: 'relative',
         }}
       >
         <div
@@ -123,20 +118,18 @@ export function VirtualScroll<T>({
             position: 'absolute',
             top: offsetY,
             left: 0,
-            right: 0
+            right: 0,
           }}
         >
-          {items
-            .slice(visibleStartIndex, visibleEndIndex)
-            .map((item, index) => (
-              <div
-                key={visibleStartIndex + index}
-                className="virtual-scroll__item"
-                style={{ height: itemHeight }}
-              >
-                {renderItem(item, visibleStartIndex + index)}
-              </div>
-            ))}
+          {items.slice(visibleStartIndex, visibleEndIndex).map((item, index) => (
+            <div
+              key={visibleStartIndex + index}
+              className="virtual-scroll__item"
+              style={{ height: itemHeight }}
+            >
+              {renderItem(item, visibleStartIndex + index)}
+            </div>
+          ))}
         </div>
       </div>
     </div>
@@ -162,4 +155,4 @@ style.textContent = `
     will-change: transform;
   }
 `;
-document.head.appendChild(style); 
+document.head.appendChild(style);

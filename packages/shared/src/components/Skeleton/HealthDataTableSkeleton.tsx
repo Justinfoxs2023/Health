@@ -1,7 +1,8 @@
 import React from 'react';
+
 import { Skeleton } from './index';
 
-export interface HealthDataTableSkeletonProps {
+export interface IHealthDataTableSkeletonProps {
   /** 自定义类名 */
   className?: string;
   /** 自定义样式 */
@@ -15,17 +16,14 @@ export interface HealthDataTableSkeletonProps {
 /**
  * 健康数据表格骨架屏组件
  */
-export const HealthDataTableSkeleton: React.FC<HealthDataTableSkeletonProps> = ({
+export const HealthDataTableSkeleton: React.FC<IHealthDataTableSkeletonProps> = ({
   className,
   style,
   rows = 5,
-  columns = 4
+  columns = 4,
 }) => {
   return (
-    <div
-      className={`health-data-table-skeleton ${className || ''}`}
-      style={style}
-    >
+    <div className={`health-data-table-skeleton ${className || ''}`} style={style}>
       {/* 表头 */}
       <div className="health-data-table-skeleton__header">
         {Array.from({ length: columns }).map((_, index) => (
@@ -42,10 +40,7 @@ export const HealthDataTableSkeleton: React.FC<HealthDataTableSkeletonProps> = (
       {/* 表格内容 */}
       <div className="health-data-table-skeleton__body">
         {Array.from({ length: rows }).map((_, rowIndex) => (
-          <div
-            key={`row-${rowIndex}`}
-            className="health-data-table-skeleton__row"
-          >
+          <div key={`row-${rowIndex}`} className="health-data-table-skeleton__row">
             {Array.from({ length: columns }).map((_, colIndex) => (
               <Skeleton
                 key={`cell-${rowIndex}-${colIndex}`}
@@ -155,4 +150,4 @@ style.textContent = `
     margin: 0 16px;
   }
 `;
-document.head.appendChild(style); 
+document.head.appendChild(style);

@@ -1,22 +1,30 @@
+/**
+ * @fileoverview TS 文件 types.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // 预测分析类型
-export interface PredictiveAnalysis {
-  // 健康风险预测
-  riskPrediction: {
+export interface IPredictiveAnalysis {
+   
+  /** riskPrediction 的描述 */
+    riskPrediction: {
     userId: string;
     timestamp: Date;
-    predictions: Array<{
+    predictions: Array{
       riskType: string;
       probability: number;
       confidence: number;
-      factors: Array<{
+      factors: Array{
         name: string;
         weight: number;
         contribution: number;
       }>;
       timeline: {
-        shortTerm: number;  // 1个月内风险
+        shortTerm: number; // 1个月内风险
         mediumTerm: number; // 3个月内风险
-        longTerm: number;   // 6个月内风险
+        longTerm: number; // 6个月内风险
       };
     }>;
   };
@@ -56,16 +64,20 @@ export interface PredictiveAnalysis {
 }
 
 // 实时分析类型
-export interface RealTimeAnalytics {
-  // 实时健康指标
-  metrics: {
+export interface IRealTimeAnalytics {
+   
+  /** metrics 的描述 */
+    metrics: {
     timestamp: Date;
-    values: Record<string, number>;
-    trends: Record<string, {
-      direction: 'up' | 'down' | 'stable';
-      rate: number;
-      significance: number;
-    }>;
+    values: Recordstring, number;
+    trends: Record
+      string,
+      {
+        direction: up  down  stable;
+        rate: number;
+        significance: number;
+      }
+    >;
   };
 
   // 异常检测
@@ -82,27 +94,31 @@ export interface RealTimeAnalytics {
   }>;
 
   // 动态阈值
-  thresholds: Record<string, {
-    current: {
-      min: number;
-      max: number;
-    };
-    adaptive: {
-      baseline: number;
-      tolerance: number;
-      adjustmentFactor: number;
-    };
-  }>;
+  thresholds: Record<
+    string,
+    {
+      current: {
+        min: number;
+        max: number;
+      };
+      adaptive: {
+        baseline: number;
+        tolerance: number;
+        adjustmentFactor: number;
+      };
+    }
+  >;
 }
 
 // 数据可视化类型
-export interface VisualizationData {
-  // 图表配置
-  chartConfig: {
-    type: 'line' | 'bar' | 'scatter' | 'radar' | 'custom';
-    dimensions: string[];
-    metrics: string[];
-    filters: Record<string, any>;
+export interface IVisualizationData {
+   
+  /** chartConfig 的描述 */
+    chartConfig: {
+    type: line  bar  scatter  radar  custom;
+    dimensions: string;
+    metrics: string;
+    filters: Recordstring, any;
     interactions: {
       zoom: boolean;
       brush: boolean;
@@ -137,11 +153,15 @@ export interface VisualizationData {
 }
 
 // 分析结果类型
-export interface AnalyticsResult {
-  predictive?: PredictiveAnalysis;
-  realTime?: RealTimeAnalytics;
-  visualization?: VisualizationData;
-  metadata: {
+export interface IAnalyticsResult {
+  /** predictive 的描述 */
+    predictive: IPredictiveAnalysis;
+  /** realTime 的描述 */
+    realTime: IRealTimeAnalytics;
+  /** visualization 的描述 */
+    visualization: IVisualizationData;
+  /** metadata 的描述 */
+    metadata: {
     generatedAt: Date;
     version: string;
     quality: {
@@ -150,4 +170,4 @@ export interface AnalyticsResult {
       reliability: number;
     };
   };
-} 
+}

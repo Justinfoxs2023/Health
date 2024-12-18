@@ -22,7 +22,7 @@ export class EmailService {
         from: process.env.EMAIL_FROM,
         to,
         subject,
-        html: content
+        html: content,
       });
       return true;
     } catch (error) {
@@ -30,4 +30,4 @@ export class EmailService {
       throw error;
     }
   }
-} 
+}

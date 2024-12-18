@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
-import { UserService } from './user.service';
+import { Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { RoleService } from './role.service';
+import { UserService } from './user.service';
 
 @Injectable()
 export class SecurityService {
@@ -29,22 +29,18 @@ export class SecurityService {
       // 加密数据
       const encrypted = Buffer.concat([
         cipher.update(JSON.stringify(data), 'utf8'),
-        cipher.final()
+        cipher.final(),
       ]);
 
       // 获取认证标签
       const authTag = cipher.getAuthTag();
 
       // 组合��密结果
-      const result = Buffer.concat([
-        iv,
-        authTag,
-        encrypted
-      ]);
+      const result = Buffer.concat([iv, authTag, encrypted]);
 
       return result.toString('base64');
     } catch (error) {
-      console.error('Encryption failed:', error);
+      console.error('Error in security.service.ts:', 'Encryption failed:', error);
       throw new Error('Data encryption failed');
     }
   }
@@ -64,14 +60,11 @@ export class SecurityService {
       decipher.setAuthTag(authTag);
 
       // 解密数据
-      const decrypted = Buffer.concat([
-        decipher.update(encrypted),
-        decipher.final()
-      ]);
+      const decrypted = Buffer.concat([decipher.update(encrypted), decipher.final()]);
 
       return JSON.parse(decrypted.toString('utf8'));
     } catch (error) {
-      console.error('Decryption failed:', error);
+      console.error('Error in security.service.ts:', 'Decryption failed:', error);
       throw new Error('Data decryption failed');
     }
   }
@@ -80,13 +73,7 @@ export class SecurityService {
   private async generateKey(userId: string): Promise<Buffer> {
     const user = await this.userService.findById(userId);
     const salt = await this.getSalt(userId);
-    return crypto.pbkdf2Sync(
-      user.secretKey,
-      salt,
-      100000,
-      this.keyLength,
-      'sha512'
-    );
+    return crypto.pbkdf2Sync(user.secretKey, salt, 100000, this.keyLength, 'sha512');
   }
 
   // 获取盐值
@@ -115,7 +102,7 @@ export class SecurityService {
     const payload = {
       sub: userId,
       roles,
-      type: 'access'
+      type: 'access',
     };
     return this.jwtService.sign(payload);
   }
@@ -124,7 +111,7 @@ export class SecurityService {
   async generateRefreshToken(userId: string): Promise<string> {
     const payload = {
       sub: userId,
-      type: 'refresh'
+      type: 'refresh',
     };
     return this.jwtService.sign(payload, { expiresIn: '7d' });
   }
@@ -143,7 +130,7 @@ export class SecurityService {
     try {
       const user = await this.userService.findById(userId);
       const roles = await this.roleService.getUserRoles(userId);
-      
+
       // 检查用户状态
       if (!user.isActive) {
         return false;
@@ -159,16 +146,15 @@ export class SecurityService {
 
       return false;
     } catch (error) {
-      console.error('Access check failed:', error);
+      console.error('Error in security.service.ts:', 'Access check failed:', error);
       return false;
     }
   }
 
   // 检查权限
   private hasPermission(permissions: any[], resource: string, action: string): boolean {
-    return permissions.some(permission => 
-      permission.resource === resource && 
-      permission.actions.includes(action)
+    return permissions.some(
+      permission => permission.resource === resource && permission.actions.includes(action),
     );
   }
 
@@ -201,7 +187,7 @@ export class SecurityService {
         idNumber: (value: string) => `${value.slice(0, 6)}****${value.slice(-4)}`,
         name: (value: string) => value,
         address: (value: string) => value,
-      }
+      },
     };
     return rules[level] || rules.medium;
   }
@@ -237,4 +223,4 @@ export class SecurityService {
     // 实现审计日志记录逻辑
     console.log('Audit log:', event);
   }
-} 
+}

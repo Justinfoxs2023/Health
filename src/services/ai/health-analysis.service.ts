@@ -1,6 +1,6 @@
-import { OpenAI } from 'openai';
-import { Logger } from '../utils/logger';
 import { HealthData, RiskAssessment, Recommendation } from '../types/health';
+import { Logger } from '../utils/logger';
+import { OpenAI } from 'openai';
 
 export class HealthAnalysisService {
   private openai: OpenAI;
@@ -8,7 +8,7 @@ export class HealthAnalysisService {
 
   constructor() {
     this.openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY
+      apiKey: process.env.OPENAI_API_KEY,
     });
     this.logger = new Logger('HealthAnalysis');
   }
@@ -17,14 +17,17 @@ export class HealthAnalysisService {
   async assessHealthRisks(healthData: HealthData): Promise<RiskAssessment> {
     try {
       const response = await this.openai.chat.completions.create({
-        model: "gpt-4",
-        messages: [{
-          role: "system",
-          content: "你是一个专业的健康风险评估专家，请分析以下健康数据并提供风险评估"
-        }, {
-          role: "user",
-          content: JSON.stringify(healthData)
-        }]
+        model: 'gpt-4',
+        messages: [
+          {
+            role: 'system',
+            content: '你是一个专业的健康风险评估专家，请分析以下健康数据并提供风险评估',
+          },
+          {
+            role: 'user',
+            content: JSON.stringify(healthData),
+          },
+        ],
       });
 
       return this.parseRiskAssessment(response.choices[0].message.content);
@@ -38,14 +41,17 @@ export class HealthAnalysisService {
   async generateRecommendations(userProfile: any): Promise<Recommendation[]> {
     try {
       const response = await this.openai.chat.completions.create({
-        model: "gpt-4",
-        messages: [{
-          role: "system",
-          content: "请基于用户画像生成个性化的健康建议"
-        }, {
-          role: "user",
-          content: JSON.stringify(userProfile)
-        }]
+        model: 'gpt-4',
+        messages: [
+          {
+            role: 'system',
+            content: '请基于用户画像生成个性化的健康建议',
+          },
+          {
+            role: 'user',
+            content: JSON.stringify(userProfile),
+          },
+        ],
       });
 
       return this.parseRecommendations(response.choices[0].message.content);
@@ -54,4 +60,4 @@ export class HealthAnalysisService {
       throw error;
     }
   }
-} 
+}

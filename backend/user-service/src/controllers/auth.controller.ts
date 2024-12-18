@@ -1,6 +1,6 @@
-import { Request, Response } from 'express';
 import { AuthService } from '../services/auth.service';
 import { Logger } from '../utils/logger';
+import { Request, Response } from 'express';
 import { validateLogin, validateOAuth } from '../utils/validators';
 
 export class AuthController {
@@ -21,7 +21,7 @@ export class AuthController {
       if (error) {
         return res.status(400).json({
           code: 400,
-          message: error.details[0].message
+          message: error.details[0].message,
         });
       }
 
@@ -30,13 +30,13 @@ export class AuthController {
 
       return res.json({
         code: 200,
-        data: result
+        data: result,
       });
     } catch (error) {
       this.logger.error('登录失败', error);
       return res.status(401).json({
         code: 401,
-        message: error.message
+        message: error.message,
       });
     }
   }
@@ -50,7 +50,7 @@ export class AuthController {
       if (error) {
         return res.status(400).json({
           code: 400,
-          message: error.details[0].message
+          message: error.details[0].message,
         });
       }
 
@@ -59,13 +59,13 @@ export class AuthController {
 
       return res.json({
         code: 200,
-        data: result
+        data: result,
       });
     } catch (error) {
       this.logger.error('OAuth登录失败', error);
       return res.status(401).json({
         code: 401,
-        message: error.message
+        message: error.message,
       });
     }
   }
@@ -80,14 +80,14 @@ export class AuthController {
 
       return res.json({
         code: 200,
-        data: tokens
+        data: tokens,
       });
     } catch (error) {
       this.logger.error('刷新Token失败', error);
       return res.status(401).json({
         code: 401,
-        message: error.message
+        message: error.message,
       });
     }
   }
-} 
+}

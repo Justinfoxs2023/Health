@@ -1,7 +1,7 @@
-import { Request, Response } from 'express';
-import { Logger } from '../../utils/logger';
-import { DashboardService } from '../../services/web/dashboard.service';
 import { AuthService } from '../../services/auth/auth.service';
+import { DashboardService } from '../../services/web/dashboard.service';
+import { Logger } from '../../utils/logger';
+import { Request, Response } from 'express';
 
 export class DashboardController {
   private logger: Logger;
@@ -24,25 +24,21 @@ export class DashboardController {
       await this.authService.verifyDashboardAccess(req.user, orgId);
 
       // 获取数据
-      const dashboard = await this.dashboardService.getDashboard(
-        userId,
-        orgId,
-        {
-          timeRange,
-          filters
-        }
-      );
+      const dashboard = await this.dashboardService.getDashboard(userId, orgId, {
+        timeRange,
+        filters,
+      });
 
       res.json({
         code: 200,
         data: dashboard,
-        message: '获取仪表板成功'
+        message: '获取仪表板成功',
       });
     } catch (error) {
       this.logger.error('获取仪表板失败', error);
       res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
@@ -57,23 +53,19 @@ export class DashboardController {
       await this.authService.verifyDashboardUpdate(req.user, orgId);
 
       // 更新配置
-      const updated = await this.dashboardService.updateDashboard(
-        userId,
-        orgId,
-        config
-      );
+      const updated = await this.dashboardService.updateDashboard(userId, orgId, config);
 
       res.json({
         code: 200,
         data: updated,
-        message: '更新仪表板成功'
+        message: '更新仪表板成功',
       });
     } catch (error) {
       this.logger.error('更新仪表板失败', error);
       res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
-} 
+}

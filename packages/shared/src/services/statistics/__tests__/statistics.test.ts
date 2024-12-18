@@ -1,5 +1,5 @@
-import { dataStatisticsService, StatTimeRange } from '../index';
 import { HealthData, HealthMetric } from '../../../types';
+import { dataStatisticsService, StatTimeRangeType } from '../index';
 
 describe('DataStatisticsService', () => {
   // 模拟健康数据
@@ -12,7 +12,7 @@ describe('DataStatisticsService', () => {
       bloodSugar: 5.5,
       temperature: 36.5,
       weight: 65,
-      steps: 8000
+      steps: 8000,
     },
     {
       id: '2',
@@ -22,7 +22,7 @@ describe('DataStatisticsService', () => {
       bloodSugar: 5.8,
       temperature: 36.6,
       weight: 65.2,
-      steps: 10000
+      steps: 10000,
     },
     {
       id: '3',
@@ -32,8 +32,8 @@ describe('DataStatisticsService', () => {
       bloodSugar: 5.6,
       temperature: 36.5,
       weight: 65.1,
-      steps: 7500
-    }
+      steps: 7500,
+    },
   ];
 
   describe('calculateStatistics', () => {
@@ -41,7 +41,7 @@ describe('DataStatisticsService', () => {
       const stats = dataStatisticsService.calculateStatistics(
         mockData,
         HealthMetric.HEART_RATE,
-        'week'
+        'week',
       );
 
       expect(stats.totalCount).toBe(3);
@@ -62,7 +62,7 @@ describe('DataStatisticsService', () => {
         HealthMetric.HEART_RATE,
         'custom',
         startDate,
-        endDate
+        endDate,
       );
 
       expect(stats.totalCount).toBe(2);
@@ -71,11 +71,7 @@ describe('DataStatisticsService', () => {
 
     it('当使用自定义时间范围但未提供日期时应抛出错误', () => {
       expect(() =>
-        dataStatisticsService.calculateStatistics(
-          mockData,
-          HealthMetric.HEART_RATE,
-          'custom'
-        )
+        dataStatisticsService.calculateStatistics(mockData, HealthMetric.HEART_RATE, 'custom'),
       ).toThrow();
     });
   });
@@ -87,9 +83,7 @@ describe('DataStatisticsService', () => {
       expect(report.id).toBeDefined();
       expect(report.generatedAt).toBeInstanceOf(Date);
       expect(report.type).toBe('daily');
-      expect(Object.keys(report.statistics)).toHaveLength(
-        Object.values(HealthMetric).length
-      );
+      expect(Object.keys(report.statistics)).toHaveLength(Object.values(HealthMetric).length);
       expect(report.recommendations).toBeInstanceOf(Array);
       expect(report.risks).toBeInstanceOf(Array);
     });
@@ -112,16 +106,14 @@ describe('DataStatisticsService', () => {
 
     it('calculateStandardDeviation应该正确计算标准差', () => {
       const values = [2, 4, 4, 4, 5, 5, 7, 9];
-      const stdDev = (dataStatisticsService as any).calculateStandardDeviation(
-        values
-      );
+      const stdDev = (dataStatisticsService as any).calculateStandardDeviation(values);
       expect(stdDev).toBeCloseTo(2.0, 1);
     });
 
     it('detectAnomalies应该正确识别异常值', () => {
       const anomalies = (dataStatisticsService as any).detectAnomalies(
         mockData,
-        HealthMetric.HEART_RATE
+        HealthMetric.HEART_RATE,
       );
       expect(anomalies).toHaveLength(1);
       expect(anomalies[0].value).toBe(95);
@@ -131,12 +123,10 @@ describe('DataStatisticsService', () => {
       const stats = {
         [HealthMetric.HEART_RATE]: {
           anomalies: [{ time: new Date(), value: 95, reason: 'High value' }],
-          totalCount: 3
-        }
+          totalCount: 3,
+        },
       };
-      const recommendations = (dataStatisticsService as any).generateRecommendations(
-        stats
-      );
+      const recommendations = (dataStatisticsService as any).generateRecommendations(stats);
       expect(recommendations).toHaveLength(1);
       expect(recommendations[0]).toContain('心率');
     });
@@ -146,14 +136,14 @@ describe('DataStatisticsService', () => {
         [HealthMetric.HEART_RATE]: {
           anomalies: [
             { time: new Date(), value: 95, reason: 'High value' },
-            { time: new Date(), value: 100, reason: 'High value' }
+            { time: new Date(), value: 100, reason: 'High value' },
           ],
-          totalCount: 10
-        }
+          totalCount: 10,
+        },
       };
       const risks = (dataStatisticsService as any).assessRisks(stats);
       expect(risks).toHaveLength(1);
       expect(risks[0].level).toBe('medium');
     });
   });
-}); 
+});

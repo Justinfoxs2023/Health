@@ -1,8 +1,8 @@
 import { Alert, AlertRule } from '../models/alert.model';
-import { NotificationService } from './notification.service';
-import { MetricsService } from './metrics.service';
-import { Redis } from '../utils/redis';
 import { Logger } from '../utils/logger';
+import { MetricsService } from './metrics.service';
+import { NotificationService } from './notification.service';
+import { Redis } from '../utils/redis';
 
 export class AlertService {
   private notificationService: NotificationService;
@@ -44,8 +44,8 @@ export class AlertService {
             details: {
               metrics,
               rule: rule.name,
-              conditions: rule.conditions
-            }
+              conditions: rule.conditions,
+            },
           });
 
           // 更新规则触发时间
@@ -111,8 +111,8 @@ export class AlertService {
         data: {
           alertId: alert._id,
           status: alert.status,
-          updatedBy: userId
-        }
+          updatedBy: userId,
+        },
       });
 
       return alert;
@@ -137,7 +137,7 @@ export class AlertService {
     try {
       const rule = new AlertRule({
         ...data,
-        updatedBy: data.createdBy
+        updatedBy: data.createdBy,
       });
 
       await rule.save();
@@ -166,19 +166,19 @@ export class AlertService {
             type: 'alert',
             level: alert.level,
             message: alert.message,
-            details: alert.details
+            details: alert.details,
           });
 
           alert.notificationsSent.push({
             channel,
             timestamp: new Date(),
-            status: 'success'
+            status: 'success',
           });
         } catch (error) {
           alert.notificationsSent.push({
             channel,
             timestamp: new Date(),
-            status: 'failed'
+            status: 'failed',
           });
           this.logger.error(`发送通知失败: ${channel}`, error);
         }
@@ -240,7 +240,7 @@ export class AlertService {
    */
   private async updateRuleLastTriggered(ruleId: string) {
     await AlertRule.findByIdAndUpdate(ruleId, {
-      lastTriggered: new Date()
+      lastTriggered: new Date(),
     });
   }
 
@@ -264,4 +264,4 @@ export class AlertService {
 
     return AlertRule.find({ type, enabled: true });
   }
-} 
+}

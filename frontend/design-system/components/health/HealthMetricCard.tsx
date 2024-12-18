@@ -1,30 +1,38 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+
+import { AnimationSystem } from '../../interaction/animations/AnimationSystem';
 import { CustomIcon } from '../../icons';
 import { DesignTokens } from '../../tokens';
-import { AnimationSystem } from '../../interaction/animations/AnimationSystem';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
-interface HealthMetricCardProps {
+interface IHealthMetricCardProps {
+  /** title 的描述 */
   title: string;
+  /** value 的描述 */
   value: number;
+  /** unit 的描述 */
   unit: string;
+  /** icon 的描述 */
   icon: string;
+  /** trend 的描述 */
   trend?: {
     type: 'up' | 'down' | 'stable';
     value: number;
   };
+  /** status 的描述 */
   status?: 'normal' | 'warning' | 'alert';
+  /** onPress 的描述 */
   onPress?: () => void;
 }
 
-export const HealthMetricCard: React.FC<HealthMetricCardProps> = ({
+export const HealthMetricCard: React.FC<IHealthMetricCardProps> = ({
   title,
   value,
   unit,
   icon,
   trend,
   status = 'normal',
-  onPress
+  onPress,
 }) => {
   const getStatusColor = () => {
     switch (status) {
@@ -55,14 +63,8 @@ export const HealthMetricCard: React.FC<HealthMetricCardProps> = ({
 
       {trend && (
         <View style={styles.trend}>
-          <CustomIcon 
-            name={`trend-${trend.type}`} 
-            size={16} 
-            color={getStatusColor()} 
-          />
-          <Text style={[styles.trendValue, { color: getStatusColor() }]}>
-            {trend.value}%
-          </Text>
+          <CustomIcon name={`trend-${trend.type}`} size={16} color={getStatusColor()} />
+          <Text style={[styles.trendValue, { color: getStatusColor() }]}>{trend.value}%</Text>
         </View>
       )}
     </TouchableOpacity>
@@ -75,39 +77,39 @@ const styles = StyleSheet.create({
     borderRadius: DesignTokens.radius.lg,
     padding: DesignTokens.spacing.lg,
     borderLeftWidth: 4,
-    ...DesignTokens.shadows.md
+    ...DesignTokens.shadows.md,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: DesignTokens.spacing.sm
+    marginBottom: DesignTokens.spacing.sm,
   },
   title: {
     marginLeft: DesignTokens.spacing.sm,
     fontSize: DesignTokens.typography.sizes.md,
-    color: DesignTokens.colors.text.secondary
+    color: DesignTokens.colors.text.secondary,
   },
   content: {
     flexDirection: 'row',
-    alignItems: 'baseline'
+    alignItems: 'baseline',
   },
   value: {
     fontSize: DesignTokens.typography.sizes.xxl,
     fontWeight: String(DesignTokens.typography.weights.bold),
-    color: DesignTokens.colors.text.primary
+    color: DesignTokens.colors.text.primary,
   },
   unit: {
     marginLeft: DesignTokens.spacing.xs,
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.text.secondary
+    color: DesignTokens.colors.text.secondary,
   },
   trend: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: DesignTokens.spacing.sm
+    marginTop: DesignTokens.spacing.sm,
   },
   trendValue: {
     marginLeft: DesignTokens.spacing.xs,
-    fontSize: DesignTokens.typography.sizes.sm
-  }
-}); 
+    fontSize: DesignTokens.typography.sizes.sm,
+  },
+});

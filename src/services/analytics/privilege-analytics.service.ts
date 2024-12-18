@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 privilege-analytics.service.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export class PrivilegeAnalyticsService {
   private readonly analyticsRepo: AnalyticsRepository;
   private readonly privilegeService: PrivilegeManagementService;
@@ -12,13 +19,13 @@ export class PrivilegeAnalyticsService {
     try {
       // 收集使用数据
       const usageData = await this.collectUsageData(period);
-      
+
       // 分析使用模式
       const patterns = await this.analyzeUsagePatterns(usageData);
-      
+
       // 生成洞察
       const insights = await this.generateInsights(patterns);
-      
+
       // 制定优化建议
       const recommendations = await this.generateOptimizationSuggestions(insights);
 
@@ -27,7 +34,7 @@ export class PrivilegeAnalyticsService {
         patterns,
         insights,
         recommendations,
-        trends: await this.analyzeTrends(usageData)
+        trends: await this.analyzeTrends(usageData),
       };
     } catch (error) {
       this.logger.error('生成使用报告失败', error);
@@ -40,10 +47,10 @@ export class PrivilegeAnalyticsService {
     try {
       // 收集反馈数据
       const feedbackData = await this.collectFeedbackData(privilegeId);
-      
+
       // 分析满意度趋势
       const trends = await this.analyzeSatisfactionTrends(feedbackData);
-      
+
       // 识别改进点
       const improvements = await this.identifyImprovementAreas(feedbackData);
 
@@ -51,11 +58,11 @@ export class PrivilegeAnalyticsService {
         satisfactionScore: await this.calculateSatisfactionScore(feedbackData),
         trends,
         improvements,
-        recommendations: await this.generateImprovementSuggestions(improvements)
+        recommendations: await this.generateImprovementSuggestions(improvements),
       };
     } catch (error) {
       this.logger.error('分析满意度失败', error);
       throw error;
     }
   }
-} 
+}

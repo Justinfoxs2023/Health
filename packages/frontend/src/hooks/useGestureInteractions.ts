@@ -1,17 +1,25 @@
 import { useEffect, useRef } from 'react';
+
 import { useSwipeable } from 'react-swipeable';
+
 import { usePinchZoom } from '@/hooks/usePinchZoom';
 
-interface GestureConfig {
+interface IGestureConfig {
+  /** enableSwipe 的描述 */
   enableSwipe?: boolean;
+  /** enablePinch 的描述 */
   enablePinch?: boolean;
+  /** enablePull 的描述 */
   enablePull?: boolean;
+  /** onSwipe 的描述 */
   onSwipe?: (direction: string) => void;
+  /** onPinch 的描述 */
   onPinch?: (scale: number) => void;
+  /** onPull 的描述 */
   onPull?: () => void;
 }
 
-export const useGestureInteractions = (config: GestureConfig) => {
+export const useGestureInteractions = (config: IGestureConfig) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const pullStartY = useRef(0);
 
@@ -20,12 +28,12 @@ export const useGestureInteractions = (config: GestureConfig) => {
     onSwipedLeft: () => config.onSwipe?.('left'),
     onSwipedRight: () => config.onSwipe?.('right'),
     preventDefaultTouchmoveEvent: true,
-    trackMouse: true
+    trackMouse: true,
   });
 
   // 缩放手势配置
   const { scale, handlePinchStart, handlePinchMove, handlePinchEnd } = usePinchZoom({
-    onPinch: config.onPinch
+    onPinch: config.onPinch,
   });
 
   // 下拉刷新配置
@@ -59,6 +67,6 @@ export const useGestureInteractions = (config: GestureConfig) => {
     scale,
     handlePinchStart,
     handlePinchMove,
-    handlePinchEnd
+    handlePinchEnd,
   };
-}; 
+};

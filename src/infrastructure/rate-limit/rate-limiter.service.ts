@@ -1,28 +1,27 @@
-import { Injectable } from '@nestjs/common';
 import { ConfigService } from '../config/config.service';
+import { Injectable } from '@nestjs/common';
 import { RedisService } from '../redis/redis.service';
 
-interface RateLimitConfig {
+interface IRateLimitConfig {
+  /** windowMs 的描述 */
   windowMs: number;
+  /** maxRequests 的描述 */
   maxRequests: number;
 }
 
 @Injectable()
 export class RateLimiterService {
-  private readonly configs: Map<string, RateLimitConfig> = new Map();
+  private readonly configs: Map<string, IRateLimitConfig> = new Map();
 
-  constructor(
-    private readonly config: ConfigService,
-    private readonly redis: RedisService
-  ) {
+  constructor(private readonly config: ConfigService, private readonly redis: RedisService) {
     this.loadConfigs();
   }
 
   private loadConfigs() {
     // 从配置加载限流规则
-    const defaultConfig: RateLimitConfig = {
+    const defaultConfig: IRateLimitConfig = {
       windowMs: 60000, // 1分钟
-      maxRequests: 100 // 最大请求数
+      maxRequests: 100, // 最大请求数
     };
 
     this.configs.set('default', defaultConfig);
@@ -31,7 +30,7 @@ export class RateLimiterService {
   async isAllowed(serviceId: string, clientId: string): Promise<boolean> {
     const config = this.configs.get(serviceId) || this.configs.get('default')!;
     const key = `ratelimit:${serviceId}:${clientId}`;
-    
+
     const currentWindow = Math.floor(Date.now() / config.windowMs);
     const windowKey = `${key}:${currentWindow}`;
 
@@ -46,11 +45,11 @@ export class RateLimiterService {
   async getRemainingRequests(serviceId: string, clientId: string): Promise<number> {
     const config = this.configs.get(serviceId) || this.configs.get('default')!;
     const key = `ratelimit:${serviceId}:${clientId}`;
-    
+
     const currentWindow = Math.floor(Date.now() / config.windowMs);
     const windowKey = `${key}:${currentWindow}`;
 
     const count = await this.redis.get(windowKey);
-    return config.maxRequests - (parseInt(count || '0'));
+    return config.maxRequests - parseInt(count || '0');
   }
-} 
+}

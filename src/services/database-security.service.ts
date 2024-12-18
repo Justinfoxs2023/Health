@@ -1,27 +1,35 @@
-import { Injectable } from '@nestjs/common';
-import { InjectConnection } from '@nestjs/mongoose';
 import { Connection } from 'mongoose';
-import { createCipheriv, createDecipheriv, randomBytes } from 'crypto';
+import { InjectConnection } from '@nestjs/mongoose';
+import { Injectable } from '@nestjs/common';
 import { Logger } from './logger.service';
+import { createCipheriv, createDecipheriv, randomBytes } from 'crypto';
 
-interface EncryptionConfig {
+interface IEncryptionConfig {
+  /** algorithm 的描述 */
   algorithm: string;
+  /** key 的描述 */
   key: Buffer;
+  /** iv 的描述 */
   iv: Buffer;
 }
 
-interface AuditLog {
+interface IAuditLog {
+  /** action 的描述 */
   action: string;
+  /** collection 的描述 */
   collection: string;
+  /** userId 的描述 */
   userId: string;
+  /** timestamp 的描述 */
   timestamp: Date;
+  /** details 的描述 */
   details: any;
 }
 
 @Injectable()
 export class DatabaseSecurityService {
-  private readonly encryptionConfig: EncryptionConfig;
-  private readonly auditLogs: AuditLog[] = [];
+  private readonly encryptionConfig: IEncryptionConfig;
+  private readonly auditLogs: IAuditLog[] = [];
   private readonly MAX_AUDIT_LOGS = 10000;
 
   constructor(
@@ -32,7 +40,7 @@ export class DatabaseSecurityService {
     this.encryptionConfig = {
       algorithm: 'aes-256-cbc',
       key: Buffer.from(process.env.ENCRYPTION_KEY || randomBytes(32)),
-      iv: Buffer.from(process.env.ENCRYPTION_IV || randomBytes(16))
+      iv: Buffer.from(process.env.ENCRYPTION_IV || randomBytes(16)),
     };
   }
 
@@ -44,12 +52,12 @@ export class DatabaseSecurityService {
       const cipher = createCipheriv(
         this.encryptionConfig.algorithm,
         this.encryptionConfig.key,
-        this.encryptionConfig.iv
+        this.encryptionConfig.iv,
       );
-      
+
       let encrypted = cipher.update(JSON.stringify(data), 'utf8', 'hex');
       encrypted += cipher.final('hex');
-      
+
       return encrypted;
     } catch (error) {
       this.logger.error(`Failed to encrypt data: ${error.message}`);
@@ -65,12 +73,12 @@ export class DatabaseSecurityService {
       const decipher = createDecipheriv(
         this.encryptionConfig.algorithm,
         this.encryptionConfig.key,
-        this.encryptionConfig.iv
+        this.encryptionConfig.iv,
       );
-      
+
       let decrypted = decipher.update(encryptedData, 'hex', 'utf8');
       decrypted += decipher.final('utf8');
-      
+
       return JSON.parse(decrypted);
     } catch (error) {
       this.logger.error(`Failed to decrypt data: ${error.message}`);
@@ -81,22 +89,20 @@ export class DatabaseSecurityService {
   /**
    * 记录审计日志
    */
-  async logAuditEvent(event: AuditLog): Promise<void> {
+  async logAuditEvent(event: IAuditLog): Promise<void> {
     try {
       this.auditLogs.push(event);
-      
+
       // 限制审计日志大小
       if (this.auditLogs.length > this.MAX_AUDIT_LOGS) {
         this.auditLogs.shift();
       }
 
       // 记录到数据库
-      await this.connection.db
-        .collection('audit_logs')
-        .insertOne({
-          ...event,
-          encrypted: await this.encryptData(event.details)
-        });
+      await this.connection.db.collection('audit_logs').insertOne({
+        ...event,
+        encrypted: await this.encryptData(event.details),
+      });
 
       this.logger.info(`Audit log recorded for action: ${event.action}`);
     } catch (error) {
@@ -108,7 +114,7 @@ export class DatabaseSecurityService {
   /**
    * 获取审计日志
    */
-  async getAuditLogs(filter: any = {}): Promise<AuditLog[]> {
+  async getAuditLogs(filter: any = {}): Promise<IAuditLog[]> {
     try {
       const logs = await this.connection.db
         .collection('audit_logs')
@@ -118,10 +124,12 @@ export class DatabaseSecurityService {
         .toArray();
 
       // 解密详情
-      return await Promise.all(logs.map(async log => ({
-        ...log,
-        details: await this.decryptData(log.encrypted)
-      })));
+      return await Promise.all(
+        logs.map(async log => ({
+          ...log,
+          details: await this.decryptData(log.encrypted),
+        })),
+      );
     } catch (error) {
       this.logger.error(`Failed to get audit logs: ${error.message}`);
       throw error;
@@ -142,7 +150,7 @@ export class DatabaseSecurityService {
       }
 
       const hasAccess = accessRules.permissions.includes(action);
-      
+
       // 记录访问检查
       await this.logAuditEvent({
         action: 'access_check',
@@ -151,8 +159,8 @@ export class DatabaseSecurityService {
         timestamp: new Date(),
         details: {
           action,
-          result: hasAccess
-        }
+          result: hasAccess,
+        },
       });
 
       return hasAccess;
@@ -167,15 +175,13 @@ export class DatabaseSecurityService {
    */
   async grantAccess(userId: string, collection: string, permissions: string[]): Promise<void> {
     try {
-      await this.connection.db
-        .collection('access_rules')
-        .updateOne(
-          { userId, collection },
-          { 
-            $addToSet: { permissions: { $each: permissions } }
-          },
-          { upsert: true }
-        );
+      await this.connection.db.collection('access_rules').updateOne(
+        { userId, collection },
+        {
+          $addToSet: { permissions: { $each: permissions } },
+        },
+        { upsert: true },
+      );
 
       // 记录权限变更
       await this.logAuditEvent({
@@ -183,7 +189,7 @@ export class DatabaseSecurityService {
         collection,
         userId,
         timestamp: new Date(),
-        details: { permissions }
+        details: { permissions },
       });
 
       this.logger.info(`Access granted to user ${userId} for collection ${collection}`);
@@ -198,14 +204,12 @@ export class DatabaseSecurityService {
    */
   async revokeAccess(userId: string, collection: string, permissions: string[]): Promise<void> {
     try {
-      await this.connection.db
-        .collection('access_rules')
-        .updateOne(
-          { userId, collection },
-          { 
-            $pullAll: { permissions }
-          }
-        );
+      await this.connection.db.collection('access_rules').updateOne(
+        { userId, collection },
+        {
+          $pullAll: { permissions },
+        },
+      );
 
       // 记录权限变更
       await this.logAuditEvent({
@@ -213,7 +217,7 @@ export class DatabaseSecurityService {
         collection,
         userId,
         timestamp: new Date(),
-        details: { permissions }
+        details: { permissions },
       });
 
       this.logger.info(`Access revoked from user ${userId} for collection ${collection}`);
@@ -228,10 +232,7 @@ export class DatabaseSecurityService {
    */
   async checkDataIntegrity(collection: string): Promise<boolean> {
     try {
-      const documents = await this.connection.db
-        .collection(collection)
-        .find({})
-        .toArray();
+      const documents = await this.connection.db.collection(collection).find({}).toArray();
 
       let isValid = true;
       for (const doc of documents) {
@@ -251,7 +252,7 @@ export class DatabaseSecurityService {
         collection,
         userId: 'system',
         timestamp: new Date(),
-        details: { result: isValid }
+        details: { result: isValid },
       });
 
       return isValid;
@@ -267,7 +268,7 @@ export class DatabaseSecurityService {
   async sanitizeData(data: any, sensitiveFields: string[]): Promise<any> {
     try {
       const sanitized = { ...data };
-      
+
       for (const field of sensitiveFields) {
         if (sanitized[field]) {
           if (typeof sanitized[field] === 'string') {
@@ -295,18 +296,17 @@ export class DatabaseSecurityService {
       // 检查未加密的敏感字段
       const collections = await this.connection.db.collections();
       for (const collection of collections) {
-        const unencryptedDocs = await collection.find({
-          $or: [
-            { encrypted: { $exists: false } },
-            { encrypted: null }
-          ]
-        }).toArray();
+        const unencryptedDocs = await collection
+          .find({
+            $or: [{ encrypted: { $exists: false } }, { encrypted: null }],
+          })
+          .toArray();
 
         if (unencryptedDocs.length > 0) {
           vulnerabilities.push({
             type: 'unencrypted_data',
             collection: collection.collectionName,
-            count: unencryptedDocs.length
+            count: unencryptedDocs.length,
           });
         }
       }
@@ -315,14 +315,14 @@ export class DatabaseSecurityService {
       const expiredRules = await this.connection.db
         .collection('access_rules')
         .find({
-          expiresAt: { $lt: new Date() }
+          expiresAt: { $lt: new Date() },
         })
         .toArray();
 
       if (expiredRules.length > 0) {
         vulnerabilities.push({
           type: 'expired_access_rules',
-          count: expiredRules.length
+          count: expiredRules.length,
         });
       }
 
@@ -332,7 +332,7 @@ export class DatabaseSecurityService {
         collection: 'system',
         userId: 'system',
         timestamp: new Date(),
-        details: { vulnerabilities }
+        details: { vulnerabilities },
       });
 
       return vulnerabilities;
@@ -341,4 +341,4 @@ export class DatabaseSecurityService {
       throw error;
     }
   }
-} 
+}

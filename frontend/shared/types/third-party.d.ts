@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 third-party.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 declare module 'react-native-linear-gradient' {
   import React from 'react';
   import { ViewProps } from 'react-native';
@@ -32,4 +39,4 @@ declare module 'react-native-safe-area-context' {
     bottom: number;
     left: number;
   };
-} 
+}

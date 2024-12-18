@@ -1,15 +1,12 @@
 import React, { useState } from 'react';
+
+import MenuIcon from '@mui/icons-material/Menu';
 import { Box, IconButton, Grid } from '@mui/material';
 import { Header, Sidebar, Main } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
 
-export const HealthDashboardLayout: React.FC<LayoutProps> = ({
-  children,
-  sidebar,
-  header
-}) => {
+export const HealthDashboardLayout: React.FC<LayoutProps> = ({ children, sidebar, header }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  
+
   return (
     <Box className="dashboard-layout">
       <Header>
@@ -18,15 +15,11 @@ export const HealthDashboardLayout: React.FC<LayoutProps> = ({
           <MenuIcon />
         </IconButton>
       </Header>
-      
+
       <Box className="dashboard-content">
-        <Sidebar open={sidebarOpen}>
-          {sidebar}
-        </Sidebar>
-        
-        <Main>
-          {children}
-        </Main>
+        <Sidebar open={sidebarOpen}>{sidebar}</Sidebar>
+
+        <Main>{children}</Main>
       </Box>
     </Box>
   );
@@ -40,16 +33,16 @@ export const HealthGrid: React.FC<GridProps> = ({
     xs: 1,
     sm: 2,
     md: 3,
-    lg: 4
-  }
+    lg: 4,
+  },
 }) => {
   return (
     <Grid container spacing={spacing}>
-      {React.Children.map(children, (child) => (
-        <Grid item {...columns}>
+      {React.Children.map(children, child => (
+        <Grid item {columns}>
           {child}
         </Grid>
       ))}
     </Grid>
   );
-}; 
+};

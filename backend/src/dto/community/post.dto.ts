@@ -1,5 +1,5 @@
-import { IsString, IsArray, IsOptional, IsEnum } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsString, IsArray, IsOptional, IsEnum } from 'class-validator';
 
 export class CreatePostDto {
   @ApiProperty({ description: '帖子标题' })
@@ -73,4 +73,4 @@ export class UpdatePostDto {
   @IsEnum(['draft', 'published', 'archived'])
   @IsOptional()
   status?: 'draft' | 'published' | 'archived';
-} 
+}

@@ -1,21 +1,21 @@
-import { renderHook, act } from '@testing-library/react';
-import { i18n, useI18n, Locale } from '../index';
 import { STORAGE_KEYS } from '../../../constants';
+import { i18n, useI18n, LocaleType } from '../index';
+import { renderHook, act } from '@testing-library/react';
 
 describe('I18nService', () => {
   const mockMessages = {
     'zh-CN': {
       hello: '你好，{name}',
       nested: {
-        key: '嵌套值'
-      }
+        key: '嵌套值',
+      },
     },
     'en-US': {
       hello: 'Hello, {name}',
       nested: {
-        key: 'Nested value'
-      }
-    }
+        key: 'Nested value',
+      },
+    },
   };
 
   beforeEach(() => {
@@ -24,7 +24,7 @@ describe('I18nService', () => {
     document.documentElement.removeAttribute('lang');
     // 加载测试消息
     Object.entries(mockMessages).forEach(([locale, messages]) => {
-      i18n.loadMessages(locale as Locale, messages);
+      i18n.loadMessages(locale as LocaleType, messages);
     });
   });
 
@@ -45,7 +45,7 @@ describe('I18nService', () => {
   });
 
   it('应该正确设置语言', () => {
-    const locales: Locale[] = ['zh-CN', 'en-US'];
+    const locales: LocaleType[] = ['zh-CN', 'en-US'];
     locales.forEach(locale => {
       i18n.setLocale(locale);
       expect(i18n.getLocale()).toBe(locale);
@@ -57,7 +57,7 @@ describe('I18nService', () => {
   it('应该正确翻译文本', () => {
     i18n.setLocale('zh-CN');
     expect(i18n.t('hello', { name: '世界' })).toBe('你好，世界');
-    
+
     i18n.setLocale('en-US');
     expect(i18n.t('hello', { name: 'world' })).toBe('Hello, world');
   });
@@ -65,7 +65,7 @@ describe('I18nService', () => {
   it('应该支持嵌套翻译', () => {
     i18n.setLocale('zh-CN');
     expect(i18n.t('nested.key')).toBe('嵌套值');
-    
+
     i18n.setLocale('en-US');
     expect(i18n.t('nested.key')).toBe('Nested value');
   });
@@ -76,10 +76,10 @@ describe('I18nService', () => {
 
   it('应该正确格式化日期', () => {
     const date = new Date('2024-01-01T12:00:00');
-    
+
     i18n.setLocale('zh-CN');
     expect(i18n.formatDate(date)).toBe('2024-01-01');
-    
+
     i18n.setLocale('en-US');
     expect(i18n.formatDate(date)).toBe('01/01/2024');
   });
@@ -91,20 +91,20 @@ describe('I18nService', () => {
 
   it('应该正确格式化数字', () => {
     const number = 1234567.89;
-    
+
     i18n.setLocale('zh-CN');
     expect(i18n.formatNumber(number)).toBe('1,234,567.89');
-    
+
     i18n.setLocale('en-US');
     expect(i18n.formatNumber(number)).toBe('1,234,567.89');
   });
 
   it('应该正确格式化货币', () => {
     const amount = 1234.56;
-    
+
     i18n.setLocale('zh-CN');
     expect(i18n.formatCurrency(amount)).toBe('¥1,234.56');
-    
+
     i18n.setLocale('en-US');
     expect(i18n.formatCurrency(amount)).toBe('$1,234.56');
   });
@@ -129,11 +129,11 @@ describe('useI18n Hook', () => {
 
   it('应该响应语言变化', () => {
     const { result } = renderHook(() => useI18n());
-    
+
     act(() => {
       result.current.setLocale('en-US');
     });
-    
+
     expect(result.current.locale).toBe('en-US');
     expect(result.current.config).toEqual(i18n.getConfig());
   });
@@ -157,12 +157,9 @@ describe('useI18n Hook', () => {
   it('应该在组件卸载时清理事件监听', () => {
     const removeEventListenerSpy = jest.spyOn(window, 'removeEventListener');
     const { unmount } = renderHook(() => useI18n());
-    
+
     unmount();
-    
-    expect(removeEventListenerSpy).toHaveBeenCalledWith(
-      'localeChange',
-      expect.any(Function)
-    );
+
+    expect(removeEventListenerSpy).toHaveBeenCalledWith('localeChange', expect.any(Function));
   });
-}); 
+});

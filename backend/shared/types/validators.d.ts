@@ -6,26 +6,36 @@ export interface IValidator {
 }
 
 // 验证规则类型
-export interface ValidationRule {
+export interface IValidationRule {
+  /** schema 的描述 */
   schema: Schema;
+  /** message 的描述 */
   message?: string;
 }
 
 // 验证器配置
-export interface ValidatorConfig {
+export interface IValidatorConfig {
+  /** abortEarly 的描述 */
   abortEarly?: boolean;
+  /** allowUnknown 的描述 */
   allowUnknown?: boolean;
+  /** stripUnknown 的描述 */
   stripUnknown?: boolean;
 }
 
 // 验证结果类型
-export interface ValidationError {
+export interface IValidationError {
+  /** field 的描述 */
   field: string;
+  /** message 的描述 */
   message: string;
+  /** type 的描述 */
   type: string;
 }
 
-export interface ValidationResponse {
+export interface IValidationResponse {
+  /** success 的描述 */
   success: boolean;
-  errors?: ValidationError[];
-} 
+  /** errors 的描述 */
+  errors?: IValidationError[];
+}

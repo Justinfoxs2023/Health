@@ -1,12 +1,14 @@
 import { Logger } from '../utils/logger';
 import { Redis } from '../utils/redis';
 
-export interface BaseServiceInterface {
+export interface IBaseServiceInterface {
+  /** logger 的描述 */
   logger: Logger;
+  /** redis 的描述 */
   redis: Redis;
 }
 
-export class BaseService implements BaseServiceInterface {
+export class BaseService implements IBaseServiceInterface {
   protected logger: Logger;
   protected redis: Redis;
 
@@ -14,4 +16,4 @@ export class BaseService implements BaseServiceInterface {
     this.logger = new Logger(serviceName);
     this.redis = new Redis();
   }
-} 
+}

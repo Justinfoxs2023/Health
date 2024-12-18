@@ -7,7 +7,7 @@ export class TestConfig {
     moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
     setupFiles: ['./jest.setup.js'],
     transformIgnorePatterns: [
-      'node_modules/(?!(react-native|@react-native|react-native-vector-icons)/)'
+      'node_modules/(?!(react-native|@react-native|react-native-vector-icons)/)',
     ],
     collectCoverage: true,
     coverageThreshold: {
@@ -15,17 +15,17 @@ export class TestConfig {
         branches: 80,
         functions: 80,
         lines: 80,
-        statements: 80
-      }
+        statements: 80,
+      },
     },
     testEnvironment: 'node',
-    testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.[jt]sx?$'
+    testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.[jt]sx?$',
   };
 
   static async runTests(options: jest.Config = {}) {
     const mergedConfig = {
       ...this.config,
-      ...options
+      ...options,
     };
 
     return jest.runCLI(mergedConfig as any, [process.cwd()]);
@@ -38,7 +38,7 @@ export class TestConfig {
   static async generateCoverage() {
     return this.runTests({
       collectCoverage: true,
-      coverageDirectory: 'coverage'
+      coverageDirectory: 'coverage',
     });
   }
-} 
+}

@@ -1,43 +1,40 @@
+import { AIService } from '../../ai/ai.service';
+import { IBaseHealthData } from '../types/health-base.types';
 import { Injectable } from '@nestjs/common';
 import { StorageService } from '../../storage/storage.service';
-import { AIService } from '../../ai/ai.service';
-import { BaseHealthData } from '../types/health-base.types';
 
 @Injectable()
 export class HealthBaseService {
-  constructor(
-    protected readonly storage: StorageService,
-    protected readonly ai: AIService
-  ) {}
+  constructor(protected readonly storage: StorageService, protected readonly ai: AIService) {}
 
   // 基础数据存储方法
-  protected async saveData<T extends BaseHealthData | BaseHealthData[]>(
-    key: string, 
-    data: T
+  protected async saveData<T extends IBaseHealthData | IBaseHealthData[]>(
+    key: string,
+    data: T,
   ): Promise<void> {
     await this.storage.set(key, data);
   }
 
-  protected async getData<T extends BaseHealthData>(key: string): Promise<T | null> {
+  protected async getData<T extends IBaseHealthData>(key: string): Promise<T | null> {
     return this.storage.get<T>(key);
   }
 
-  protected async getListData<T extends BaseHealthData>(key: string): Promise<T[]> {
+  protected async getListData<T extends IBaseHealthData>(key: string): Promise<T[]> {
     return this.storage.get<T[]>(key) || [];
   }
 
   // 时间段计算
-  protected calculatePeriod(data: BaseHealthData[]): { start: Date; end: Date } {
+  protected calculatePeriod(data: IBaseHealthData[]): { start: Date; end: Date } {
     if (!data.length) {
       return {
         start: new Date(),
-        end: new Date()
+        end: new Date(),
       };
     }
 
     return {
       start: new Date(Math.min(...data.map(d => d.timestamp.getTime()))),
-      end: new Date(Math.max(...data.map(d => d.timestamp.getTime())))
+      end: new Date(Math.max(...data.map(d => d.timestamp.getTime()))),
     };
   }
 
@@ -49,10 +46,10 @@ export class HealthBaseService {
   // 趋势分析
   protected analyzeTrend(data: number[]): 'increasing' | 'stable' | 'decreasing' {
     if (data.length < 2) return 'stable';
-    
+
     const recentAvg = this.calculateAverage(data.slice(-3));
     const previousAvg = this.calculateAverage(data.slice(-6, -3));
-    
+
     const difference = recentAvg - previousAvg;
     const threshold = 0.05; // 5%变化阈值
 
@@ -61,7 +58,7 @@ export class HealthBaseService {
   }
 
   // 数据验证
-  protected validateData<T extends BaseHealthData>(data: T): boolean {
+  protected validateData<T extends IBaseHealthData>(data: T): boolean {
     return (
       data &&
       data.id &&
@@ -79,14 +76,12 @@ export class HealthBaseService {
   }
 
   // 添加数据验证方法
-  protected validateSessionData<T extends BaseHealthData>(
+  protected validateSessionData<T extends IBaseHealthData>(
     session: Partial<T>,
-    plan: BaseHealthData
+    plan: IBaseHealthData,
   ): boolean {
     return (
-      session &&
-      session.userId === plan.userId &&
-      (!session.id || typeof session.id === 'string')
+      session && session.userId === plan.userId && (!session.id || typeof session.id === 'string')
     );
   }
-} 
+}

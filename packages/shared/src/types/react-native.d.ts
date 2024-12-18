@@ -1,6 +1,13 @@
+/**
+ * @fileoverview TS 文件 react-native.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 declare module 'react-native' {
   import React from 'react';
-  
+
   export interface ViewProps {
     style?: any;
     children?: React.ReactNode;
@@ -61,11 +68,11 @@ declare module 'react-native-chart-kit' {
   // 添加其他图表类型
 }
 
-export interface ViewStyle {
+export interface IViewStyle {
   [key: string]: any;
 }
 
-export interface TextStyle {
+export interface ITextStyle {
   [key: string]: any;
 }
 
@@ -94,4 +101,4 @@ export const Dimensions: {
 };
 export const Vibration: {
   vibrate: (pattern?: number | number[], repeat?: boolean) => void;
-}; 
+};

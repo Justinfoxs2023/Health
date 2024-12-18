@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 global.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // 统一导出基础类型
 export * from './base';
 export * from './express';
@@ -8,7 +15,7 @@ export * from './tokens';
 declare global {
   // 基础类型
   type Dict = Record<string, any>;
-  
+
   // Express扩展
   namespace Express {
     interface Request {
@@ -36,11 +43,7 @@ declare global {
 
     interface Response {
       status(code: number): this;
-      json(body: {
-        code: number;
-        data?: any;
-        message?: string;
-      }): this;
+      json(body: { code: number; data?: any; message?: string }): this;
     }
   }
 
@@ -85,20 +88,20 @@ declare global {
 }
 
 // 导出常用类型
-export type RequestHandler = (
+export type RequestHandlerType = (
   req: Express.Request,
   res: Express.Response,
-  next: NextFunction
+  next: NextFunction,
 ) => Promise<void> | void;
 
-export type ErrorRequestHandler = (
+export type ErrorRequestHandlerType = (
   err: any,
   req: Express.Request,
   res: Express.Response,
-  next: NextFunction
+  next: NextFunction,
 ) => void;
 
-export type Middleware = RequestHandler | ErrorRequestHandler;
+export type MiddlewareType = RequestHandlerType | ErrorRequestHandlerType;
 
 // 导出第三方库类型
 declare module 'joi';

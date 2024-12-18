@@ -1,20 +1,21 @@
 import React from 'react';
-import { Card, Button, Tag, Progress, Space, Typography, Tooltip, Avatar } from 'antd';
+
+import 'dayjs/locale/zh-cn';
+import dayjs from 'dayjs';
 import {
   CalendarOutlined,
   TeamOutlined,
   TrophyOutlined,
   ClockCircleOutlined,
-  EnvironmentOutlined
+  EnvironmentOutlined,
 } from '@ant-design/icons';
-import dayjs from 'dayjs';
-import 'dayjs/locale/zh-cn';
-
+import { Card, Button, Tag, Progress, Space, Typography, Tooltip, Avatar } from 'antd';
 dayjs.locale('zh-cn');
 
 const { Title, Text, Paragraph } = Typography;
 
-interface ActivityCardProps {
+interface IActivityCardProps {
+  /** activity 的描述 */
   activity: {
     _id: string;
     title: string;
@@ -42,22 +43,28 @@ interface ActivityCardProps {
     requirements?: string[];
     images?: string[];
   };
+  /** onJoin 的描述 */
   onJoin?: () => void;
+  /** onViewDetails 的描述 */
   onViewDetails?: () => void;
+  /** loading 的描述 */
   loading?: boolean;
+  /** participated 的描述 */
   participated?: boolean;
+  /** className 的描述 */
   className?: string;
+  /** style 的描述 */
   style?: React.CSSProperties;
 }
 
-export const ActivityCard: React.FC<ActivityCardProps> = ({
+export const ActivityCard: React.FC<IActivityCardProps> = ({
   activity,
   onJoin,
   onViewDetails,
   loading = false,
   participated = false,
   className,
-  style
+  style,
 }) => {
   const {
     title,
@@ -74,7 +81,7 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
     rewards,
     rules,
     requirements,
-    images
+    images,
   } = activity;
 
   const getStatusColor = (status: string) => {
@@ -146,28 +153,24 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
       hoverable
       className={className}
       style={{ marginBottom: 16, ...style }}
-      cover={images?.[0] && (
-        <div style={{ height: 200, overflow: 'hidden' }}>
-          <img
-            alt={title}
-            src={images[0]}
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-          />
-        </div>
-      )}
+      cover={
+        images?.[0] && (
+          <div style={{ height: 200, overflow: 'hidden' }}>
+            <img
+              alt={title}
+              src={images[0]}
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
+          </div>
+        )
+      }
       actions={[
-        <Button
-          key="join"
-          type="primary"
-          onClick={onJoin}
-          loading={loading}
-          disabled={!canJoin}
-        >
+        <Button key="join" type="primary" onClick={onJoin} loading={loading} disabled={!canJoin}>
           {participated ? '已参加' : '立即参加'}
         </Button>,
         <Button key="details" onClick={onViewDetails}>
           查看详情
-        </Button>
+        </Button>,
       ]}
     >
       <Space direction="vertical" size="middle" style={{ width: '100%' }}>
@@ -190,10 +193,7 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
           </div>
         </Space>
 
-        <Paragraph
-          ellipsis={{ rows: 2, expandable: true, symbol: '展开' }}
-          type="secondary"
-        >
+        <Paragraph ellipsis={{ rows: 2, expandable: true, symbol: '展开' }} type="secondary">
           {description}
         </Paragraph>
 
@@ -283,4 +283,4 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
       </Space>
     </Card>
   );
-}; 
+};

@@ -6,7 +6,7 @@ export enum ExpertType {
   NUTRITIONIST = 'nutritionist', // 营养师
   TRAINER = 'trainer', // 健身教练
   PSYCHOLOGIST = 'psychologist', // 心理咨询师
-  PHYSIOTHERAPIST = 'physiotherapist' // 理疗师
+  PHYSIOTHERAPIST = 'physiotherapist', // 理疗师
 }
 
 /** 专家领域 */
@@ -20,11 +20,11 @@ export enum ExpertField {
   FITNESS = 'fitness', // 健身
   REHABILITATION = 'rehabilitation', // 康复
   MENTAL = 'mental', // 心理
-  CHINESE_MEDICINE = 'chinese_medicine' // 中医
+  CHINESE_MEDICINE = 'chinese_medicine', // 中医
 }
 
 /** 专家信息 */
-export interface Expert {
+export interface IExpert {
   /** ID */
   id: string;
   /** 姓名 */
@@ -73,7 +73,7 @@ export interface Expert {
 }
 
 /** 咨询记录 */
-export interface Consultation {
+export interface IConsultation {
   /** ID */
   id: string;
   /** 用户ID */
@@ -124,7 +124,7 @@ export interface Consultation {
 }
 
 /** 专家查询选项 */
-export interface ExpertQueryOptions {
+export interface IExpertQueryOptions {
   /** 类型 */
   type?: ExpertType;
   /** 领域 */
@@ -154,8 +154,8 @@ export class ExpertService {
   }
 
   /** 获取专家列表 */
-  public async getExperts(options: ExpertQueryOptions = {}): Promise<{
-    experts: Expert[];
+  public async getExperts(options: IExpertQueryOptions = {}): Promise<{
+    experts: IExpert[];
     total: number;
   }> {
     try {
@@ -180,7 +180,7 @@ export class ExpertService {
   }
 
   /** 获取专家详情 */
-  public async getExpert(expertId: string): Promise<Expert> {
+  public async getExpert(expertId: string): Promise<IExpert> {
     try {
       const response = await fetch(`/api/experts/${expertId}`);
       if (!response.ok) {
@@ -203,21 +203,21 @@ export class ExpertService {
       topic: string;
       description: string;
       appointmentTime: Date;
-    }
-  ): Promise<Consultation> {
+    },
+  ): Promise<IConsultation> {
     try {
       const response = await fetch('/api/consultations', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           userId,
           ...data,
           status: 'pending',
           createdAt: new Date(),
-          updatedAt: new Date()
-        })
+          updatedAt: new Date(),
+        }),
       });
 
       if (!response.ok) {
@@ -238,9 +238,9 @@ export class ExpertService {
       status?: 'pending' | 'confirmed' | 'cancelled' | 'completed';
       page?: number;
       pageSize?: number;
-    } = {}
+    } = {},
   ): Promise<{
-    consultations: Consultation[];
+    consultations: IConsultation[];
     total: number;
   }> {
     try {
@@ -263,7 +263,7 @@ export class ExpertService {
   }
 
   /** 获取咨询详情 */
-  public async getConsultation(consultationId: string): Promise<Consultation> {
+  public async getConsultation(consultationId: string): Promise<IConsultation> {
     try {
       const response = await fetch(`/api/consultations/${consultationId}`);
       if (!response.ok) {
@@ -283,19 +283,19 @@ export class ExpertService {
     status: 'confirmed' | 'cancelled' | 'completed',
     data?: {
       cancelReason?: string;
-    }
-  ): Promise<Consultation> {
+    },
+  ): Promise<IConsultation> {
     try {
       const response = await fetch(`/api/consultations/${consultationId}/status`, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           status,
           ...data,
-          updatedAt: new Date()
-        })
+          updatedAt: new Date(),
+        }),
       });
 
       if (!response.ok) {
@@ -316,18 +316,18 @@ export class ExpertService {
       content: string;
       type: 'text' | 'image' | 'voice' | 'video';
       sender: 'user' | 'expert';
-    }
-  ): Promise<Consultation> {
+    },
+  ): Promise<IConsultation> {
     try {
       const response = await fetch(`/api/consultations/${consultationId}/records`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           ...data,
-          time: new Date()
-        })
+          time: new Date(),
+        }),
       });
 
       if (!response.ok) {
@@ -353,15 +353,15 @@ export class ExpertService {
         duration: string;
       }[];
       advice: string;
-    }
-  ): Promise<Consultation> {
+    },
+  ): Promise<IConsultation> {
     try {
       const response = await fetch(`/api/consultations/${consultationId}/prescription`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
       });
 
       if (!response.ok) {
@@ -382,18 +382,18 @@ export class ExpertService {
       rating: number;
       content: string;
       tags: string[];
-    }
-  ): Promise<Consultation> {
+    },
+  ): Promise<IConsultation> {
     try {
       const response = await fetch(`/api/consultations/${consultationId}/evaluation`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           ...data,
-          createdAt: new Date()
-        })
+          createdAt: new Date(),
+        }),
       });
 
       if (!response.ok) {
@@ -410,9 +410,9 @@ export class ExpertService {
   /** 搜索专家 */
   public async searchExperts(
     keyword: string,
-    options: ExpertQueryOptions = {}
+    options: IExpertQueryOptions = {},
   ): Promise<{
-    experts: Expert[];
+    experts: IExpert[];
     total: number;
   }> {
     try {
@@ -441,7 +441,7 @@ export class ExpertService {
   public async getExpertSchedule(
     expertId: string,
     startDate: Date,
-    endDate: Date
+    endDate: Date,
   ): Promise<{
     availableSlots: {
       date: Date;
@@ -455,7 +455,7 @@ export class ExpertService {
     try {
       const queryParams = new URLSearchParams({
         startDate: startDate.toISOString(),
-        endDate: endDate.toISOString()
+        endDate: endDate.toISOString(),
       });
 
       const response = await fetch(`/api/experts/${expertId}/schedule?${queryParams}`);
@@ -471,4 +471,4 @@ export class ExpertService {
   }
 }
 
-export const expertService = ExpertService.getInstance(); 
+export const expertService = ExpertService.getInstance();

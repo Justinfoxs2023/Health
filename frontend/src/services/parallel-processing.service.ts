@@ -18,9 +18,7 @@ export class ParallelProcessingService {
 
     // 并行处理每个批次
     const results = await Promise.all(
-      batches.map(batch => 
-        this.workerPool.execute('processImageBatch', [batch])
-      )
+      batches.map(batch => this.workerPool.execute('processImageBatch', [batch])),
     );
 
     return results.flat();
@@ -28,11 +26,11 @@ export class ParallelProcessingService {
 
   // 并行数据分析
   async analyzeDataInParallel<T>(data: T[], processor: (item: T) => Promise<any>): Promise<any[]> {
-    const tasks = data.map(item => async () => {
+    const tasks = console.error('Error in parallel-processing.service.ts:', item => async () => {
       try {
         return await processor(item);
       } catch (error) {
-        console.error('并行处理失败:', error);
+        console.error('Error in parallel-processing.service.ts:', '并行处理失败:', error);
         throw error;
       }
     });
@@ -48,7 +46,7 @@ export class ParallelProcessingService {
     while (taskQueue.length > 0) {
       const minLoadIndex = workerLoads.indexOf(Math.min(...workerLoads));
       const task = taskQueue.shift();
-      
+
       if (task) {
         const startTime = performance.now();
         await this.workerPool.executeOnWorker(minLoadIndex, task);
@@ -60,7 +58,7 @@ export class ParallelProcessingService {
 
   private chunkArray<T>(array: T[], size: number): T[][] {
     return Array.from({ length: Math.ceil(array.length / size) }, (_, i) =>
-      array.slice(i * size, (i + 1) * size)
+      array.slice(i * size, (i + 1) * size),
     );
   }
-} 
+}

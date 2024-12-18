@@ -1,7 +1,7 @@
-import { spawn } from 'child_process';
-import path from 'path';
 import fs from 'fs';
+import path from 'path';
 import { logger } from '../logger';
+import { spawn } from 'child_process';
 
 class BackupService {
   private readonly backupDir: string;
@@ -60,9 +60,9 @@ class BackupService {
             return {
               path: filePath,
               size: stats.size,
-              created: stats.ctime
+              created: stats.ctime,
             };
-          })
+          }),
       );
 
       return backups.sort((a, b) => b.created.getTime() - a.created.getTime());
@@ -78,18 +78,19 @@ class BackupService {
   private executeBackup(backupPath: string): Promise<void> {
     return new Promise((resolve, reject) => {
       const mongodump = spawn('mongodump', [
-        '--uri', process.env.MONGODB_URI || 'mongodb://localhost:27017/health_management_dev',
+        '--uri',
+        process.env.MONGODB_URI || 'mongodb://localhost:27017/health_management_dev',
         '--gzip',
-        '--archive=' + backupPath
+        '--archive=' + backupPath,
       ]);
 
       let error = '';
 
-      mongodump.stderr.on('data', (data) => {
+      mongodump.stderr.on('data', data => {
         error += data;
       });
 
-      mongodump.on('close', (code) => {
+      mongodump.on('close', code => {
         if (code === 0) {
           resolve();
         } else {
@@ -97,7 +98,7 @@ class BackupService {
         }
       });
 
-      mongodump.on('error', (err) => {
+      mongodump.on('error', err => {
         reject(err);
       });
     });
@@ -109,19 +110,20 @@ class BackupService {
   private executeRestore(backupPath: string): Promise<void> {
     return new Promise((resolve, reject) => {
       const mongorestore = spawn('mongorestore', [
-        '--uri', process.env.MONGODB_URI || 'mongodb://localhost:27017/health_management_dev',
+        '--uri',
+        process.env.MONGODB_URI || 'mongodb://localhost:27017/health_management_dev',
         '--gzip',
         '--archive=' + backupPath,
-        '--drop' // 恢复前删除现有数据
+        '--drop', // 恢复前删除现有数据
       ]);
 
       let error = '';
 
-      mongorestore.stderr.on('data', (data) => {
+      mongorestore.stderr.on('data', data => {
         error += data;
       });
 
-      mongorestore.on('close', (code) => {
+      mongorestore.on('close', code => {
         if (code === 0) {
           resolve();
         } else {
@@ -129,7 +131,7 @@ class BackupService {
         }
       });
 
-      mongorestore.on('error', (err) => {
+      mongorestore.on('error', err => {
         reject(err);
       });
     });
@@ -143,11 +145,7 @@ class BackupService {
       const backups = await this.getBackupList();
       if (backups.length > this.maxBackups) {
         const oldBackups = backups.slice(this.maxBackups);
-        await Promise.all(
-          oldBackups.map(backup =>
-            fs.promises.unlink(backup.path)
-          )
-        );
+        await Promise.all(oldBackups.map(backup => fs.promises.unlink(backup.path)));
         logger.info(`已清理 ${oldBackups.length} 个旧备份`);
       }
     } catch (error) {
@@ -167,20 +165,21 @@ class BackupService {
 
       // 检查文件完整性
       const testRestore = spawn('mongorestore', [
-        '--uri', process.env.MONGODB_URI || 'mongodb://localhost:27017/health_management_test',
+        '--uri',
+        process.env.MONGODB_URI || 'mongodb://localhost:27017/health_management_test',
         '--gzip',
         '--archive=' + backupPath,
-        '--dryRun' // 仅测试，不实际恢复
+        '--dryRun', // 仅测试，不实际恢复
       ]);
 
       return new Promise((resolve, reject) => {
         let error = '';
 
-        testRestore.stderr.on('data', (data) => {
+        testRestore.stderr.on('data', data => {
           error += data;
         });
 
-        testRestore.on('close', (code) => {
+        testRestore.on('close', code => {
           if (code === 0) {
             resolve(true);
           } else {
@@ -188,7 +187,7 @@ class BackupService {
           }
         });
 
-        testRestore.on('error', (err) => {
+        testRestore.on('error', err => {
           reject(err);
         });
       });
@@ -214,7 +213,7 @@ class BackupService {
           totalBackups: 0,
           totalSize: 0,
           oldestBackup: new Date(),
-          newestBackup: new Date()
+          newestBackup: new Date(),
         };
       }
 
@@ -222,7 +221,7 @@ class BackupService {
         totalBackups: backups.length,
         totalSize: backups.reduce((sum, backup) => sum + backup.size, 0),
         oldestBackup: backups[backups.length - 1].created,
-        newestBackup: backups[0].created
+        newestBackup: backups[0].created,
       };
     } catch (error) {
       logger.error('获取备份统计信息失败:', error);
@@ -231,4 +230,4 @@ class BackupService {
   }
 }
 
-export const backupService = new BackupService(); 
+export const backupService = new BackupService();

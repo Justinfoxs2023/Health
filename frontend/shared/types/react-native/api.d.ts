@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 api.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 declare module 'react-native' {
   // Platform API
   export const Platform: {
@@ -39,7 +46,7 @@ declare module 'react-native' {
   export const Keyboard: {
     addListener: (
       eventName: string,
-      callback: (event: KeyboardEvent) => void
+      callback: (event: KeyboardEvent) => void,
     ) => { remove: () => void };
     removeListener: (eventName: string, callback: Function) => void;
     dismiss: () => void;
@@ -55,10 +62,13 @@ declare module 'react-native' {
         onPress?: () => void;
         style?: 'default' | 'cancel' | 'destructive';
       }>,
-      options?: { cancelable?: boolean }
+      options?: { cancelable?: boolean },
     ) => void;
   };
 
   // Types
-  export type ImageSourcePropType = number | { uri: string } | { uri: string; width: number; height: number };
-} 
+  export type ImageSourcePropType =
+    | number
+    | { uri: string }
+    | { uri: string; width: number; height: number };
+}

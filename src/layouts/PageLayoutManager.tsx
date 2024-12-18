@@ -1,4 +1,5 @@
 import React from 'react';
+
 import styled from 'styled-components';
 import { useLocation } from 'react-router-dom';
 
@@ -30,31 +31,28 @@ const MainContent = styled.main`
   overflow-y: auto;
 `;
 
-interface PageLayoutProps {
-  children: React.ReactNode;
-  sidebarContent?: React.ReactNode;
-  headerContent?: React.ReactNode;
+interface IPageLayoutProps {
+  /** children 的描述 */
+  children: ReactReactNode;
+  /** sidebarContent 的描述 */
+  sidebarContent: ReactReactNode;
+  /** headerContent 的描述 */
+  headerContent: ReactReactNode;
 }
 
-export const PageLayoutManager: React.FC<PageLayoutProps> = ({
+export const PageLayoutManager: React.FC<IPageLayoutProps> = ({
   children,
   sidebarContent,
-  headerContent
+  headerContent,
 }) => {
   const location = useLocation();
   const currentModule = location.pathname.split('/')[1];
 
   return (
     <LayoutContainer>
-      <Header>
-        {headerContent}
-      </Header>
-      <Sidebar>
-        {sidebarContent}
-      </Sidebar>
-      <MainContent>
-        {children}
-      </MainContent>
+      <Header>{headerContent}</Header>
+      <Sidebar>{sidebarContent}</Sidebar>
+      <MainContent>{children}</MainContent>
     </LayoutContainer>
   );
-}; 
+};

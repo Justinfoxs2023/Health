@@ -1,6 +1,6 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { SecurityService } from '../security.service';
 import { SecurityConfig } from '../security.config';
+import { SecurityService } from '../security.service';
+import { Test, TestingModule } from '@nestjs/testing';
 
 describe('SecurityService', () => {
   let service: SecurityService;
@@ -27,7 +27,7 @@ describe('SecurityService', () => {
         encrypted.encrypted,
         key,
         encrypted.iv,
-        encrypted.tag
+        encrypted.tag,
       );
       expect(decrypted).toBe(data);
     });
@@ -39,7 +39,7 @@ describe('SecurityService', () => {
 
       const encrypted = await service.encrypt(data, key);
       await expect(
-        service.decrypt(encrypted.encrypted, wrongKey, encrypted.iv, encrypted.tag)
+        service.decrypt(encrypted.encrypted, wrongKey, encrypted.iv, encrypted.tag),
       ).rejects.toThrow();
     });
   });
@@ -110,7 +110,7 @@ describe('SecurityService', () => {
         'NOLOWERCASE123', // 没有小写字母
         'NoSpecialChar123', // 没有特殊字符
         'No@Numbers', // 没有数字
-        'Test@111111111' // 重复字符
+        'Test@111111111', // 重复字符
       ];
 
       weakPasswords.forEach(password => {
@@ -131,7 +131,7 @@ describe('SecurityService', () => {
         bankCard: '6222021234567890123',
         address: '上海市浦东新区张江高科技园区',
         password: 'secret123',
-        normalField: 'normal value'
+        normalField: 'normal value',
       };
 
       const masked = service.maskSensitiveData(data);
@@ -150,13 +150,13 @@ describe('SecurityService', () => {
           name: '张三',
           contact: {
             phoneNumber: '13812345678',
-            email: 'zhangsan@example.com'
-          }
+            email: 'zhangsan@example.com',
+          },
         },
         credentials: {
           password: 'secret123',
-          token: 'abc123'
-        }
+          token: 'abc123',
+        },
       };
 
       const masked = service.maskSensitiveData(data);
@@ -172,13 +172,13 @@ describe('SecurityService', () => {
         users: [
           {
             name: '张三',
-            phoneNumber: '13812345678'
+            phoneNumber: '13812345678',
           },
           {
             name: '李四',
-            phoneNumber: '13987654321'
-          }
-        ]
+            phoneNumber: '13987654321',
+          },
+        ],
       };
 
       const masked = service.maskSensitiveData(data);
@@ -243,4 +243,4 @@ describe('SecurityService', () => {
       expect(sessionId1).not.toBe(sessionId2);
     });
   });
-}); 
+});

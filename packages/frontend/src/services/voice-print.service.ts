@@ -1,12 +1,18 @@
 import * as tf from '@tensorflow/tfjs';
-import { LocalDatabase } from '../utils/local-database';
+import { ILocalDatabase } from '../utils/local-database';
 
-interface VoicePrint {
+interface IVoicePrint {
+  /** id 的描述 */
   id: string;
+  /** userId 的描述 */
   userId: string;
+  /** features 的描述 */
   features: Float32Array;
+  /** createdAt 的描述 */
   createdAt: Date;
+  /** updatedAt 的描述 */
   updatedAt: Date;
+  /** metadata 的描述 */
   metadata: {
     quality: number;
     confidence: number;
@@ -15,9 +21,9 @@ interface VoicePrint {
 }
 
 export class VoicePrintService {
-  private db: LocalDatabase;
+  private db: ILocalDatabase;
   private model: tf.LayersModel | null = null;
-  private voicePrints: Map<string, VoicePrint> = new Map();
+  private voicePrints: Map<string, IVoicePrint> = new Map();
   private audioContext: AudioContext;
   private analyzer: AnalyserNode;
 
@@ -38,7 +44,7 @@ export class VoicePrintService {
     try {
       this.model = await tf.loadLayersModel('/models/voice-print/model.json');
     } catch (error) {
-      console.error('加载声纹识别模型失败:', error);
+      console.error('Error in voice-print.service.ts:', '加载声纹识别模型失败:', error);
     }
   }
 
@@ -50,7 +56,7 @@ export class VoicePrintService {
         this.voicePrints = new Map(storedPrints);
       }
     } catch (error) {
-      console.error('加载声纹数据失败:', error);
+      console.error('Error in voice-print.service.ts:', '加载声纹数据失败:', error);
     }
   }
 
@@ -59,7 +65,7 @@ export class VoicePrintService {
     try {
       // 提取声纹特征
       const features = await this.extractFeatures(audioData);
-      
+
       // 质量评估
       const quality = await this.assessQuality(features);
       if (quality < 0.8) {
@@ -67,7 +73,7 @@ export class VoicePrintService {
       }
 
       // 创建声纹记录
-      const voicePrint: VoicePrint = {
+      const voicePrint: IVoicePrint = {
         id: `vp_${Date.now()}`,
         userId,
         features,
@@ -76,29 +82,33 @@ export class VoicePrintService {
         metadata: {
           quality,
           confidence: 1.0,
-          environment: await this.detectEnvironment()
-        }
+          environment: await this.detectEnvironment(),
+        },
       };
 
       // 保存声纹
       await this.saveVoicePrint(voicePrint);
       return voicePrint.id;
     } catch (error) {
-      console.error('注册声纹失败:', error);
+      console.error('Error in voice-print.service.ts:', '注册声纹失败:', error);
       throw error;
     }
   }
 
   // 声纹验证
-  async verifyVoicePrint(userId: string, audioData: Float32Array): Promise<{
+  async verifyVoicePrint(
+    userId: string,
+    audioData: Float32Array,
+  ): Promise<{
     matched: boolean;
     confidence: number;
     matchedPrintId?: string;
   }> {
     try {
       const features = await this.extractFeatures(audioData);
-      const userPrints = Array.from(this.voicePrints.values())
-        .filter(print => print.userId === userId);
+      const userPrints = Array.from(this.voicePrints.values()).filter(
+        print => print.userId === userId,
+      );
 
       if (userPrints.length === 0) {
         throw new Error('未找到用户声纹记录');
@@ -106,9 +116,9 @@ export class VoicePrintService {
 
       // 计算相似度并找到最佳匹配
       const similarities = await Promise.all(
-        userPrints.map(print => this.calculateSimilarity(features, print.features))
+        userPrints.map(print => this.calculateSimilarity(features, print.features)),
       );
-      
+
       const maxSimilarity = Math.max(...similarities);
       const matchIndex = similarities.indexOf(maxSimilarity);
       const threshold = 0.85;
@@ -116,10 +126,10 @@ export class VoicePrintService {
       return {
         matched: maxSimilarity >= threshold,
         confidence: maxSimilarity,
-        matchedPrintId: maxSimilarity >= threshold ? userPrints[matchIndex].id : undefined
+        matchedPrintId: maxSimilarity >= threshold ? userPrints[matchIndex].id : undefined,
       };
     } catch (error) {
-      console.error('声纹验证失败:', error);
+      console.error('Error in voice-print.service.ts:', '声纹验证失败:', error);
       throw error;
     }
   }
@@ -136,14 +146,14 @@ export class VoicePrintService {
 
     // 只有当新样本质量更好时才更新
     if (quality > existingPrint.metadata.quality) {
-      const updatedPrint: VoicePrint = {
+      const updatedPrint: IVoicePrint = {
         ...existingPrint,
         features,
         updatedAt: new Date(),
         metadata: {
           ...existingPrint.metadata,
-          quality
-        }
+          quality,
+        },
       };
 
       await this.saveVoicePrint(updatedPrint);
@@ -156,11 +166,11 @@ export class VoicePrintService {
 
     // 预处理音频
     const processedData = await this.preprocessAudio(audioData);
-    
+
     // 使用模型提取特征
     const tensor = tf.tensor(processedData).expandDims(0);
-    const features = await this.model.predict(tensor) as tf.Tensor;
-    
+    const features = (await this.model.predict(tensor)) as tf.Tensor;
+
     return new Float32Array(await features.data());
   }
 
@@ -168,10 +178,10 @@ export class VoicePrintService {
   private async preprocessAudio(audioData: Float32Array): Promise<Float32Array> {
     // 应用预加重滤波
     const preemphasized = this.applyPreemphasis(audioData);
-    
+
     // 分帧和加窗
     const frames = this.frameSignal(preemphasized);
-    
+
     // 提取声学特征
     return this.extractAcousticFeatures(frames);
   }
@@ -218,7 +228,10 @@ export class VoicePrintService {
   }
 
   // 计算相似度
-  private async calculateSimilarity(features1: Float32Array, features2: Float32Array): Promise<number> {
+  private async calculateSimilarity(
+    features1: Float32Array,
+    features2: Float32Array,
+  ): Promise<number> {
     // 计算余弦相似度
     let dotProduct = 0;
     let norm1 = 0;
@@ -246,15 +259,14 @@ export class VoicePrintService {
   }
 
   // 保存声纹
-  private async saveVoicePrint(voicePrint: VoicePrint): Promise<void> {
+  private async saveVoicePrint(voicePrint: IVoicePrint): Promise<void> {
     this.voicePrints.set(voicePrint.id, voicePrint);
     await this.db.put('voice-prints', Array.from(this.voicePrints.entries()));
   }
 
   // 获取用户声纹列表
-  async getUserVoicePrints(userId: string): Promise<VoicePrint[]> {
-    return Array.from(this.voicePrints.values())
-      .filter(print => print.userId === userId);
+  async getUserVoicePrints(userId: string): Promise<IVoicePrint[]> {
+    return Array.from(this.voicePrints.values()).filter(print => print.userId === userId);
   }
 
   // 删除声纹
@@ -262,4 +274,4 @@ export class VoicePrintService {
     this.voicePrints.delete(printId);
     await this.db.put('voice-prints', Array.from(this.voicePrints.entries()));
   }
-} 
+}

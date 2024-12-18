@@ -1,8 +1,9 @@
-import { Logger } from '@/utils/Logger';
-import { CodeValidationService } from '../services/system/CodeValidationService';
-import { FeatureValidationService } from '../services/system/FeatureValidationService';
 import * as fs from 'fs/promises';
 import * as path from 'path';
+import { CodeValidationService } from '../services/system/CodeValidationService';
+import { FeatureValidationService } from '../services/system/FeatureValidationService';
+
+import { Logger } from '@/utils/Logger';
 
 class FeatureValidationScript {
   private logger: Logger;
@@ -22,19 +23,19 @@ class FeatureValidationScript {
     try {
       // 1. 读取开发文档
       const docs = await this.readDevelopmentDocs();
-      
+
       // 2. 执行代码验证
       const codeReport = await this.codeValidation.validateCodebase();
-      
+
       // 3. 执行功能验证
       const featureReports = await this.validateAllFeatures();
-      
+
       // 4. 生成验证报告
       const report = this.generateReport(docs, codeReport, featureReports);
-      
+
       // 5. 保存报告
       await this.saveReport(report);
-      
+
       // 6. 输出结果
       this.displayResults(report);
     } catch (error) {
@@ -50,7 +51,7 @@ class FeatureValidationScript {
     return {
       health: await this.featureValidation.validateHealthFeatures(),
       ai: await this.featureValidation.validateAIFeatures(),
-      community: await this.featureValidation.validateCommunityFeatures()
+      community: await this.featureValidation.validateCommunityFeatures(),
     };
   }
 
@@ -64,19 +65,19 @@ class FeatureValidationScript {
         totalFeatures: 0,
         implementedFeatures: 0,
         partialFeatures: 0,
-        missingFeatures: 0
+        missingFeatures: 0,
       },
       codebase: {
         modulesChecked: codeReport.modulesChecked,
         missingModules: codeReport.missingModules,
-        suggestions: codeReport.suggestions
+        suggestions: codeReport.suggestions,
       },
       features: {
         health: this.summarizeFeatureReport(featureReports.health),
         ai: this.summarizeFeatureReport(featureReports.ai),
-        community: this.summarizeFeatureReport(featureReports.community)
+        community: this.summarizeFeatureReport(featureReports.community),
       },
-      recommendations: this.generateRecommendations(codeReport, featureReports)
+      recommendations: this.generateRecommendations(codeReport, featureReports),
     };
 
     // 计算总数
@@ -95,15 +96,18 @@ class FeatureValidationScript {
    */
   private summarizeFeatureReport(report: any) {
     return {
-      total: report.validatedFeatures.length + report.missingFeatures.length + report.partialFeatures.length,
+      total:
+        report.validatedFeatures.length +
+        report.missingFeatures.length +
+        report.partialFeatures.length,
       implemented: report.validatedFeatures.length,
       partial: report.partialFeatures.length,
       missing: report.missingFeatures.length,
       details: {
         implemented: report.validatedFeatures,
         partial: report.partialFeatures,
-        missing: report.missingFeatures
-      }
+        missing: report.missingFeatures,
+      },
     };
   }
 
@@ -123,7 +127,9 @@ class FeatureValidationScript {
       }
       for (const partial of report.partialFeatures) {
         recommendations.push(
-          `完善部分实现功能: ${category}/${partial.feature} (缺失方法: ${partial.missingMethods.join(', ')})`
+          `完善部分实现功能: ${category}/${
+            partial.feature
+          } (缺失方法: ${partial.missingMethods.join(', ')})`,
         );
       }
     }
@@ -137,13 +143,10 @@ class FeatureValidationScript {
   private async saveReport(report: any): Promise<void> {
     const reportDir = path.join(process.cwd(), 'reports');
     const filename = `validation-report-${new Date().toISOString()}.json`;
-    
+
     try {
       await fs.mkdir(reportDir, { recursive: true });
-      await fs.writeFile(
-        path.join(reportDir, filename),
-        JSON.stringify(report, null, 2)
-      );
+      await fs.writeFile(path.join(reportDir, filename), JSON.stringify(report, null, 2));
     } catch (error) {
       this.logger.error('保存报告失败', error);
       throw error;
@@ -155,14 +158,14 @@ class FeatureValidationScript {
    */
   private displayResults(report: any): void {
     console.log('\n=== 功能验证报告 ===\n');
-    
+
     // 显示摘要
     console.log('功能完成情况:');
     console.log(`总功能数: ${report.summary.totalFeatures}`);
     console.log(`已实现: ${report.summary.implementedFeatures}`);
     console.log(`部分实现: ${report.summary.partialFeatures}`);
     console.log(`未实现: ${report.summary.missingFeatures}`);
-    
+
     // 显示各模块详情
     console.log('\n模块详情:');
     for (const [category, details] of Object.entries(report.features)) {
@@ -171,14 +174,17 @@ class FeatureValidationScript {
       console.log(`- 部分实现: ${details.partial}`);
       console.log(`- 未实现: ${details.missing}`);
     }
-    
+
     // 显示建议
     console.log('\n改进建议:');
     report.recommendations.forEach((recommendation: string, index: number) => {
       console.log(`${index + 1}. ${recommendation}`);
     });
-    
-    console.log('\n报告已保存至:', path.join('reports', `validation-report-${report.timestamp}.json`));
+
+    console.log(
+      '\n报告已保存至:',
+      path.join('reports', `validation-report-${report.timestamp}.json`),
+    );
   }
 
   /**
@@ -196,12 +202,12 @@ class FeatureValidationScript {
 }
 
 // 执行验证
-async function runValidation() {
+async function runValidation(): Promise<void> {
   const validator = new FeatureValidationScript();
   try {
     await validator.validate();
   } catch (error) {
-    console.error('验证失败:', error);
+    console.error('Error in validateFeatures.ts:', '验证失败:', error);
     process.exit(1);
   }
 }
@@ -209,4 +215,4 @@ async function runValidation() {
 // 如果直接运行此脚本
 if (require.main === module) {
   runValidation();
-} 
+}

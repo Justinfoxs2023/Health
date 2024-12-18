@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
+
 import { BehaviorSubject } from 'rxjs';
 
 /** 主题类型 */
-export type ThemeMode = 'light' | 'dark' | 'system';
+export type ThemeModeType = 'light' | 'dark' | 'system';
 
 /** 主题配置 */
-export interface ThemeConfig {
+export interface IThemeConfig {
   /** 主色调 */
   primaryColor: string;
   /** 次要色调 */
@@ -41,7 +42,7 @@ export interface ThemeConfig {
 }
 
 /** 默认主题配置 */
-const defaultConfig: ThemeConfig = {
+const defaultConfig: IThemeConfig = {
   primaryColor: '#1890ff',
   secondaryColor: '#52c41a',
   backgroundColor: '#ffffff',
@@ -49,29 +50,29 @@ const defaultConfig: ThemeConfig = {
   fontSize: {
     small: '12px',
     medium: '14px',
-    large: '16px'
+    large: '16px',
   },
   spacing: {
     small: '8px',
     medium: '16px',
-    large: '24px'
+    large: '24px',
   },
   borderRadius: {
     small: '2px',
     medium: '4px',
-    large: '8px'
+    large: '8px',
   },
   shadows: {
     small: '0 2px 4px rgba(0,0,0,0.1)',
     medium: '0 4px 8px rgba(0,0,0,0.1)',
-    large: '0 8px 16px rgba(0,0,0,0.1)'
-  }
+    large: '0 8px 16px rgba(0,0,0,0.1)',
+  },
 };
 
 /** 主题管理服务 */
 class ThemeService {
-  private mode$ = new BehaviorSubject<ThemeMode>('system');
-  private config$ = new BehaviorSubject<ThemeConfig>(defaultConfig);
+  private mode$ = new BehaviorSubject<ThemeModeType>('system');
+  private config$ = new BehaviorSubject<IThemeConfig>(defaultConfig);
 
   constructor() {
     this.initTheme();
@@ -79,7 +80,7 @@ class ThemeService {
 
   private initTheme() {
     // 从localStorage读取主题设置
-    const savedMode = localStorage.getItem('themeMode') as ThemeMode;
+    const savedMode = localStorage.getItem('themeMode') as ThemeModeType;
     if (savedMode) {
       this.setMode(savedMode);
     }
@@ -91,7 +92,7 @@ class ThemeService {
         const config = JSON.parse(savedConfig);
         this.setConfig(config);
       } catch (error) {
-        console.error('Failed to parse theme config:', error);
+        console.error('Error in index.ts:', 'Failed to parse theme config:', error);
       }
     }
 
@@ -105,25 +106,22 @@ class ThemeService {
 
   private handleSystemThemeChange = (e: MediaQueryListEvent) => {
     if (this.mode$.value === 'system') {
-      document.documentElement.setAttribute(
-        'data-theme',
-        e.matches ? 'dark' : 'light'
-      );
+      document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
     }
   };
 
   /** 获取当前主题模式 */
-  public getMode(): ThemeMode {
+  public getMode(): ThemeModeType {
     return this.mode$.value;
   }
 
   /** 获取当前主题配置 */
-  public getConfig(): ThemeConfig {
+  public getConfig(): IThemeConfig {
     return this.config$.value;
   }
 
   /** 设置主题模式 */
-  public setMode(mode: ThemeMode): void {
+  public setMode(mode: ThemeModeType): void {
     this.mode$.next(mode);
     localStorage.setItem('themeMode', mode);
 
@@ -139,17 +137,17 @@ class ThemeService {
       new CustomEvent('themechange', {
         detail: {
           mode: this.mode$.value,
-          config: this.config$.value
-        }
-      })
+          config: this.config$.value,
+        },
+      }),
     );
   }
 
   /** 设置主题配置 */
-  public setConfig(config: Partial<ThemeConfig>): void {
+  public setConfig(config: Partial<IThemeConfig>): void {
     const newConfig = {
       ...this.config$.value,
-      ...config
+      ...config,
     };
     this.config$.next(newConfig);
     localStorage.setItem('themeConfig', JSON.stringify(newConfig));
@@ -162,7 +160,7 @@ class ThemeService {
         Object.entries(value).forEach(([subKey, subValue]) => {
           document.documentElement.style.setProperty(
             `--theme-${key}-${subKey}`,
-            subValue as string
+            subValue as string,
           );
         });
       }
@@ -173,9 +171,9 @@ class ThemeService {
       new CustomEvent('themechange', {
         detail: {
           mode: this.mode$.value,
-          config: newConfig
-        }
-      })
+          config: newConfig,
+        },
+      }),
     );
   }
 
@@ -193,7 +191,16 @@ class ThemeService {
 export const themeService = new ThemeService();
 
 /** 主题Hook */
-export function useTheme() {
+export function useTheme(): {
+  mode: 'light' | 'dark' | 'system';
+  config: import('D:/Health/packages/shared/src/services/theme/index').IThemeConfig;
+  setMode: (
+    mode: import('D:/Health/packages/shared/src/services/theme/index').ThemeModeType,
+  ) => void;
+  setConfig: (
+    config: Partial<import('D:/Health/packages/shared/src/services/theme/index').IThemeConfig>,
+  ) => void;
+} {
   const [mode, setMode] = useState(themeService.getMode());
   const [config, setConfig] = useState(themeService.getConfig());
 
@@ -213,6 +220,6 @@ export function useTheme() {
     mode,
     config,
     setMode: themeService.setMode.bind(themeService),
-    setConfig: themeService.setConfig.bind(themeService)
+    setConfig: themeService.setConfig.bind(themeService),
   };
-} 
+}

@@ -1,0 +1,185 @@
+# 数据库配置
+
+# MongoDB配置
+mongodb:
+  # 主数据库配置
+  primary:
+    uri: mongodb://localhost:27017
+    database: health
+    options:
+      useNewUrlParser: true
+      useUnifiedTopology: true
+      maxPoolSize: 100
+      minPoolSize: 10
+      connectTimeoutMS: 30000
+      socketTimeoutMS: 30000
+
+  # 分片配置
+  sharding:
+    enabled: true
+    collections:
+      # 用户数据分片
+      users:
+        shardKey: userId
+        shardCount: 4
+        shardingStrategy: hash
+        indexes:
+          - keys: { userId: 1 }
+            options: { unique: true }
+          - keys: { email: 1 }
+            options: { unique: true }
+
+      # 健康数据分片
+      health_data:
+        shardKey: userId
+        shardCount: 4
+        shardingStrategy: hash
+        indexes:
+          - keys: { userId: 1, timestamp: -1 }
+            options: { }
+
+      # 订单数据分片
+      orders:
+        shardKey: userId
+        shardCount: 4
+        shardingStrategy: hash
+        indexes:
+          - keys: { orderId: 1 }
+            options: { unique: true }
+          - keys: { userId: 1, createdAt: -1 }
+            options: { }
+
+  # 副本集配置
+  replication:
+    enabled: true
+    replicas:
+      - host: localhost
+        port: 27018
+        priority: 1
+      - host: localhost
+        port: 27019
+        priority: 0.5
+
+# Redis配置
+redis:
+  # 主缓存配置
+  primary:
+    host: localhost
+    port: 6379
+    password: null
+    db: 0
+    options:
+      maxRetriesPerRequest: 3
+      connectTimeout: 10000
+      maxRedirections: 6
+
+  # 集群配置
+  cluster:
+    enabled: true
+    nodes:
+      - host: localhost
+        port: 7000
+      - host: localhost
+        port: 7001
+      - host: localhost
+        port: 7002
+    options:
+      maxRedirections: 16
+      retryDelayMs: 2000
+      retryMaxAttempts: 5
+
+  # 缓存策略
+  caching:
+    # 默认缓存策略
+    default:
+      strategy: lru
+      maxSize: 1000
+      maxAge: 3600
+
+    # 特定类型数据的缓存策略
+    patterns:
+      # 用户数据缓存
+      user:
+        pattern: "user:*"
+        strategy: lru
+        maxSize: 10000
+        maxAge: 7200
+
+      # 健康数据缓存
+      health:
+        pattern: "health:*"
+        strategy: lfu
+        maxSize: 50000
+        maxAge: 3600
+
+      # 订单数据缓存
+      order:
+        pattern: "order:*"
+        strategy: ttl
+        maxAge: 1800
+
+# 数据同步配置
+sync:
+  # 同���任务配置
+  tasks:
+    # 用户数据同步
+    user_sync:
+      sourceService: user-service
+      targetService: analytics-service
+      dataType: users
+      syncInterval: 3600
+      syncStrategy: incremental
+
+    # 健康数据同步
+    health_sync:
+      sourceService: health-service
+      targetService: analytics-service
+      dataType: health_data
+      syncInterval: 1800
+      syncStrategy: incremental
+
+    # 订单数据同步
+    order_sync:
+      sourceService: order-service
+      targetService: analytics-service
+      dataType: orders
+      syncInterval: 900
+      syncStrategy: incremental
+
+# 监控配置
+monitoring:
+  # 性能监控
+  performance:
+    enabled: true
+    sampleRate: 0.1
+    metricsInterval: 60
+
+  # 健康检查
+  health:
+    enabled: true
+    checkInterval: 30
+    timeout: 5
+
+  # 告警配置
+  alerts:
+    enabled: true
+    channels:
+      - type: email
+        recipients: ["admin@example.com"]
+      - type: slack
+        webhook: "https://hooks.slack.com/services/xxx"
+
+# 备份配置
+backup:
+  # 自动备份
+  auto:
+    enabled: true
+    interval: 86400
+    retention: 7
+    type: full
+
+  # 增量备份
+  incremental:
+    enabled: true
+    interval: 3600
+    retention: 24

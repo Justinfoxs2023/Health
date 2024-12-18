@@ -1,19 +1,20 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+
 import { HealthAnalysis } from '../index';
 import { IHealthData, HealthDataType } from '../../../types';
 import { analysisService } from '../../../services/analysis';
+import { render, screen } from '@testing-library/react';
 
 // Mock i18n
 jest.mock('react-i18next', () => ({
   useTranslation: () => ({
-    t: (key: string) => key
-  })
+    t: (key: string) => key,
+  }),
 }));
 
 // Mock Chart component
 jest.mock('../../Chart', () => ({
-  Chart: () => <div data-testid="chart">Chart</div>
+  Chart: () => <div data-testid="chart">Chart</div>,
 }));
 
 describe('HealthAnalysis', () => {
@@ -24,22 +25,22 @@ describe('HealthAnalysis', () => {
       type: HealthDataType.BLOOD_PRESSURE,
       value: 120,
       timestamp: new Date('2023-01-01'),
-      userId: 'user1'
+      userId: 'user1',
     },
     {
       id: '2',
       type: HealthDataType.BLOOD_PRESSURE,
       value: 140,
       timestamp: new Date('2023-01-02'),
-      userId: 'user1'
+      userId: 'user1',
     },
     {
       id: '3',
       type: HealthDataType.BLOOD_PRESSURE,
       value: 160,
       timestamp: new Date('2023-01-03'),
-      userId: 'user1'
-    }
+      userId: 'user1',
+    },
   ];
 
   beforeEach(() => {
@@ -117,8 +118,8 @@ describe('HealthAnalysis', () => {
         type: HealthDataType.HEART_RATE,
         value: 100,
         timestamp: new Date('2023-01-04'),
-        userId: 'user1'
-      }
+        userId: 'user1',
+      },
     ];
 
     render(<HealthAnalysis data={mixedData} />);
@@ -138,8 +139,8 @@ describe('HealthAnalysis', () => {
         type: HealthDataType.BLOOD_PRESSURE,
         value: 200, // 极高值
         timestamp: new Date('2023-01-05'),
-        userId: 'user1'
-      }
+        userId: 'user1',
+      },
     ];
 
     render(<HealthAnalysis data={dataWithExtreme} />);
@@ -153,11 +154,7 @@ describe('HealthAnalysis', () => {
     const style = { margin: '20px' };
 
     const { container } = render(
-      <HealthAnalysis
-        data={mockData}
-        className={className}
-        style={style}
-      />
+      <HealthAnalysis data={mockData} className={className} style={style} />,
     );
 
     const rootElement = container.firstChild as HTMLElement;
@@ -172,4 +169,4 @@ describe('HealthAnalysis', () => {
     const animations = document.getElementsByClassName('animation');
     expect(animations.length).toBeGreaterThan(0);
   });
-}); 
+});

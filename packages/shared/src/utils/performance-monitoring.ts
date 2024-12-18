@@ -1,9 +1,16 @@
+/**
+ * @fileoverview TS 文件 performance-monitoring.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export class PerformanceMonitor {
-  private metrics: PerformanceMetrics = {
+  private metrics: IPerformanceMetrics = {
     responseTime: 0,
     memoryUsage: 0,
     fps: 0,
-    loadTime: 0
+    loadTime: 0,
   };
 
   // 监控响应时间
@@ -42,4 +49,4 @@ export class PerformanceMonitor {
     calculateFPS();
     return this.metrics.fps;
   }
-} 
+}

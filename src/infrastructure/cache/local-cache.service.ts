@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
-import { ConfigService } from '../config/config.service';
 import LRUCache from 'lru-cache';
+import { ConfigService } from '../config/config.service';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class LocalCacheService {
@@ -14,7 +14,7 @@ export class LocalCacheService {
     this.cache = new LRUCache({
       max: parseInt(this.config.get('CACHE_LOCAL_MAX_SIZE') || '10000'),
       maxAge: parseInt(this.config.get('CACHE_LOCAL_TTL') || '600000'), // 10 minutes
-      updateAgeOnGet: true
+      updateAgeOnGet: true,
     });
   }
 
@@ -33,4 +33,4 @@ export class LocalCacheService {
   async clear(): Promise<void> {
     this.cache.reset();
   }
-} 
+}

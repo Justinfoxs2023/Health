@@ -6,7 +6,7 @@ class TransactionService {
    * 执行事务
    */
   async executeTransaction<T>(
-    operations: (session: mongoose.ClientSession) => Promise<T>
+    operations: (session: mongoose.ClientSession) => Promise<T>,
   ): Promise<T> {
     const session = await mongoose.startSession();
     session.startTransaction();
@@ -28,7 +28,7 @@ class TransactionService {
    * 批量执行事务
    */
   async executeBulkTransaction<T>(
-    operations: (session: mongoose.ClientSession) => Promise<T[]>
+    operations: (session: mongoose.ClientSession) => Promise<T[]>,
   ): Promise<T[]> {
     const session = await mongoose.startSession();
     session.startTransaction();
@@ -51,10 +51,10 @@ class TransactionService {
    */
   async executeTransactionWithRetry<T>(
     operations: (session: mongoose.ClientSession) => Promise<T>,
-    maxRetries: number = 3
+    maxRetries = 3,
   ): Promise<T> {
     let retries = 0;
-    
+
     while (retries < maxRetries) {
       try {
         return await this.executeTransaction(operations);
@@ -76,17 +76,14 @@ class TransactionService {
    */
   async executeTransactionWithTimeout<T>(
     operations: (session: mongoose.ClientSession) => Promise<T>,
-    timeoutMs: number = 5000
+    timeoutMs = 5000,
   ): Promise<T> {
     const timeoutPromise = new Promise((_, reject) => {
       setTimeout(() => reject(new Error('事务执行超时')), timeoutMs);
     });
 
     try {
-      const result = await Promise.race([
-        this.executeTransaction(operations),
-        timeoutPromise
-      ]);
+      const result = await Promise.race([this.executeTransaction(operations), timeoutPromise]);
       return result as T;
     } catch (error) {
       logger.error('事务执行超时或失败:', error);
@@ -99,7 +96,7 @@ class TransactionService {
    */
   async executeTransactionWithRollback<T>(
     operations: (session: mongoose.ClientSession) => Promise<T>,
-    rollbackHook?: (error: any) => Promise<void>
+    rollbackHook?: (error: any) => Promise<void>,
   ): Promise<T> {
     const session = await mongoose.startSession();
     session.startTransaction();
@@ -128,7 +125,7 @@ class TransactionService {
    */
   async executeBulkTransactionWithProgress<T>(
     operations: (session: mongoose.ClientSession) => Promise<T[]>,
-    progressCallback?: (completed: number, total: number) => void
+    progressCallback?: (completed: number, total: number) => void,
   ): Promise<T[]> {
     const session = await mongoose.startSession();
     session.startTransaction();
@@ -150,4 +147,4 @@ class TransactionService {
   }
 }
 
-export const transactionService = new TransactionService(); 
+export const transactionService = new TransactionService();

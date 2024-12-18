@@ -12,18 +12,18 @@ export class Logger {
           return `[${timestamp}] [${level.toUpperCase()}] [${context}] ${message} ${
             Object.keys(meta).length ? JSON.stringify(meta) : ''
           }`;
-        })
+        }),
       ),
       transports: [
         new winston.transports.Console(),
-        new winston.transports.File({ 
-          filename: `${process.env.LOG_PATH}/error.log`, 
-          level: 'error' 
+        new winston.transports.File({
+          filename: `${process.env.LOG_PATH}/error.log`,
+          level: 'error',
         }),
-        new winston.transports.File({ 
-          filename: `${process.env.LOG_PATH}/combined.log` 
-        })
-      ]
+        new winston.transports.File({
+          filename: `${process.env.LOG_PATH}/combined.log`,
+        }),
+      ],
     });
   }
 
@@ -38,4 +38,4 @@ export class Logger {
   debug(message: string, meta?: any) {
     this.logger.debug(message, meta);
   }
-} 
+}

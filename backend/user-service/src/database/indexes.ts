@@ -1,8 +1,8 @@
-import { User } from '../models/user.model';
 import { HealthData } from '../models/health-data.model';
-import { Profile } from '../models/profile.model';
-import { Notification } from '../models/notification.model';
 import { Logger } from '../utils/logger';
+import { Notification } from '../models/notification.model';
+import { Profile } from '../models/profile.model';
+import { User } from '../models/user.model';
 
 export async function createIndexes(): Promise<void> {
   const logger = new Logger('DatabaseIndexes');
@@ -33,4 +33,4 @@ export async function createIndexes(): Promise<void> {
     logger.error('Failed to create database indexes', error);
     throw error;
   }
-} 
+}

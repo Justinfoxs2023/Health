@@ -1,80 +1,86 @@
 import React from 'react';
+
 import { theme } from '../../styles/theme';
 
-interface LoadingProps {
-  size?: 'small' | 'medium' | 'large';
-  color?: 'primary' | 'secondary';
-  overlay?: boolean;
+interface ILoadingProps {
+  /** size 的描述 */
+    size: small  medium  large;
+  color: primary  secondary;
+  overlay: boolean;
 }
 
-export const Loading: React.FC<LoadingProps> = ({
+export const Loading: React.FC<ILoadingProps> = ({
   size = 'medium',
   color = 'primary',
-  overlay = false
+  overlay = false,
 }) => {
   const sizeMap = {
     small: '24px',
     medium: '40px',
-    large: '56px'
+    large: '56px',
   };
 
   return (
     <>
       <div className={`loading-container ${overlay ? 'overlay' : ''}`}>
-        <div className={`spinner ${size} ${color}`} />
+        <div className={spinner {size} {color}} />
       </div>
 
-      <style jsx>{`
-        .loading-container {
-          display: flex;
-          align-items: center;
-          justify-content: center;
+      <style jsx>{
+        loadingcontainer {
+          display flex
+          alignitems center
+          justifycontent center
         }
 
-        .loading-container.overlay {
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: rgba(255, 255, 255, 0.9);
-          z-index: 9999;
+        loadingcontaineroverlay {
+          position fixed
+          top 0
+          left 0
+          right 0
+          bottom 0
+          background rgba255 255 255 09
+          zindex 9999
         }
 
-        .spinner {
-          border-radius: 50%;
-          border: 2px solid transparent;
-          animation: spin 1s linear infinite;
+        spinner {
+          borderradius 50
+          border 2px solid transparent
+          animation spin 1s linear infinite
         }
 
-        .spinner.primary {
-          border-top-color: ${theme.colors.primary.main};
+        spinnerprimary {
+          bordertopcolor {themecolorsprimarymain}
         }
 
-        .spinner.secondary {
-          border-top-color: ${theme.colors.secondary.main};
+        spinnersecondary {
+          bordertopcolor {themecolorssecondarymain}
         }
 
-        .spinner.small {
-          width: ${sizeMap.small};
-          height: ${sizeMap.small};
+        spinnersmall {
+          width {sizeMapsmall}
+          height {sizeMapsmall}
         }
 
-        .spinner.medium {
-          width: ${sizeMap.medium};
-          height: ${sizeMap.medium};
+        spinnermedium {
+          width {sizeMapmedium}
+          height {sizeMapmedium}
         }
 
-        .spinner.large {
-          width: ${sizeMap.large};
-          height: ${sizeMap.large};
+        spinnerlarge {
+          width {sizeMaplarge}
+          height {sizeMaplarge}
         }
 
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
+        keyframes spin {
+          0 {
+            transform rotate0deg
+          }
+          100 {
+            transform rotate360deg
+          }
         }
-      `}</style>
+      }</style>
     </>
   );
-}; 
+};

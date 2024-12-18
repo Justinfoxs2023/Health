@@ -1,6 +1,6 @@
-import { Request, Response } from 'express';
 import { DevWorkflowService } from '../services/ai/dev-workflow.service';
 import { Logger } from '../utils/logger';
+import { Request, Response } from 'express';
 
 export class DevAssistantController {
   private workflowService: DevWorkflowService;
@@ -16,17 +16,17 @@ export class DevAssistantController {
     try {
       const { code } = req.body;
       const comments = await this.workflowService.assistCodeReview(code);
-      
+
       return res.json({
         code: 200,
         data: comments,
-        message: '代码审查完成'
+        message: '代码审查完成',
       });
     } catch (error) {
       this.logger.error('代码审查失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
@@ -36,18 +36,18 @@ export class DevAssistantController {
     try {
       const { sourceCode } = req.body;
       const tests = await this.workflowService.generateTests(sourceCode);
-      
+
       return res.json({
         code: 200,
         data: tests,
-        message: '测试用例生成成功'
+        message: '测试用例生成成功',
       });
     } catch (error) {
       this.logger.error('生成测试用例失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
-} 
+}

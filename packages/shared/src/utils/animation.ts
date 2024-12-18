@@ -4,7 +4,7 @@ import { CSSProperties } from 'react';
 export const ANIMATION_DURATION = {
   FAST: 150,
   NORMAL: 300,
-  SLOW: 450
+  SLOW: 450,
 } as const;
 
 /** 动画缓动函数配置 */
@@ -16,11 +16,11 @@ export const ANIMATION_EASING = {
   // 退出场景
   EASE_OUT: 'cubic-bezier(0, 0, 0.2, 1)',
   // 弹性缓动
-  BOUNCE: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)'
+  BOUNCE: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
 } as const;
 
 /** 动画类型 */
-export type AnimationType = 
+export type AnimationType =
   | 'fade'
   | 'slide-up'
   | 'slide-down'
@@ -32,7 +32,7 @@ export type AnimationType =
   | 'flip';
 
 /** 动画配置接口 */
-export interface AnimationConfig {
+export interface IAnimationConfig {
   /** 动画类型 */
   type: AnimationType;
   /** 动画时长(ms) */
@@ -46,16 +46,16 @@ export interface AnimationConfig {
 }
 
 /** 获取动画样式 */
-export function getAnimationStyle(config: AnimationConfig): CSSProperties {
+export function getAnimationStyle(config: IAnimationConfig): CSSProperties {
   const {
     type,
     duration = ANIMATION_DURATION.NORMAL,
     delay = 0,
-    easing = ANIMATION_EASING.EASE
+    easing = ANIMATION_EASING.EASE,
   } = config;
 
   const baseStyle: CSSProperties = {
-    transition: `all ${duration}ms ${easing} ${delay}ms`
+    transition: `all ${duration}ms ${easing} ${delay}ms`,
   };
 
   switch (type) {
@@ -64,48 +64,48 @@ export function getAnimationStyle(config: AnimationConfig): CSSProperties {
         ...baseStyle,
         opacity: 0,
         '&.enter': {
-          opacity: 1
-        }
+          opacity: 1,
+        },
       };
     case 'slide-up':
       return {
         ...baseStyle,
         transform: 'translateY(100%)',
         '&.enter': {
-          transform: 'translateY(0)'
-        }
+          transform: 'translateY(0)',
+        },
       };
     case 'slide-down':
       return {
         ...baseStyle,
         transform: 'translateY(-100%)',
         '&.enter': {
-          transform: 'translateY(0)'
-        }
+          transform: 'translateY(0)',
+        },
       };
     case 'slide-left':
       return {
         ...baseStyle,
         transform: 'translateX(100%)',
         '&.enter': {
-          transform: 'translateX(0)'
-        }
+          transform: 'translateX(0)',
+        },
       };
     case 'slide-right':
       return {
         ...baseStyle,
         transform: 'translateX(-100%)',
         '&.enter': {
-          transform: 'translateX(0)'
-        }
+          transform: 'translateX(0)',
+        },
       };
     case 'zoom':
       return {
         ...baseStyle,
         transform: 'scale(0)',
         '&.enter': {
-          transform: 'scale(1)'
-        }
+          transform: 'scale(1)',
+        },
       };
     case 'bounce':
       return {
@@ -113,24 +113,24 @@ export function getAnimationStyle(config: AnimationConfig): CSSProperties {
         transform: 'scale(0)',
         easing: ANIMATION_EASING.BOUNCE,
         '&.enter': {
-          transform: 'scale(1)'
-        }
+          transform: 'scale(1)',
+        },
       };
     case 'rotate':
       return {
         ...baseStyle,
         transform: 'rotate(-180deg)',
         '&.enter': {
-          transform: 'rotate(0)'
-        }
+          transform: 'rotate(0)',
+        },
       };
     case 'flip':
       return {
         ...baseStyle,
         transform: 'perspective(400px) rotateX(-90deg)',
         '&.enter': {
-          transform: 'perspective(400px) rotateX(0)'
-        }
+          transform: 'perspective(400px) rotateX(0)',
+        },
       };
     default:
       return baseStyle;
@@ -138,11 +138,11 @@ export function getAnimationStyle(config: AnimationConfig): CSSProperties {
 }
 
 /** 动画组件Props */
-export interface AnimationProps {
+export interface IAnimationProps {
   /** 子元素 */
   children: React.ReactNode;
   /** 动画配置 */
-  animation: AnimationConfig;
+  animation: IAnimationConfig;
   /** 是否显示 */
   visible?: boolean;
   /** 自定义类名 */
@@ -176,35 +176,35 @@ export function injectKeyframes(name: string, frames: Record<string, CSSProperti
 export const ANIMATION_KEYFRAMES = {
   fadeIn: {
     '0%': { opacity: 0 },
-    '100%': { opacity: 1 }
+    '100%': { opacity: 1 },
   },
   fadeOut: {
     '0%': { opacity: 1 },
-    '100%': { opacity: 0 }
+    '100%': { opacity: 0 },
   },
   slideUp: {
     '0%': { transform: 'translateY(100%)' },
-    '100%': { transform: 'translateY(0)' }
+    '100%': { transform: 'translateY(0)' },
   },
   slideDown: {
     '0%': { transform: 'translateY(-100%)' },
-    '100%': { transform: 'translateY(0)' }
+    '100%': { transform: 'translateY(0)' },
   },
   zoomIn: {
     '0%': { transform: 'scale(0)' },
-    '100%': { transform: 'scale(1)' }
+    '100%': { transform: 'scale(1)' },
   },
   zoomOut: {
     '0%': { transform: 'scale(1)' },
-    '100%': { transform: 'scale(0)' }
+    '100%': { transform: 'scale(0)' },
   },
   rotate: {
     '0%': { transform: 'rotate(0deg)' },
-    '100%': { transform: 'rotate(360deg)' }
+    '100%': { transform: 'rotate(360deg)' },
   },
   bounce: {
     '0%, 20%, 50%, 80%, 100%': { transform: 'translateY(0)' },
     '40%': { transform: 'translateY(-30px)' },
-    '60%': { transform: 'translateY(-15px)' }
-  }
-}; 
+    '60%': { transform: 'translateY(-15px)' },
+  },
+};

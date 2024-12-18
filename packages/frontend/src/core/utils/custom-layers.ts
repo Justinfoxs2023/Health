@@ -12,18 +12,8 @@ export class CustomAttentionLayer extends tf.layers.Layer {
     const shape = inputShape as tf.Shape;
     const inputDim = shape[shape.length - 1];
 
-    this.addWeight(
-      'W',
-      [inputDim, this.units],
-      'float32',
-      tf.initializers.glorotUniform({})
-    );
-    this.addWeight(
-      'V',
-      [this.units, 1],
-      'float32',
-      tf.initializers.glorotUniform({})
-    );
+    this.addWeight('W', [inputDim, this.units], 'float32', tf.initializers.glorotUniform({}));
+    this.addWeight('V', [this.units, 1], 'float32', tf.initializers.glorotUniform({}));
   }
 
   call(inputs: tf.Tensor | tf.Tensor[], kwargs: any): tf.Tensor | tf.Tensor[] {
@@ -49,9 +39,9 @@ export class CustomAttentionLayer extends tf.layers.Layer {
     const config = super.getConfig();
     return {
       ...config,
-      units: this.units
+      units: this.units,
     };
   }
 
   static className = 'CustomAttentionLayer';
-} 
+}

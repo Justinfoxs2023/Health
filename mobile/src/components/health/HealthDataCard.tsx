@@ -1,18 +1,32 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+
 import { Card, Text, useTheme } from 'react-native-paper';
 import { LineChart } from 'react-native-chart-kit';
+import { View, StyleSheet } from 'react-native';
 
-interface HealthDataCardProps {
+interface IHealthDataCardProps {
+  /** title 的描述 */
   title: string;
+  /** value 的描述 */
   value: number;
+  /** unit 的描述 */
   unit: string;
+  /** data 的描述 */
   data: number[];
+  /** labels 的描述 */
   labels: string[];
+  /** trend 的描述 */
   trend?: 'up' | 'down' | 'stable';
 }
 
-export const HealthDataCard = ({ title, value, unit, data, labels, trend }: HealthDataCardProps) => {
+export const HealthDataCard = ({
+  title,
+  value,
+  unit,
+  data,
+  labels,
+  trend,
+}: IHealthDataCardProps) => {
   const theme = useTheme();
 
   const getTrendColor = () => {
@@ -81,4 +95,4 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     borderRadius: 16,
   },
-}); 
+});

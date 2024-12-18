@@ -1,7 +1,7 @@
-import { Request, Response } from 'express';
 import { AdminService } from '../services/admin.service';
 import { AuditService } from '../services/audit.service';
 import { Logger } from '../utils/logger';
+import { Request, Response } from 'express';
 
 export class AdminController {
   private adminService: AdminService;
@@ -20,23 +20,23 @@ export class AdminController {
   async getUsers(req: Request, res: Response) {
     try {
       const { page = 1, limit = 10, search, role } = req.query;
-      
+
       const users = await this.adminService.getUsers({
         page: Number(page),
         limit: Number(limit),
         search: search as string,
-        role: role as string
+        role: role as string,
       });
 
       return res.json({
         code: 200,
-        data: users
+        data: users,
       });
     } catch (error) {
       this.logger.error('获取用户列表失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
@@ -51,24 +51,24 @@ export class AdminController {
       const adminId = req.user.id;
 
       await this.adminService.updateUserRoles(userId, roles);
-      
+
       // 记录审计日志
       await this.auditService.log({
         userId: adminId,
         action: 'UPDATE_USER_ROLES',
         resource: `user:${userId}`,
-        details: { roles }
+        details: { roles },
       });
 
       return res.json({
         code: 200,
-        message: '角色更新成功'
+        message: '角色更新成功',
       });
     } catch (error) {
       this.logger.error('更新用户角色失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
@@ -82,24 +82,24 @@ export class AdminController {
       const adminId = req.user.id;
 
       await this.adminService.updateSystemConfig(config);
-      
+
       // 记录审计日志
       await this.auditService.log({
         userId: adminId,
         action: 'UPDATE_SYSTEM_CONFIG',
         resource: 'system:config',
-        details: { config }
+        details: { config },
       });
 
       return res.json({
         code: 200,
-        message: '配置更新成功'
+        message: '配置更新成功',
       });
     } catch (error) {
       this.logger.error('更新系统配置失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
@@ -116,19 +116,19 @@ export class AdminController {
         limit: Number(limit),
         startDate: startDate as string,
         endDate: endDate as string,
-        userId: userId as string
+        userId: userId as string,
       });
 
       return res.json({
         code: 200,
-        data: logs
+        data: logs,
       });
     } catch (error) {
       this.logger.error('获取操作日志失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
-} 
+}

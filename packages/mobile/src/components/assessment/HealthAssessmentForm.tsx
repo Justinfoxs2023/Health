@@ -1,25 +1,35 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
-import { Text, TextInput, Button, RadioButton, useTheme } from 'react-native-paper';
 
-interface HealthAssessmentFormProps {
-  onSubmit: (data: HealthAssessmentData) => void;
+import { Text, TextInput, Button, RadioButton, useTheme } from 'react-native-paper';
+import { View, StyleSheet, ScrollView } from 'react-native';
+
+interface IHealthAssessmentFormProps {
+  /** onSubmit 的描述 */
+  onSubmit: (data: IHealthAssessmentData) => void;
 }
 
-export interface HealthAssessmentData {
+export interface IHealthAssessmentData {
+  /** age 的描述 */
   age: number;
+  /** gender 的描述 */
   gender: 'male' | 'female';
+  /** height 的描述 */
   height: number;
+  /** weight 的描述 */
   weight: number;
+  /** lifestyle 的描述 */
   lifestyle: 'sedentary' | 'moderate' | 'active';
+  /** sleepHours 的描述 */
   sleepHours: number;
+  /** healthGoals 的描述 */
   healthGoals: string[];
+  /** medicalHistory 的描述 */
   medicalHistory: string;
 }
 
-export const HealthAssessmentForm = ({ onSubmit }: HealthAssessmentFormProps) => {
+export const HealthAssessmentForm = ({ onSubmit }: IHealthAssessmentFormProps) => {
   const theme = useTheme();
-  const [formData, setFormData] = useState<HealthAssessmentData>({
+  const [formData, setFormData] = useState<IHealthAssessmentData>({
     age: 0,
     gender: 'male',
     height: 0,
@@ -27,7 +37,7 @@ export const HealthAssessmentForm = ({ onSubmit }: HealthAssessmentFormProps) =>
     lifestyle: 'moderate',
     sleepHours: 7,
     healthGoals: [],
-    medicalHistory: ''
+    medicalHistory: '',
   });
 
   const handleSubmit = () => {
@@ -42,12 +52,12 @@ export const HealthAssessmentForm = ({ onSubmit }: HealthAssessmentFormProps) =>
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>健康评估问卷</Text>
-      
+
       <View style={styles.inputGroup}>
         <Text style={styles.label}>年龄</Text>
         <TextInput
           value={formData.age.toString()}
-          onChangeText={(value) => setFormData({...formData, age: parseInt(value) || 0})}
+          onChangeText={value => setFormData({ ...formData, age: parseInt(value) || 0 })}
           keyboardType="numeric"
           style={styles.input}
         />
@@ -56,7 +66,7 @@ export const HealthAssessmentForm = ({ onSubmit }: HealthAssessmentFormProps) =>
       <View style={styles.inputGroup}>
         <Text style={styles.label}>性别</Text>
         <RadioButton.Group
-          onValueChange={value => setFormData({...formData, gender: value as 'male' | 'female'})}
+          onValueChange={value => setFormData({ ...formData, gender: value as 'male' | 'female' })}
           value={formData.gender}
         >
           <View style={styles.radioGroup}>
@@ -70,7 +80,7 @@ export const HealthAssessmentForm = ({ onSubmit }: HealthAssessmentFormProps) =>
         <Text style={styles.label}>身高 (cm)</Text>
         <TextInput
           value={formData.height.toString()}
-          onChangeText={(value) => setFormData({...formData, height: parseInt(value) || 0})}
+          onChangeText={value => setFormData({ ...formData, height: parseInt(value) || 0 })}
           keyboardType="numeric"
           style={styles.input}
         />
@@ -80,17 +90,13 @@ export const HealthAssessmentForm = ({ onSubmit }: HealthAssessmentFormProps) =>
         <Text style={styles.label}>体重 (kg)</Text>
         <TextInput
           value={formData.weight.toString()}
-          onChangeText={(value) => setFormData({...formData, weight: parseInt(value) || 0})}
+          onChangeText={value => setFormData({ ...formData, weight: parseInt(value) || 0 })}
           keyboardType="numeric"
           style={styles.input}
         />
       </View>
 
-      <Button
-        mode="contained"
-        onPress={handleSubmit}
-        style={styles.submitButton}
-      >
+      <Button mode="contained" onPress={handleSubmit} style={styles.submitButton}>
         提交评估
       </Button>
     </ScrollView>
@@ -123,4 +129,4 @@ const styles = StyleSheet.create({
   submitButton: {
     marginTop: 24,
   },
-}); 
+});

@@ -1,11 +1,14 @@
-import { Response } from 'express';
-import { IAuthRequest } from '../types/models';
 import { HealthRisk } from '../models/health-risk.model';
+import { IAuthRequest } from '../types/models';
+import { Response } from 'express';
 import { User } from '../models/user.model';
 
-interface HealthRiskData {
+interface IHealthRiskData {
+  /** level 的描述 */
   level: string;
+  /** type 的描述 */
   type: string;
+  /** suggestion 的描述 */
   suggestion: string;
 }
 
@@ -21,48 +24,48 @@ export class HealthAnalysisController {
       if (!user?.healthData) {
         return res.status(400).json({
           success: false,
-          message: '缺少健康数据'
+          message: '缺少健康数据',
         });
       }
 
       // 计算BMI
       const height = user.profile.height! / 100; // 转换为米
       const bmi = user.profile.weight! / (height * height);
-      
+
       // BMI风险评估
-      let bmiRisk: HealthRiskData | null = null;
+      let bmiRisk: IHealthRiskData | null = null;
       if (bmi < 18.5) {
         bmiRisk = {
           level: '中',
           type: '体重过轻',
-          suggestion: '建议适当增加营养摄入,合理搭配饮食'
+          suggestion: '建议适当增加营养摄入,合理搭配饮食',
         };
       } else if (bmi > 24) {
         bmiRisk = {
           level: '高',
           type: '超重',
-          suggestion: '建议控制饮食,增加运动量'
+          suggestion: '建议控制饮食,增加运动量',
         };
       }
 
       // 血压风险评估
-      let bloodPressureRisk: HealthRiskData | null = null;
+      let bloodPressureRisk: IHealthRiskData | null = null;
       const { systolic, diastolic } = user.healthData.bloodPressure!;
       if (systolic > 140 || diastolic > 90) {
         bloodPressureRisk = {
           level: '高',
           type: '高血压风险',
-          suggestion: '建议定期监测血压,控制盐分摄入'
+          suggestion: '建议定期监测血压,控制盐分摄入',
         };
       }
 
       // 血糖风险评估
-      let bloodSugarRisk: HealthRiskData | null = null;
+      let bloodSugarRisk: IHealthRiskData | null = null;
       if (user.healthData.bloodSugar!.value > 6.1) {
         bloodSugarRisk = {
           level: '中',
           type: '血糖偏高',
-          suggestion: '建议控制糖分摄入,规律作息'
+          suggestion: '建议控制糖分摄入,规律作息',
         };
       }
 
@@ -72,7 +75,7 @@ export class HealthAnalysisController {
         await HealthRisk.create({
           userId,
           risks,
-          createdAt: new Date()
+          createdAt: new Date(),
         });
       }
 
@@ -81,21 +84,21 @@ export class HealthAnalysisController {
         diet: [
           {
             type: '饮食建议',
-            items: this.generateDietRecommendations(user)
-          }
+            items: this.generateDietRecommendations(user),
+          },
         ],
         exercise: [
           {
             type: '运动建议',
-            items: this.generateExerciseRecommendations(user)
-          }
+            items: this.generateExerciseRecommendations(user),
+          },
         ],
         lifestyle: [
           {
             type: '生活方式建议',
-            items: this.generateLifestyleRecommendations(user)
-          }
-        ]
+            items: this.generateLifestyleRecommendations(user),
+          },
+        ],
       };
 
       res.json({
@@ -104,25 +107,25 @@ export class HealthAnalysisController {
           healthIndex: {
             bmi: {
               value: bmi.toFixed(1),
-              status: this.getBMIStatus(bmi)
+              status: this.getBMIStatus(bmi),
             },
             bloodPressure: {
               value: `${systolic}/${diastolic}`,
-              status: this.getBloodPressureStatus(systolic, diastolic)
+              status: this.getBloodPressureStatus(systolic, diastolic),
             },
             bloodSugar: {
               value: user.healthData.bloodSugar!.value,
-              status: this.getBloodSugarStatus(user.healthData.bloodSugar!.value)
-            }
+              status: this.getBloodSugarStatus(user.healthData.bloodSugar!.value),
+            },
           },
           risks,
-          recommendations
-        }
+          recommendations,
+        },
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: error instanceof Error ? error.message : '未知错误'
+        message: error instanceof Error ? error.message : '未知错误',
       });
     }
   }
@@ -149,14 +152,14 @@ export class HealthAnalysisController {
           pagination: {
             total,
             page: Number(page),
-            limit: Number(limit)
-          }
-        }
+            limit: Number(limit),
+          },
+        },
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: error instanceof Error ? error.message : '未知错误'
+        message: error instanceof Error ? error.message : '未知错误',
       });
     }
   }
@@ -220,7 +223,7 @@ export class HealthAnalysisController {
 
     recommendations.push('保持规律作息,每天保证7-8小时睡眠');
     recommendations.push('避免久坐,每隔1小时起来活动5-10分钟');
-    
+
     if (user.healthData.bloodPressure?.systolic > 140) {
       recommendations.push('保持心情愉悦,学会压力管理');
       recommendations.push('戒烟限酒');
@@ -230,4 +233,4 @@ export class HealthAnalysisController {
   }
 }
 
-export const healthAnalysisController = new HealthAnalysisController(); 
+export const healthAnalysisController = new HealthAnalysisController();

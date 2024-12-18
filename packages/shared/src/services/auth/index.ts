@@ -1,27 +1,37 @@
+import { IUser } from '../../types';
+import { STORAGE_KEYS } from '../../constants';
 import { http } from '../http';
 import { storage } from '../storage';
-import { STORAGE_KEYS } from '../../constants';
-import { IUser } from '../../types';
 
 /** 登录参数 */
-export interface LoginParams {
+export interface ILoginParams {
+  /** username 的描述 */
   username: string;
+  /** password 的描述 */
   password: string;
+  /** remember 的描述 */
   remember?: boolean;
 }
 
 /** 注册参数 */
-export interface RegisterParams {
+export interface IRegisterParams {
+  /** username 的描述 */
   username: string;
+  /** password 的描述 */
   password: string;
+  /** email 的描述 */
   email: string;
+  /** phone 的描述 */
   phone?: string;
 }
 
 /** 认证响应 */
-export interface AuthResponse {
+export interface IAuthResponse {
+  /** user 的描述 */
   user: IUser;
+  /** token 的描述 */
   token: string;
+  /** refreshToken 的描述 */
   refreshToken: string;
 }
 
@@ -51,11 +61,7 @@ class AuthService {
         const originalRequest = error.config;
 
         // 如果是401错误且不是刷新token的请求
-        if (
-          error.response?.status === 401 &&
-          !originalRequest._retry &&
-          this.refreshToken
-        ) {
+        if (error.response?.status === 401 && !originalRequest._retry && this.refreshToken) {
           if (!this.refreshPromise) {
             this.refreshPromise = this.refreshAccessToken();
           }
@@ -70,7 +76,7 @@ class AuthService {
         }
 
         return Promise.reject(error);
-      }
+      },
     );
   }
 
@@ -93,8 +99,8 @@ class AuthService {
   }
 
   /** 登录 */
-  public async login(params: LoginParams): Promise<void> {
-    const { data } = await http.post<AuthResponse>('/auth/login', params);
+  public async login(params: ILoginParams): Promise<void> {
+    const { data } = await http.post<IAuthResponse>('/auth/login', params);
     this.handleAuthSuccess(data);
 
     // 如果记住登录，保存刷新令牌
@@ -104,8 +110,8 @@ class AuthService {
   }
 
   /** 注册 */
-  public async register(params: RegisterParams): Promise<void> {
-    const { data } = await http.post<AuthResponse>('/auth/register', params);
+  public async register(params: IRegisterParams): Promise<void> {
+    const { data } = await http.post<IAuthResponse>('/auth/register', params);
     this.handleAuthSuccess(data);
   }
 
@@ -115,7 +121,7 @@ class AuthService {
       try {
         await http.post('/auth/logout');
       } catch (error) {
-        console.error('Logout failed:', error);
+        console.error('Error in index.ts:', 'Logout failed:', error);
       }
     }
 
@@ -125,8 +131,8 @@ class AuthService {
   /** 刷新访问令牌 */
   private async refreshAccessToken(): Promise<void> {
     try {
-      const { data } = await http.post<AuthResponse>('/auth/refresh', {
-        refreshToken: this.refreshToken
+      const { data } = await http.post<IAuthResponse>('/auth/refresh', {
+        refreshToken: this.refreshToken,
       });
 
       this.token = data.token;
@@ -139,7 +145,7 @@ class AuthService {
   }
 
   /** 处理认证成功 */
-  private handleAuthSuccess(response: AuthResponse): void {
+  private handleAuthSuccess(response: IAuthResponse): void {
     const { user, token, refreshToken } = response;
 
     this.currentUser = user;
@@ -180,4 +186,4 @@ class AuthService {
 }
 
 /** 认证服务实例 */
-export const authService = AuthService.getInstance(); 
+export const authService = AuthService.getInstance();

@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 utils.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 declare module '../utils/*' {
   // 日志工具
   export interface Logger {
@@ -31,4 +38,4 @@ declare module '../utils/*' {
     comparePassword(password: string, hash: string): Promise<boolean>;
     generateToken(length?: number): string;
   }
-} 
+}

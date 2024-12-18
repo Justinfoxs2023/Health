@@ -1,12 +1,18 @@
 import React from 'react';
-import { View, FlatList, StyleSheet, Text, TouchableOpacity, Image } from 'react-native';
-import { useQuery } from '@tanstack/react-query';
-import { getAchievements } from '../../api/exercise';
+
 import { LoadingSpinner, Icon, ProgressBar } from '../../components';
+import { View, FlatList, StyleSheet, Text, TouchableOpacity, Image } from 'react-native';
+import { getAchievements } from '../../api/exercise';
+import { useQuery } from '@tanstack/react-query';
 
 export const AchievementScreen = ({ navigation }) => {
-  const [selectedCategory, setSelectedCategory] = React.useState<'all' | 'exercise' | 'challenge' | 'social'>('all');
-  const { data: achievements, isLoading } = useQuery<Achievement[]>('achievements', getAchievements);
+  const [selectedCategory, setSelectedCategory] = React.useState<
+    'all' | 'exercise' | 'challenge' | 'social'
+  >('all');
+  const { data: achievements, isLoading } = useQuery<Achievement[]>(
+    'achievements',
+    getAchievements,
+  );
 
   const getLevelColor = (level: string) => {
     switch (level) {
@@ -38,7 +44,7 @@ export const AchievementScreen = ({ navigation }) => {
       <Text style={styles.description}>{achievement.description}</Text>
 
       <View style={styles.progressContainer}>
-        <ProgressBar 
+        <ProgressBar
           progress={achievement.progress / achievement.target}
           color={getLevelColor(achievement.level)}
         />
@@ -66,7 +72,7 @@ export const AchievementScreen = ({ navigation }) => {
   if (isLoading) return <LoadingSpinner />;
 
   const filteredAchievements = achievements?.filter(
-    achievement => selectedCategory === 'all' || achievement.category === selectedCategory
+    achievement => selectedCategory === 'all' || achievement.category === selectedCategory,
   );
 
   return (
@@ -120,108 +126,108 @@ export const AchievementScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   tabs: {
     flexDirection: 'row',
     backgroundColor: '#fff',
     paddingHorizontal: 15,
-    paddingVertical: 10
+    paddingVertical: 10,
   },
   tab: {
     flex: 1,
     alignItems: 'center',
-    paddingVertical: 8
+    paddingVertical: 8,
   },
   activeTab: {
     borderBottomWidth: 2,
-    borderBottomColor: '#2E7D32'
+    borderBottomColor: '#2E7D32',
   },
   tabText: {
     fontSize: 14,
-    color: '#666'
+    color: '#666',
   },
   activeTabText: {
     color: '#2E7D32',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   list: {
-    padding: 15
+    padding: 15,
   },
   achievementCard: {
     backgroundColor: '#fff',
     borderRadius: 12,
-    padding: 15
+    padding: 15,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10
+    marginBottom: 10,
   },
   icon: {
     width: 40,
     height: 40,
-    marginRight: 10
+    marginRight: 10,
   },
   titleContainer: {
-    flex: 1
+    flex: 1,
   },
   title: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 4
+    marginBottom: 4,
   },
   levelBadge: {
     alignSelf: 'flex-start',
     paddingHorizontal: 8,
     paddingVertical: 2,
-    borderRadius: 10
+    borderRadius: 10,
   },
   levelText: {
     fontSize: 12,
     color: '#fff',
-    textTransform: 'capitalize'
+    textTransform: 'capitalize',
   },
   description: {
     fontSize: 14,
     color: '#666',
-    marginBottom: 12
+    marginBottom: 12,
   },
   progressContainer: {
-    marginBottom: 12
+    marginBottom: 12,
   },
   progressText: {
     fontSize: 12,
     color: '#666',
     textAlign: 'right',
-    marginTop: 4
+    marginTop: 4,
   },
   rewardsContainer: {
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: '#eee',
-    paddingTop: 12
+    paddingTop: 12,
   },
   rewardItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8
+    marginBottom: 8,
   },
   rewardIcon: {
     width: 20,
     height: 20,
-    marginRight: 8
+    marginRight: 8,
   },
   rewardValue: {
     fontSize: 14,
-    color: '#F57C00'
+    color: '#F57C00',
   },
   achievedDate: {
     fontSize: 12,
     color: '#999',
-    textAlign: 'right'
+    textAlign: 'right',
   },
   separator: {
-    height: 15
-  }
-}); 
+    height: 15,
+  },
+});

@@ -1,5 +1,5 @@
-import { CacheOptions } from '../types/cache';
 import { AIOptimizationConfig } from '../types/ai';
+import { CacheOptions } from '../types/cache';
 import { EdgeComputingConfig } from '../types/edge';
 
 export const cacheConfig: CacheOptions = {
@@ -7,19 +7,19 @@ export const cacheConfig: CacheOptions = {
   local: {
     enabled: true,
     maxSize: 100 * 1024 * 1024, // 100MB
-    ttl: 24 * 60 * 60 * 1000,   // 24小时
+    ttl: 24 * 60 * 60 * 1000, // 24小时
   },
   memory: {
     enabled: true,
     maxItems: 10000,
-    ttl: 30 * 60 * 1000,        // 30分钟
+    ttl: 30 * 60 * 1000, // 30分钟
   },
   redis: {
     enabled: true,
     maxMemory: '2gb',
     evictionPolicy: 'allkeys-lru',
     keyPrefix: 'health:',
-  }
+  },
 };
 
 export const aiOptimizationConfig: AIOptimizationConfig = {
@@ -38,7 +38,7 @@ export const aiOptimizationConfig: AIOptimizationConfig = {
     enabled: true,
     strategy: 'lru',
     maxSize: 1024 * 1024 * 1024, // 1GB
-  }
+  },
 };
 
 export const edgeComputingConfig: EdgeComputingConfig = {
@@ -46,15 +46,15 @@ export const edgeComputingConfig: EdgeComputingConfig = {
   enabled: true,
   dataProcessing: {
     localProcessing: ['imagePreprocessing', 'dataValidation', 'basicAnalytics'],
-    cloudProcessing: ['deepLearning', 'complexAnalytics']
+    cloudProcessing: ['deepLearning', 'complexAnalytics'],
   },
   sync: {
     strategy: 'incremental',
     interval: 5 * 60 * 1000, // 5分钟
-    retryAttempts: 3
+    retryAttempts: 3,
   },
   storage: {
     maxLocalSize: 500 * 1024 * 1024, // 500MB
-    priorityData: ['healthMetrics', 'activityLogs']
-  }
-}; 
+    priorityData: ['healthMetrics', 'activityLogs'],
+  },
+};

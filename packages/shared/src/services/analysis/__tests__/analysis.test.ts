@@ -1,5 +1,5 @@
-import { analysisService } from '../index';
 import { IHealthData, HealthDataType } from '../../../types';
+import { analysisService } from '../index';
 
 describe('AnalysisService', () => {
   // 测试数据
@@ -9,22 +9,22 @@ describe('AnalysisService', () => {
       type: HealthDataType.BLOOD_PRESSURE,
       value: 120,
       timestamp: new Date('2023-01-01'),
-      userId: 'user1'
+      userId: 'user1',
     },
     {
       id: '2',
       type: HealthDataType.BLOOD_PRESSURE,
       value: 140,
       timestamp: new Date('2023-01-02'),
-      userId: 'user1'
+      userId: 'user1',
     },
     {
       id: '3',
       type: HealthDataType.BLOOD_PRESSURE,
       value: 160,
       timestamp: new Date('2023-01-03'),
-      userId: 'user1'
-    }
+      userId: 'user1',
+    },
   ];
 
   describe('calculateStats', () => {
@@ -49,7 +49,7 @@ describe('AnalysisService', () => {
         std: 0,
         median: 0,
         abnormalCount: 0,
-        total: 0
+        total: 0,
       });
     });
   });
@@ -100,8 +100,8 @@ describe('AnalysisService', () => {
           type: HealthDataType.HEART_RATE,
           value: 100,
           timestamp: new Date('2023-01-04'),
-          userId: 'user1'
-        }
+          userId: 'user1',
+        },
       ];
 
       const result = analysisService.assess(mixedData);
@@ -128,8 +128,8 @@ describe('AnalysisService', () => {
           type: HealthDataType.BLOOD_PRESSURE,
           value: 200, // 极高值
           timestamp: new Date('2023-01-05'),
-          userId: 'user1'
-        }
+          userId: 'user1',
+        },
       ];
 
       const stats = analysisService.calculateStats(dataWithExtreme);
@@ -146,8 +146,8 @@ describe('AnalysisService', () => {
           type: 'INVALID_TYPE' as HealthDataType,
           value: 100,
           timestamp: new Date('2023-01-06'),
-          userId: 'user1'
-        }
+          userId: 'user1',
+        },
       ];
 
       const result = analysisService.assess(invalidData);
@@ -156,4 +156,4 @@ describe('AnalysisService', () => {
       expect(result.abnormalMetrics).toHaveLength(0);
     });
   });
-}); 
+});

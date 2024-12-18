@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 user-experience.service.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export class UserExperienceService {
   private readonly interactionManager: InteractionManager;
   private readonly feedbackCollector: FeedbackCollector;
@@ -13,10 +20,10 @@ export class UserExperienceService {
     try {
       // 分析交互模式
       const patterns = await this.analyzeInteractionPatterns(userId);
-      
+
       // 优化手势响应
       const gestureOptimization = await this.optimizeGestureResponse(patterns);
-      
+
       // 自适应界面调整
       const adaptiveUI = await this.generateAdaptiveUI(patterns);
 
@@ -24,7 +31,7 @@ export class UserExperienceService {
         patterns,
         gestureOptimization,
         adaptiveUI,
-        metrics: await this.measureInteractionMetrics(userId)
+        metrics: await this.measureInteractionMetrics(userId),
       };
     } catch (error) {
       this.logger.error('交互体验优化失败', error);
@@ -37,10 +44,10 @@ export class UserExperienceService {
     try {
       // 用户偏好学习
       const preferences = await this.learnUserPreferences(userId);
-      
+
       // 内容个性化
       const contentPersonalization = await this.personalizeContent(preferences);
-      
+
       // 界面定制化
       const uiCustomization = await this.customizeUI(preferences);
 
@@ -48,11 +55,11 @@ export class UserExperienceService {
         preferences,
         contentPersonalization,
         uiCustomization,
-        effectiveness: await this.measurePersonalizationEffectiveness(userId)
+        effectiveness: await this.measurePersonalizationEffectiveness(userId),
       };
     } catch (error) {
       this.logger.error('个性化增强失败', error);
       throw error;
     }
   }
-} 
+}

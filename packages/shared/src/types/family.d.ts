@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 family.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 declare namespace Family {
   interface DiseaseHistory {
     memberId: string;
@@ -26,4 +33,4 @@ declare namespace Family {
     status: 'pending' | 'completed' | 'overdue';
     priority: number;
   }
-} 
+}

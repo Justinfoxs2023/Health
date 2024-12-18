@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 index.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export const config = {
   app: {
     port: process.env.PORT || 3000,
@@ -25,4 +32,4 @@ export const config = {
     codeTTL: 300, // 5分钟
     maxAttempts: 3,
   },
-}; 
+};

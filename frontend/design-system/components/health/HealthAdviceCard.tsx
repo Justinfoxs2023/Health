@@ -1,24 +1,31 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+
 import { CustomIcon } from '../../icons';
 import { DesignTokens } from '../../tokens';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 
-interface HealthAdviceCardProps {
+interface IHealthAdviceCardProps {
+  /** title 的描述 */
   title: string;
+  /** description 的描述 */
   description: string;
+  /** type 的描述 */
   type: 'diet' | 'exercise' | 'lifestyle' | 'medical';
+  /** priority 的描述 */
   priority: 'high' | 'medium' | 'low';
+  /** imageUrl 的描述 */
   imageUrl?: string;
+  /** onPress 的描述 */
   onPress?: () => void;
 }
 
-export const HealthAdviceCard: React.FC<HealthAdviceCardProps> = ({
+export const HealthAdviceCard: React.FC<IHealthAdviceCardProps> = ({
   title,
   description,
   type,
   priority,
   imageUrl,
-  onPress
+  onPress,
 }) => {
   const getTypeIcon = () => {
     switch (type) {
@@ -45,18 +52,10 @@ export const HealthAdviceCard: React.FC<HealthAdviceCardProps> = ({
   };
 
   return (
-    <TouchableOpacity 
-      style={styles.container}
-      onPress={onPress}
-      activeOpacity={0.7}
-    >
+    <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.7}>
       <View style={styles.header}>
         <View style={styles.typeContainer}>
-          <CustomIcon 
-            name={getTypeIcon()} 
-            size={20} 
-            color={DesignTokens.colors.brand.primary} 
-          />
+          <CustomIcon name={getTypeIcon()} size={20} color={DesignTokens.colors.brand.primary} />
           <Text style={styles.type}>{type.toUpperCase()}</Text>
         </View>
         <View style={[styles.priorityBadge, { backgroundColor: getPriorityColor() }]}>
@@ -64,13 +63,7 @@ export const HealthAdviceCard: React.FC<HealthAdviceCardProps> = ({
         </View>
       </View>
 
-      {imageUrl && (
-        <Image 
-          source={{ uri: imageUrl }}
-          style={styles.image}
-          resizeMode="cover"
-        />
-      )}
+      {imageUrl && <Image source={{ uri: imageUrl }} style={styles.image} resizeMode="cover" />}
 
       <View style={styles.content}>
         <Text style={styles.title}>{title}</Text>
@@ -79,11 +72,7 @@ export const HealthAdviceCard: React.FC<HealthAdviceCardProps> = ({
 
       <TouchableOpacity style={styles.actionButton}>
         <Text style={styles.actionButtonText}>了解更多</Text>
-        <CustomIcon 
-          name="arrow-forward" 
-          size={16} 
-          color={DesignTokens.colors.brand.primary} 
-        />
+        <CustomIcon name="arrow-forward" size={16} color={DesignTokens.colors.brand.primary} />
       </TouchableOpacity>
     </TouchableOpacity>
   );
@@ -94,49 +83,49 @@ const styles = StyleSheet.create({
     backgroundColor: DesignTokens.colors.background.paper,
     borderRadius: DesignTokens.radius.lg,
     overflow: 'hidden',
-    ...DesignTokens.shadows.md
+    ...DesignTokens.shadows.md,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: DesignTokens.spacing.md
+    padding: DesignTokens.spacing.md,
   },
   typeContainer: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   type: {
     marginLeft: DesignTokens.spacing.sm,
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.text.secondary
+    color: DesignTokens.colors.text.secondary,
   },
   priorityBadge: {
     paddingHorizontal: DesignTokens.spacing.sm,
     paddingVertical: DesignTokens.spacing.xs,
-    borderRadius: DesignTokens.radius.full
+    borderRadius: DesignTokens.radius.full,
   },
   priorityText: {
     fontSize: DesignTokens.typography.sizes.xs,
     color: DesignTokens.colors.neutral.white,
-    textTransform: 'uppercase'
+    textTransform: 'uppercase',
   },
   image: {
     width: '100%',
-    height: 150
+    height: 150,
   },
   content: {
-    padding: DesignTokens.spacing.lg
+    padding: DesignTokens.spacing.lg,
   },
   title: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: String(DesignTokens.typography.weights.semibold),
     color: DesignTokens.colors.text.primary,
-    marginBottom: DesignTokens.spacing.sm
+    marginBottom: DesignTokens.spacing.sm,
   },
   description: {
     fontSize: DesignTokens.typography.sizes.md,
-    color: DesignTokens.colors.text.secondary
+    color: DesignTokens.colors.text.secondary,
   },
   actionButton: {
     flexDirection: 'row',
@@ -144,12 +133,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: DesignTokens.spacing.md,
     borderTopWidth: 1,
-    borderTopColor: DesignTokens.colors.border
+    borderTopColor: DesignTokens.colors.border,
   },
   actionButtonText: {
     marginRight: DesignTokens.spacing.sm,
     fontSize: DesignTokens.typography.sizes.md,
     color: DesignTokens.colors.brand.primary,
-    fontWeight: String(DesignTokens.typography.weights.medium)
-  }
-}); 
+    fontWeight: String(DesignTokens.typography.weights.medium),
+  },
+});

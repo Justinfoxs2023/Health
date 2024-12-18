@@ -1,25 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  View, 
-  Animated, 
-  StyleSheet, 
-  Dimensions,
-  TouchableOpacity 
-} from 'react-native';
-import { 
-  Surface,
-  Text,
-  IconButton,
-  Searchbar,
-  Chip 
-} from 'react-native-paper';
-import { useTheme } from '@/hooks/useTheme';
-import { useLayout } from '@/hooks/useLayout';
-import { QuickToolBar } from '@/components/QuickToolBar';
-import { ToolGrid } from '@/components/ToolGrid';
+
+import { Surface, Text, IconButton, Searchbar, Chip } from 'react-native-paper';
+import { View, Animated, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
+
 import { CategoryTabs } from '@/components/CategoryTabs';
+import { QuickToolBar } from '@/components/QuickToolBar';
 import { SearchSuggestions } from '@/components/SearchSuggestions';
+import { ToolGrid } from '@/components/ToolGrid';
 import { VoiceSearch } from '@/components/VoiceSearch';
+import { useLayout } from '@/hooks/useLayout';
+import { useTheme } from '@/hooks/useTheme';
 
 export const EnhancedToolsScreen = () => {
   const theme = useTheme();
@@ -68,21 +58,19 @@ export const EnhancedToolsScreen = () => {
           value={searchQuery}
           onChangeText={setSearchQuery}
           style={styles.searchBar}
-          right={() => (
-            <VoiceSearch onResult={setSearchQuery} />
-          )}
+          right={() => <VoiceSearch onResult={setSearchQuery} />}
         />
-        <SearchSuggestions 
+        <SearchSuggestions
           query={searchQuery}
           visible={searchQuery.length > 0}
-          onSelect={(tool) => navigateToTool(tool)}
+          onSelect={tool => navigateToTool(tool)}
         />
       </Animated.View>
 
       {/* 快捷工具栏 */}
       <QuickToolBar
         tools={quickTools}
-        onToolPress={(tool) => navigateToTool(tool)}
+        onToolPress={tool => navigateToTool(tool)}
         onReorder={handleReorder}
         style={styles.quickTools}
       />
@@ -99,16 +87,13 @@ export const EnhancedToolsScreen = () => {
         <ToolGrid
           category={selectedCategory}
           layout={layout.mainContent}
-          onToolPress={(tool) => navigateToTool(tool)}
-          onLongPress={(tool) => handleToolLongPress(tool)}
+          onToolPress={tool => navigateToTool(tool)}
+          onLongPress={tool => handleToolLongPress(tool)}
         />
       </Animated.View>
 
       {/* 快捷操作按钮 */}
-      <TouchableOpacity 
-        style={styles.fab}
-        onPress={toggleSearch}
-      >
+      <TouchableOpacity style={styles.fab} onPress={toggleSearch}>
         <IconButton
           icon={searchVisible ? 'close' : 'magnify'}
           size={24}
@@ -159,4 +144,4 @@ const styles = StyleSheet.create({
     elevation: 4,
     zIndex: 99,
   },
-}); 
+});

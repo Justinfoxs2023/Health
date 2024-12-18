@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 ai-settings.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 declare namespace AI {
   // AI模型配置
   interface ModelConfig {
@@ -29,8 +36,8 @@ declare namespace AI {
     codeReview: {
       enabled: boolean;
       maxFileSize: number;
-      excludedFiles: string[];
-      priorityRules: string[];
+      excludedFiles: string;
+      priorityRules: string;
     };
     testGeneration: {
       enabled: boolean;
@@ -56,4 +63,4 @@ declare namespace AI {
     service: ServiceConfig;
     features: FeatureConfig;
   }
-} 
+}

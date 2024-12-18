@@ -1,6 +1,6 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { PerformanceMonitor } from '../performance-monitor';
 import * as prometheus from 'prom-client';
+import { PerformanceMonitor } from '../performance-monitor';
+import { Test, TestingModule } from '@nestjs/testing';
 
 describe('PerformanceMonitor', () => {
   let monitor: PerformanceMonitor;
@@ -11,7 +11,7 @@ describe('PerformanceMonitor', () => {
     }).compile();
 
     monitor = module.get<PerformanceMonitor>(PerformanceMonitor);
-    
+
     // 清除所有已注册的指标
     prometheus.register.clear();
   });
@@ -19,7 +19,7 @@ describe('PerformanceMonitor', () => {
   describe('recordTrainingDuration', () => {
     it('应该记录模型训练时间', async () => {
       monitor.recordTrainingDuration('vital-signs', 120);
-      
+
       const metrics = await monitor.getMetrics();
       expect(metrics).toContain('model_training_duration_seconds');
       expect(metrics).toContain('vital-signs');
@@ -33,7 +33,7 @@ describe('PerformanceMonitor', () => {
         accuracy: 0.85,
         precision: 0.83,
         recall: 0.87,
-        f1Score: 0.85
+        f1Score: 0.85,
       });
 
       const metrics = await monitor.getMetrics();
@@ -88,7 +88,7 @@ describe('PerformanceMonitor', () => {
     class TestClass {
       @PerformanceMonitor.Monitor({
         type: 'training',
-        modelType: 'test-model'
+        modelType: 'test-model',
       })
       async testTraining(): Promise<void> {
         await new Promise(resolve => setTimeout(resolve, 100));
@@ -96,7 +96,7 @@ describe('PerformanceMonitor', () => {
 
       @PerformanceMonitor.Monitor({
         type: 'prediction',
-        modelType: 'test-model'
+        modelType: 'test-model',
       })
       async testPrediction(): Promise<void> {
         await new Promise(resolve => setTimeout(resolve, 50));
@@ -104,7 +104,7 @@ describe('PerformanceMonitor', () => {
 
       @PerformanceMonitor.Monitor({
         type: 'data_processing',
-        operationType: 'validation'
+        operationType: 'validation',
       })
       async testDataProcessing(): Promise<void> {
         await new Promise(resolve => setTimeout(resolve, 30));
@@ -112,7 +112,7 @@ describe('PerformanceMonitor', () => {
 
       @PerformanceMonitor.Monitor({
         type: 'data_processing',
-        operationType: 'validation'
+        operationType: 'validation',
       })
       async testError(): Promise<void> {
         throw new Error('TEST_ERROR');
@@ -183,4 +183,4 @@ describe('PerformanceMonitor', () => {
       expect(metrics).toContain('system');
     });
   });
-}); 
+});

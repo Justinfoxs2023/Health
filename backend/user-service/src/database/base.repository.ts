@@ -1,6 +1,6 @@
-import { Model, Document, FilterQuery, UpdateQuery } from 'mongoose';
-import { Logger } from '../utils/logger';
 import { AppError } from '../utils/errors';
+import { Logger } from '../utils/logger';
+import { Model, Document, FilterQuery, UpdateQuery } from 'mongoose';
 
 export abstract class BaseRepository<T extends Document> {
   protected model: Model<T>;
@@ -57,11 +57,14 @@ export abstract class BaseRepository<T extends Document> {
     }
   }
 
-  async find(conditions: FilterQuery<T>, options?: {
-    skip?: number;
-    limit?: number;
-    sort?: any;
-  }): Promise<T[]> {
+  async find(
+    conditions: FilterQuery<T>,
+    options?: {
+      skip?: number;
+      limit?: number;
+      sort?: any;
+    },
+  ): Promise<T[]> {
     try {
       let query = this.model.find(conditions);
 
@@ -81,4 +84,4 @@ export abstract class BaseRepository<T extends Document> {
       throw new AppError('查询数据失败', 500);
     }
   }
-} 
+}

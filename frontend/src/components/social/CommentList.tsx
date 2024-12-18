@@ -1,24 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { List, Comment, Avatar, Tooltip, message } from 'antd';
-import { LikeOutlined, LikeFilled } from '@ant-design/icons';
-import { useTranslation } from 'react-i18next';
-import { formatDistance } from 'date-fns';
-import { zhCN } from 'date-fns/locale';
-import { CommentForm } from './CommentForm';
-import { PostService } from '@/services/PostService';
-import { Comment as CommentType } from '@/types/community';
 
-interface CommentListProps {
+import { CommentForm } from './CommentForm';
+import { LikeOutlined, LikeFilled } from '@ant-design/icons';
+import { List, Comment, Avatar, Tooltip, message } from 'antd';
+import { formatDistance } from 'date-fns';
+import { useTranslation } from 'react-i18next';
+import { zhCN } from 'date-fns/locale';
+
+import { Comment as CommentType } from '@/types/community';
+import { PostService } from '@/services/PostService';
+
+interface ICommentListProps {
+  /** postId 的描述 */
   postId: string;
+  /** comments 的描述 */
   comments: CommentType[];
+  /** onCommentAdded 的描述 */
   onCommentAdded?: () => void;
 }
 
-export const CommentList: React.FC<CommentListProps> = ({
-  postId,
-  comments,
-  onCommentAdded
-}) => {
+export const CommentList: React.FC<ICommentListProps> = ({ postId, comments, onCommentAdded }) => {
   const { t } = useTranslation();
   const [replyTo, setReplyTo] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -34,12 +35,12 @@ export const CommentList: React.FC<CommentListProps> = ({
 
   const handleReply = async (content: string) => {
     if (!replyTo) return;
-    
+
     try {
       setLoading(true);
       await PostService.createComment(postId, {
         content,
-        parent_id: replyTo
+        parent_id: replyTo,
       });
       setReplyTo(null);
       onCommentAdded?.();
@@ -58,12 +59,9 @@ export const CommentList: React.FC<CommentListProps> = ({
         <span className="comment-action">{comment.metrics.likes}</span>
       </span>
     </Tooltip>,
-    <span
-      key="reply"
-      onClick={() => setReplyTo(comment.id)}
-    >
+    <span key="reply" onClick={() => setReplyTo(comment.id)}>
       {t('comments.reply')}
-    </span>
+    </span>,
   ];
 
   return (
@@ -82,7 +80,7 @@ export const CommentList: React.FC<CommentListProps> = ({
               <span>
                 {formatDistance(new Date(comment.created_at), new Date(), {
                   locale: zhCN,
-                  addSuffix: true
+                  addSuffix: true,
                 })}
               </span>
             </Tooltip>
@@ -100,7 +98,7 @@ export const CommentList: React.FC<CommentListProps> = ({
                   <span>
                     {formatDistance(new Date(reply.created_at), new Date(), {
                       locale: zhCN,
-                      addSuffix: true
+                      addSuffix: true,
                     })}
                   </span>
                 </Tooltip>
@@ -112,7 +110,7 @@ export const CommentList: React.FC<CommentListProps> = ({
               onSubmit={handleReply}
               onCancel={() => setReplyTo(null)}
               placeholder={t('comments.replyPlaceholder', {
-                username: comment.author.username
+                username: comment.author.username,
               })}
             />
           )}
@@ -120,4 +118,4 @@ export const CommentList: React.FC<CommentListProps> = ({
       )}
     />
   );
-}; 
+};

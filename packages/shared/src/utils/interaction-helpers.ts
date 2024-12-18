@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 interaction-helpers.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // 交互助手函数
 export const interactionHelpers = {
   // 防抖函数
@@ -30,5 +37,5 @@ export const interactionHelpers = {
       }
       return responseTime;
     };
-  }
-}; 
+  },
+};

@@ -1,40 +1,52 @@
 import React from 'react';
-import { View, FlatList, StyleSheet, Text, TouchableOpacity, Image } from 'react-native';
-import { useQuery } from '@tanstack/react-query';
-import { getPosts } from '../../api/community';
-import { LoadingSpinner, Icon } from '../../components';
 
-interface Post {
+import { LoadingSpinner, Icon } from '../../components';
+import { View, FlatList, StyleSheet, Text, TouchableOpacity, Image } from 'react-native';
+import { getPosts } from '../../api/community';
+import { useQuery } from '@tanstack/react-query';
+
+interface IPost {
+  /** id 的描述 */
   id: string;
+  /** userId 的描述 */
   userId: string;
+  /** userName 的描述 */
   userName: string;
+  /** userAvatar 的描述 */
   userAvatar: string;
+  /** content 的描述 */
   content: string;
+  /** images 的描述 */
   images?: string[];
+  /** likes 的描述 */
   likes: number;
+  /** comments 的描述 */
   comments: number;
+  /** tags 的描述 */
   tags: string[];
+  /** createdAt 的描述 */
   createdAt: string;
+  /** type 的描述 */
   type: 'experience' | 'question' | 'challenge';
 }
 
 export const CommunityScreen = ({ navigation }) => {
-  const { data: posts, isLoading } = useQuery<Post[]>('communityPosts', getPosts);
-  const [selectedTab, setSelectedTab] = React.useState<'all' | 'experience' | 'question' | 'challenge'>('all');
+  const { data: posts, isLoading } = useQuery<IPost[]>('communityPosts', getPosts);
+  const [selectedTab, setSelectedTab] = React.useState<
+    'all' | 'experience' | 'question' | 'challenge'
+  >('all');
 
   const tabs = [
     { key: 'all', label: '全部' },
     { key: 'experience', label: '经验分享' },
     { key: 'question', label: '健康问答' },
-    { key: 'challenge', label: '团队挑战' }
+    { key: 'challenge', label: '团队挑战' },
   ];
 
-  const filteredPosts = posts?.filter(post => 
-    selectedTab === 'all' || post.type === selectedTab
-  );
+  const filteredPosts = posts?.filter(post => selectedTab === 'all' || post.type === selectedTab);
 
-  const renderPost = ({ item: post }: { item: Post }) => (
-    <TouchableOpacity 
+  const renderPost = ({ item: post }: { item: IPost }) => (
+    <TouchableOpacity
       style={styles.postCard}
       onPress={() => navigation.navigate('PostDetail', { id: post.id })}
     >
@@ -43,9 +55,7 @@ export const CommunityScreen = ({ navigation }) => {
           <Image source={{ uri: post.userAvatar }} style={styles.avatar} />
           <View>
             <Text style={styles.userName}>{post.userName}</Text>
-            <Text style={styles.postTime}>
-              {new Date(post.createdAt).toLocaleDateString()}
-            </Text>
+            <Text style={styles.postTime}>{new Date(post.createdAt).toLocaleDateString()}</Text>
           </View>
         </View>
         {post.type === 'experience' && (
@@ -65,7 +75,9 @@ export const CommunityScreen = ({ navigation }) => {
         )}
       </View>
 
-      <Text style={styles.content} numberOfLines={3}>{post.content}</Text>
+      <Text style={styles.content} numberOfLines={3}>
+        {post.content}
+      </Text>
 
       {post.images && post.images.length > 0 && (
         <View style={styles.imageGrid}>
@@ -98,7 +110,7 @@ export const CommunityScreen = ({ navigation }) => {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>健康社区</Text>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.postButton}
           onPress={() => navigation.navigate('CreatePost')}
         >
@@ -114,10 +126,9 @@ export const CommunityScreen = ({ navigation }) => {
             style={[styles.tab, selectedTab === tab.key && styles.activeTab]}
             onPress={() => setSelectedTab(tab.key as any)}
           >
-            <Text style={[
-              styles.tabText,
-              selectedTab === tab.key && styles.activeTabText
-            ]}>{tab.label}</Text>
+            <Text style={[styles.tabText, selectedTab === tab.key && styles.activeTabText]}>
+              {tab.label}
+            </Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -136,19 +147,19 @@ export const CommunityScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 15,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#333'
+    color: '#333',
   },
   postButton: {
     flexDirection: 'row',
@@ -156,12 +167,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#2E7D32',
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 20
+    borderRadius: 20,
   },
   postButtonText: {
     color: '#fff',
     fontSize: 14,
-    marginLeft: 4
+    marginLeft: 4,
   },
   tabBar: {
     flexDirection: 'row',
@@ -169,110 +180,110 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 10,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#f0f0f0'
+    borderBottomColor: '#f0f0f0',
   },
   tab: {
     flex: 1,
     paddingVertical: 8,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   activeTab: {
     borderBottomWidth: 2,
-    borderBottomColor: '#2E7D32'
+    borderBottomColor: '#2E7D32',
   },
   tabText: {
     fontSize: 14,
-    color: '#666'
+    color: '#666',
   },
   activeTabText: {
     color: '#2E7D32',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   list: {
-    padding: 15
+    padding: 15,
   },
   postCard: {
     backgroundColor: '#fff',
     borderRadius: 12,
-    padding: 15
+    padding: 15,
   },
   postHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10
+    marginBottom: 10,
   },
   userInfo: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   avatar: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    marginRight: 10
+    marginRight: 10,
   },
   userName: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333'
+    color: '#333',
   },
   postTime: {
     fontSize: 12,
     color: '#999',
-    marginTop: 2
+    marginTop: 2,
   },
   tag: {
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 12
+    borderRadius: 12,
   },
   experienceTag: {
-    backgroundColor: '#E8F5E9'
+    backgroundColor: '#E8F5E9',
   },
   questionTag: {
-    backgroundColor: '#E3F2FD'
+    backgroundColor: '#E3F2FD',
   },
   challengeTag: {
-    backgroundColor: '#FFF3E0'
+    backgroundColor: '#FFF3E0',
   },
   tagText: {
     fontSize: 12,
-    color: '#2E7D32'
+    color: '#2E7D32',
   },
   content: {
     fontSize: 14,
     color: '#333',
     lineHeight: 20,
-    marginBottom: 10
+    marginBottom: 10,
   },
   imageGrid: {
     flexDirection: 'row',
-    marginBottom: 10
+    marginBottom: 10,
   },
   postImage: {
     width: 100,
     height: 100,
     borderRadius: 8,
-    marginRight: 8
+    marginRight: 8,
   },
   postFooter: {
     flexDirection: 'row',
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: '#f0f0f0',
-    paddingTop: 10
+    paddingTop: 10,
   },
   footerItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginRight: 20
+    marginRight: 20,
   },
   footerText: {
     fontSize: 14,
     color: '#666',
-    marginLeft: 4
+    marginLeft: 4,
   },
   separator: {
-    height: 10
-  }
-}); 
+    height: 10,
+  },
+});

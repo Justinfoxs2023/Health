@@ -1,21 +1,23 @@
-import { Injectable } from '@nestjs/common';
-import { HealthBaseService } from '../health/base/health-base.service';
-import { StorageService } from '../storage/storage.service';
 import { AIService } from '../ai/ai.service';
 import { ExerciseService } from '../exercise/exercise.service';
-import { NutritionService } from '../nutrition/nutrition.service';
-import { MedicationService } from '../medication/medication.service';
+import { HealthBaseService } from '../health/base/health-base.service';
+import { Injectable } from '@nestjs/common';
 import { IntelligentAlertService } from '../alert/intelligent-alert.service';
+import { MedicationService } from '../medication/medication.service';
+import { NutritionService } from '../nutrition/nutrition.service';
+import { StorageService } from '../storage/storage.service';
 
 // 健康数据分析结果
-export interface HealthAnalytics extends BaseHealthData {
+export interface IHealthAnalytics extends BaseHealthData {
+  /** overview 的描述 */
   overview: {
     healthScore: number;
     riskLevel: 'low' | 'moderate' | 'high';
     trends: TrendAnalysis[];
     alerts: HealthAlert[];
   };
-  
+
+  /** correlations 的描述 */
   correlations: {
     exercise: ExerciseCorrelation[];
     nutrition: NutritionCorrelation[];
@@ -23,12 +25,14 @@ export interface HealthAnalytics extends BaseHealthData {
     lifestyle: LifestyleCorrelation[];
   };
 
+  /** predictions 的描述 */
   predictions: {
     shortTerm: HealthPrediction[];
     longTerm: HealthPrediction[];
     risks: RiskPrediction[];
   };
 
+  /** recommendations 的描述 */
   recommendations: {
     immediate: ActionRecommendation[];
     lifestyle: LifestyleRecommendation[];
@@ -44,27 +48,22 @@ export class HealthAnalyticsService extends HealthBaseService {
     private readonly exercise: ExerciseService,
     private readonly nutrition: NutritionService,
     private readonly medication: MedicationService,
-    private readonly alert: IntelligentAlertService
+    private readonly alert: IntelligentAlertService,
   ) {
     super(storage, ai);
   }
 
   // 综合健康分析
-  async analyzeHealthData(userId: string): Promise<HealthAnalytics> {
+  async analyzeHealthData(userId: string): Promise<IHealthAnalytics> {
     // 1. 收集数据
-    const [
-      exerciseData,
-      nutritionData,
-      medicationData,
-      vitalSigns,
-      lifestyleData
-    ] = await Promise.all([
-      this.exercise.getUserData(userId),
-      this.nutrition.getUserData(userId),
-      this.medication.getUserData(userId),
-      this.getVitalSigns(userId),
-      this.getLifestyleData(userId)
-    ]);
+    const [exerciseData, nutritionData, medicationData, vitalSigns, lifestyleData] =
+      await Promise.all([
+        this.exercise.getUserData(userId),
+        this.nutrition.getUserData(userId),
+        this.medication.getUserData(userId),
+        this.getVitalSigns(userId),
+        this.getLifestyleData(userId),
+      ]);
 
     // 2. AI分析
     const analysis = await this.ai.analyzeHealthData({
@@ -72,7 +71,7 @@ export class HealthAnalyticsService extends HealthBaseService {
       nutrition: nutritionData,
       medication: medicationData,
       vitalSigns,
-      lifestyle: lifestyleData
+      lifestyle: lifestyleData,
     });
 
     // 3. 生成预警
@@ -84,7 +83,7 @@ export class HealthAnalyticsService extends HealthBaseService {
     return {
       ...analysis,
       alerts,
-      recommendations
+      recommendations,
     };
   }
 
@@ -103,7 +102,7 @@ export class HealthAnalyticsService extends HealthBaseService {
     return {
       correlations: validatedCorrelations,
       insights: await this.generateInsights(validatedCorrelations),
-      recommendations: await this.generateCorrelationBasedRecommendations(validatedCorrelations)
+      recommendations: await this.generateCorrelationBasedRecommendations(validatedCorrelations),
     };
   }
 
@@ -122,7 +121,7 @@ export class HealthAnalyticsService extends HealthBaseService {
     return {
       predictions,
       risks,
-      preventiveActions: await this.generatePreventiveActions(risks)
+      preventiveActions: await this.generatePreventiveActions(risks),
     };
   }
 
@@ -141,7 +140,7 @@ export class HealthAnalyticsService extends HealthBaseService {
       currentLifestyle: lifestyleData,
       impact,
       improvements,
-      expectedBenefits: await this.calculateExpectedBenefits(improvements)
+      expectedBenefits: await this.calculateExpectedBenefits(improvements),
     };
   }
 
@@ -175,4 +174,4 @@ export class HealthAnalyticsService extends HealthBaseService {
     // 实现��期收益计算逻辑
     return [];
   }
-} 
+}

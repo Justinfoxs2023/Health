@@ -1,21 +1,21 @@
-import { injectable, inject } from 'inversify';
-import { TYPES } from '../../di/types';
-import { Logger, Metrics, AlertService } from '../../types';
 import { BaseService } from '../base/base.service';
-import { Request, Response } from '../../types/express';
+import { IRequest, IResponse } from '../../types/express';
+import { Logger, Metrics, AlertService } from '../../types';
+import { TYPES } from '../../di/types';
+import { injectable, inject } from 'inversify';
 
 @injectable()
 export class PerformanceMonitorService extends BaseService {
   constructor(
-    @inject(TYPES.Logger) logger: Logger,
-    @inject(TYPES.Metrics) metrics: Metrics,
-    @inject(TYPES.AlertService) alertService: AlertService,
-    private config: PerformanceConfig
+    @inject() logger: Logger,
+    @inject() metrics: Metrics,
+    @inject() alertService: AlertService,
+    private config: IPerformanceConfig,
   ) {
     super(logger, metrics, alertService);
   }
 
-  async monitorAPIPerformance(req: Request, res: Response, next: Function) {
+  async monitorAPIPerformance(req: IRequest, res: IResponse, next: Function) {
     const start = Date.now();
     const path = req.path;
 
@@ -30,7 +30,7 @@ export class PerformanceMonitorService extends BaseService {
   private async recordAPIMetrics(path: string, duration: number, statusCode: number) {
     await this.metrics.recordTiming('api.request.duration', duration, {
       path,
-      statusCode: String(statusCode)
+      statusCode: String(statusCode),
     });
   }
-} 
+}

@@ -1,11 +1,23 @@
 /**
+ * @fileoverview TS 文件 training-config.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
+/**
  * 基础训练配置接口
  */
-export interface BaseTrainingConfig {
+export interface IBaseTrainingConfig {
+  /** epochs 的描述 */
   epochs: number;
+  /** batchSize 的描述 */
   batchSize: number;
+  /** validationSplit 的描述 */
   validationSplit: number;
+  /** learningRate 的描述 */
   learningRate: number;
+  /** modelArchitecture 的描述 */
   modelArchitecture: {
     hiddenLayers: number[];
     dropout: number;
@@ -15,29 +27,29 @@ export interface BaseTrainingConfig {
 /**
  * 生命体征模型配置
  */
-export const vitalSignsConfig: BaseTrainingConfig = {
+export const vitalSignsConfig: IBaseTrainingConfig = {
   epochs: 100,
   batchSize: 32,
   validationSplit: 0.2,
   learningRate: 0.001,
   modelArchitecture: {
     hiddenLayers: [64, 32, 16],
-    dropout: 0.2
-  }
+    dropout: 0.2,
+  },
 };
 
 /**
  * 生活方式模型配置
  */
-export const lifestyleConfig: BaseTrainingConfig = {
+export const lifestyleConfig: IBaseTrainingConfig = {
   epochs: 100,
   batchSize: 32,
   validationSplit: 0.2,
   learningRate: 0.001,
   modelArchitecture: {
     hiddenLayers: [128, 64, 32],
-    dropout: 0.3
-  }
+    dropout: 0.3,
+  },
 };
 
 /**
@@ -55,28 +67,23 @@ export const dataProcessingConfig = {
       'physicalData.heartRate': { min: 40, max: 200 },
       'physicalData.bodyTemperature': { min: 35, max: 42 },
       'physicalData.bloodOxygen': { min: 80, max: 100 },
-      
+
       // 心理数据
       'mentalData.stressLevel': { min: 0, max: 10 },
       'mentalData.moodScore': { min: 0, max: 10 },
       'mentalData.sleepQuality': { min: 0, max: 10 },
-      
+
       // 营养数据
       'nutritionData.calorieIntake': { min: 1000, max: 3000 },
       'nutritionData.waterIntake': { min: 1000, max: 4000 },
-      
+
       // 生活方式数据
       'lifestyleData.sleepHours': { min: 4, max: 12 },
-      'lifestyleData.activityLevel': { min: 0, max: 10 }
-    }
+      'lifestyleData.activityLevel': { min: 0, max: 10 },
+    },
   },
   validation: {
-    requiredFields: [
-      'physicalData',
-      'mentalData',
-      'nutritionData',
-      'lifestyleData'
-    ]
+    requiredFields: ['physicalData', 'mentalData', 'nutritionData', 'lifestyleData'],
   },
   featureEngineering: {
     derivedFeatures: {
@@ -85,53 +92,55 @@ export const dataProcessingConfig = {
         return data.physicalData.weight / (height * height);
       },
       pulseRate: (data: any) => {
-        return data.physicalData.heartRate * data.physicalData.bloodOxygen / 100;
+        return (data.physicalData.heartRate * data.physicalData.bloodOxygen) / 100;
       },
       stressIndex: (data: any) => {
-        return (data.mentalData.stressLevel * 10 + 
-                (10 - data.mentalData.moodScore) * 5 + 
-                (10 - data.mentalData.sleepQuality) * 3) / 18;
+        return (
+          (data.mentalData.stressLevel * 10 +
+            (10 - data.mentalData.moodScore) * 5 +
+            (10 - data.mentalData.sleepQuality) * 3) /
+          18
+        );
       },
       activityIndex: (data: any) => {
         const activities = data.lifestyleData.activities;
         if (!activities.length) return 0;
-        return activities.reduce((sum: number, act: any) => 
-          sum + act.duration * act.intensity, 0) / activities.length;
+        return (
+          activities.reduce((sum: number, act: any) => sum + act.duration * act.intensity, 0) /
+          activities.length
+        );
       },
       nutritionBalance: (data: any) => {
         const meals = data.nutritionData.meals;
         if (!meals.length) return 0;
-        const totalCalories = meals.reduce((sum: number, meal: any) => 
-          sum + meal.items.reduce((mealSum: number, item: any) => 
-            mealSum + item.calories, 0), 0);
+        const totalCalories = meals.reduce(
+          (sum: number, meal: any) =>
+            sum + meal.items.reduce((mealSum: number, item: any) => mealSum + item.calories, 0),
+          0,
+        );
         return Math.min(1, totalCalories / data.nutritionData.calorieIntake);
-      }
+      },
     },
     featureSelection: {
       method: 'correlation',
-      threshold: 0.3
-    }
-  }
+      threshold: 0.3,
+    },
+  },
 };
 
 /**
  * 模型评估配置
  */
 export const evaluationConfig = {
-  metrics: [
-    'accuracy',
-    'precision',
-    'recall',
-    'f1Score'
-  ],
+  metrics: ['accuracy', 'precision', 'recall', 'f1Score'],
   thresholds: {
     accuracy: 0.8,
-    loss: 0.2
+    loss: 0.2,
   },
   crossValidation: {
     folds: 5,
-    shuffle: true
-  }
+    shuffle: true,
+  },
 };
 
 /**
@@ -143,16 +152,12 @@ export const dataConfig = {
   seed: 42,
   augmentation: {
     enabled: true,
-    methods: [
-      'noise',
-      'scaling',
-      'rotation'
-    ],
-    noiseLevel: 0.05
+    methods: ['noise', 'scaling', 'rotation'],
+    noiseLevel: 0.05,
   },
   balancing: {
     enabled: true,
     method: 'smote',
-    targetRatio: 1.0
-  }
-}; 
+    targetRatio: 1.0,
+  },
+};

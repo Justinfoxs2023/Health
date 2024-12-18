@@ -1,41 +1,58 @@
 import * as tf from '@tensorflow/tfjs';
 import { EmotionRecognitionService } from './emotion-recognition.service';
-import { LocalDatabase } from '../utils/local-database';
+import { ILocalDatabase } from '../utils/local-database';
 
-interface EmotionalContext {
+interface IEmotionalContext {
+  /** situation 的描述 */
   situation: string;
+  /** environment 的描述 */
   environment: string;
+  /** socialFactors 的描述 */
   socialFactors: string[];
-  personalHistory: EmotionalHistory[];
+  /** personalHistory 的描述 */
+  personalHistory: IEmotionalHistory[];
 }
 
-interface EmotionalHistory {
+interface IEmotionalHistory {
+  /** emotion 的描述 */
   emotion: string;
+  /** intensity 的描述 */
   intensity: number;
+  /** timestamp 的描述 */
   timestamp: Date;
+  /** context 的描述 */
   context: string;
 }
 
-interface EmotionalInsight {
+interface IEmotionalInsight {
+  /** primaryEmotion 的描述 */
   primaryEmotion: string;
+  /** secondaryEmotions 的描述 */
   secondaryEmotions: string[];
+  /** triggers 的描述 */
   triggers: string[];
-  patterns: EmotionalPattern[];
+  /** patterns 的描述 */
+  patterns: IEmotionalPattern[];
+  /** suggestions 的描述 */
   suggestions: string[];
 }
 
-interface EmotionalPattern {
+interface IEmotionalPattern {
+  /** pattern 的描述 */
   pattern: string;
+  /** frequency 的描述 */
   frequency: number;
+  /** impact 的描述 */
   impact: number;
+  /** relatedEmotions 的描述 */
   relatedEmotions: string[];
 }
 
 export class DeepEmotionUnderstandingService {
-  private db: LocalDatabase;
+  private db: ILocalDatabase;
   private emotionService: EmotionRecognitionService;
   private model: tf.LayersModel | null = null;
-  private emotionalContexts: Map<string, EmotionalContext> = new Map();
+  private emotionalContexts: Map<string, IEmotionalContext> = new Map();
 
   constructor() {
     this.db = new LocalDatabase('deep-emotion');
@@ -52,7 +69,11 @@ export class DeepEmotionUnderstandingService {
     try {
       this.model = await tf.loadLayersModel('/models/deep-emotion/model.json');
     } catch (error) {
-      console.error('加载深度情感模型失败:', error);
+      console.error(
+        'Error in deep-emotion-understanding.service.ts:',
+        '加载深度情感模型失败:',
+        error,
+      );
     }
   }
 
@@ -63,7 +84,11 @@ export class DeepEmotionUnderstandingService {
         this.emotionalContexts = new Map(contexts);
       }
     } catch (error) {
-      console.error('加载情感上下文失败:', error);
+      console.error(
+        'Error in deep-emotion-understanding.service.ts:',
+        '加载情感上下文失败:',
+        error,
+      );
     }
   }
 
@@ -71,36 +96,32 @@ export class DeepEmotionUnderstandingService {
   async analyzeEmotion(
     userId: string,
     audioData: Float32Array,
-    context?: Partial<EmotionalContext>
-  ): Promise<EmotionalInsight> {
+    context?: Partial<IEmotionalContext>,
+  ): Promise<IEmotionalInsight> {
     try {
       // 基础情感识别
       const baseEmotion = await this.emotionService.recognizeEmotion(audioData);
-      
+
       // 加载用户情感上下文
       const userContext = await this.getUserEmotionalContext(userId);
-      
+
       // 深度特征提取
       const deepFeatures = await this.extractDeepFeatures(audioData, baseEmotion);
-      
+
       // 上下文整合
       const contextualizedFeatures = await this.contextualizeFeatures(
         deepFeatures,
         userContext,
-        context
+        context,
       );
-      
+
       // 情感模式分析
       const patterns = await this.analyzeEmotionalPatterns(userId, contextualizedFeatures);
-      
+
       // 生成洞察
-      return await this.generateEmotionalInsights(
-        baseEmotion,
-        contextualizedFeatures,
-        patterns
-      );
+      return await this.generateEmotionalInsights(baseEmotion, contextualizedFeatures, patterns);
     } catch (error) {
-      console.error('深度情感分析失败:', error);
+      console.error('Error in deep-emotion-understanding.service.ts:', '深度情感分析失败:', error);
       throw error;
     }
   }
@@ -108,21 +129,21 @@ export class DeepEmotionUnderstandingService {
   // 提取深度特征
   private async extractDeepFeatures(
     audioData: Float32Array,
-    baseEmotion: any
+    baseEmotion: any,
   ): Promise<Float32Array> {
     if (!this.model) throw new Error('模型未加载');
 
     const tensor = tf.tensor(audioData).expandDims(0);
-    const features = await this.model.predict(tensor) as tf.Tensor;
-    
+    const features = (await this.model.predict(tensor)) as tf.Tensor;
+
     return new Float32Array(await features.data());
   }
 
   // 上下文化特征
   private async contextualizeFeatures(
     features: Float32Array,
-    userContext: EmotionalContext,
-    currentContext?: Partial<EmotionalContext>
+    userContext: IEmotionalContext,
+    currentContext?: Partial<IEmotionalContext>,
   ): Promise<Float32Array> {
     // 实现特征上下文化
     return features;
@@ -131,8 +152,8 @@ export class DeepEmotionUnderstandingService {
   // 分析情感模式
   private async analyzeEmotionalPatterns(
     userId: string,
-    features: Float32Array
-  ): Promise<EmotionalPattern[]> {
+    features: Float32Array,
+  ): Promise<IEmotionalPattern[]> {
     // 实现情感模式分析
     return [];
   }
@@ -141,20 +162,20 @@ export class DeepEmotionUnderstandingService {
   private async generateEmotionalInsights(
     baseEmotion: any,
     contextualizedFeatures: Float32Array,
-    patterns: EmotionalPattern[]
-  ): Promise<EmotionalInsight> {
+    patterns: IEmotionalPattern[],
+  ): Promise<IEmotionalInsight> {
     // 实现情感洞察生成
     return {
       primaryEmotion: '',
       secondaryEmotions: [],
       triggers: [],
       patterns: [],
-      suggestions: []
+      suggestions: [],
     };
   }
 
   // 获取用户情感上下文
-  private async getUserEmotionalContext(userId: string): Promise<EmotionalContext> {
+  private async getUserEmotionalContext(userId: string): Promise<IEmotionalContext> {
     const context = this.emotionalContexts.get(userId);
     if (!context) {
       return this.createInitialContext();
@@ -163,24 +184,21 @@ export class DeepEmotionUnderstandingService {
   }
 
   // 创建初始上下文
-  private createInitialContext(): EmotionalContext {
+  private createInitialContext(): IEmotionalContext {
     return {
       situation: 'unknown',
       environment: 'unknown',
       socialFactors: [],
-      personalHistory: []
+      personalHistory: [],
     };
   }
 
   // 更新情感上下文
-  async updateEmotionalContext(
-    userId: string,
-    context: Partial<EmotionalContext>
-  ): Promise<void> {
+  async updateEmotionalContext(userId: string, context: Partial<IEmotionalContext>): Promise<void> {
     const currentContext = await this.getUserEmotionalContext(userId);
     const updatedContext = {
       ...currentContext,
-      ...context
+      ...context,
     };
 
     this.emotionalContexts.set(userId, updatedContext);
@@ -189,32 +207,24 @@ export class DeepEmotionUnderstandingService {
 
   // 保存情感上下文
   private async saveEmotionalContexts(): Promise<void> {
-    await this.db.put('emotional-contexts', 
-      Array.from(this.emotionalContexts.entries())
-    );
+    await this.db.put('emotional-contexts', Array.from(this.emotionalContexts.entries()));
   }
 
   // 获取情感历史
-  async getEmotionalHistory(userId: string): Promise<EmotionalHistory[]> {
+  async getEmotionalHistory(userId: string): Promise<IEmotionalHistory[]> {
     const context = await this.getUserEmotionalContext(userId);
     return context.personalHistory;
   }
 
   // 添加情感历史记录
-  async addEmotionalHistoryEntry(
-    userId: string,
-    entry: EmotionalHistory
-  ): Promise<void> {
+  async addEmotionalHistoryEntry(userId: string, entry: IEmotionalHistory): Promise<void> {
     const context = await this.getUserEmotionalContext(userId);
     context.personalHistory.push(entry);
     await this.updateEmotionalContext(userId, context);
   }
 
   // 生成情感建议
-  async generateEmotionalSuggestions(
-    userId: string,
-    emotion: string
-  ): Promise<string[]> {
+  async generateEmotionalSuggestions(userId: string, emotion: string): Promise<string[]> {
     // 实现情感建议生成
     return [];
   }
@@ -222,9 +232,9 @@ export class DeepEmotionUnderstandingService {
   // 分析情感趋势
   async analyzeEmotionalTrends(
     userId: string,
-    timeRange: { start: Date; end: Date }
+    timeRange: { start: Date; end: Date },
   ): Promise<any> {
     // 实现情感趋势分析
     return {};
   }
-} 
+}

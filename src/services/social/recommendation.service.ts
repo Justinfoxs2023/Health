@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 recommendation.service.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export class RecommendationService {
   private readonly healthDataService: HealthDataService;
   private readonly userProfileService: UserProfileService;
@@ -13,10 +20,10 @@ export class RecommendationService {
     try {
       // 获取用户健康数据
       const healthData = await this.healthDataService.getUserHealthData(userId);
-      
+
       // 获取用户画像
       const userProfile = await this.userProfileService.getUserProfile(userId);
-      
+
       // 获取历史行为数据
       const behaviorData = await this.getBehaviorData(userId);
 
@@ -25,7 +32,7 @@ export class RecommendationService {
         healthData,
         userProfile,
         behaviorData,
-        currentGoals: await this.getCurrentGoals(userId)
+        currentGoals: await this.getCurrentGoals(userId),
       });
     } catch (error) {
       this.logger.error('获取健康建议失败', error);
@@ -38,17 +45,17 @@ export class RecommendationService {
     try {
       // 获取用户社交偏好
       const socialPreferences = await this.getSocialPreferences(userId);
-      
+
       // 获取好友圈活动
       const friendActivities = await this.getFriendActivities(userId);
-      
+
       // 获取兴趣匹配活动
       const interestMatchedActivities = await this.getInterestMatchedActivities(userId);
 
-      return this.rankAndFilterActivities([
-        ...friendActivities,
-        ...interestMatchedActivities
-      ], socialPreferences);
+      return this.rankAndFilterActivities(
+        [...friendActivities, ...interestMatchedActivities],
+        socialPreferences,
+      );
     } catch (error) {
       this.logger.error('获取社交活动推荐失败', error);
       throw error;
@@ -60,13 +67,13 @@ export class RecommendationService {
     try {
       // 更新健康特征
       await this.updateHealthFeatures(userId, data.healthMetrics);
-      
+
       // 更新行为特征
       await this.updateBehaviorFeatures(userId, data.behaviors);
-      
+
       // 更新社交特征
       await this.updateSocialFeatures(userId, data.socialInteractions);
-      
+
       // 重新训练推荐模型
       await this.mlService.retrainUserModel(userId);
     } catch (error) {
@@ -74,4 +81,4 @@ export class RecommendationService {
       throw error;
     }
   }
-} 
+}

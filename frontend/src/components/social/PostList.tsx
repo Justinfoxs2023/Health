@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { List, Card, Avatar, Space, Tag, Button, message } from 'antd';
+
 import { LikeOutlined, MessageOutlined, StarOutlined } from '@ant-design/icons';
-import { useTranslation } from 'react-i18next';
+import { List, Card, Avatar, Space, Tag, Button, message } from 'antd';
 import { formatDistance } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 import { zhCN } from 'date-fns/locale';
-import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
-import { PostService } from '@/services/PostService';
+
 import { Post } from '@/types/community';
+import { PostService } from '@/services/PostService';
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 
 const PAGE_SIZE = 10;
 
@@ -22,9 +24,9 @@ export const PostList: React.FC = () => {
       const response = await PostService.getPosts({
         page,
         pageSize: PAGE_SIZE,
-        status: 'published'
+        status: 'published',
       });
-      
+
       const newPosts = response.data;
       setPosts(prev => [...prev, ...newPosts]);
       setHasMore(newPosts.length === PAGE_SIZE);
@@ -37,7 +39,7 @@ export const PostList: React.FC = () => {
 
   const { containerRef } = useInfiniteScroll(loadMorePosts, {
     threshold: 0.8,
-    hasMore
+    hasMore,
   });
 
   const handleLike = async (postId: string) => {
@@ -47,8 +49,8 @@ export const PostList: React.FC = () => {
         prev.map(post =>
           post.id === postId
             ? { ...post, metrics: { ...post.metrics, likes: post.metrics.likes + 1 } }
-            : post
-        )
+            : post,
+        ),
       );
     } catch (error) {
       message.error(t('posts.likeError'));
@@ -86,16 +88,10 @@ export const PostList: React.FC = () => {
               <Space onClick={() => handleFavorite(post.id)}>
                 <StarOutlined />
                 {post.metrics.favorites}
-              </Space>
+              </Space>,
             ]}
             extra={
-              post.media?.length > 0 && (
-                <img
-                  width={272}
-                  alt="post-image"
-                  src={post.media[0].url}
-                />
-              )
+              post.media?.length > 0 && <img width={272} alt="post-image" src={post.media[0].url} />
             }
           >
             <List.Item.Meta
@@ -114,7 +110,7 @@ export const PostList: React.FC = () => {
                   <span>
                     {formatDistance(new Date(post.created_at), new Date(), {
                       locale: zhCN,
-                      addSuffix: true
+                      addSuffix: true,
                     })}
                   </span>
                 </Space>
@@ -126,4 +122,4 @@ export const PostList: React.FC = () => {
       />
     </div>
   );
-}; 
+};

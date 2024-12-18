@@ -1,7 +1,20 @@
+/**
+ * @fileoverview TS 文件 validation.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 declare module 'class-validator' {
-  export function validate(object: object, validatorOptions?: ValidatorOptions): Promise<ValidationError[]>;
-  export function validateOrReject(object: object, validatorOptions?: ValidatorOptions): Promise<void>;
-  
+  export function validate(
+    object: object,
+    validatorOptions?: ValidatorOptions,
+  ): Promise<ValidationError[]>;
+  export function validateOrReject(
+    object: object,
+    validatorOptions?: ValidatorOptions,
+  ): Promise<void>;
+
   export interface ValidatorOptions {
     skipMissingProperties?: boolean;
     whitelist?: boolean;
@@ -24,8 +37,12 @@ declare module 'class-validator' {
 }
 
 declare module 'class-transformer' {
-  export function plainToClass<T>(cls: ClassConstructor<T>, plain: object, options?: ClassTransformOptions): T;
-  
+  export function plainToClass<T>(
+    cls: ClassConstructor<T>,
+    plain: object,
+    options?: ClassTransformOptions,
+  ): T;
+
   export interface ClassTransformOptions {
     excludeExtraneousValues?: boolean;
     groups?: string[];
@@ -36,4 +53,4 @@ declare module 'class-transformer' {
   export interface ClassConstructor<T> {
     new (...args: any[]): T;
   }
-} 
+}

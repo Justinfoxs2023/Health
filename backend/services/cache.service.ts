@@ -1,14 +1,20 @@
+import { EventEmitter } from 'events';
+import { Logger } from '../utils/logger';
 import { RedisClient, createClient } from 'redis';
 import { promisify } from 'util';
-import { Logger } from '../utils/logger';
-import { EventEmitter } from 'events';
 
-interface CacheConfig {
+interface ICacheConfig {
+  /** host 的描述 */
   host: string;
+  /** port 的描述 */
   port: number;
+  /** password 的描述 */
   password?: string;
+  /** db 的描述 */
   db?: number;
+  /** prefix 的描述 */
   prefix?: string;
+  /** ttl 的描述 */
   ttl?: number;
 }
 
@@ -23,7 +29,7 @@ export class CacheService extends EventEmitter {
   private setAsync: (key: string, value: string) => Promise<'OK'>;
   private delAsync: (key: string) => Promise<number>;
 
-  constructor(config: CacheConfig) {
+  constructor(config: ICacheConfig) {
     super();
     this.logger = new Logger('CacheService');
     this.defaultTTL = config.ttl || 3600; // 默认1小时
@@ -34,7 +40,7 @@ export class CacheService extends EventEmitter {
       port: config.port,
       password: config.password,
       db: config.db || 0,
-      prefix: this.prefix
+      prefix: this.prefix,
     });
 
     this.initializeClient();
@@ -48,7 +54,7 @@ export class CacheService extends EventEmitter {
       this.logger.info('Redis连接成功');
     });
 
-    this.client.on('error', (error) => {
+    this.client.on('error', error => {
       this.logger.error('Redis错误:', error);
       this.emit('error', error);
     });
@@ -66,7 +72,7 @@ export class CacheService extends EventEmitter {
     try {
       const serializedValue = JSON.stringify(value);
       await this.setAsync(key, serializedValue);
-      
+
       if (ttl || this.defaultTTL) {
         this.client.expire(key, ttl || this.defaultTTL);
       }
@@ -100,7 +106,7 @@ export class CacheService extends EventEmitter {
   // 批量操作
   async mset(items: Record<string, any>, ttl?: number): Promise<void> {
     const multi = this.client.multi();
-    
+
     Object.entries(items).forEach(([key, value]) => {
       multi.set(key, JSON.stringify(value));
       if (ttl || this.defaultTTL) {
@@ -137,4 +143,4 @@ export class CacheService extends EventEmitter {
     this.emit('disconnected');
     this.logger.info('Redis连接已关闭');
   }
-} 
+}

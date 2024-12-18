@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+
 import { List, Switch, Divider } from 'react-native-paper';
-import { useSettings } from '../../hooks/useSettings';
+import { View, StyleSheet, ScrollView } from 'react-native';
 import { useAuth } from '../../hooks/useAuth';
+import { useSettings } from '../../hooks/useSettings';
 
 export const SettingsScreen = () => {
   const { settings, updateSettings } = useSettings();
@@ -17,9 +18,7 @@ export const SettingsScreen = () => {
           right={() => (
             <Switch
               value={settings.pushEnabled}
-              onValueChange={(value) => 
-                updateSettings({ pushEnabled: value })
-              }
+              onValueChange={value => updateSettings({ pushEnabled: value })}
             />
           )}
         />
@@ -28,9 +27,7 @@ export const SettingsScreen = () => {
           right={() => (
             <Switch
               value={settings.emailEnabled}
-              onValueChange={(value) => 
-                updateSettings({ emailEnabled: value })
-              }
+              onValueChange={value => updateSettings({ emailEnabled: value })}
             />
           )}
         />
@@ -45,26 +42,22 @@ export const SettingsScreen = () => {
           right={() => (
             <Switch
               value={settings.biometricEnabled}
-              onValueChange={(value) => 
-                updateSettings({ biometricEnabled: value })
-              }
+              onValueChange={value => updateSettings({ biometricEnabled: value })}
             />
           )}
         />
         <List.Item
           title="修改密码"
-          onPress={() => {/* 导航到修改密码页面 */}}
+          onPress={() => {
+            /* 导航到修改密码页面 */
+          }}
         />
       </List.Section>
 
       <Divider />
 
       <List.Section>
-        <List.Item
-          title="退出登录"
-          onPress={logout}
-          titleStyle={styles.logoutText}
-        />
+        <List.Item title="退出登录" onPress={logout} titleStyle={styles.logoutText} />
       </List.Section>
     </ScrollView>
   );
@@ -78,4 +71,4 @@ const styles = StyleSheet.create({
   logoutText: {
     color: 'red',
   },
-}); 
+});

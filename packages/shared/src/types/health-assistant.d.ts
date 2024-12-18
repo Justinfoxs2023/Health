@@ -1,9 +1,19 @@
+/**
+ * @fileoverview TS 文件 health-assistant.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // AI健康助手类型定义
-export interface HealthAssistant {
+export interface IHealthAssistant {
+  /** id 的描述 */
   id: string;
+  /** userId 的描述 */
   userId: string;
-  
+
   // 健康建议引擎
+  /** advisoryEngine 的描述 */
   advisoryEngine: {
     // 异常检测阈值
     thresholds: {
@@ -14,7 +24,7 @@ export interface HealthAssistant {
         criticalHigh: number;
       };
     };
-    
+
     // 智能建议规则
     rules: {
       dietary: DietaryRule[];
@@ -23,10 +33,11 @@ export interface HealthAssistant {
       medication: MedicationRule[];
     };
   };
-  
+
   // 个性化设置
+  /** personalSettings 的描述 */
   personalSettings: {
-    healthGoals: HealthGoal[];
+    healthGoals: IHealthGoal[];
     dietaryRestrictions: string[];
     exercisePreferences: string[];
     sleepSchedule: {
@@ -37,12 +48,18 @@ export interface HealthAssistant {
 }
 
 // 健康目标
-export interface HealthGoal {
+export interface IHealthGoal {
+  /** type 的描述 */
   type: HealthGoalType;
+  /** target 的描述 */
   target: number;
+  /** deadline 的描述 */
   deadline: Date;
+  /** progress 的描述 */
   progress: number;
+  /** status 的描述 */
   status: 'active' | 'completed' | 'failed';
+  /** reminders 的描述 */
   reminders: boolean;
 }
 
@@ -53,5 +70,5 @@ export enum HealthGoalType {
   BLOOD_GLUCOSE = 'bloodGlucose',
   EXERCISE_DURATION = 'exerciseDuration',
   STEPS_COUNT = 'stepsCount',
-  SLEEP_DURATION = 'sleepDuration'
-} 
+  SLEEP_DURATION = 'sleepDuration',
+}

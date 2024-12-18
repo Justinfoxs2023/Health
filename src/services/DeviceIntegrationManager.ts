@@ -1,6 +1,6 @@
+import { DeviceManager } from '@/utils/deviceManager';
 import { HealthKit } from '@/utils/healthKit';
 import { NotificationManager } from '@/utils/notificationManager';
-import { DeviceManager } from '@/utils/deviceManager';
 
 export class DeviceIntegrationManager {
   private healthKit: HealthKit;
@@ -19,7 +19,7 @@ export class DeviceIntegrationManager {
       const healthData = await this.healthKit.fetchHealthData();
       await this.processHealthData(healthData);
     } catch (error) {
-      console.error('健康数据同步失败:', error);
+      console.error('Error in DeviceIntegrationManager.ts:', '健康数据同步失败:', error);
     }
   }
 
@@ -27,7 +27,7 @@ export class DeviceIntegrationManager {
   startRealTimeMonitoring() {
     this.healthKit.startMonitoring({
       onDataReceived: this.handleHealthData,
-      onAlert: this.handleHealthAlert
+      onAlert: this.handleHealthAlert,
     });
   }
 
@@ -39,7 +39,7 @@ export class DeviceIntegrationManager {
         await this.setupDevice(device);
       }
     } catch (error) {
-      console.error('设备管理失败:', error);
+      console.error('Error in DeviceIntegrationManager.ts:', '设备管理失败:', error);
     }
   }
 
@@ -51,7 +51,7 @@ export class DeviceIntegrationManager {
       this.setupActivityReminders();
       this.setupAppointmentNotifications();
     } catch (error) {
-      console.error('通知设置失败:', error);
+      console.error('Error in DeviceIntegrationManager.ts:', '通知设置失败:', error);
     }
   }
 
@@ -61,8 +61,8 @@ export class DeviceIntegrationManager {
       trigger: 'threshold',
       conditions: {
         heartRate: { min: 60, max: 100 },
-        bloodPressure: { min: 90/60, max: 140/90 }
-      }
+        bloodPressure: { min: 90 / 60, max: 140 / 90 },
+      },
     });
   }
 
@@ -72,8 +72,8 @@ export class DeviceIntegrationManager {
       trigger: 'time',
       schedule: {
         frequency: 'daily',
-        times: ['09:00', '15:00', '20:00']
-      }
+        times: ['09:00', '15:00', '20:00'],
+      },
     });
   }
-} 
+}

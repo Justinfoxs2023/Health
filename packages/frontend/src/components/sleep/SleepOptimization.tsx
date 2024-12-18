@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, StyleSheet } from 'react-native';
+
 import { Card, Text, Icon } from '../common';
 import { CircadianRhythmGuide } from './CircadianRhythmGuide';
 import { EnvironmentControl } from './EnvironmentControl';
+import { View, ScrollView, StyleSheet } from 'react-native';
 import { useSleepOptimization } from '../../hooks/sleep';
 
 export const SleepOptimization: React.FC = () => {
@@ -29,7 +30,7 @@ export const SleepOptimization: React.FC = () => {
 
       {plan && (
         <>
-          <CircadianRhythmGuide 
+          <CircadianRhythmGuide
             lightExposure={plan.circadianRhythm.lightExposure}
             activityTiming={plan.circadianRhythm.activityTiming}
           />
@@ -48,20 +49,20 @@ export const SleepOptimization: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   header: {
     padding: 15,
-    marginBottom: 10
+    marginBottom: 10,
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#2E7D32'
+    color: '#2E7D32',
   },
   subtitle: {
     fontSize: 14,
     color: '#666',
-    marginTop: 5
-  }
-}); 
+    marginTop: 5,
+  },
+});

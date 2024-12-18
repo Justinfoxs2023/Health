@@ -1,20 +1,30 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
-import { Card, Text, Button, Chip, useTheme, ProgressBar } from 'react-native-paper';
 
-interface UserDietProfile {
+import { Card, Text, Button, Chip, useTheme, ProgressBar } from 'react-native-paper';
+import { View, StyleSheet, ScrollView } from 'react-native';
+
+interface IUserDietProfile {
+  /** age 的描述 */
   age: number;
+  /** gender 的描述 */
   gender: 'male' | 'female';
+  /** height 的描述 */
   height: number;
+  /** weight 的描述 */
   weight: number;
+  /** activityLevel 的描述 */
   activityLevel: 'sedentary' | 'light' | 'moderate' | 'active' | 'very_active';
+  /** dietaryRestrictions 的描述 */
   dietaryRestrictions: string[];
+  /** allergies 的描述 */
   allergies: string[];
+  /** preferences 的描述 */
   preferences: {
     cuisineTypes: string[];
     mealTimes: string[];
     portions: 'small' | 'medium' | 'large';
   };
+  /** goals 的描述 */
   goals: {
     type: 'weight_loss' | 'weight_gain' | 'maintenance' | 'muscle_gain';
     target: number;
@@ -22,39 +32,53 @@ interface UserDietProfile {
   };
 }
 
-interface Meal {
+interface IMeal {
+  /** id 的描述 */
   id: string;
+  /** name 的描述 */
   name: string;
+  /** type 的描述 */
   type: 'breakfast' | 'lunch' | 'dinner' | 'snack';
+  /** nutrition 的描述 */
   nutrition: {
     calories: number;
     protein: number;
     carbs: number;
     fat: number;
   };
+  /** ingredients 的描述 */
   ingredients: Array<{
     name: string;
     amount: number;
     unit: string;
   }>;
+  /** preparation 的描述 */
   preparation: string;
+  /** alternatives 的描述 */
   alternatives: Array<{
     name: string;
     reason: string;
   }>;
 }
 
-interface DietPlan {
+interface IDietPlan {
+  /** id 的描述 */
   id: string;
+  /** dailyCalories 的描述 */
   dailyCalories: number;
+  /** macroDistribution 的描述 */
   macroDistribution: {
     protein: number;
     carbs: number;
     fat: number;
   };
-  meals: Meal[];
-  snacks: Meal[];
+  /** meals 的描述 */
+  meals: IMeal[];
+  /** snacks 的描述 */
+  snacks: IMeal[];
+  /** hydrationGoal 的描述 */
   hydrationGoal: number;
+  /** supplementRecommendations 的描述 */
   supplementRecommendations?: Array<{
     name: string;
     dosage: string;
@@ -62,15 +86,17 @@ interface DietPlan {
   }>;
 }
 
-interface DietPlanGeneratorProps {
-  userProfile: UserDietProfile;
-  onGeneratePlan: (plan: DietPlan) => void;
+interface IDietPlanGeneratorProps {
+  /** userProfile 的描述 */
+  userProfile: IUserDietProfile;
+  /** onGeneratePlan 的描述 */
+  onGeneratePlan: (plan: IDietPlan) => void;
 }
 
-export const DietPlanGenerator = ({ userProfile, onGeneratePlan }: DietPlanGeneratorProps) => {
+export const DietPlanGenerator = ({ userProfile, onGeneratePlan }: IDietPlanGeneratorProps) => {
   const theme = useTheme();
   const [loading, setLoading] = useState(false);
-  const [currentPlan, setCurrentPlan] = useState<DietPlan | null>(null);
+  const [currentPlan, setCurrentPlan] = useState<IDietPlan | null>(null);
 
   const generatePlan = async () => {
     setLoading(true);
@@ -88,7 +114,7 @@ export const DietPlanGenerator = ({ userProfile, onGeneratePlan }: DietPlanGener
       setCurrentPlan(plan);
       onGeneratePlan(plan);
     } catch (error) {
-      console.error('生成饮食计划失败:', error);
+      console.error('Error in DietPlanGenerator.tsx:', '生成饮食计划失败:', error);
       alert('生成计划失败，请重试');
     } finally {
       setLoading(false);
@@ -102,9 +128,13 @@ export const DietPlanGenerator = ({ userProfile, onGeneratePlan }: DietPlanGener
           <Text style={styles.sectionTitle}>目标设定</Text>
           <View style={styles.goalInfo}>
             <Text style={styles.goalType}>
-              {userProfile.goals.type === 'weight_loss' ? '减重' :
-               userProfile.goals.type === 'weight_gain' ? '增重' :
-               userProfile.goals.type === 'muscle_gain' ? '增肌' : '体重维持'}
+              {userProfile.goals.type === 'weight_loss'
+                ? '减重'
+                : userProfile.goals.type === 'weight_gain'
+                ? '增重'
+                : userProfile.goals.type === 'muscle_gain'
+                ? '增肌'
+                : '体重维持'}
             </Text>
             <Text style={styles.goalTarget}>
               目标: {userProfile.goals.target}kg
@@ -148,9 +178,7 @@ export const DietPlanGenerator = ({ userProfile, onGeneratePlan }: DietPlanGener
               <Text style={styles.sectionTitle}>每日营养目标</Text>
               <View style={styles.nutritionGrid}>
                 <View style={styles.nutritionItem}>
-                  <Text style={styles.nutritionValue}>
-                    {currentPlan.dailyCalories}
-                  </Text>
+                  <Text style={styles.nutritionValue}>{currentPlan.dailyCalories}</Text>
                   <Text style={styles.nutritionLabel}>卡路里</Text>
                 </View>
                 <View style={styles.nutritionItem}>
@@ -160,15 +188,11 @@ export const DietPlanGenerator = ({ userProfile, onGeneratePlan }: DietPlanGener
                   <Text style={styles.nutritionLabel}>蛋白质</Text>
                 </View>
                 <View style={styles.nutritionItem}>
-                  <Text style={styles.nutritionValue}>
-                    {currentPlan.macroDistribution.carbs}g
-                  </Text>
+                  <Text style={styles.nutritionValue}>{currentPlan.macroDistribution.carbs}g</Text>
                   <Text style={styles.nutritionLabel}>碳水</Text>
                 </View>
                 <View style={styles.nutritionItem}>
-                  <Text style={styles.nutritionValue}>
-                    {currentPlan.macroDistribution.fat}g
-                  </Text>
+                  <Text style={styles.nutritionValue}>{currentPlan.macroDistribution.fat}g</Text>
                   <Text style={styles.nutritionLabel}>脂肪</Text>
                 </View>
               </View>
@@ -180,30 +204,27 @@ export const DietPlanGenerator = ({ userProfile, onGeneratePlan }: DietPlanGener
               <Card.Content>
                 <Text style={styles.mealTitle}>{meal.name}</Text>
                 <Text style={styles.mealType}>
-                  {meal.type === 'breakfast' ? '早餐' :
-                   meal.type === 'lunch' ? '午餐' :
-                   meal.type === 'dinner' ? '晚餐' : '加餐'}
+                  {meal.type === 'breakfast'
+                    ? '早餐'
+                    : meal.type === 'lunch'
+                    ? '午餐'
+                    : meal.type === 'dinner'
+                    ? '晚餐'
+                    : '加餐'}
                 </Text>
 
                 <View style={styles.mealNutrition}>
-                  <Text style={styles.nutritionInfo}>
-                    {meal.nutrition.calories} 卡路里
-                  </Text>
-                  <Text style={styles.nutritionInfo}>
-                    蛋白质 {meal.nutrition.protein}g
-                  </Text>
-                  <Text style={styles.nutritionInfo}>
-                    碳水 {meal.nutrition.carbs}g
-                  </Text>
-                  <Text style={styles.nutritionInfo}>
-                    脂肪 {meal.nutrition.fat}g
-                  </Text>
+                  <Text style={styles.nutritionInfo}>{meal.nutrition.calories} 卡路里</Text>
+                  <Text style={styles.nutritionInfo}>蛋白质 {meal.nutrition.protein}g</Text>
+                  <Text style={styles.nutritionInfo}>碳水 {meal.nutrition.carbs}g</Text>
+                  <Text style={styles.nutritionInfo}>脂肪 {meal.nutrition.fat}g</Text>
                 </View>
 
                 <Text style={styles.ingredientsTitle}>食材</Text>
                 {meal.ingredients.map((ingredient, index) => (
                   <Text key={index} style={styles.ingredient}>
-                    • {ingredient.name} {ingredient.amount}{ingredient.unit}
+                    • {ingredient.name} {ingredient.amount}
+                    {ingredient.unit}
                   </Text>
                 ))}
 
@@ -350,4 +371,4 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#666',
   },
-}); 
+});

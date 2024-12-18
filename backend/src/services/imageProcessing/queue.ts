@@ -1,7 +1,7 @@
 import Bull from 'bull';
 import { Image } from '../../schemas/Image';
-import { processImage } from './processor';
 import { logger } from '../logger';
+import { processImage } from './processor';
 
 // 创建图片处理队列
 const imageQueue = new Bull('image-processing', {
@@ -21,16 +21,16 @@ const imageQueue = new Bull('image-processing', {
 });
 
 // 队列处理器
-imageQueue.process(async (job) => {
+imageQueue.process(async job => {
   const { imageId } = job.data;
-  
+
   try {
     // 更新图片状态为处理中
     await Image.findByIdAndUpdate(imageId, { status: 'processing' });
-    
+
     // 处理图片
     const result = await processImage(imageId);
-    
+
     // 更新处理结果
     await Image.findByIdAndUpdate(imageId, {
       status: 'ready',
@@ -47,25 +47,25 @@ imageQueue.process(async (job) => {
     return result;
   } catch (error) {
     logger.error('图片处理失败:', { imageId, error });
-    
+
     // 更新错误状态
     await Image.findByIdAndUpdate(imageId, {
       status: 'error',
       errorMessage: error.message,
     });
-    
+
     throw error;
   }
 });
 
 // 监听队列事件
-imageQueue.on('completed', (job) => {
+imageQueue.on('completed', job => {
   logger.info('图片处理完成:', { imageId: job.data.imageId });
 });
 
 imageQueue.on('failed', (job, error) => {
-  logger.error('图片处理失败:', { 
-    imageId: job.data.imageId, 
+  logger.error('图片处理失败:', {
+    imageId: job.data.imageId,
     error: error.message,
     attempts: job.attemptsMade,
   });
@@ -104,4 +104,4 @@ export const pauseQueue = async () => {
 
 export const resumeQueue = async () => {
   await imageQueue.resume();
-}; 
+};

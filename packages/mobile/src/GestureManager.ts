@@ -1,26 +1,33 @@
 import { useEffect, useRef } from 'react';
-import { useSwipeable } from 'react-swipeable';
-import { useNavigate } from 'react-router-dom';
 
-interface GestureConfig {
+import { useNavigate } from 'react-router-dom';
+import { useSwipeable } from 'react-swipeable';
+
+interface IGestureConfig {
+  /** enableSwipe 的描述 */
   enableSwipe?: boolean;
+  /** enablePinch 的描述 */
   enablePinch?: boolean;
+  /** enablePull 的描述 */
   enablePull?: boolean;
+  /** onSwipe 的描述 */
   onSwipe?: (direction: string) => void;
+  /** onPinch 的描述 */
   onPinch?: (scale: number) => void;
+  /** onPull 的描述 */
   onPull?: () => void;
 }
 
 export class GestureManager {
   private static instance: GestureManager;
-  private gestureConfig: GestureConfig = {
+  private gestureConfig: IGestureConfig = {
     enableSwipe: true,
     enablePinch: true,
-    enablePull: true
+    enablePull: true,
   };
 
   // 手势配置
-  static configure(config: Partial<GestureConfig>) {
+  static configure(config: Partial<IGestureConfig>) {
     if (!this.instance) {
       this.instance = new GestureManager();
     }
@@ -44,7 +51,7 @@ export class GestureManager {
         }
       },
       preventDefaultTouchmoveEvent: true,
-      trackMouse: true
+      trackMouse: true,
     });
 
     return handlers;
@@ -65,7 +72,7 @@ export class GestureManager {
         if (e.touches.length === 2) {
           initialDistance = Math.hypot(
             e.touches[0].pageX - e.touches[1].pageX,
-            e.touches[0].pageY - e.touches[1].pageY
+            e.touches[0].pageY - e.touches[1].pageY,
           );
         }
       };
@@ -74,9 +81,9 @@ export class GestureManager {
         if (e.touches.length === 2) {
           const distance = Math.hypot(
             e.touches[0].pageX - e.touches[1].pageX,
-            e.touches[0].pageY - e.touches[1].pageY
+            e.touches[0].pageY - e.touches[1].pageY,
           );
-          
+
           currentScale = Math.min(Math.max(distance / initialDistance, 0.5), 3);
           element.style.transform = `scale(${currentScale})`;
         }
@@ -132,4 +139,4 @@ export class GestureManager {
 
     return containerRef;
   }
-} 
+}

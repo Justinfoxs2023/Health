@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 react-native-animated.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 declare module 'react-native' {
   export namespace Animated {
     export class Value {
@@ -29,32 +36,19 @@ declare module 'react-native' {
       useNativeDriver?: boolean;
     }
 
-    export function timing(
-      value: Animated.Value,
-      config: AnimationConfig
-    ): CompositeAnimation;
+    export function timing(value: Animated.Value, config: AnimationConfig): CompositeAnimation;
 
-    export function spring(
-      value: Animated.Value,
-      config: AnimationConfig
-    ): CompositeAnimation;
+    export function spring(value: Animated.Value, config: AnimationConfig): CompositeAnimation;
 
-    export function decay(
-      value: Animated.Value,
-      config: AnimationConfig
-    ): CompositeAnimation;
+    export function decay(value: Animated.Value, config: AnimationConfig): CompositeAnimation;
 
-    export function parallel(
-      animations: CompositeAnimation[]
-    ): CompositeAnimation;
+    export function parallel(animations: CompositeAnimation[]): CompositeAnimation;
 
-    export function sequence(
-      animations: CompositeAnimation[]
-    ): CompositeAnimation;
+    export function sequence(animations: CompositeAnimation[]): CompositeAnimation;
 
     export function loop(
       animation: CompositeAnimation,
-      config?: { iterations?: number }
+      config?: { iterations?: number },
     ): CompositeAnimation;
   }
 
@@ -74,4 +68,4 @@ declare module 'react-native' {
     out: (easing: (t: number) => number) => (t: number) => number;
     in: (easing: (t: number) => number) => (t: number) => number;
   };
-} 
+}

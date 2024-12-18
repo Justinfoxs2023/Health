@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 errors.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 declare module '../utils/errors' {
   export class BaseError extends Error {
     constructor(message: string);
@@ -14,4 +21,4 @@ declare module '../utils/errors' {
   export class ProfileNotFoundError extends NotFoundError {}
   export class PermissionError extends AuthorizationError {}
   export class AppError extends BaseError {}
-} 
+}

@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 performance-monitor.service.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export class PerformanceMonitorService {
   private metrics: {
     [key: string]: number[];
@@ -33,7 +40,7 @@ export class PerformanceMonitorService {
       average: measurements.reduce((a, b) => a + b, 0) / measurements.length,
       min: Math.min(...measurements),
       max: Math.max(...measurements),
-      count: measurements.length
+      count: measurements.length,
     };
   }
-} 
+}

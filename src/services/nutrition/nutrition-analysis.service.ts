@@ -1,11 +1,13 @@
+import { AIService } from '../ai/ai.service';
+import { IBaseHealthData } from '../health/types/health-base.types';
 import { Injectable } from '@nestjs/common';
 import { StorageService } from '../storage/storage.service';
-import { AIService } from '../ai/ai.service';
-import { BaseHealthData } from '../health/types/health-base.types';
 
 // 营养记录
-export interface NutritionRecord extends BaseHealthData {
-  mealType: 'breakfast' | 'lunch' | 'dinner' | 'snack';
+export interface INutritionRecord extends IBaseHealthData {
+  /** mealType 的描述 */
+  mealType: "breakfast" | "lunch" | "dinner" | "snack";
+  /** foods 的描述 */
   foods: Array<{
     name: string;
     amount: number;
@@ -20,6 +22,7 @@ export interface NutritionRecord extends BaseHealthData {
       minerals: Record<string, number>;
     };
   }>;
+  /** totalNutrients 的描述 */
   totalNutrients: {
     calories: number;
     macros: {
@@ -29,63 +32,66 @@ export interface NutritionRecord extends BaseHealthData {
     };
     micros: Record<string, number>;
   };
+  /** tags 的描述 */
   tags: string[];
-  mood?: string;
-  symptoms?: string[];
+  /** mood 的描述 */
+  mood?: undefined | string;
+  /** symptoms 的描述 */
+  symptoms?: undefined | string[];
 }
 
 @Injectable()
 export class NutritionAnalysisService {
-  constructor(
-    private readonly storage: StorageService,
-    private readonly ai: AIService
-  ) {}
+  constructor(private readonly storage: StorageService, private readonly ai: AIService) {}
 
   // 分析饮食记录
   async analyzeDiet(userId: string, period: string): Promise<NutritionAnalysis> {
     // 1. 获取饮食记录
     const records = await this.getNutritionRecords(userId, period);
-    
+
     // 2. 计算营养摄入
     const intake = await this.calculateNutrientIntake(records);
-    
+
     // 3. 分析营养平衡
     const balance = await this.analyzeNutrientBalance(intake);
-    
+
     // 4. 生成建议
     const recommendations = await this.generateRecommendations(balance);
-    
+
     return {
       period,
       intake,
       balance,
-      recommendations
+      recommendations,
     };
   }
 
   // 生成饮食计划
-  async generateMealPlan(userId: string, params: {
-    goals: string[];
-    preferences: string[];
-    restrictions: string[];
-    budget?: number;
-  }): Promise<MealPlan> {
+  async generateMealPlan(
+    userId: string,
+    params: {
+      goals: string[];
+      preferences: string[];
+      restrictions: string[];
+      budget?: number;
+    },
+  ): Promise<MealPlan> {
     // 1. 获取用户档案
     const profile = await this.getUserProfile(userId);
-    
+
     // 2. 考虑健康状况
     const healthFactors = await this.getHealthFactors(userId);
-    
+
     // 3. AI生成计划
     const plan = await this.ai.generateMealPlan({
       profile,
       healthFactors,
-      ...params
+      ...params,
     });
-    
+
     // 4. 验证计划
     await this.validateMealPlan(plan);
-    
+
     return plan;
   }
 
@@ -93,21 +99,21 @@ export class NutritionAnalysisService {
   async analyzeFoodImage(imageData: Buffer): Promise<FoodAnalysis> {
     // 1. AI识别食物
     const recognition = await this.ai.recognizeFood(imageData);
-    
+
     // 2. 获取营养信息
     const nutrients = await this.getNutrientInfo(recognition.foods);
-    
+
     // 3. 分析健康程度
     const healthScore = await this.calculateHealthScore(nutrients);
-    
+
     // 4. 生成建议
     const suggestions = await this.generateFoodSuggestions(recognition, nutrients);
-    
+
     return {
       foods: recognition.foods,
       nutrients,
       healthScore,
-      suggestions
+      suggestions,
     };
   }
 
@@ -115,24 +121,24 @@ export class NutritionAnalysisService {
   async trackNutrients(userId: string): Promise<NutrientTracking> {
     // 1. 获取目标
     const goals = await this.getNutrientGoals(userId);
-    
+
     // 2. 获取实际摄入
     const intake = await this.getCurrentIntake(userId);
-    
+
     // 3. 分析差距
     const gaps = this.analyzeNutrientGaps(goals, intake);
-    
+
     // 4. 生成建议
     return {
       goals,
       intake,
       gaps,
-      recommendations: await this.generateNutrientRecommendations(gaps)
+      recommendations: await this.generateNutrientRecommendations(gaps),
     };
   }
 
   // 私有方法
-  private async calculateNutrientIntake(records: NutritionRecord[]): Promise<NutrientIntake> {
+  private async calculateNutrientIntake(records: INutritionRecord[]): Promise<NutrientIntake> {
     // 实现营养摄入计算逻辑
     return null;
   }
@@ -150,4 +156,4 @@ export class NutritionAnalysisService {
     // 实现健康评分计算逻辑
     return 0;
   }
-} 
+}

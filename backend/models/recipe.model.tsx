@@ -4,83 +4,89 @@ import { IRecipe } from '../types/models';
 const RecipeSchema = new Schema({
   name: {
     type: String,
-    required: true
+    required: true,
   },
-  ingredients: [{
-    food: {
-      type: Schema.Types.ObjectId,
-      ref: 'Food',
-      required: true
+  ingredients: [
+    {
+      food: {
+        type: Schema.Types.ObjectId,
+        ref: 'Food',
+        required: true,
+      },
+      amount: {
+        type: Number,
+        required: true,
+      },
+      note: String,
     },
-    amount: {
-      type: Number,
-      required: true
+  ],
+  steps: [
+    {
+      order: {
+        type: Number,
+        required: true,
+      },
+      description: {
+        type: String,
+        required: true,
+      },
+      image: String,
+      duration: Number,
     },
-    note: String
-  }],
-  steps: [{
-    order: {
-      type: Number,
-      required: true
-    },
-    description: {
-      type: String,
-      required: true
-    },
-    image: String,
-    duration: Number
-  }],
+  ],
   nutrition: {
     calories: {
       type: Number,
-      required: true
+      required: true,
     },
     protein: {
       type: Number,
-      required: true
+      required: true,
     },
     fat: {
       type: Number,
-      required: true
+      required: true,
     },
     carbohydrates: {
       type: Number,
-      required: true
+      required: true,
     },
-    fiber: Number
+    fiber: Number,
   },
-  occasions: [{
-    type: String,
-    enum: ['早餐', '午餐', '晚餐', '加餐'],
-    required: true
-  }],
+  occasions: [
+    {
+      type: String,
+      enum: ['早餐', '午餐', '晚餐', '加餐'],
+      required: true,
+    },
+  ],
   difficulty: {
     type: String,
     enum: ['简单', '中等', '困难'],
-    required: true
+    required: true,
   },
   cookingTime: {
     type: Number,
-    required: true
+    required: true,
   },
   servings: {
     type: Number,
-    required: true
+    required: true,
   },
   tags: [String],
   createdAt: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   updatedAt: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
-RecipeSchema.pre('save', function(next) {
+RecipeSchema.pre('save', function (next) {
   this.updatedAt = new Date();
   next();
 });
 
-export const Recipe = mongoose.model<IRecipe>('Recipe', RecipeSchema); 
+export const Recipe = mongoose.model<IRecipe>('Recipe', RecipeSchema);

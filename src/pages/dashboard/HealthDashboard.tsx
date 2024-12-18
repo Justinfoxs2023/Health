@@ -1,12 +1,13 @@
 import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+
 import styled from 'styled-components';
-import { VitalsMonitor } from './components/VitalsMonitor';
 import { ActivityTracker } from './components/ActivityTracker';
-import { SleepAnalysis } from './components/SleepAnalysis';
 import { HealthPrediction } from './components/HealthPrediction';
-import { RiskAssessment } from './components/RiskAssessment';
 import { PersonalizedReports } from './components/PersonalizedReports';
+import { RiskAssessment } from './components/RiskAssessment';
+import { SleepAnalysis } from './components/SleepAnalysis';
+import { VitalsMonitor } from './components/VitalsMonitor';
+import { useDispatch, useSelector } from 'react-redux';
 
 const DashboardContainer = styled.div`
   display: grid;
@@ -43,43 +44,28 @@ export const HealthDashboard: React.FC = () => {
     <DashboardContainer>
       {/* 实时生命体征监测 */}
       <DashboardSection>
-        <VitalsMonitor 
-          data={healthData.vitals}
-          onAlert={handleVitalsAlert}
-        />
+        <VitalsMonitor data={healthData.vitals} onAlert={handleVitalsAlert} />
       </DashboardSection>
 
       {/* 活动量追踪 */}
       <DashboardSection>
-        <ActivityTracker 
-          data={healthData.activity}
-          goals={healthData.goals}
-        />
+        <ActivityTracker data={healthData.activity} goals={healthData.goals} />
       </DashboardSection>
 
       {/* 睡眠质量分析 */}
       <DashboardSection>
-        <SleepAnalysis 
-          data={healthData.sleep}
-          recommendations={healthData.sleepRecommendations}
-        />
+        <SleepAnalysis data={healthData.sleep} recommendations={healthData.sleepRecommendations} />
       </DashboardSection>
 
       {/* AI健康分析 */}
       <DashboardSection>
-        <HealthPrediction 
-          trends={healthData.trends}
-          predictions={healthData.predictions}
-        />
-        <RiskAssessment 
-          risks={healthData.risks}
-          suggestions={healthData.suggestions}
-        />
+        <HealthPrediction trends={healthData.trends} predictions={healthData.predictions} />
+        <RiskAssessment risks={healthData.risks} suggestions={healthData.suggestions} />
       </DashboardSection>
 
       {/* 个性化报告 */}
       <DashboardSection>
-        <PersonalizedReports 
+        <PersonalizedReports
           dailyReport={healthData.dailyReport}
           weeklyAnalysis={healthData.weeklyAnalysis}
           monthlyTrends={healthData.monthlyTrends}
@@ -87,4 +73,4 @@ export const HealthDashboard: React.FC = () => {
       </DashboardSection>
     </DashboardContainer>
   );
-}; 
+};

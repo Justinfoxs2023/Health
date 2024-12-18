@@ -1,20 +1,25 @@
 import * as Sentry from '@sentry/node';
-import { ProfilingIntegration } from '@sentry/profiling-node';
 import { Integrations } from '@sentry/tracing';
+import { ProfilingIntegration } from '@sentry/profiling-node';
 import { logger } from '../logger';
 import { performanceConfig } from '../../config/performance.config';
 
-interface PerformanceMetrics {
+interface IPerformanceMetrics {
+  /** responseTime 的描述 */
   responseTime: number;
+  /** memoryUsage 的描述 */
   memoryUsage: number;
+  /** cpuUsage 的描述 */
   cpuUsage: number;
+  /** activeConnections 的描述 */
   activeConnections: number;
+  /** errorRate 的描述 */
   errorRate: number;
 }
 
 class MonitoringService {
   private static instance: MonitoringService;
-  private metrics: PerformanceMetrics = {
+  private metrics: IPerformanceMetrics = {
     responseTime: 0,
     memoryUsage: 0,
     cpuUsage: 0,
@@ -128,7 +133,8 @@ class MonitoringService {
       });
     }
 
-    if (this.metrics.errorRate > 0.01) { // 1%错误率阈值
+    if (this.metrics.errorRate > 0.01) {
+      // 1%错误率阈值
       this.reportIssue('错误率过高', {
         current: this.metrics.errorRate,
         threshold: 0.01,
@@ -184,7 +190,7 @@ class MonitoringService {
   /**
    * 获取当前性能指标
    */
-  getMetrics(): PerformanceMetrics {
+  getMetrics(): IPerformanceMetrics {
     return { ...this.metrics };
   }
 
@@ -202,4 +208,4 @@ class MonitoringService {
   }
 }
 
-export const monitoringService = MonitoringService.getInstance(); 
+export const monitoringService = MonitoringService.getInstance();

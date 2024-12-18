@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { Reward } from '../entities/reward.entity';
 import { RewardController } from '../controllers/reward.controller';
 import { RewardService } from '../services/reward.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Reward])],
@@ -10,4 +10,4 @@ import { RewardService } from '../services/reward.service';
   providers: [RewardService],
   exports: [RewardService],
 })
-export class RewardModule {} 
+export class RewardModule {}

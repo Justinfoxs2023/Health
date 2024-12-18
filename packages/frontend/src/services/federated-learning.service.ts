@@ -1,14 +1,21 @@
 import * as tf from '@tensorflow/tfjs';
-import { LocalDatabase, createDatabase } from '../utils/local-database';
+import { ILocalDatabase, createDatabase } from '../utils/local-database';
 import { PrivacyPreservingService } from './privacy-preserving.service';
 
-interface FederatedConfig {
+interface IFederatedConfig {
+  /** aggregationRounds 的描述 */
   aggregationRounds: number;
+  /** minClients 的描述 */
   minClients: number;
+  /** clientFraction 的描述 */
   clientFraction: number;
+  /** localEpochs 的描述 */
   localEpochs: number;
+  /** localBatchSize 的描述 */
   localBatchSize: number;
+  /** communicationProtocol 的描述 */
   communicationProtocol: 'websocket' | 'webrtc' | 'http';
+  /** privacyConfig 的描述 */
   privacyConfig: {
     enabled: boolean;
     method: 'differential-privacy' | 'secure-aggregation';
@@ -17,37 +24,50 @@ interface FederatedConfig {
   };
 }
 
-interface ClientState {
+interface IClientState {
+  /** id 的描述 */
   id: string;
+  /** dataSize 的描述 */
   dataSize: number;
+  /** lastUpdate 的描述 */
   lastUpdate: Date;
+  /** performance 的描述 */
   performance: {
     accuracy: number;
     loss: number;
     trainingTime: number;
   };
+  /** status 的描述 */
   status: 'idle' | 'training' | 'uploading' | 'error';
 }
 
-interface FederatedMetrics {
+interface IFederatedMetrics {
+  /** globalAccuracy 的描述 */
   globalAccuracy: number;
+  /** globalLoss 的描述 */
   globalLoss: number;
-  clientMetrics: Map<string, {
-    accuracy: number;
-    loss: number;
-    contribution: number;
-  }>;
+  /** clientMetrics 的描述 */
+  clientMetrics: Map<
+    string,
+    {
+      accuracy: number;
+      loss: number;
+      contribution: number;
+    }
+  >;
+  /** convergenceRate 的描述 */
   convergenceRate: number;
+  /** communicationCost 的描述 */
   communicationCost: number;
 }
 
 export class FederatedLearningService {
-  private db: LocalDatabase;
+  private db: ILocalDatabase;
   private globalModel: tf.LayersModel | null = null;
-  private clients: Map<string, ClientState> = new Map();
-  private config: FederatedConfig;
+  private clients: Map<string, IClientState> = new Map();
+  private config: IFederatedConfig;
   private privacyService: PrivacyPreservingService;
-  private currentRound: number = 0;
+  private currentRound = 0;
 
   constructor() {
     this.db = createDatabase('federated-learning');
@@ -63,34 +83,29 @@ export class FederatedLearningService {
         enabled: true,
         method: 'secure-aggregation',
         epsilon: 0.1,
-        delta: 1e-5
-      }
+        delta: 1e-5,
+      },
     };
   }
 
   // 初始化联邦学习
-  async initializeFederation(
-    initialModel: tf.LayersModel
-  ): Promise<void> {
+  async initializeFederation(initialModel: tf.LayersModel): Promise<void> {
     this.globalModel = initialModel;
     await this.saveGlobalModel();
   }
 
   // 注册客户端
-  async registerClient(
-    clientId: string,
-    dataSize: number
-  ): Promise<void> {
-    const clientState: ClientState = {
+  async registerClient(clientId: string, dataSize: number): Promise<void> {
+    const clientState: IClientState = {
       id: clientId,
       dataSize,
       lastUpdate: new Date(),
       performance: {
         accuracy: 0,
         loss: 0,
-        trainingTime: 0
+        trainingTime: 0,
       },
-      status: 'idle'
+      status: 'idle',
     };
 
     this.clients.set(clientId, clientState);
@@ -99,22 +114,26 @@ export class FederatedLearningService {
 
   // 开始联邦训练
   async startFederatedTraining(): Promise<void> {
-    for (this.currentRound = 0; this.currentRound < this.config.aggregationRounds; this.currentRound++) {
+    for (
+      this.currentRound = 0;
+      this.currentRound < this.config.aggregationRounds;
+      this.currentRound++
+    ) {
       // 选择参与客户端
       const selectedClients = this.selectClients();
-      
+
       // 分发模型
       await this.distributeModel(selectedClients);
-      
+
       // 收集更新
       const clientUpdates = await this.collectClientUpdates(selectedClients);
-      
+
       // 聚合更新
       await this.aggregateUpdates(clientUpdates);
-      
+
       // 评估全局模型
       const metrics = await this.evaluateGlobalModel();
-      
+
       // 检查收敛
       if (this.checkConvergence(metrics)) {
         break;
@@ -125,8 +144,8 @@ export class FederatedLearningService {
   // 客户端本地训练
   async trainOnClient(
     clientId: string,
-    data: { x: tf.Tensor; y: tf.Tensor }
-  ): Promise<{localModel: tf.LayersModel; metrics: any}> {
+    data: { x: tf.Tensor; y: tf.Tensor },
+  ): Promise<{ localModel: tf.LayersModel; metrics: any }> {
     const client = this.clients.get(clientId);
     if (!client) throw new Error('客户端未注册');
 
@@ -136,20 +155,20 @@ export class FederatedLearningService {
     try {
       // 克隆全局模型
       const localModel = await this.cloneModel(this.globalModel!);
-      
+
       // 本地训练
       const history = await localModel.fit(data.x, data.y, {
         epochs: this.config.localEpochs,
         batchSize: this.config.localBatchSize,
         validationSplit: 0.2,
-        callbacks: this.createClientCallbacks(clientId)
+        callbacks: this.createClientCallbacks(clientId),
       });
 
       // 更新客户端状态
       client.performance = {
         accuracy: history.history.accuracy[history.history.accuracy.length - 1],
         loss: history.history.loss[history.history.loss.length - 1],
-        trainingTime: Date.now() - startTime
+        trainingTime: Date.now() - startTime,
       };
       client.status = 'idle';
       client.lastUpdate = new Date();
@@ -170,7 +189,7 @@ export class FederatedLearningService {
       clientId: string;
       model: tf.LayersModel;
       dataSize: number;
-    }>
+    }>,
   ): Promise<void> {
     // 如果启用了隐私保护
     if (this.config.privacyConfig.enabled) {
@@ -195,14 +214,12 @@ export class FederatedLearningService {
       clientId: string;
       model: tf.LayersModel;
       dataSize: number;
-    }>
+    }>,
   ): Promise<void> {
     const totalDataSize = clientUpdates.reduce((sum, update) => sum + update.dataSize, 0);
 
     // 初始化聚合权重
-    const aggregatedWeights = this.globalModel!.getWeights().map(w => 
-      tf.zerosLike(w)
-    );
+    const aggregatedWeights = this.globalModel!.getWeights().map(w => tf.zerosLike(w));
 
     // 加权平均
     for (const update of clientUpdates) {
@@ -225,14 +242,14 @@ export class FederatedLearningService {
       clientId: string;
       model: tf.LayersModel;
       dataSize: number;
-    }>
+    }>,
   ): Promise<void> {
     // 实现差分隐私聚合
     const noisyUpdates = await Promise.all(
       clientUpdates.map(async update => ({
         ...update,
-        model: await this.addDPNoise(update.model)
-      }))
+        model: await this.addDPNoise(update.model),
+      })),
     );
 
     await this.federatedAveraging(noisyUpdates);
@@ -244,14 +261,14 @@ export class FederatedLearningService {
       clientId: string;
       model: tf.LayersModel;
       dataSize: number;
-    }>
+    }>,
   ): Promise<void> {
     // 实现安全聚合协议
     const secureUpdates = await this.privacyService.secureAggregate(
       clientUpdates.map(update => ({
         gradients: update.model.getWeights(),
-        weights: this.globalModel!.getWeights()
-      }))
+        weights: this.globalModel!.getWeights(),
+      })),
     );
 
     this.globalModel!.setWeights(secureUpdates.weights);
@@ -265,7 +282,7 @@ export class FederatedLearningService {
 
     const numSelect = Math.max(
       this.config.minClients,
-      Math.floor(availableClients.length * this.config.clientFraction)
+      Math.floor(availableClients.length * this.config.clientFraction),
     );
 
     return this.shuffleArray(availableClients).slice(0, numSelect);
@@ -273,29 +290,31 @@ export class FederatedLearningService {
 
   private async cloneModel(model: tf.LayersModel): Promise<tf.LayersModel> {
     const cloned = tf.sequential({
-      layers: model.layers.map(layer => layer.clone())
+      layers: model.layers.map(layer => layer.clone()),
     });
     cloned.compile({
       optimizer: model.optimizer,
       loss: model.loss,
-      metrics: model.metrics
+      metrics: model.metrics,
     });
     return cloned;
   }
 
   private createClientCallbacks(clientId: string): tf.CustomCallbackArgs[] {
-    return [{
-      onBatchEnd: async (batch, logs) => {
-        // 监控客户端训练进度
-        await this.updateClientProgress(clientId, batch, logs);
-      }
-    }];
+    return [
+      {
+        onBatchEnd: async (batch, logs) => {
+          // 监控客户端训练进度
+          await this.updateClientProgress(clientId, batch, logs);
+        },
+      },
+    ];
   }
 
   private async updateClientProgress(
     clientId: string,
     batch: number,
-    logs?: tf.Logs
+    logs?: tf.Logs,
   ): Promise<void> {
     const client = this.clients.get(clientId);
     if (!client) return;
@@ -304,7 +323,7 @@ export class FederatedLearningService {
     await this.db.put(`client-progress-${clientId}`, {
       batch,
       logs,
-      timestamp: new Date()
+      timestamp: new Date(),
     });
   }
 
@@ -314,7 +333,7 @@ export class FederatedLearningService {
     await this.db.put('federation-state', {
       round: this.currentRound,
       timestamp: new Date(),
-      config: this.config
+      config: this.config,
     });
   }
 
@@ -329,21 +348,21 @@ export class FederatedLearningService {
 
   // 监控和评估
   async getClientMetrics(clientId: string): Promise<{
-    performance: ClientState['performance'];
+    performance: IClientState['performance'];
     progress: any[];
   }> {
     const client = this.clients.get(clientId);
     if (!client) throw new Error('客户端不存在');
 
-    const progress = await this.db.get(`client-progress-${clientId}`) || [];
+    const progress = (await this.db.get(`client-progress-${clientId}`)) || [];
 
     return {
       performance: client.performance,
-      progress
+      progress,
     };
   }
 
-  async getFederationMetrics(): Promise<FederatedMetrics> {
+  async getFederationMetrics(): Promise<IFederatedMetrics> {
     const clientMetrics = new Map();
     let totalAccuracy = 0;
     let totalLoss = 0;
@@ -352,7 +371,7 @@ export class FederatedLearningService {
       clientMetrics.set(clientId, {
         accuracy: state.performance.accuracy,
         loss: state.performance.loss,
-        contribution: state.dataSize
+        contribution: state.dataSize,
       });
       totalAccuracy += state.performance.accuracy;
       totalLoss += state.performance.loss;
@@ -363,7 +382,7 @@ export class FederatedLearningService {
       globalLoss: totalLoss / this.clients.size,
       clientMetrics,
       convergenceRate: this.calculateConvergenceRate(),
-      communicationCost: this.calculateCommunicationCost()
+      communicationCost: this.calculateCommunicationCost(),
     };
   }
 
@@ -376,4 +395,4 @@ export class FederatedLearningService {
     // 实现通信成本计算
     return 0;
   }
-} 
+}

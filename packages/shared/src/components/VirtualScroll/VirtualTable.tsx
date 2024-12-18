@@ -1,7 +1,8 @@
 import React from 'react';
+
 import { VirtualScroll } from './index';
 
-export interface VirtualTableColumn<T = any> {
+export interface IVirtualTableColumn<T = any> {
   /** 列标题 */
   title: React.ReactNode;
   /** 列数据字段 */
@@ -18,11 +19,11 @@ export interface VirtualTableColumn<T = any> {
   sorter?: (a: T, b: T) => number;
 }
 
-export interface VirtualTableProps<T = any> {
+export interface IVirtualTableProps<T = any> {
   /** 数据源 */
   dataSource: T[];
   /** 列配置 */
-  columns: VirtualTableColumn<T>[];
+  columns: IVirtualTableColumn<T>[];
   /** 行高 */
   rowHeight?: number;
   /** 表格高度 */
@@ -75,8 +76,8 @@ export function VirtualTable<T extends Record<string, any>>({
   loading,
   empty,
   onScroll,
-  onReachBottom
-}: VirtualTableProps<T>) {
+  onReachBottom,
+}: IVirtualTableProps<T>): import('D:/Health/node_modules/@types/react/jsx-runtime').JSX.Element {
   // 获取行键值
   const getRowKey = (record: T, index: number): React.Key => {
     if (typeof rowKey === 'function') {
@@ -87,25 +88,17 @@ export function VirtualTable<T extends Record<string, any>>({
 
   // 渲染表头
   const renderHeader = () => (
-    <div
-      className="virtual-table__header"
-      style={{ height: headerHeight }}
-    >
+    <div className="virtual-table__header" style={{ height: headerHeight }}>
       <div className="virtual-table__row">
         {selectable && (
           <div className="virtual-table__cell virtual-table__cell--checkbox">
             <input
               type="checkbox"
-              checked={
-                dataSource.length > 0 &&
-                selectedRowKeys.length === dataSource.length
-              }
-              onChange={(e) => {
+              checked={dataSource.length > 0 && selectedRowKeys.length === dataSource.length}
+              onChange={e => {
                 if (onSelectChange) {
                   onSelectChange(
-                    e.target.checked
-                      ? dataSource.map((item, index) => getRowKey(item, index))
-                      : []
+                    e.target.checked ? dataSource.map((item, index) => getRowKey(item, index)) : [],
                   );
                 }
               }}
@@ -121,7 +114,7 @@ export function VirtualTable<T extends Record<string, any>>({
             style={{
               width: column.width,
               textAlign: column.align,
-              flex: column.width ? undefined : 1
+              flex: column.width ? undefined : 1,
             }}
           >
             {column.title}
@@ -137,9 +130,7 @@ export function VirtualTable<T extends Record<string, any>>({
       className={`virtual-table__row ${
         striped && index % 2 === 1 ? 'virtual-table__row--striped' : ''
       } ${
-        selectedRowKeys.includes(getRowKey(record, index))
-          ? 'virtual-table__row--selected'
-          : ''
+        selectedRowKeys.includes(getRowKey(record, index)) ? 'virtual-table__row--selected' : ''
       }`}
     >
       {selectable && (
@@ -147,13 +138,13 @@ export function VirtualTable<T extends Record<string, any>>({
           <input
             type="checkbox"
             checked={selectedRowKeys.includes(getRowKey(record, index))}
-            onChange={(e) => {
+            onChange={e => {
               if (onSelectChange) {
                 const key = getRowKey(record, index);
                 onSelectChange(
                   e.target.checked
                     ? [...selectedRowKeys, key]
-                    : selectedRowKeys.filter((k) => k !== key)
+                    : selectedRowKeys.filter(k => k !== key),
                 );
               }
             }}
@@ -169,7 +160,7 @@ export function VirtualTable<T extends Record<string, any>>({
           style={{
             width: column.width,
             textAlign: column.align,
-            flex: column.width ? undefined : 1
+            flex: column.width ? undefined : 1,
           }}
         >
           {column.render
@@ -190,9 +181,7 @@ export function VirtualTable<T extends Record<string, any>>({
 
   return (
     <div
-      className={`virtual-table ${bordered ? 'virtual-table--bordered' : ''} ${
-        className || ''
-      }`}
+      className={`virtual-table ${bordered ? 'virtual-table--bordered' : ''} ${className || ''}`}
       style={style}
     >
       {renderHeader()}
@@ -292,4 +281,4 @@ style.textContent = `
     color: var(--theme-text-color-secondary);
   }
 `;
-document.head.appendChild(style); 
+document.head.appendChild(style);

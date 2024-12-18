@@ -1,10 +1,14 @@
 import * as tf from '@tensorflow/tfjs';
-import { LocalDatabase, createDatabase } from '../utils/local-database';
+import { ILocalDatabase, createDatabase } from '../utils/local-database';
 
-interface DistillationConfig {
+interface IDistillationConfig {
+  /** temperature 的描述 */
   temperature: number;
-  alpha: number;  // 软标签和硬标签的权重平衡
+  /** alpha 的描述 */
+  alpha: number; // 软标签和硬标签的权重平衡
+  /** teacherModelPath 的描述 */
   teacherModelPath: string;
+  /** studentArchitecture 的描述 */
   studentArchitecture: {
     layers: Array<{
       type: string;
@@ -13,6 +17,7 @@ interface DistillationConfig {
       kernelSize?: number[];
     }>;
   };
+  /** training 的描述 */
   training: {
     epochs: number;
     batchSize: number;
@@ -21,11 +26,16 @@ interface DistillationConfig {
   };
 }
 
-interface DistillationResult {
+interface IDistillationResult {
+  /** compressionRatio 的描述 */
   compressionRatio: number;
+  /** accuracyTeacher 的描述 */
   accuracyTeacher: number;
+  /** accuracyStudent 的描述 */
   accuracyStudent: number;
+  /** latencyImprovement 的描述 */
   latencyImprovement: number;
+  /** metrics 的描述 */
   metrics: {
     loss: number[];
     distillationLoss: number[];
@@ -34,10 +44,10 @@ interface DistillationResult {
 }
 
 export class KnowledgeDistillationService {
-  private db: LocalDatabase;
+  private db: ILocalDatabase;
   private teacherModel: tf.LayersModel | null = null;
   private studentModel: tf.LayersModel | null = null;
-  private config: DistillationConfig;
+  private config: IDistillationConfig;
 
   constructor() {
     this.db = createDatabase('knowledge-distillation');
@@ -49,22 +59,20 @@ export class KnowledgeDistillationService {
         layers: [
           { type: 'dense', units: 128, activation: 'relu' },
           { type: 'dense', units: 64, activation: 'relu' },
-          { type: 'dense', units: 10, activation: 'softmax' }
-        ]
+          { type: 'dense', units: 10, activation: 'softmax' },
+        ],
       },
       training: {
         epochs: 100,
         batchSize: 32,
         learningRate: 0.001,
-        distillationLoss: 'kl'
-      }
+        distillationLoss: 'kl',
+      },
     };
   }
 
   // 初始化蒸馏过程
-  async initializeDistillation(
-    teacherModel: tf.LayersModel
-  ): Promise<void> {
+  async initializeDistillation(teacherModel: tf.LayersModel): Promise<void> {
     this.teacherModel = teacherModel;
     this.studentModel = await this.buildStudentModel();
   }
@@ -72,8 +80,8 @@ export class KnowledgeDistillationService {
   // 执行知识蒸馏
   async performDistillation(
     data: { x: tf.Tensor; y: tf.Tensor },
-    validationData?: { x: tf.Tensor; y: tf.Tensor }
-  ): Promise<DistillationResult> {
+    validationData?: { x: tf.Tensor; y: tf.Tensor },
+  ): Promise<IDistillationResult> {
     if (!this.teacherModel || !this.studentModel) {
       throw new Error('模型未初始化');
     }
@@ -82,17 +90,10 @@ export class KnowledgeDistillationService {
     const softLabels = await this.generateSoftLabels(data.x);
 
     // 训练学生模型
-    const history = await this.trainStudentModel(
-      data,
-      softLabels,
-      validationData
-    );
+    const history = await this.trainStudentModel(data, softLabels, validationData);
 
     // 评估结果
-    const result = await this.evaluateDistillation(
-      data,
-      validationData
-    );
+    const result = await this.evaluateDistillation(data, validationData);
 
     await this.saveDistillationResult(result);
     return result;
@@ -113,17 +114,21 @@ export class KnowledgeDistillationService {
     for (const layerConfig of this.config.studentArchitecture.layers) {
       switch (layerConfig.type) {
         case 'dense':
-          model.add(tf.layers.dense({
-            units: layerConfig.units!,
-            activation: layerConfig.activation
-          }));
+          model.add(
+            tf.layers.dense({
+              units: layerConfig.units!,
+              activation: layerConfig.activation,
+            }),
+          );
           break;
         case 'conv2d':
-          model.add(tf.layers.conv2d({
-            filters: layerConfig.units!,
-            kernelSize: layerConfig.kernelSize!,
-            activation: layerConfig.activation
-          }));
+          model.add(
+            tf.layers.conv2d({
+              filters: layerConfig.units!,
+              kernelSize: layerConfig.kernelSize!,
+              activation: layerConfig.activation,
+            }),
+          );
           break;
         // 添加其他层类型
       }
@@ -132,7 +137,7 @@ export class KnowledgeDistillationService {
     model.compile({
       optimizer: tf.train.adam(this.config.training.learningRate),
       loss: this.createDistillationLoss(),
-      metrics: ['accuracy']
+      metrics: ['accuracy'],
     });
 
     return model;
@@ -168,7 +173,7 @@ export class KnowledgeDistillationService {
         // 组合损失
         return tf.add(
           tf.mul(distillationLoss, tf.scalar(this.config.alpha)),
-          tf.mul(hardLoss, tf.scalar(1 - this.config.alpha))
+          tf.mul(hardLoss, tf.scalar(1 - this.config.alpha)),
         );
       });
     };
@@ -178,7 +183,7 @@ export class KnowledgeDistillationService {
   private async trainStudentModel(
     data: { x: tf.Tensor; y: tf.Tensor },
     softLabels: tf.Tensor,
-    validationData?: { x: tf.Tensor; y: tf.Tensor }
+    validationData?: { x: tf.Tensor; y: tf.Tensor },
   ): Promise<tf.History> {
     // 组合硬标签和软标签
     const combinedLabels = tf.concat([data.y, softLabels], 1);
@@ -186,19 +191,21 @@ export class KnowledgeDistillationService {
     return await this.studentModel!.fit(data.x, combinedLabels, {
       epochs: this.config.training.epochs,
       batchSize: this.config.training.batchSize,
-      validationData: validationData ? [
-        validationData.x,
-        tf.concat([validationData.y, this.generateSoftLabels(validationData.x)], 1)
-      ] : undefined,
-      callbacks: this.createDistillationCallbacks()
+      validationData: validationData
+        ? [
+            validationData.x,
+            tf.concat([validationData.y, this.generateSoftLabels(validationData.x)], 1),
+          ]
+        : undefined,
+      callbacks: this.createDistillationCallbacks(),
     });
   }
 
   // 评估蒸馏结果
   private async evaluateDistillation(
     data: { x: tf.Tensor; y: tf.Tensor },
-    validationData?: { x: tf.Tensor; y: tf.Tensor }
-  ): Promise<DistillationResult> {
+    validationData?: { x: tf.Tensor; y: tf.Tensor },
+  ): Promise<IDistillationResult> {
     const evalData = validationData || data;
 
     const teacherAccuracy = await this.evaluateModel(this.teacherModel!, evalData);
@@ -213,20 +220,20 @@ export class KnowledgeDistillationService {
       accuracyStudent: studentAccuracy,
       latencyImprovement,
       metrics: {
-        loss: [],  // 从训练历史中获取
+        loss: [], // 从训练历史中获取
         distillationLoss: [],
-        studentAccuracy: []
-      }
+        studentAccuracy: [],
+      },
     };
   }
 
   // 辅助方法
   private async evaluateModel(
     model: tf.LayersModel,
-    data: { x: tf.Tensor; y: tf.Tensor }
+    data: { x: tf.Tensor; y: tf.Tensor },
   ): Promise<number> {
-    const result = await model.evaluate(data.x, data.y) as tf.Scalar[];
-    return result[1].dataSync()[0];  // 返回准确率
+    const result = (await model.evaluate(data.x, data.y)) as tf.Scalar[];
+    return result[1].dataSync()[0]; // 返回准确率
   }
 
   private async calculateCompressionRatio(): Promise<number> {
@@ -240,7 +247,7 @@ export class KnowledgeDistillationService {
     model.weights.forEach(weight => {
       totalParams += weight.size;
     });
-    return totalParams * 4;  // 假设每个参数占4字节
+    return totalParams * 4; // 假设每个参数占4字节
   }
 
   private async measureLatencyImprovement(input: tf.Tensor): Promise<number> {
@@ -249,10 +256,7 @@ export class KnowledgeDistillationService {
     return (teacherTime - studentTime) / teacherTime;
   }
 
-  private async measureInferenceTime(
-    model: tf.LayersModel,
-    input: tf.Tensor
-  ): Promise<number> {
+  private async measureInferenceTime(model: tf.LayersModel, input: tf.Tensor): Promise<number> {
     // 预热
     for (let i = 0; i < 10; i++) {
       await model.predict(input);
@@ -269,15 +273,17 @@ export class KnowledgeDistillationService {
   }
 
   private createDistillationCallbacks(): tf.CustomCallbackArgs[] {
-    return [{
-      onEpochEnd: async (epoch, logs) => {
-        console.log(`Epoch ${epoch}: loss = ${logs?.loss}`);
-      }
-    }];
+    return [
+      {
+        onEpochEnd: async (epoch, logs) => {
+          console.log(`Epoch ${epoch}: loss = ${logs?.loss}`);
+        },
+      },
+    ];
   }
 
   // 保存蒸馏结果
-  private async saveDistillationResult(result: DistillationResult): Promise<void> {
+  private async saveDistillationResult(result: IDistillationResult): Promise<void> {
     await this.studentModel!.save('indexeddb://student-model');
     await this.db.put('distillation-result', result);
     await this.db.put('distillation-config', this.config);
@@ -289,8 +295,8 @@ export class KnowledgeDistillationService {
       this.studentModel = await tf.loadLayersModel('indexeddb://student-model');
       return this.studentModel;
     } catch (error) {
-      console.error('加载学生模型失败:', error);
+      console.error('Error in knowledge-distillation.service.ts:', '加载学生模型失败:', error);
       return null;
     }
   }
-} 
+}

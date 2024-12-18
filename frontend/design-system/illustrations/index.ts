@@ -1,23 +1,30 @@
+/**
+ * @fileoverview TS 文件 index.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export const Illustrations = {
   // 空状态插图
   empty: {
     noData: require('./empty/no-data.svg'),
     noConnection: require('./empty/no-connection.svg'),
-    noResults: require('./empty/no-results.svg')
+    noResults: require('./empty/no-results.svg'),
   },
 
   // 成功状态插图
   success: {
     completed: require('./success/completed.svg'),
     achieved: require('./success/achieved.svg'),
-    verified: require('./success/verified.svg')
+    verified: require('./success/verified.svg'),
   },
 
   // 错误状态插图
   error: {
     failed: require('./error/failed.svg'),
     notFound: require('./error/not-found.svg'),
-    serverError: require('./error/server-error.svg')
+    serverError: require('./error/server-error.svg'),
   },
 
   // 健康相关插图
@@ -25,22 +32,22 @@ export const Illustrations = {
     exercise: require('./health/exercise.svg'),
     nutrition: require('./health/nutrition.svg'),
     meditation: require('./health/meditation.svg'),
-    sleep: require('./health/sleep.svg')
-  }
+    sleep: require('./health/sleep.svg'),
+  },
 };
 
 // 插图尺寸预设
 export const IllustrationSizes = {
   small: {
     width: 120,
-    height: 120
+    height: 120,
   },
   medium: {
     width: 200,
-    height: 200
+    height: 200,
   },
   large: {
     width: 300,
-    height: 300
-  }
-}; 
+    height: 300,
+  },
+};

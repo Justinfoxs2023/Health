@@ -23,18 +23,19 @@ const SkeletonBase = styled.div<{ height: string; width: string }>`
   border-radius: 4px;
 `;
 
-interface SkeletonProps {
-  type?: 'text' | 'avatar' | 'button' | 'card';
-  height?: string;
-  width?: string;
-  repeat?: number;
+interface ISkeletonProps {
+  /** type 的描述 */
+    type: text  avatar  button  card;
+  height: string;
+  width: string;
+  repeat: number;
 }
 
-export const Skeleton: React.FC<SkeletonProps> = ({
+export const Skeleton: React.FC<ISkeletonProps> = ({
   type = 'text',
   height = '20px',
   width = '100%',
-  repeat = 1
+  repeat = 1,
 }) => {
   const skeletons = Array(repeat).fill(null);
 
@@ -50,4 +51,4 @@ export const Skeleton: React.FC<SkeletonProps> = ({
       ))}
     </>
   );
-}; 
+};

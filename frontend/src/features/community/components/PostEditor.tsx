@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TSX 文件 PostEditor.tsx 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // 发帖编辑器组件
 export const PostEditor: React.FC = () => {
   const [content, setContent] = useState('');
@@ -10,13 +17,13 @@ export const PostEditor: React.FC = () => {
         content,
         media,
         tags,
-        type: 'experience'
+        type: 'experience',
       });
-      
+
       // 发布成功后的处理
       Toast.show({
         type: 'success',
-        text: '发布成功'
+        text: '发布成功',
       });
     } catch (error) {
       handleError(error);
@@ -36,4 +43,4 @@ export const PostEditor: React.FC = () => {
       <Button title="发布" onPress={handleSubmit} />
     </View>
   );
-}; 
+};

@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
-import { logger } from '../logger';
 import { cacheService } from '../cache';
+import { logger } from '../logger';
 
 class DatabaseMonitoringService {
   private readonly metricsKey = 'db:metrics';
@@ -47,12 +47,12 @@ class DatabaseMonitoringService {
       connections: {
         active: connection.states.connected,
         available: connection.states.disconnected,
-        pending: connection.states.connecting
+        pending: connection.states.connecting,
       },
       operations: await this.getOperationMetrics(db),
       memory: await this.getMemoryMetrics(db),
       collections: await this.getCollectionMetrics(db),
-      indexes: await this.getIndexMetrics(db)
+      indexes: await this.getIndexMetrics(db),
     };
 
     return metrics;
@@ -63,12 +63,12 @@ class DatabaseMonitoringService {
    */
   private async getOperationMetrics(db: any) {
     const serverStatus = await db.command({ serverStatus: 1 });
-    
+
     return {
       totalOperations: serverStatus.opcounters,
       activeConnections: serverStatus.connections,
       networkTraffic: serverStatus.network,
-      queryExecutor: serverStatus.metrics.queryExecutor
+      queryExecutor: serverStatus.metrics.queryExecutor,
     };
   }
 
@@ -77,11 +77,11 @@ class DatabaseMonitoringService {
    */
   private async getMemoryMetrics(db: any) {
     const serverStatus = await db.command({ serverStatus: 1 });
-    
+
     return {
       virtualMemory: serverStatus.mem.virtual,
       residentMemory: serverStatus.mem.resident,
-      pageFaults: serverStatus.extra_info.page_faults
+      pageFaults: serverStatus.extra_info.page_faults,
     };
   }
 
@@ -100,7 +100,7 @@ class DatabaseMonitoringService {
         count: stats.count,
         avgObjSize: stats.avgObjSize,
         storageSize: stats.storageSize,
-        indexes: stats.nindexes
+        indexes: stats.nindexes,
       });
     }
 
@@ -122,8 +122,8 @@ class DatabaseMonitoringService {
           name: index.name,
           keys: index.key,
           size: index.size,
-          accesses: index.accesses
-        }))
+          accesses: index.accesses,
+        })),
       });
     }
 
@@ -138,7 +138,7 @@ class DatabaseMonitoringService {
       await cacheService.set(
         `${this.metricsKey}:${metrics.timestamp.getTime()}`,
         metrics,
-        3600 // 1小时过期
+        3600, // 1小时过期
       );
     } catch (error) {
       logger.error('保存数据库指标失败:', error);
@@ -148,12 +148,13 @@ class DatabaseMonitoringService {
   /**
    * 获取最近的指标
    */
-  async getRecentMetrics(duration: number = 3600000) { // 默认1小时
+  async getRecentMetrics(duration = 3600000) {
+    // 默认1小时
     try {
       const now = Date.now();
       const start = now - duration;
       const keys = await cacheService.redis.keys(`${this.metricsKey}:*`);
-      
+
       const metrics = [];
       for (const key of keys) {
         const timestamp = parseInt(key.split(':')[2]);
@@ -165,8 +166,8 @@ class DatabaseMonitoringService {
         }
       }
 
-      return metrics.sort((a, b) => 
-        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+      return metrics.sort(
+        (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
       );
     } catch (error) {
       logger.error('获取数据库指标失败:', error);
@@ -191,7 +192,7 @@ class DatabaseMonitoringService {
         operationalHealth: this.analyzeOperations(latest.operations),
         memoryHealth: this.analyzeMemory(latest.memory),
         collectionHealth: this.analyzeCollections(latest.collections),
-        recommendations: []
+        recommendations: [],
       };
 
       // 添加建议
@@ -222,7 +223,7 @@ class DatabaseMonitoringService {
     return {
       status: utilizationRate > 0.8 ? 'warning' : 'healthy',
       utilizationRate,
-      details: connections
+      details: connections,
     };
   }
 
@@ -231,13 +232,17 @@ class DatabaseMonitoringService {
    */
   private analyzeOperations(operations: any) {
     const { totalOperations } = operations;
-    const writeRatio = (totalOperations.insert + totalOperations.update + totalOperations.delete) /
-      (totalOperations.query + totalOperations.insert + totalOperations.update + totalOperations.delete);
+    const writeRatio =
+      (totalOperations.insert + totalOperations.update + totalOperations.delete) /
+      (totalOperations.query +
+        totalOperations.insert +
+        totalOperations.update +
+        totalOperations.delete);
 
     return {
       status: writeRatio > 0.7 ? 'warning' : 'healthy',
       writeRatio,
-      details: operations
+      details: operations,
     };
   }
 
@@ -250,7 +255,7 @@ class DatabaseMonitoringService {
     return {
       status: memoryUtilization > 0.8 ? 'warning' : 'healthy',
       memoryUtilization,
-      details: memory
+      details: memory,
     };
   }
 
@@ -261,14 +266,14 @@ class DatabaseMonitoringService {
     const analysis = collections.map(collection => ({
       name: collection.name,
       status: collection.size > 1000000000 ? 'warning' : 'healthy', // 1GB警告
-      details: collection
+      details: collection,
     }));
 
     return {
       status: analysis.some(a => a.status === 'warning') ? 'warning' : 'healthy',
-      collections: analysis
+      collections: analysis,
     };
   }
 }
 
-export const databaseMonitoringService = new DatabaseMonitoringService(); 
+export const databaseMonitoringService = new DatabaseMonitoringService();

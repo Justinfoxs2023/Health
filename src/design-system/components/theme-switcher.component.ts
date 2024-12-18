@@ -1,40 +1,42 @@
-import { Component } from '@angular/core';
 import type { OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { DesignSystemService } from '../design-system.service';
-import { Theme } from '../types';
+import { ITheme } from '../types';
 
 @Component({
   selector: 'app-theme-switcher',
   template: `
     <div class="theme-switcher">
       <select [value]="currentThemeId" (change)="onThemeChange($event)">
-        <option *ngFor="let theme of themes" [value]="theme.id">
-          {{ theme.name }}
+        <option ngFor="let theme of themes" value="themeid">
+          {{ themename }}
         </option>
       </select>
-      
-      <button *ngIf="showCustomize" (click)="openCustomizer()">
-        自定义主题
-      </button>
+
+      <button ngIf="showCustomize" click="openCustomizer"></button>
     </div>
-  `
+  `,
 })
 export class ThemeSwitcherComponent implements OnInit {
   currentThemeId: string;
-  themes: Theme[] = [];
+  themes: ITheme[] = [];
   showCustomize = false;
 
   constructor(private designSystem: DesignSystemService) {}
 
   ngOnInit() {
-    this.designSystem.getCurrentTheme().subscribe({
-      next: (theme: Theme) => {
+    console.error('Error in theme-switcher.component.ts:', {
+      next: (theme: ITheme) => {
         this.currentThemeId = theme.id;
       },
       error: (error: any) => {
-        console.error('Error getting current theme:', error);
+        console.error(
+          'Error in theme-switcher.component.ts:',
+          'Error getting current theme:',
+          error,
+        );
       },
-      complete: () => {}
+      complete: () => {},
     });
   }
 
@@ -46,4 +48,4 @@ export class ThemeSwitcherComponent implements OnInit {
   openCustomizer() {
     // 实现打开主题自定义器的逻辑
   }
-} 
+}

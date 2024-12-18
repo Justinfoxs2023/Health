@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 index.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export const DesignTokens = {
   // 颜色令牌
   colors: {
@@ -5,7 +12,7 @@ export const DesignTokens = {
     brand: {
       primary: '#2E7D32',
       secondary: '#0288D1',
-      tertiary: '#9C27B0'
+      tertiary: '#9C27B0',
     },
 
     // 功能色
@@ -13,7 +20,7 @@ export const DesignTokens = {
       success: '#43A047',
       warning: '#FFA000',
       error: '#D32F2F',
-      info: '#1976D2'
+      info: '#1976D2',
     },
 
     // 中性色
@@ -30,9 +37,9 @@ export const DesignTokens = {
         600: '#757575',
         700: '#616161',
         800: '#424242',
-        900: '#212121'
-      }
-    }
+        900: '#212121',
+      },
+    },
   },
 
   // 字体令牌
@@ -41,7 +48,7 @@ export const DesignTokens = {
     families: {
       primary: 'PingFang SC',
       secondary: 'SF Pro Text',
-      number: 'DIN Alternate'
+      number: 'DIN Alternate',
     },
 
     // 字重
@@ -49,7 +56,7 @@ export const DesignTokens = {
       regular: 400,
       medium: 500,
       semibold: 600,
-      bold: 700
+      bold: 700,
     },
 
     // 字号
@@ -59,8 +66,8 @@ export const DesignTokens = {
       md: 16,
       lg: 20,
       xl: 24,
-      xxl: 32
-    }
+      xxl: 32,
+    },
   },
 
   // 间距令牌
@@ -70,7 +77,7 @@ export const DesignTokens = {
     md: 16,
     lg: 24,
     xl: 32,
-    xxl: 48
+    xxl: 48,
   },
 
   // 圆角令牌
@@ -80,7 +87,7 @@ export const DesignTokens = {
     md: 8,
     lg: 16,
     xl: 24,
-    full: 9999
+    full: 9999,
   },
 
   // 阴影令牌
@@ -90,21 +97,21 @@ export const DesignTokens = {
       shadowOffset: { width: 0, height: 1 },
       shadowOpacity: 0.18,
       shadowRadius: 1.0,
-      elevation: 1
+      elevation: 1,
     },
     md: {
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.20,
+      shadowOpacity: 0.2,
       shadowRadius: 1.41,
-      elevation: 2
+      elevation: 2,
     },
     lg: {
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 3 },
       shadowOpacity: 0.22,
       shadowRadius: 2.22,
-      elevation: 3
-    }
-  }
-}; 
+      elevation: 3,
+    },
+  },
+};

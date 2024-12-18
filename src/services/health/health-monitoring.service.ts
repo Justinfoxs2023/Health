@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 health-monitoring.service.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 @Injectable()
 export class HealthMonitoringService {
   // 生理指标监测
@@ -56,4 +63,4 @@ export class HealthMonitoringService {
       medical: string[];
     };
   };
-} 
+}

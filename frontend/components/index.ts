@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 index.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export * from './Icon';
 export * from './Tag';
 export * from './LoadingSpinner';
@@ -30,4 +37,4 @@ export * from './DatePicker';
 export * from './TimePicker';
 export * from './ConsultTypeSelector';
 export * from './TagSelector';
-// ... 其他组件 
+// ... 其他组件

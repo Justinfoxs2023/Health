@@ -19,4 +19,4 @@ export class UserGrowth {
 
   @Column('timestamp')
   lastUpdated: Date;
-} 
+}

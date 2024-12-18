@@ -12,7 +12,7 @@ router.get(
   '/profile',
   auth.verifyToken,
   rateLimit.standard,
-  userController.getUserProfile.bind(userController)
+  userController.getUserProfile.bind(userController),
 );
 
 // 更新用户信息
@@ -20,7 +20,7 @@ router.put(
   '/profile',
   auth.verifyToken,
   rateLimit.standard,
-  userController.updateUserProfile.bind(userController)
+  userController.updateUserProfile.bind(userController),
 );
 
 // 更新头像
@@ -29,7 +29,7 @@ router.put(
   auth.verifyToken,
   rateLimit.upload,
   uploadMiddleware.single('avatar'),
-  userController.updateAvatar.bind(userController)
+  userController.updateAvatar.bind(userController),
 );
 
-export default router; 
+export default router;

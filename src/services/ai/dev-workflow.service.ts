@@ -1,6 +1,6 @@
+import { CodeAnalysis, TestCase, Documentation } from '../types/ai';
 import { DevAssistantService } from './dev-assistant.service';
 import { Logger } from '../utils/logger';
-import { CodeAnalysis, TestCase, Documentation } from '../types/ai';
 
 export class DevWorkflowService {
   private devAssistant: DevAssistantService;
@@ -16,13 +16,13 @@ export class DevWorkflowService {
     try {
       // 1. 代码质量检查
       const analysis = await this.devAssistant.reviewCode(changes.join('\n'));
-      
+
       // 2. 生成测试用例
       const tests = await this.devAssistant.generateTests(changes.join('\n'));
-      
+
       // 3. 运行测试
       const testResults = await this.runTests(tests);
-      
+
       // 4. 更新文档
       await this.updateDocs(changes);
 
@@ -49,10 +49,10 @@ export class DevWorkflowService {
     try {
       // 1. 分析构建上下文
       const analysis = await this.analyzeBuildContext(buildContext);
-      
+
       // 2. 生成优化建议
       const suggestions = await this.generateBuildSuggestions(analysis);
-      
+
       // 3. 自动修复常见问题
       const fixes = await this.autoFixCommonIssues(analysis);
 
@@ -60,11 +60,11 @@ export class DevWorkflowService {
         analysis,
         suggestions,
         fixes,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     } catch (error) {
       this.logger.error('CI support failed', error);
       throw error;
     }
   }
-} 
+}

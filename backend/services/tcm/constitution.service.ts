@@ -1,10 +1,12 @@
+import { AI } from '../../utils/ai';
 import { EventEmitter } from 'events';
 import { Logger } from '../../utils/logger';
 import { Redis } from '../../utils/redis';
-import { AI } from '../../utils/ai';
 
-interface ConstitutionConfig {
+interface IConstitutionConfig {
+  /** evaluationThreshold 的描述 */
   evaluationThreshold: number;
+  /** aiModelVersions 的描述 */
   aiModelVersions: {
     facial: string;
     tongue: string;
@@ -16,9 +18,9 @@ export class ConstitutionService extends EventEmitter {
   private logger: Logger;
   private redis: Redis;
   private ai: AI;
-  private config: ConstitutionConfig;
+  private config: IConstitutionConfig;
 
-  constructor(config: ConstitutionConfig) {
+  constructor(config: IConstitutionConfig) {
     super();
     this.logger = new Logger('ConstitutionService');
     this.redis = new Redis();
@@ -27,18 +29,21 @@ export class ConstitutionService extends EventEmitter {
   }
 
   // 体质评估
-  async evaluateConstitution(userId: string, data: {
-    questionnaire?: any;
-    facial?: string;
-    tongue?: string;
-    pulse?: any;
-  }): Promise<any> {
+  async evaluateConstitution(
+    userId: string,
+    data: {
+      questionnaire?: any;
+      facial?: string;
+      tongue?: string;
+      pulse?: any;
+    },
+  ): Promise<any> {
     try {
       const results = await Promise.all([
         data.questionnaire && this.evaluateQuestionnaire(data.questionnaire),
         data.facial && this.analyzeFacial(data.facial),
         data.tongue && this.analyzeTongue(data.tongue),
-        data.pulse && this.analyzePulse(data.pulse)
+        data.pulse && this.analyzePulse(data.pulse),
       ]);
 
       const constitution = this.synthesizeResults(results);
@@ -58,30 +63,30 @@ export class ConstitutionService extends EventEmitter {
       primaryType: '气虚质',
       secondaryType: '阴虚质',
       scores: {
-        '气虚质': 0.8,
-        '阴虚质': 0.6
-      }
+        气虚质: 0.8,
+        阴虚质: 0.6,
+      },
     };
   }
 
   // 面相分析
   private async analyzeFacial(imageUrl: string): Promise<any> {
     return await this.ai.analyze('facial', imageUrl, {
-      modelVersion: this.config.aiModelVersions.facial
+      modelVersion: this.config.aiModelVersions.facial,
     });
   }
 
   // 舌诊分析
   private async analyzeTongue(imageUrl: string): Promise<any> {
     return await this.ai.analyze('tongue', imageUrl, {
-      modelVersion: this.config.aiModelVersions.tongue
+      modelVersion: this.config.aiModelVersions.tongue,
     });
   }
 
   // 脉诊分析
   private async analyzePulse(data: any): Promise<any> {
     return await this.ai.analyze('pulse', data, {
-      modelVersion: this.config.aiModelVersions.pulse
+      modelVersion: this.config.aiModelVersions.pulse,
     });
   }
-} 
+}

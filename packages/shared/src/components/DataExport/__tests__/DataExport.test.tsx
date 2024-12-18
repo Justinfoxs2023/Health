@@ -1,8 +1,9 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+
 import { DataExport } from '../index';
-import { exportService } from '../../../services/export';
 import { Message } from '../../Message';
+import { exportService } from '../../../services/export';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 
 // Mock services
 jest.mock('../../../services/export');
@@ -11,7 +12,7 @@ jest.mock('../../Message');
 describe('DataExport Component', () => {
   const mockData = [
     { id: 1, name: 'Test 1', value: 100 },
-    { id: 2, name: 'Test 2', value: 200 }
+    { id: 2, name: 'Test 2', value: 200 },
   ];
 
   const mockExportSuccess = jest.fn();
@@ -47,7 +48,7 @@ describe('DataExport Component', () => {
         data={mockData}
         onExportSuccess={mockExportSuccess}
         onExportError={mockExportError}
-      />
+      />,
     );
 
     // 打开模态框
@@ -65,8 +66,8 @@ describe('DataExport Component', () => {
         mockData,
         expect.objectContaining({
           format: 'json',
-          includeMetadata: true
-        })
+          includeMetadata: true,
+        }),
       );
       expect(mockExportSuccess).toHaveBeenCalled();
       expect(Message.success).toHaveBeenCalledWith('数据导出成功');
@@ -82,7 +83,7 @@ describe('DataExport Component', () => {
         data={mockData}
         onExportSuccess={mockExportSuccess}
         onExportError={mockExportError}
-      />
+      />,
     );
 
     // 打开模态框
@@ -104,7 +105,7 @@ describe('DataExport Component', () => {
       version: '1.0.0',
       size: 1000,
       encrypted: false,
-      recordCount: 2
+      recordCount: 2,
     };
     (exportService.createBackup as jest.Mock).mockResolvedValue(mockMetadata);
 
@@ -117,10 +118,7 @@ describe('DataExport Component', () => {
     fireEvent.click(screen.getByText('创建备份'));
 
     await waitFor(() => {
-      expect(exportService.createBackup).toHaveBeenCalledWith(
-        mockData,
-        expect.any(Object)
-      );
+      expect(exportService.createBackup).toHaveBeenCalledWith(mockData, expect.any(Object));
       expect(Message.success).toHaveBeenCalledWith('创建备份成功');
     });
   });
@@ -151,8 +149,8 @@ describe('DataExport Component', () => {
         description: 'Test Backup',
         size: 1000,
         encrypted: false,
-        recordCount: 2
-      }
+        recordCount: 2,
+      },
     ];
     (exportService.getBackupList as jest.Mock).mockResolvedValue(mockBackups);
     (exportService.restoreBackup as jest.Mock).mockResolvedValue(mockData);
@@ -170,10 +168,7 @@ describe('DataExport Component', () => {
     fireEvent.click(screen.getByText('恢复备份'));
 
     await waitFor(() => {
-      expect(exportService.restoreBackup).toHaveBeenCalledWith(
-        'backup_123',
-        undefined
-      );
+      expect(exportService.restoreBackup).toHaveBeenCalledWith('backup_123', undefined);
       expect(Message.success).toHaveBeenCalledWith('恢复备份成功');
     });
   });
@@ -187,8 +182,8 @@ describe('DataExport Component', () => {
         description: 'Test Backup',
         size: 1000,
         encrypted: false,
-        recordCount: 2
-      }
+        recordCount: 2,
+      },
     ];
     (exportService.getBackupList as jest.Mock).mockResolvedValue(mockBackups);
 
@@ -217,17 +212,14 @@ describe('DataExport Component', () => {
     fireEvent.click(screen.getByText('导出数据'));
 
     // 启用加密
-    const encryptCheckbox = screen.getByText('加密数据')
-      .previousElementSibling as HTMLInputElement;
+    const encryptCheckbox = screen.getByText('加密数据').previousElementSibling as HTMLInputElement;
     fireEvent.click(encryptCheckbox);
 
     // 验证密钥输入框出现
     expect(screen.getByPlaceholderText('请输入加密密钥')).toBeInTheDocument();
 
     // 输入密钥
-    const keyInput = screen.getByPlaceholderText(
-      '请输入加密密钥'
-    ) as HTMLInputElement;
+    const keyInput = screen.getByPlaceholderText('请输入加密密钥') as HTMLInputElement;
     fireEvent.change(keyInput, { target: { value: 'test-key' } });
 
     // 点击导出按钮
@@ -238,9 +230,9 @@ describe('DataExport Component', () => {
         mockData,
         expect.objectContaining({
           encrypt: true,
-          encryptionKey: 'test-key'
-        })
+          encryptionKey: 'test-key',
+        }),
       );
     });
   });
-}); 
+});

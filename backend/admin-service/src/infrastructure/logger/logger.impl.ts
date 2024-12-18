@@ -1,35 +1,29 @@
-import { injectable } from 'inversify';
-import { createLogger, format, transports } from 'winston';
-import { Logger } from '../../types/logger';
 import { ConfigLoader } from '../../config/config.loader';
+import { ILogger } from '../../types/logger';
+import { createLogger, format, transports } from 'winston';
+import { injectable } from 'inversify';
 
 @injectable()
-export class LoggerImpl implements Logger {
+export class LoggerImpl implements ILogger {
   private logger: any;
   private config = ConfigLoader.getInstance();
 
   constructor() {
     this.logger = createLogger({
       level: this.config.get('LOG_LEVEL', 'info'),
-      format: format.combine(
-        format.timestamp(),
-        format.json()
-      ),
+      format: format.combine(format.timestamp(), format.json()),
       transports: [
         new transports.Console({
-          format: format.combine(
-            format.colorize(),
-            format.simple()
-          )
+          format: format.combine(format.colorize(), format.simple()),
         }),
         new transports.File({
           filename: `${this.config.get('LOG_PATH', './logs')}/error.log`,
-          level: 'error'
+          level: 'error',
         }),
         new transports.File({
-          filename: `${this.config.get('LOG_PATH', './logs')}/combined.log`
-        })
-      ]
+          filename: `${this.config.get('LOG_PATH', './logs')}/combined.log`,
+        }),
+      ],
     });
   }
 
@@ -48,4 +42,4 @@ export class LoggerImpl implements Logger {
   debug(message: string, data?: any): void {
     this.logger.debug(message, { data });
   }
-} 
+}

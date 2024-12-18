@@ -1,9 +1,10 @@
 import React from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
+
+import { SleepAnalysis } from '../components/sleep/SleepAnalysis';
+import { SleepHistory } from '../components/sleep/SleepHistory';
 import { SleepMonitoring } from '../components/sleep/SleepMonitoring';
 import { SleepOptimization } from '../components/sleep/SleepOptimization';
-import { SleepHistory } from '../components/sleep/SleepHistory';
-import { SleepAnalysis } from '../components/sleep/SleepAnalysis';
+import { createStackNavigator } from '@react-navigation/stack';
 
 const Stack = createStackNavigator();
 
@@ -17,7 +18,7 @@ export const SleepStack = () => {
         headerTintColor: '#fff',
       }}
     >
-      <Stack.Screen 
+      <Stack.Screen
         name="SleepMonitoring"
         component={SleepMonitoring}
         options={{ title: '睡眠监测' }}
@@ -27,11 +28,7 @@ export const SleepStack = () => {
         component={SleepOptimization}
         options={{ title: '睡眠优化' }}
       />
-      <Stack.Screen
-        name="SleepHistory"
-        component={SleepHistory}
-        options={{ title: '睡眠历史' }}
-      />
+      <Stack.Screen name="SleepHistory" component={SleepHistory} options={{ title: '睡眠历史' }} />
       <Stack.Screen
         name="SleepAnalysis"
         component={SleepAnalysis}
@@ -39,4 +36,4 @@ export const SleepStack = () => {
       />
     </Stack.Navigator>
   );
-}; 
+};

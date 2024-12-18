@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TSX 文件 HealthDataDisplay.tsx 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // 健康数据显示组件
 export const HealthDataDisplay: React.FC = () => {
   const [healthData, setHealthData] = useState<HealthData | null>(null);
@@ -16,11 +23,7 @@ export const HealthDataDisplay: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <MetricCard
-        title="心率"
-        value={healthData?.metrics.heartRate}
-        unit="bpm"
-      />
+      <MetricCard title="心率" value={healthData?.metrics.heartRate} unit="bpm" />
       <MetricCard
         title="血压"
         value={`${healthData?.metrics.bloodPressure?.systolic}/${healthData?.metrics.bloodPressure?.diastolic}`}
@@ -29,4 +32,4 @@ export const HealthDataDisplay: React.FC = () => {
       {/* 其他健康指标... */}
     </View>
   );
-}; 
+};

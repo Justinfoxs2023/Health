@@ -2,12 +2,12 @@ import { Request, Response, NextFunction } from 'express';
 
 declare module '../middleware/*' {
   export interface AuthMiddleware {
-    verifyToken(req: Request, res: Response, next: NextFunction): Promise<void>;
+    verifyTokenreq: Request, res: Response, next: NextFunction: Promisevoid;
   }
 
   export interface RateLimitMiddleware {
-    standard(req: Request, res: Response, next: NextFunction): Promise<void>;
-    upload(req: Request, res: Response, next: NextFunction): Promise<void>;
+    standardreq: Request, res: Response, next: NextFunction: Promisevoid;
+    uploadreq: Request, res: Response, next: NextFunction: Promisevoid;
   }
 }
 
@@ -15,10 +15,10 @@ declare module '../middleware/*' {
 declare global {
   namespace Express {
     interface Request {
-      user?: {
+      user: {
         id: string;
-        roles: string[];
-        permissions?: string[];
+        roles: string;
+        permissions: string;
       };
       file?: {
         fieldname: string;
@@ -30,4 +30,4 @@ declare global {
       };
     }
   }
-} 
+}

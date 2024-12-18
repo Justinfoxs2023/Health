@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 colorUtils.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export class ColorUtils {
   // 颜色透明度调整
   static withOpacity(color: string, opacity: number): string {
@@ -20,11 +27,9 @@ export class ColorUtils {
       const r = parseInt(hex.substring(0, 2), 16) / 255;
       const g = parseInt(hex.substring(2, 4), 16) / 255;
       const b = parseInt(hex.substring(4, 6), 16) / 255;
-      
+
       const toLinear = (value: number): number => {
-        return value <= 0.03928
-          ? value / 12.92
-          : Math.pow((value + 0.055) / 1.055, 2.4);
+        return value <= 0.03928 ? value / 12.92 : Math.pow((value + 0.055) / 1.055, 2.4);
       };
 
       return 0.2126 * toLinear(r) + 0.7152 * toLinear(g) + 0.0722 * toLinear(b);
@@ -32,10 +37,10 @@ export class ColorUtils {
 
     const l1 = getLuminance(foreground);
     const l2 = getLuminance(background);
-    
+
     const brightest = Math.max(l1, l2);
     const darkest = Math.min(l1, l2);
-    
+
     return (brightest + 0.05) / (darkest + 0.05);
   }
-} 
+}

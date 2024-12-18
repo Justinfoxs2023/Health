@@ -1,6 +1,6 @@
-import { Request, Response } from 'express';
 import { DoctorService } from '../services/doctor.service';
 import { Logger } from '../utils/logger';
+import { Request, Response } from 'express';
 
 export class DoctorController {
   private doctorService: DoctorService;
@@ -23,18 +23,18 @@ export class DoctorController {
         doctorId,
         Number(page),
         Number(limit),
-        status as string
+        status as string,
       );
 
       return res.json({
         code: 200,
-        data: patients
+        data: patients,
       });
     } catch (error) {
       this.logger.error('获取患者列表失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
@@ -47,20 +47,17 @@ export class DoctorController {
       const doctorId = req.user.id;
       const patientId = req.params.patientId;
 
-      const patientDetail = await this.doctorService.getPatientDetail(
-        doctorId,
-        patientId
-      );
+      const patientDetail = await this.doctorService.getPatientDetail(doctorId, patientId);
 
       return res.json({
         code: 200,
-        data: patientDetail
+        data: patientDetail,
       });
     } catch (error) {
       this.logger.error('获取患者详情失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
@@ -78,19 +75,19 @@ export class DoctorController {
         patientId,
         medications,
         diagnosis,
-        instructions
+        instructions,
       });
 
       return res.status(201).json({
         code: 201,
         data: prescription,
-        message: '处方创建成功'
+        message: '处方创建成功',
       });
     } catch (error) {
       this.logger.error('创建处方失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
@@ -107,20 +104,20 @@ export class DoctorController {
         doctorId,
         patientId,
         type: consultationType,
-        content
+        content,
       });
 
       return res.status(201).json({
         code: 201,
         data: consultation,
-        message: '咨询记录创建成功'
+        message: '咨询记录创建成功',
       });
     } catch (error) {
       this.logger.error('创建咨询记录失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
-} 
+}

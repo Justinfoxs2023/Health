@@ -1,28 +1,44 @@
+/**
+ * @fileoverview TS 文件 advanced-analytics.types.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // 高级分析配置
-export interface AdvancedAnalyticsConfig {
-  predictionHorizon: number;  // 预测时间范围(天)
-  confidenceLevel: number;    // 置信水平(0-1)
-  updateFrequency: number;    // 更新频率(分钟)
-  anomalyThreshold: number;   // 异常阈值
+export interface IAdvancedAnalyticsConfig {
+  /** predictionHorizon 的描述 */
+    predictionHorizon: number;  
+  /** confidenceLevel 的描述 */
+    confidenceLevel: number;  /** 01 的描述 */
+    /** 01 的描述 */
+    01
+  /** updateFrequency 的描述 */
+    updateFrequency: number;  
+  /** anomalyThreshold 的描述 */
+    anomalyThreshold: number;  
 }
 
 // 健康趋势分析
-export interface HealthTrendAnalysis {
-  userId: string;
-  timestamp: Date;
-  
-  // 关键指标趋势
-  metrics: Array<{
+export interface IHealthTrendAnalysis {
+  /** userId 的描述 */
+    userId: string;
+  /** timestamp 的描述 */
+    timestamp: Date;
+
+   
+  /** metrics 的描述 */
+    metrics: Array{
     name: string;
     currentValue: number;
-    historicalValues: Array<{
+    historicalValues: Array{
       value: number;
       timestamp: Date;
     }>;
     trend: {
       direction: 'up' | 'down' | 'stable';
-      rate: number;  // 变化率
-      significance: number;  // 显著性
+      rate: number; // 变化率
+      significance: number; // 显著性
     };
     seasonality?: {
       daily?: number;
@@ -34,7 +50,7 @@ export interface HealthTrendAnalysis {
   // 健康预测
   predictions: Array<{
     metric: string;
-    horizon: string;  // 预测时间范围
+    horizon: string; // 预测时间范围
     values: Array<{
       timestamp: Date;
       value: number;
@@ -79,29 +95,35 @@ export interface HealthTrendAnalysis {
 }
 
 // 预测模型性能
-export interface ModelPerformance {
-  modelId: string;
-  metric: string;
-  timestamp: Date;
-  
-  // 模型评估指标
-  metrics: {
-    mse: number;      // 均方误差
-    rmse: number;     // 均方根误差
-    mae: number;      // 平均绝对误差
-    r2: number;       // R方值
-    accuracy: number; // 准确率(分类问题)
+export interface IModelPerformance {
+  /** modelId 的描述 */
+    modelId: string;
+  /** metric 的描述 */
+    metric: string;
+  /** timestamp 的描述 */
+    timestamp: Date;
+
+   
+  /** metrics 的描述 */
+    metrics: {
+    mse: number;  
+    rmse: number;  
+    mae: number;  
+    r2: number;  R
+    accuracy: number;  
   };
 
   // 特征重要性
-  featureImportance: Array<{
+  /** featureImportance 的描述 */
+    featureImportance: Array<{
     feature: string;
     importance: number;
     stability: number;
   }>;
 
   // 模型诊断
-  diagnostics: {
+  /** diagnostics 的描述 */
+    diagnostics: {
     residuals: {
       mean: number;
       std: number;
@@ -117,14 +139,15 @@ export interface ModelPerformance {
 }
 
 // 高级可视化选项
-export interface AdvancedVisualization {
-  // 多维分析
-  dimensions: Array<{
+export interface IAdvancedVisualization {
+   
+  /** dimensions 的描述 */
+    dimensions: Array{
     name: string;
-    type: 'categorical' | 'numerical' | 'temporal';
-    aggregation?: 'sum' | 'avg' | 'min' | 'max' | 'count';
-    filter?: {
-      operator: 'eq' | 'gt' | 'lt' | 'between';
+    type: categorical  numerical  temporal;
+    aggregation: sum  avg  min  max  count;
+    filter: {
+      operator: eq  gt  lt  between;
       value: any;
     };
   }>;
@@ -167,23 +190,27 @@ export interface AdvancedVisualization {
 }
 
 // 分析报告配置
-export interface AnalyticsReport {
-  id: string;
-  userId: string;
-  timestamp: Date;
-  type: 'daily' | 'weekly' | 'monthly' | 'custom';
-  
-  // 报告内容
+export interface IAnalyticsReport {
+  /** id 的描述 */
+    id: string;
+  /** userId 的描述 */
+    userId: string;
+  /** timestamp 的描述 */
+    timestamp: Date;
+  /** type 的描述 */
+    type: daily  weekly  monthly  custom;
+
+   
   content: {
     summary: {
       title: string;
-      highlights: string[];
+      highlights: string;
       score: number;
     };
     sections: Array<{
       title: string;
       description: string;
-      visualizations: AdvancedVisualization[];
+      visualizations: IAdvancedVisualization[];
       insights: Array<{
         type: string;
         content: string;
@@ -206,4 +233,4 @@ export interface AnalyticsReport {
       recipients: string[];
     };
   };
-} 
+}

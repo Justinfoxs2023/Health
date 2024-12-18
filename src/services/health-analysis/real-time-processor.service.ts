@@ -1,21 +1,21 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { IVitalSigns, IAnomalyDetection } from './types';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Logger } from '../../infrastructure/logger/logger.service';
 import { MetricsService } from '../../infrastructure/monitoring/metrics.service';
 import { Subject, Observable } from 'rxjs';
 import { filter, map, buffer, debounceTime } from 'rxjs/operators';
-import { VitalSigns, AnomalyDetection } from './types';
 
 @Injectable()
 export class RealTimeProcessorService implements OnModuleInit {
-  private readonly dataStream = new Subject<VitalSigns>();
-  private readonly anomalyStream = new Subject<AnomalyDetection>();
+  private readonly dataStream = new Subject<IVitalSigns>();
+  private readonly anomalyStream = new Subject<IAnomalyDetection>();
   private readonly alertThresholds: Map<string, { min: number; max: number }>;
 
   constructor(
     private readonly config: ConfigService,
     private readonly logger: Logger,
-    private readonly metrics: MetricsService
+    private readonly metrics: MetricsService,
   ) {
     this.alertThresholds = this.loadAlertThresholds();
   }
@@ -32,41 +32,43 @@ export class RealTimeProcessorService implements OnModuleInit {
       ['diastolic', { min: 60, max: 90 }],
       ['temperature', { min: 36.1, max: 37.2 }],
       ['respiratoryRate', { min: 12, max: 20 }],
-      ['oxygenSaturation', { min: 95, max: 100 }]
+      ['oxygenSaturation', { min: 95, max: 100 }],
     ]);
   }
 
   private setupDataProcessing() {
     // 设置实时数据处理管道
-    this.dataStream.pipe(
-      // 缓冲收集数据
-      buffer(this.dataStream.pipe(debounceTime(1000))),
-      // 过滤空数据
-      filter(data => data.length > 0),
-      // 处理数据批次
-      map(batch => this.processBatch(batch))
-    ).subscribe(
-      anomalies => {
-        anomalies.forEach(anomaly => this.anomalyStream.next(anomaly));
-      },
-      error => {
-        this.logger.error('Error processing real-time data:', error);
-      }
-    );
+    this.dataStream
+      .pipe(
+        // 缓冲收集数据
+        buffer(this.dataStream.pipe(debounceTime(1000))),
+        // 过滤空数据
+        filter(data => data.length > 0),
+        // 处理数据批次
+        map(batch => this.processBatch(batch)),
+      )
+      .subscribe(
+        anomalies => {
+          anomalies.forEach(anomaly => this.anomalyStream.next(anomaly));
+        },
+        error => {
+          this.logger.error('Error processing real-time data:', error);
+        },
+      );
   }
 
   // 接收新的生命体征数据
-  processVitalSigns(vitalSigns: VitalSigns): void {
+  processVitalSigns(vitalSigns: IVitalSigns): void {
     this.dataStream.next(vitalSigns);
   }
 
   // 订阅异常检测结果
-  subscribeToAnomalies(): Observable<AnomalyDetection> {
+  subscribeToAnomalies(): Observable<IAnomalyDetection> {
     return this.anomalyStream.asObservable();
   }
 
-  private processBatch(batch: VitalSigns[]): AnomalyDetection[] {
-    const anomalies: AnomalyDetection[] = [];
+  private processBatch(batch: IVitalSigns[]): IAnomalyDetection[] {
+    const anomalies: IAnomalyDetection[] = [];
     const startTime = Date.now();
 
     try {
@@ -92,10 +94,10 @@ export class RealTimeProcessorService implements OnModuleInit {
   }
 
   private checkVitalSign(
-    signs: VitalSigns,
+    signs: IVitalSigns,
     metric: string,
     value: number,
-    anomalies: AnomalyDetection[]
+    anomalies: IAnomalyDetection[],
   ): void {
     const threshold = this.alertThresholds.get(metric);
     if (!threshold) return;
@@ -106,14 +108,14 @@ export class RealTimeProcessorService implements OnModuleInit {
         value,
         expectedRange: threshold,
         severity: this.calculateSeverity(value, threshold),
-        timestamp: signs.timestamp
+        timestamp: signs.timestamp,
       });
     }
   }
 
   private calculateSeverity(
     value: number,
-    threshold: { min: number; max: number }
+    threshold: { min: number; max: number },
   ): 'low' | 'medium' | 'high' {
     const minDiff = Math.abs(value - threshold.min);
     const maxDiff = Math.abs(value - threshold.max);
@@ -126,4 +128,4 @@ export class RealTimeProcessorService implements OnModuleInit {
     }
     return 'low';
   }
-} 
+}

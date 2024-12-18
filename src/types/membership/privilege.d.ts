@@ -1,52 +1,87 @@
+/**
+ * @fileoverview TS 文件 privilege.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // 会员权益类型
-export type PrivilegeType = 'health_service' | 'exclusive_feature' | 'priority_service';
+export type PrivilegeType = any;
 
 // 权益频率
-export type ServiceFrequency = 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'yearly' | 'on_demand';
+export type ServiceFrequencyType =
+  any;
 
 // 权益定义
-export interface Privilege {
-  id: string;
-  name: string;
-  description: string;
-  type: PrivilegeType;
-  frequency?: ServiceFrequency;
-  tier: TierLevel[];
-  status: 'active' | 'inactive' | 'deprecated';
+export interface IPrivilege {
+  /** id 的描述 */
+    id: string;
+  /** name 的描述 */
+    name: string;
+  /** description 的描述 */
+    description: string;
+  /** type 的描述 */
+    type: "health_service" | "exclusive_feature" | "priority_service";
+  /** frequency 的描述 */
+    frequency: "daily" | "weekly" | "monthly" | "quarterly" | "yearly" | "on_demand";
+  /** tier 的描述 */
+    tier: TierLevel;
+  /** status 的描述 */
+    status: active  inactive  deprecated;
   effectiveDate: Date;
-  expiryDate?: Date;
+  expiryDate: Date;
 }
 
 // 新权益数据
-export interface NewPrivilegeData {
-  name: string;
-  description: string;
-  type: PrivilegeType;
-  frequency?: ServiceFrequency;
-  tier: TierLevel[];
-  effectiveDate: Date;
-  expiryDate?: Date;
+export interface INewPrivilegeData {
+  /** name 的描述 */
+    name: string;
+  /** description 的描述 */
+    description: string;
+  /** type 的描述 */
+    type: "health_service" | "exclusive_feature" | "priority_service";
+  /** frequency 的描述 */
+    frequency: "daily" | "weekly" | "monthly" | "quarterly" | "yearly" | "on_demand";
+  /** tier 的描述 */
+    tier: TierLevel;
+  /** effectiveDate 的描述 */
+    effectiveDate: Date;
+  /** expiryDate 的描述 */
+    expiryDate: Date;
 }
 
 // 权益更新数据
-export interface PrivilegeUpdates {
-  name?: string;
-  description?: string;
-  frequency?: ServiceFrequency;
-  tier?: TierLevel[];
-  status?: 'active' | 'inactive';
-  effectiveDate?: Date;
-  expiryDate?: Date;
+export interface IPrivilegeUpdates {
+  /** name 的描述 */
+    name: string;
+  /** description 的描述 */
+    description: string;
+  /** frequency 的描述 */
+    frequency: "daily" | "weekly" | "monthly" | "quarterly" | "yearly" | "on_demand";
+  /** tier 的描述 */
+    tier: TierLevel;
+  /** status 的描述 */
+    status: active  /** inactive 的描述 */
+    /** inactive 的描述 */
+    inactive;
+  /** effectiveDate 的描述 */
+    effectiveDate: Date;
+  /** expiryDate 的描述 */
+    expiryDate: Date;
 }
 
 // 权益使用统计
-export interface UsageStats {
-  usage: {
+export interface IUsageStats {
+  /** usage 的描述 */
+    usage: {
     total: number;
-    byTier: Record<TierLevel, number>;
-    byPeriod: Record<string, number>;
+    byTier: RecordTierLevel, number;
+    byPeriod: Recordstring, number;
   };
-  trends: UsageTrend[];
-  report: UsageReport;
-  recommendations: Recommendation[];
-} 
+  /** trends 的描述 */
+    trends: UsageTrend[];
+  /** report 的描述 */
+    report: UsageReport;
+  /** recommendations 的描述 */
+    recommendations: Recommendation[];
+}

@@ -1,7 +1,8 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+
 import { HealthDataForm } from '../index';
 import { HealthDataType } from '../../../types';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 
 describe('HealthDataForm', () => {
   const mockSubmit = jest.fn();
@@ -12,12 +13,7 @@ describe('HealthDataForm', () => {
   });
 
   it('应该正确渲染表单字段', () => {
-    render(
-      <HealthDataForm
-        onSubmit={mockSubmit}
-        onCancel={mockCancel}
-      />
-    );
+    render(<HealthDataForm onSubmit={mockSubmit} onCancel={mockCancel} />);
 
     expect(screen.getByLabelText(/数据类型/)).toBeInTheDocument();
     expect(screen.getByLabelText(/数值/)).toBeInTheDocument();
@@ -30,15 +26,11 @@ describe('HealthDataForm', () => {
       type: HealthDataType.BLOOD_PRESSURE,
       value: 120,
       unit: 'mmHg',
-      note: '测试备注'
+      note: '测试备注',
     };
 
     render(
-      <HealthDataForm
-        initialData={initialData}
-        onSubmit={mockSubmit}
-        onCancel={mockCancel}
-      />
+      <HealthDataForm initialData={initialData} onSubmit={mockSubmit} onCancel={mockCancel} />,
     );
 
     expect(screen.getByDisplayValue('blood_pressure')).toBeInTheDocument();
@@ -48,12 +40,7 @@ describe('HealthDataForm', () => {
   });
 
   it('应该在提交时验证必填字段', async () => {
-    render(
-      <HealthDataForm
-        onSubmit={mockSubmit}
-        onCancel={mockCancel}
-      />
-    );
+    render(<HealthDataForm onSubmit={mockSubmit} onCancel={mockCancel} />);
 
     fireEvent.click(screen.getByText('提交'));
 
@@ -65,21 +52,16 @@ describe('HealthDataForm', () => {
   });
 
   it('应该在表单验证通过后调用onSubmit', async () => {
-    render(
-      <HealthDataForm
-        onSubmit={mockSubmit}
-        onCancel={mockCancel}
-      />
-    );
+    render(<HealthDataForm onSubmit={mockSubmit} onCancel={mockCancel} />);
 
     fireEvent.change(screen.getByLabelText(/数据类型/), {
-      target: { value: HealthDataType.BLOOD_PRESSURE }
+      target: { value: HealthDataType.BLOOD_PRESSURE },
     });
     fireEvent.change(screen.getByLabelText(/数值/), {
-      target: { value: '120' }
+      target: { value: '120' },
     });
     fireEvent.change(screen.getByLabelText(/单位/), {
-      target: { value: 'mmHg' }
+      target: { value: 'mmHg' },
     });
 
     fireEvent.click(screen.getByText('提交'));
@@ -90,33 +72,22 @@ describe('HealthDataForm', () => {
         value: 120,
         unit: 'mmHg',
         note: '',
-        timestamp: expect.any(Date)
+        timestamp: expect.any(Date),
       });
     });
   });
 
   it('应该在点击取消按钮时调用onCancel', () => {
-    render(
-      <HealthDataForm
-        onSubmit={mockSubmit}
-        onCancel={mockCancel}
-      />
-    );
+    render(<HealthDataForm onSubmit={mockSubmit} onCancel={mockCancel} />);
 
     fireEvent.click(screen.getByText('取消'));
     expect(mockCancel).toHaveBeenCalled();
   });
 
   it('应该在加载状态下禁用按钮', () => {
-    render(
-      <HealthDataForm
-        onSubmit={mockSubmit}
-        onCancel={mockCancel}
-        loading={true}
-      />
-    );
+    render(<HealthDataForm onSubmit={mockSubmit} onCancel={mockCancel} loading={true} />);
 
     expect(screen.getByText('提交')).toBeDisabled();
     expect(screen.getByText('取消')).toBeDisabled();
   });
-}); 
+});

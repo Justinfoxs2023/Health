@@ -1,7 +1,7 @@
-import { injectable, inject } from 'inversify';
-import { TYPES } from '../di/types';
 import { Logger } from '../types/logger';
 import { RedisClient } from '../infrastructure/redis';
+import { TYPES } from '../di/types';
+import { injectable, inject } from 'inversify';
 
 @injectable()
 export class EventBus {
@@ -9,7 +9,7 @@ export class EventBus {
 
   constructor(
     @inject(TYPES.Logger) private readonly logger: Logger,
-    @inject(TYPES.Redis) private readonly redis: RedisClient
+    @inject(TYPES.Redis) private readonly redis: RedisClient,
   ) {
     this.subscribe();
   }
@@ -24,7 +24,7 @@ export class EventBus {
   }
 
   private subscribe(): void {
-    this.redis.subscribe(this.CHANNEL, (message) => {
+    this.redis.subscribe(this.CHANNEL, message => {
       try {
         const { event, data } = JSON.parse(message);
         this.handleEvent(event, data);
@@ -37,4 +37,4 @@ export class EventBus {
   private handleEvent(event: string, data: any): void {
     // 实现事件处理逻辑
   }
-} 
+}

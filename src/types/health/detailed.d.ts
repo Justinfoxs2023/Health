@@ -1,30 +1,47 @@
+/**
+ * @fileoverview TS 文件 detailed.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // 运动数据
-export interface ExerciseData {
-  id: string;
-  userId: string;
-  timestamp: Date;
-  type: ExerciseType;
-  duration: number;  // 分钟
-  intensity: 'low' | 'medium' | 'high';
+export interface IExerciseData {
+  /** id 的描述 */
+    id: string;
+  /** userId 的描述 */
+    userId: string;
+  /** timestamp 的描述 */
+    timestamp: Date;
+  /** type 的描述 */
+    type: ExerciseType;
+  /** duration 的描述 */
+    duration: number;  
+  /** intensity 的描述 */
+    intensity: low  medium  high;
   metrics: {
-    heartRate: number[];     // 心率数据
-    calories: number;        // 消耗卡路里
-    steps?: number;         // 步数
-    distance?: number;      // 距离(米)
-    pace?: number;         // 配速
-    elevation?: number;    // 海拔变化
+    heartRate: number;  
+    calories: number;  
+    steps: number;  
+    distance: number;  
+    pace: number;  
+    elevation: number;  
   };
-  segments?: ExerciseSegment[];  // 运动分段
-  location?: GeoLocation[];     // 运动轨迹
+  segments?: ExerciseSegment[]; // 运动分段
+  location?: GeoLocation[]; // 运动轨迹
 }
 
 // 饮食数据
-export interface DietData {
-  id: string;
-  userId: string;
-  timestamp: Date;
-  mealType: 'breakfast' | 'lunch' | 'dinner' | 'snack';
-  items: FoodItem[];
+export interface IDietData {
+  /** id 的描述 */
+    id: string;
+  /** userId 的描述 */
+    userId: string;
+  /** timestamp 的描述 */
+    timestamp: Date;
+  /** mealType 的描述 */
+    mealType: breakfast  lunch  dinner  snack;
+  items: FoodItem;
   nutrition: {
     calories: number;
     protein: number;
@@ -34,44 +51,48 @@ export interface DietData {
     vitamins: VitaminIntake;
     minerals: MineralIntake;
   };
-  waterIntake: number;  // 毫升
-  mood?: string;       // 进食心情
-  location?: string;   // 用餐地点
+  waterIntake: number; // 毫升
+  mood?: string; // 进食心情
+  location?: string; // 用餐地点
 }
 
 // 身体数据
-export interface BodyData {
-  id: string;
-  userId: string;
-  timestamp: Date;
-  measurements: {
-    weight: number;      // 公斤
-    height: number;      // 厘米
+export interface IBodyData {
+  /** id 的描述 */
+    id: string;
+  /** userId 的描述 */
+    userId: string;
+  /** timestamp 的描述 */
+    timestamp: Date;
+  /** measurements 的描述 */
+    measurements: {
+    weight: number;  
+    height: number;  
     bmi: number;
-    bodyFat: number;     // 体脂率
-    muscleMass: number;  // 肌肉量
-    boneMass: number;    // 骨量
-    visceralFat: number; // 内脏脂肪
-    waistline: number;   // 腰围
-    metabolism: number;  // 基础代谢率
+    bodyFat: number;  
+    muscleMass: number;  
+    boneMass: number;  
+    visceralFat: number;  
+    waistline: number;  
+    metabolism: number;  
   };
-  composition: {
-    water: number;      // 体水分
-    protein: number;    // 蛋白质
-    mineral: number;    // 无机盐
+  /** composition 的描述 */
+    composition: {
+    water: number; // 体水分
+    protein: number; // 蛋白质
+    mineral: number; // 无机盐
   };
-  symmetry?: {
-    leftRight: number;  // 左右对称性
-    upDown: number;     // 上下对称性
-  };
+  /** symmetry 的描述 */
+    symmetry?: undefined | { leftRight: number; upDown: number; };
 }
 
 // 数据分析配置
-export interface AnalysisConfig {
-  timeRange: {
+export interface IAnalysisConfig {
+  /** timeRange 的描述 */
+    timeRange: {
     start: Date;
     end: Date;
-    interval?: 'hour' | 'day' | 'week' | 'month';
+    interval: hour  day  week  month;
   };
   metrics: string[];
   dimensions?: string[];
@@ -81,16 +102,19 @@ export interface AnalysisConfig {
 }
 
 // 数据过滤器
-export interface DataFilter {
-  field: string;
-  operator: 'eq' | 'gt' | 'lt' | 'between' | 'in';
+export interface IDataFilter {
+  /** field 的描述 */
+    field: string;
+  /** operator 的描述 */
+    operator: eq  gt  lt  between  in;
   value: any;
-  logic?: 'and' | 'or';
+  logic: and  or;
 }
 
 // 聚合配置
-export interface AggregationConfig {
-  type: 'sum' | 'avg' | 'min' | 'max' | 'count';
-  groupBy?: string[];
-  having?: DataFilter[];
-} 
+export interface IAggregationConfig {
+  /** type 的描述 */
+    type: sum  avg  min  max  count;
+  groupBy: string;
+  having: DataFilter;
+}

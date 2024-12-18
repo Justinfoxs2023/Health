@@ -1,8 +1,8 @@
+import { AIService } from '../../ai-services/ai.service';
 import { HealthAnalysis } from '../models/health-analysis.model';
 import { HealthRecord } from '../models/health-record.model';
-import { AIService } from '../../ai-services/ai.service';
-import { Redis } from '../utils/redis';
 import { Logger } from '../utils/logger';
+import { Redis } from '../utils/redis';
 
 export class AnalysisService {
   private aiService: AIService;
@@ -22,24 +22,24 @@ export class AnalysisService {
     try {
       // 获取健康数据
       const healthData = await this.getHealthData(userId, period);
-      
+
       // 计算基础指标
       const metrics = await this.calculateMetrics(healthData);
-      
+
       // 生成健康评分
       const healthScore = await this.calculateHealthScore(metrics);
-      
+
       // 风险评估
       const risks = await this.assessRisks(metrics);
-      
+
       // 改进建议
       const improvements = await this.generateImprovements(metrics, risks);
-      
+
       // AI分析
       const aiInsights = await this.aiService.analyzeHealthData({
         metrics,
         risks,
-        improvements
+        improvements,
       });
 
       // 创建分析记录
@@ -51,9 +51,9 @@ export class AnalysisService {
         analysis: {
           healthScore,
           risks,
-          improvements
+          improvements,
         },
-        aiInsights
+        aiInsights,
       });
 
       await analysis.save();
@@ -79,8 +79,8 @@ export class AnalysisService {
       userId,
       timestamp: {
         $gte: startDate,
-        $lte: endDate
-      }
+        $lte: endDate,
+      },
     }).sort({ timestamp: 1 });
   }
 
@@ -142,4 +142,4 @@ export class AnalysisService {
     }
     return date;
   }
-} 
+}

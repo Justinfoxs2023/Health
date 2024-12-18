@@ -1,27 +1,21 @@
 import React from 'react';
-import { render, fireEvent, screen } from '@testing-library/react';
+
+import { VirtualList } from '../VirtualList';
 import { VirtualScroll } from '../index';
 import { VirtualTable } from '../VirtualTable';
-import { VirtualList } from '../VirtualList';
+import { render, fireEvent, screen } from '@testing-library/react';
 
 describe('VirtualScroll', () => {
   const mockItems = Array.from({ length: 1000 }, (_, i) => ({
     id: i,
-    name: `Item ${i}`
+    name: `Item ${i}`,
   }));
 
-  const mockRenderItem = (item: any) => (
-    <div data-testid={`item-${item.id}`}>{item.name}</div>
-  );
+  const mockRenderItem = (item: any) => <div data-testid={`item-${item.id}`}>{item.name}</div>;
 
   it('应该正确渲染可见项', () => {
     const { container } = render(
-      <VirtualScroll
-        items={mockItems}
-        itemHeight={50}
-        height={200}
-        renderItem={mockRenderItem}
-      />
+      <VirtualScroll items={mockItems} itemHeight={50} height={200} renderItem={mockRenderItem} />,
     );
 
     // 检查容器高度
@@ -48,7 +42,7 @@ describe('VirtualScroll', () => {
         renderItem={mockRenderItem}
         onScroll={onScroll}
         onReachBottom={onReachBottom}
-      />
+      />,
     );
 
     const scrollContainer = container.firstChild as HTMLElement;
@@ -67,7 +61,7 @@ describe('VirtualScroll', () => {
         height={200}
         renderItem={mockRenderItem}
         onReachBottom={onReachBottom}
-      />
+      />,
     );
 
     const scrollContainer = container.firstChild as HTMLElement;
@@ -76,8 +70,8 @@ describe('VirtualScroll', () => {
       target: {
         scrollTop: 49800, // (1000 items * 50px) - 200px
         scrollHeight: 50000,
-        clientHeight: 200
-      }
+        clientHeight: 200,
+      },
     });
 
     expect(onReachBottom).toHaveBeenCalled();
@@ -87,21 +81,17 @@ describe('VirtualScroll', () => {
 describe('VirtualTable', () => {
   const mockColumns = [
     { title: 'ID', dataIndex: 'id' },
-    { title: 'Name', dataIndex: 'name' }
+    { title: 'Name', dataIndex: 'name' },
   ];
 
   const mockDataSource = Array.from({ length: 100 }, (_, i) => ({
     id: i,
-    name: `Name ${i}`
+    name: `Name ${i}`,
   }));
 
   it('应该正确渲染表格', () => {
     const { container } = render(
-      <VirtualTable
-        columns={mockColumns}
-        dataSource={mockDataSource}
-        height={400}
-      />
+      <VirtualTable columns={mockColumns} dataSource={mockDataSource} height={400} />,
     );
 
     // 检查表头
@@ -123,7 +113,7 @@ describe('VirtualTable', () => {
         selectable
         selectedRowKeys={[]}
         onSelectChange={onSelectChange}
-      />
+      />,
     );
 
     // 点击第一行的复选框
@@ -139,19 +129,11 @@ describe('VirtualTable', () => {
       {
         title: 'Action',
         dataIndex: 'action',
-        render: (_: any, record: any) => (
-          <button data-testid={`btn-${record.id}`}>Click</button>
-        )
-      }
+        render: (_: any, record: any) => <button data-testid={`btn-${record.id}`}>Click</button>,
+      },
     ];
 
-    render(
-      <VirtualTable
-        columns={columns}
-        dataSource={mockDataSource}
-        height={400}
-      />
-    );
+    render(<VirtualTable columns={columns} dataSource={mockDataSource} height={400} />);
 
     expect(screen.getByTestId('btn-0')).toBeInTheDocument();
   });
@@ -160,20 +142,14 @@ describe('VirtualTable', () => {
 describe('VirtualList', () => {
   const mockItems = Array.from({ length: 100 }, (_, i) => ({
     id: i,
-    name: `Item ${i}`
+    name: `Item ${i}`,
   }));
 
-  const mockRenderItem = (item: any) => (
-    <div data-testid={`item-${item.id}`}>{item.name}</div>
-  );
+  const mockRenderItem = (item: any) => <div data-testid={`item-${item.id}`}>{item.name}</div>;
 
   it('应该正确渲染列表', () => {
     const { container } = render(
-      <VirtualList
-        items={mockItems}
-        height={400}
-        renderItem={mockRenderItem}
-      />
+      <VirtualList items={mockItems} height={400} renderItem={mockRenderItem} />,
     );
 
     expect(container.querySelector('.virtual-list')).toBeInTheDocument();
@@ -190,7 +166,7 @@ describe('VirtualList', () => {
         selectable
         selectedKeys={[]}
         onSelectChange={onSelectChange}
-      />
+      />,
     );
 
     // 点击第一个列表项
@@ -201,14 +177,7 @@ describe('VirtualList', () => {
   });
 
   it('应该显示加载状态', () => {
-    render(
-      <VirtualList
-        items={[]}
-        height={400}
-        renderItem={mockRenderItem}
-        loading
-      />
-    );
+    render(<VirtualList items={[]} height={400} renderItem={mockRenderItem} loading />);
 
     expect(screen.getByText('加载中...')).toBeInTheDocument();
   });
@@ -220,9 +189,9 @@ describe('VirtualList', () => {
         height={400}
         renderItem={mockRenderItem}
         empty={<div>暂无数据</div>}
-      />
+      />,
     );
 
     expect(screen.getByText('暂无数据')).toBeInTheDocument();
   });
-}); 
+});

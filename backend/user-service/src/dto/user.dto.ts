@@ -35,19 +35,27 @@ export class UpdateUserDTO {
   profile?: Partial<UserProfile>;
 }
 
-export interface LoginDTO {
+export interface ILoginDTO {
+  /** email 的描述 */
   email: string;
+  /** password 的描述 */
   password: string;
 }
 
-export interface RegisterDTO {
+export interface IRegisterDTO {
+  /** email 的描述 */
   email: string;
+  /** password 的描述 */
   password: string;
+  /** username 的描述 */
   username: string;
 }
 
-export interface UpdateProfileDTO {
+export interface IUpdateProfileDTO {
+  /** username 的描述 */
   username?: string;
+  /** email 的描述 */
   email?: string;
+  /** avatar 的描述 */
   avatar?: string;
-} 
+}

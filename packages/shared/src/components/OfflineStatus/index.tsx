@@ -1,34 +1,45 @@
 import React from 'react';
-import { Badge, Button, Tooltip, Space, Typography, Progress, Alert } from 'antd';
+
+import 'dayjs/locale/zh-cn';
+import dayjs from 'dayjs';
 import {
   SyncOutlined,
   CloudOutlined,
   CloudOffOutlined,
   WarningOutlined,
   CheckCircleOutlined,
-  LoadingOutlined
+  LoadingOutlined,
 } from '@ant-design/icons';
-import dayjs from 'dayjs';
-import 'dayjs/locale/zh-cn';
-
-dayjs.locale('zh-cn');
+import { Badge, Button, Tooltip, Space, Typography, Progress, Alert } from 'antd';
+dayjs.l;
+ocale('zh-cn');
 
 const { Text } = Typography;
 
-interface OfflineStatusProps {
+interface IOfflineStatusProps {
+  /** isOffline 的描述 */
   isOffline: boolean;
+  /** isSyncing 的描述 */
   isSyncing: boolean;
+  /** lastSyncTime 的描述 */
   lastSyncTime: Date | null;
+  /** error 的描述 */
   error: Error | null;
+  /** pendingChanges 的描述 */
   pendingChanges: number;
+  /** syncProgress 的描述 */
   syncProgress?: number;
+  /** onSync 的描述 */
   onSync?: () => void;
+  /** onRetry 的描述 */
   onRetry?: () => void;
+  /** className 的描述 */
   className?: string;
+  /** style 的描述 */
   style?: React.CSSProperties;
 }
 
-export const OfflineStatus: React.FC<OfflineStatusProps> = ({
+export const OfflineStatus: React.FC<IOfflineStatusProps> = ({
   isOffline,
   isSyncing,
   lastSyncTime,
@@ -38,7 +49,7 @@ export const OfflineStatus: React.FC<OfflineStatusProps> = ({
   onSync,
   onRetry,
   className,
-  style
+  style,
 }) => {
   const getStatusIcon = () => {
     if (isOffline) {
@@ -114,11 +125,7 @@ export const OfflineStatus: React.FC<OfflineStatusProps> = ({
       <Space direction="vertical" style={{ width: '100%' }}>
         <Space align="center" style={{ width: '100%', justifyContent: 'space-between' }}>
           <Space>
-            <Badge
-              count={pendingChanges > 0 ? pendingChanges : 0}
-              size="small"
-              offset={[-5, 5]}
-            >
+            <Badge count={pendingChanges > 0 ? pendingChanges : 0} size="small" offset={[-5, 5]}>
               {getStatusIcon()}
             </Badge>
             <Tooltip title={getTooltipTitle()}>
@@ -154,4 +161,4 @@ export const OfflineStatus: React.FC<OfflineStatusProps> = ({
       </Space>
     </div>
   );
-}; 
+};

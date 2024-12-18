@@ -1,92 +1,132 @@
+/**
+ * @fileoverview TS 文件 emergency.types.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // 紧急情况类型定义
-export interface EmergencySituation {
-  id: string;
-  userId: string;
-  type: EmergencyType;
-  location: {
+export interface IEmergencySituation {
+  /** id 的描述 */
+    id: string;
+  /** userId 的描述 */
+    userId: string;
+  /** type 的描述 */
+    type: "medical" | "injury" | "mental" | "environmental";
+  /** location 的描述 */
+    location: {
     latitude: number;
     longitude: number;
-    address?: string;
+    address: string;
   };
-  description: string;
-  timestamp: Date;
-  symptoms?: string[];
-  vitalSigns?: Record<string, number>;
+  /** description 的描述 */
+    description: string;
+  /** timestamp 的描述 */
+    timestamp: Date;
+  /** symptoms 的描述 */
+    symptoms?: undefined | string[];
+  /** vitalSigns 的描述 */
+    vitalSigns?: undefined | Record<string, number>;
 }
 
-export interface EmergencyResponse {
-  id: string;
-  situation: EmergencySituation;
-  assessment: EmergencyAssessment;
-  actions: EmergencyAction[];
-  status: EmergencyStatus;
-  timeline: EmergencyTimelineEvent[];
-  outcomes?: EmergencyOutcome[];
+export interface IEmergencyResponse {
+  /** id 的描述 */
+    id: string;
+  /** situation 的描述 */
+    situation: IEmergencySituation;
+  /** assessment 的描述 */
+    assessment: IEmergencyAssessment;
+  /** actions 的描述 */
+    actions: IEmergencyAction;
+  /** status 的描述 */
+    status: "active" | "resolved" | "cancelled";
+  /** timeline 的描述 */
+    timeline: IEmergencyTimelineEvent;
+  /** outcomes 的描述 */
+    outcomes: IEmergencyOutcome;
 }
 
-export interface EmergencyAssessment {
-  severity: EmergencySeverity;
-  analysis: any;
-  recommendedActions: EmergencyAction[];
-  timestamp: Date;
+export interface IEmergencyAssessment {
+  /** severity 的描述 */
+    severity: "critical" | "high" | "moderate" | "low";
+  /** analysis 的描述 */
+    analysis: any;
+  /** recommendedActions 的描述 */
+    recommendedActions: IEmergencyAction;
+  /** timestamp 的描述 */
+    timestamp: Date;
 }
 
-export type EmergencyType = 
-  | 'medical'
-  | 'injury'
-  | 'mental'
-  | 'environmental';
+export type EmergencyType = any;
 
-export type EmergencySeverity = 
-  | 'critical'
-  | 'high' 
-  | 'moderate'
-  | 'low';
+export type EmergencySeverityType = any;
 
-export type EmergencyStatus =
-  | 'active'
-  | 'resolved'
-  | 'cancelled';
+export type EmergencyStatusType = any;
 
-export interface EmergencyAction {
-  type: string;
-  priority: number;
-  status?: 'pending' | 'in_progress' | 'completed' | 'failed';
-  details?: any;
-}
-
-export interface EmergencyResource {
-  id: string;
-  type: string;
-  name: string;
-  location: [number, number];
-  distance: number;
-  availability: boolean;
-  contact: {
-    phone: string;
-    email?: string;
-  };
-}
-
-export interface EmergencyTimelineEvent {
-  timestamp: Date;
-  type: string;
-  description: string;
-  details?: any;
-}
-
-export interface EmergencyOutcome {
-  type: string;
-  status: 'success' | 'partial' | 'failed';
+export interface IEmergencyAction {
+  /** type 的描述 */
+    type: string;
+  /** priority 的描述 */
+    priority: number;
+  /** status 的描述 */
+    status: pending  in_progress  completed  failed;
   details: any;
 }
 
-export interface EmergencyReport {
-  id: string;
-  situation: EmergencySituation;
-  assessment: EmergencyAssessment;
-  actions: EmergencyAction[];
-  timeline: EmergencyTimelineEvent[];
-  outcomes: EmergencyOutcome[];
-  recommendations: string[];
-} 
+export interface IEmergencyResource {
+  /** id 的描述 */
+    id: string;
+  /** type 的描述 */
+    type: string;
+  /** name 的描述 */
+    name: string;
+  /** location 的描述 */
+    location: number, /** number 的描述 */
+    /** number 的描述 */
+    number;
+  /** distance 的描述 */
+    distance: number;
+  /** availability 的描述 */
+    availability: false | true;
+  /** contact 的描述 */
+    contact: {
+    phone: string;
+    email: string;
+  };
+}
+
+export interface IEmergencyTimelineEvent {
+  /** timestamp 的描述 */
+    timestamp: Date;
+  /** type 的描述 */
+    type: string;
+  /** description 的描述 */
+    description: string;
+  /** details 的描述 */
+    details: any;
+}
+
+export interface IEmergencyOutcome {
+  /** type 的描述 */
+    type: string;
+  /** status 的描述 */
+    status: success  partial  failed;
+  details: any;
+}
+
+export interface IEmergencyReport {
+  /** id 的描述 */
+    id: string;
+  /** situation 的描述 */
+    situation: IEmergencySituation;
+  /** assessment 的描述 */
+    assessment: IEmergencyAssessment;
+  /** actions 的描述 */
+    actions: IEmergencyAction;
+  /** timeline 的描述 */
+    timeline: IEmergencyTimelineEvent;
+  /** outcomes 的描述 */
+    outcomes: IEmergencyOutcome;
+  /** recommendations 的描述 */
+    recommendations: string;
+}

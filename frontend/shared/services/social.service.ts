@@ -40,9 +40,9 @@ export class SocialService {
   /**
    * 获取动态流
    */
-  async getFeed(page: number = 1, limit: number = 20) {
+  async getFeed(page = 1, limit = 20) {
     return this.api.get('/social/feed', {
-      params: { page, limit }
+      params: { page, limit },
     });
   }
 
@@ -92,4 +92,4 @@ export class SocialService {
   async createCommunityPost(communityId: string, postData: any) {
     return this.api.post(`/social/communities/${communityId}/posts`, postData);
   }
-} 
+}

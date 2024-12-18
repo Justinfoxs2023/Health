@@ -1,9 +1,10 @@
 import React, { useState, useRef } from 'react';
-import { View, StyleSheet, TouchableOpacity, Animated } from 'react-native';
+
 import { Icon, Text } from '../common';
-import { useVoiceRecognition } from '../../hooks/voice';
-import { VoiceWaveform } from './VoiceWaveform';
 import { ResponseCard } from './ResponseCard';
+import { View, StyleSheet, TouchableOpacity, Animated } from 'react-native';
+import { VoiceWaveform } from './VoiceWaveform';
+import { useVoiceRecognition } from '../../hooks/voice';
 
 export const VoiceAssistant: React.FC = () => {
   const [isListening, setIsListening] = useState(false);
@@ -16,13 +17,13 @@ export const VoiceAssistant: React.FC = () => {
       Animated.timing(pulseAnim, {
         toValue: 1.2,
         duration: 1000,
-        useNativeDriver: true
+        useNativeDriver: true,
       }),
       Animated.timing(pulseAnim, {
         toValue: 1,
         duration: 1000,
-        useNativeDriver: true
-      })
+        useNativeDriver: true,
+      }),
     ]).start(() => {
       if (isListening) {
         startPulseAnimation();
@@ -45,33 +46,15 @@ export const VoiceAssistant: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity 
-        style={styles.button}
-        onPress={handlePress}
-      >
-        <Animated.View style={[
-          styles.buttonInner,
-          { transform: [{ scale: pulseAnim }] }
-        ]}>
-          <Icon 
-            name={isListening ? 'mic' : 'mic-none'} 
-            size={32} 
-            color="#fff" 
-          />
+      <TouchableOpacity style={styles.button} onPress={handlePress}>
+        <Animated.View style={[styles.buttonInner, { transform: [{ scale: pulseAnim }] }]}>
+          <Icon name={isListening ? 'mic' : 'mic-none'} size={32} color="#fff" />
         </Animated.View>
       </TouchableOpacity>
 
-      {isListening && (
-        <VoiceWaveform />
-      )}
+      {isListening && <VoiceWaveform />}
 
-      {response && (
-        <ResponseCard
-          type={response.type}
-          text={response.text}
-          data={response.data}
-        />
-      )}
+      {response && <ResponseCard type={response.type} text={response.text} data={response.data} />}
     </View>
   );
 };
@@ -81,7 +64,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 20,
     right: 20,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   button: {
     width: 64,
@@ -94,13 +77,13 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
-    shadowRadius: 3.84
+    shadowRadius: 3.84,
   },
   buttonInner: {
     width: '100%',
     height: '100%',
     borderRadius: 32,
     justifyContent: 'center',
-    alignItems: 'center'
-  }
-}); 
+    alignItems: 'center',
+  },
+});

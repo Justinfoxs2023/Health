@@ -1,6 +1,6 @@
+import { AppError } from '../utils/errors';
 import { Logger } from '../utils/logger';
 import { Redis } from '../utils/redis';
-import { AppError } from '../utils/errors';
 
 export abstract class BaseService {
   protected logger: Logger;
@@ -28,4 +28,4 @@ export abstract class BaseService {
     }
     throw new AppError('INTERNAL_ERROR', 500, error.message);
   }
-} 
+}

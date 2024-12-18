@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 index.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // 导出所有类型
 export * from './base';
 export * from './express';
@@ -10,7 +17,7 @@ export * from './utils';
 declare global {
   // 基础类型
   type Dict = Record<string, any>;
-  
+
   // 错误类型
   interface AppError extends Error {
     code: string;
@@ -32,4 +39,4 @@ declare global {
     validate(data: any): Promise<boolean>;
     handleError(error: Error): void;
   }
-} 
+}

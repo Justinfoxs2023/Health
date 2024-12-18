@@ -1,15 +1,16 @@
 import React, { useState, useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
+
+import type { ExportFormatType, IBackupMetadata } from '../../services/export';
 import { Button } from '../Button';
-import { Modal } from '../Modal';
-import { Message } from '../Message';
 import { Loading } from '../Loading';
+import { Message } from '../Message';
+import { Modal } from '../Modal';
 import { exportService } from '../../services/export';
-import type { ExportFormat, BackupMetadata } from '../../services/export';
 import { useTheme } from '../../hooks/useTheme';
+import { useTranslation } from 'react-i18next';
 
 /** 数据导出组件属性 */
-export interface DataExportProps {
+export interface IDataExportProps {
   /** 要导出的数据 */
   data: any[];
   /** 导出按钮文本 */
@@ -23,35 +24,39 @@ export interface DataExportProps {
 }
 
 /** 数据导出组件 */
-export const DataExport: React.FC<DataExportProps> = ({
+export const DataExport: React.FC<IDataExportProps> = ({
   data,
   buttonText = '导出数据',
   buttonType = 'default',
   onExportSuccess,
-  onExportError
+  onExportError,
 }) => {
   const { t } = useTranslation();
   const { theme } = useTheme();
-  
+
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [exportFormat, setExportFormat] = useState<ExportFormat>('json');
+  const [exportFormat, setExportFormat] = useState<ExportFormatType>('json');
   const [includeMetadata, setIncludeMetadata] = useState(true);
   const [isEncrypted, setIsEncrypted] = useState(false);
   const [encryptionKey, setEncryptionKey] = useState('');
-  const [backupList, setBackupList] = useState<BackupMetadata[]>([]);
+  const [backupList, setBackupList] = useState<IBackupMetadata[]>([]);
   const [selectedBackupId, setSelectedBackupId] = useState<string>('');
 
   // 加载备份列表
-  const loadBackupList = useCallback(async () => {
-    try {
-      const list = await exportService.getBackupList();
-      setBackupList(list);
-    } catch (error) {
-      Message.error(t('加载备份列表失败'));
-      console.error('加载备份列表失败:', error);
-    }
-  }, [t]);
+  const loadBackupList = console.error(
+    'Error in index.tsx:',
+    async () => {
+      try {
+        const list = await exportService.getBackupList();
+        setBackupList(list);
+      } catch (error) {
+        Message.error(t('加载备份列表失败'));
+        console.error('Error in index.tsx:', '加载备份列表失败:', error);
+      }
+    },
+    [t],
+  );
 
   // 处理导出
   const handleExport = async () => {
@@ -61,7 +66,7 @@ export const DataExport: React.FC<DataExportProps> = ({
         format: exportFormat,
         includeMetadata,
         encrypt: isEncrypted,
-        encryptionKey: isEncrypted ? encryptionKey : undefined
+        encryptionKey: isEncrypted ? encryptionKey : undefined,
       });
 
       // 创建下载链接
@@ -79,7 +84,7 @@ export const DataExport: React.FC<DataExportProps> = ({
     } catch (error) {
       Message.error(t('数据导出失败'));
       onExportError?.(error as Error);
-      console.error('数据导出失败:', error);
+      console.error('Error in index.tsx:', '数据导出失败:', error);
     } finally {
       setIsLoading(false);
     }
@@ -92,13 +97,13 @@ export const DataExport: React.FC<DataExportProps> = ({
       const metadata = await exportService.createBackup(data, {
         encrypt: isEncrypted,
         encryptionKey: isEncrypted ? encryptionKey : undefined,
-        description: `手动备份 - ${new Date().toLocaleString()}`
+        description: `手动备份 - ${new Date().toLocaleString()}`,
       });
       Message.success(t('创建备份成功'));
       loadBackupList();
     } catch (error) {
       Message.error(t('创建备份失败'));
-      console.error('创建备份失败:', error);
+      console.error('Error in index.tsx:', '创建备份失败:', error);
     } finally {
       setIsLoading(false);
     }
@@ -115,13 +120,13 @@ export const DataExport: React.FC<DataExportProps> = ({
     try {
       const restoredData = await exportService.restoreBackup(
         selectedBackupId,
-        isEncrypted ? encryptionKey : undefined
+        isEncrypted ? encryptionKey : undefined,
       );
       Message.success(t('恢复备份成功'));
       // TODO: 处理恢复的数据
     } catch (error) {
       Message.error(t('恢复备份失败'));
-      console.error('恢复备份失败:', error);
+      console.error('Error in index.tsx:', '恢复备份失败:', error);
     } finally {
       setIsLoading(false);
     }
@@ -142,7 +147,7 @@ export const DataExport: React.FC<DataExportProps> = ({
       setSelectedBackupId('');
     } catch (error) {
       Message.error(t('删除备份失败'));
-      console.error('删除备份失败:', error);
+      console.error('Error in index.tsx:', '删除备份失败:', error);
     } finally {
       setIsLoading(false);
     }
@@ -169,7 +174,7 @@ export const DataExport: React.FC<DataExportProps> = ({
               <label style={styles.label}>{t('导出格式')}</label>
               <select
                 value={exportFormat}
-                onChange={e => setExportFormat(e.target.value as ExportFormat)}
+                onChange={e => setExportFormat(e.target.value as ExportFormatType)}
                 style={styles.select}
               >
                 <option value="json">JSON</option>
@@ -257,49 +262,49 @@ export const DataExport: React.FC<DataExportProps> = ({
 
 const styles = {
   container: {
-    padding: '20px'
+    padding: '20px',
   },
   section: {
-    marginBottom: '20px'
+    marginBottom: '20px',
   },
   sectionTitle: {
     fontSize: '16px',
     fontWeight: 'bold',
-    marginBottom: '10px'
+    marginBottom: '10px',
   },
   formGroup: {
-    marginBottom: '15px'
+    marginBottom: '15px',
   },
   label: {
     display: 'block',
-    marginBottom: '5px'
+    marginBottom: '5px',
   },
   checkbox: {
     display: 'flex',
     alignItems: 'center',
-    gap: '5px'
+    gap: '5px',
   },
   select: {
     width: '100%',
     padding: '8px',
     borderRadius: '4px',
-    border: '1px solid #ddd'
+    border: '1px solid #ddd',
   },
   input: {
     width: '100%',
     padding: '8px',
     borderRadius: '4px',
-    border: '1px solid #ddd'
+    border: '1px solid #ddd',
   },
   buttonGroup: {
     display: 'flex',
     gap: '10px',
-    marginTop: '10px'
+    marginTop: '10px',
   },
   button: {
-    minWidth: '80px'
+    minWidth: '80px',
   },
   backupList: {
-    marginBottom: '10px'
-  }
-}; 
+    marginBottom: '10px',
+  },
+};

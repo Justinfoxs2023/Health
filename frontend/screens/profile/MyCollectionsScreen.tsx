@@ -1,15 +1,15 @@
 import React from 'react';
-import { View, FlatList, StyleSheet } from 'react-native';
-import { useQuery } from 'react-query';
-import { getMyCollections } from '../../api/collection';
+
 import { ArticleCard, QuestionCard, LoadingSpinner, SegmentedControl } from '../../components';
+import { View, FlatList, StyleSheet } from 'react-native';
+import { getMyCollections } from '../../api/collection';
+import { useQuery } from 'react-query';
 
 export const MyCollectionsScreen = ({ navigation }) => {
   const [type, setType] = React.useState('文章');
 
-  const { data, isLoading, refetch } = useQuery(
-    ['myCollections', type],
-    () => getMyCollections(type)
+  const { data, isLoading, refetch } = useQuery(['myCollections', type], () =>
+    getMyCollections(type),
   );
 
   const renderItem = ({ item }) => {
@@ -34,10 +34,10 @@ export const MyCollectionsScreen = ({ navigation }) => {
       <SegmentedControl
         values={['文章', '问答']}
         selectedIndex={type === '文章' ? 0 : 1}
-        onChange={(index) => setType(index === 0 ? '文章' : '问答')}
+        onChange={index => setType(index === 0 ? '文章' : '问答')}
         style={styles.segmentedControl}
       />
-      
+
       {isLoading ? (
         <LoadingSpinner />
       ) : (
@@ -57,12 +57,12 @@ export const MyCollectionsScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   segmentedControl: {
-    margin: 15
+    margin: 15,
   },
   list: {
-    padding: 15
-  }
-}); 
+    padding: 15,
+  },
+});

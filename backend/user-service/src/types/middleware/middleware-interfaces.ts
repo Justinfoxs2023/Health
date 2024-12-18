@@ -13,4 +13,4 @@ export interface IRateLimitMiddleware {
 export interface IValidationMiddleware {
   validateBody(schema: any): (req: Request, res: Response, next: NextFunction) => Promise<void>;
   validateQuery(schema: any): (req: Request, res: Response, next: NextFunction) => Promise<void>;
-} 
+}

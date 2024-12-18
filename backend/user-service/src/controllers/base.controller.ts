@@ -1,6 +1,6 @@
-import { Request, Response } from 'express';
-import { Logger } from '../utils/logger';
 import { AppError } from '../utils/errors';
+import { Logger } from '../utils/logger';
+import { Request, Response } from 'express';
 
 export abstract class BaseController {
   protected logger: Logger;
@@ -13,7 +13,7 @@ export abstract class BaseController {
     return res.status(200).json({
       code: 200,
       data,
-      message
+      message,
     });
   }
 
@@ -21,7 +21,7 @@ export abstract class BaseController {
     return res.status(201).json({
       code: 201,
       data,
-      message
+      message,
     });
   }
 
@@ -32,7 +32,7 @@ export abstract class BaseController {
 
     return res.status(status).json({
       code,
-      message
+      message,
     });
   }
 
@@ -43,4 +43,4 @@ export abstract class BaseController {
     }
     return value;
   }
-} 
+}

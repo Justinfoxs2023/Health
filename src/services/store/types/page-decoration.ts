@@ -1,17 +1,27 @@
+/**
+ * @fileoverview TS 文件 page-decoration.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // 页面装修
-export interface PageDecoration {
-  id: string;
-  name: string;
-  type: 'home' | 'category' | 'topic' | 'campaign';
-  status: 'draft' | 'published' | 'archived';
-  
-  // 页面基本信息
+export interface IPageDecoration {
+  /** id 的描述 */
+    id: string;
+  /** name 的描述 */
+    name: string;
+  /** type 的描述 */
+    type: home  category  topic  campaign;
+  status: draft  published  archived;
+
+   
   basicInfo: {
     title: string;
     description: string;
-    keywords: string[];
+    keywords: string;
     backgroundColor: string;
-    backgroundImage?: string;
+    backgroundImage: string;
   };
 
   // 布局配置
@@ -25,7 +35,7 @@ export interface PageDecoration {
       margin: string;
       padding: string;
     };
-    content: ComponentConfig;
+    content: IComponentConfig;
     visible: boolean;
   }>;
 
@@ -61,18 +71,27 @@ export interface PageDecoration {
 }
 
 // 组件配置接口
-interface ComponentConfig {
-  type: string;
-  title?: string;
-  subtitle?: string;
-  actionUrl?: string;
-  style: Record<string, string>;
-  data: any;
+interface IComponentConfig {
+  /** type 的描述 */
+    type: string;
+  /** title 的描述 */
+    title: string;
+  /** subtitle 的描述 */
+    subtitle: string;
+  /** actionUrl 的描述 */
+    actionUrl: string;
+  /** style 的描述 */
+    style: Recordstring, /** string 的描述 */
+    /** string 的描述 */
+    string;
+  /** data 的描述 */
+    data: any;
 }
 
 // Banner配置
-interface BannerConfig extends ComponentConfig {
-  items: Array<{
+interface IBannerConfig extends IComponentConfig {
+  /** items 的描述 */
+    items: Array<{
     image: string;
     title: string;
     subtitle?: string;
@@ -80,16 +99,22 @@ interface BannerConfig extends ComponentConfig {
     startTime?: Date;
     endTime?: Date;
   }>;
-  autoPlay: boolean;
-  interval: number;
-  animation: string;
+  /** autoPlay 的描述 */
+    autoPlay: false | true;
+  /** interval 的描述 */
+    interval: number;
+  /** animation 的描述 */
+    animation: string;
 }
 
 // 商品列表配置
-interface ProductListConfig extends ComponentConfig {
-  displayMode: 'grid' | 'list';
-  columns: number;
-  source: {
+interface IProductListConfig extends IComponentConfig {
+  /** displayMode 的描述 */
+    displayMode: "grid" | "list";
+  /** columns 的描述 */
+    columns: number;
+  /** source 的描述 */
+    source: {
     type: 'manual' | 'auto';
     productIds?: string[];
     rules?: {
@@ -99,7 +124,10 @@ interface ProductListConfig extends ComponentConfig {
       sort?: string;
     };
   };
-  showPrice: boolean;
-  showRating: boolean;
-  showTags: boolean;
-} 
+  /** showPrice 的描述 */
+    showPrice: false | true;
+  /** showRating 的描述 */
+    showRating: false | true;
+  /** showTags 的描述 */
+    showTags: false | true;
+}

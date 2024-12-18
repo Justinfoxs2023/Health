@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { bootstrap } from './bootstrap';
 
-bootstrap().catch(error => {
-  console.error('Application failed to start:', error);
+console.error('Error in index.ts:', error => {
+  console.error('Error in index.ts:', 'Application failed to start:', error);
   process.exit(1);
-}); 
+});

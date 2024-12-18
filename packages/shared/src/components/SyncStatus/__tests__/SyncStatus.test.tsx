@@ -1,23 +1,24 @@
 import React from 'react';
-import { render, screen, fireEvent, act } from '@testing-library/react';
-import { SyncStatus } from '../index';
-import { syncService } from '../../../services/sync';
+
 import { Message } from '../../Message';
+import { SyncStatus } from '../index';
+import { render, screen, fireEvent, act } from '@testing-library/react';
+import { syncService } from '../../../services/sync';
 
 // Mock syncService
 jest.mock('../../../services/sync', () => ({
   syncService: {
     getState: jest.fn(),
-    sync: jest.fn()
-  }
+    sync: jest.fn(),
+  },
 }));
 
 // Mock Message
 jest.mock('../../Message', () => ({
   Message: {
     success: jest.fn(),
-    error: jest.fn()
-  }
+    error: jest.fn(),
+  },
 }));
 
 // Mock i18n
@@ -33,11 +34,11 @@ jest.mock('react-i18next', () => ({
         'sync.success': '同步成功',
         'sync.error': '同步失败',
         'sync.lastSync': `上次同步: ${params?.time || ''}`,
-        'sync.pendingDetails': `${params?.count || 0} 条数据待同步`
+        'sync.pendingDetails': `${params?.count || 0} 条数据待同步`,
       };
       return translations[key] || key;
-    }
-  })
+    },
+  }),
 }));
 
 describe('SyncStatus', () => {
@@ -48,7 +49,7 @@ describe('SyncStatus', () => {
       syncing: false,
       lastSyncTime: new Date(),
       pendingCount: 0,
-      offline: false
+      offline: false,
     });
   });
 
@@ -63,7 +64,7 @@ describe('SyncStatus', () => {
       syncing: false,
       lastSyncTime: null,
       pendingCount: 0,
-      offline: true
+      offline: true,
     });
 
     render(<SyncStatus />);
@@ -76,7 +77,7 @@ describe('SyncStatus', () => {
       syncing: true,
       lastSyncTime: new Date(),
       pendingCount: 0,
-      offline: false
+      offline: false,
     });
 
     render(<SyncStatus />);
@@ -88,7 +89,7 @@ describe('SyncStatus', () => {
       syncing: false,
       lastSyncTime: new Date(),
       pendingCount: 5,
-      offline: false
+      offline: false,
     });
 
     render(<SyncStatus />);
@@ -130,7 +131,7 @@ describe('SyncStatus', () => {
       syncing: false,
       lastSyncTime,
       pendingCount: 3,
-      offline: false
+      offline: false,
     });
 
     render(<SyncStatus showDetails />);
@@ -149,9 +150,9 @@ describe('SyncStatus', () => {
             syncing: true,
             lastSyncTime: new Date(),
             pendingCount: 0,
-            offline: false
-          }
-        })
+            offline: false,
+          },
+        }),
       );
     });
 
@@ -168,8 +169,6 @@ describe('SyncStatus', () => {
 
   it('应该应用自定义类名', () => {
     render(<SyncStatus className="custom-class" />);
-    expect(screen.getByText('已同步').parentElement?.parentElement).toHaveClass(
-      'custom-class'
-    );
+    expect(screen.getByText('已同步').parentElement?.parentElement).toHaveClass('custom-class');
   });
-}); 
+});

@@ -1,8 +1,3 @@
-import { Injectable } from '@nestjs/common';
-import { Logger } from '@utils/logger';
-import { CacheManager } from '@utils/cache-manager';
-import { AIModelManager } from '@models/ai-model-manager';
-import { DataProcessor } from '@utils/data-processor';
 import {
   IUserProfile,
   IExerciseRecommendation,
@@ -13,9 +8,13 @@ import {
   IAllergy,
   IUserSchedule,
   IRecommendationContext,
-  IRecommendationResult
+  IRecommendationResult,
 } from '@shared/types/health';
-
+import { AIModelManager } from '@models/ai-model-manager';
+import { CacheManager } from '@utils/cache-manager';
+import { DataProcessor } from '@utils/data-processor';
+import { Injectable } from '@nestjs/common';
+import { Logger } from '@utils/logger';
 @Injectable()
 export class UnifiedRecommendationService {
   private readonly logger = new Logger(UnifiedRecommendationService.name);
@@ -23,7 +22,7 @@ export class UnifiedRecommendationService {
   constructor(
     private readonly aiModelManager: AIModelManager,
     private readonly cacheManager: CacheManager,
-    private readonly dataProcessor: DataProcessor
+    private readonly dataProcessor: DataProcessor,
   ) {}
 
   /**
@@ -33,7 +32,7 @@ export class UnifiedRecommendationService {
    */
   public async generateRecommendations(
     userId: string,
-    context: IRecommendationContext
+    context: IRecommendationContext,
   ): Promise<IRecommendationResult> {
     try {
       this.logger.info('开始生成健康推荐', { userId, context });
@@ -53,7 +52,7 @@ export class UnifiedRecommendationService {
       const [exerciseRecs, dietRecs, lifestyleRecs] = await Promise.all([
         this.generateExerciseRecommendations(userProfile, context),
         this.generateDietRecommendations(userProfile, context),
-        this.generateLifestyleRecommendations(userProfile, context)
+        this.generateLifestyleRecommendations(userProfile, context),
       ]);
 
       // 整合推荐结果
@@ -69,16 +68,16 @@ export class UnifiedRecommendationService {
             age: userProfile.age,
             gender: userProfile.gender,
             activityLevel: userProfile.activityLevel,
-            healthGoals: userProfile.healthGoals
-          }
-        }
+            healthGoals: userProfile.healthGoals,
+          },
+        },
       };
 
       // 缓存推荐结果
       await this.cacheManager.set(
         cacheKey,
         result,
-        Number(process.env.RECOMMENDATION_CACHE_TTL) || 3600
+        Number(process.env.RECOMMENDATION_CACHE_TTL) || 3600,
       );
 
       this.logger.info('健康推荐生成完成', { userId });
@@ -94,24 +93,24 @@ export class UnifiedRecommendationService {
    */
   private async generateExerciseRecommendations(
     profile: IUserProfile,
-    context: IRecommendationContext
+    context: IRecommendationContext,
   ): Promise<IExerciseRecommendation[]> {
     try {
       // 使用AI模型生成初始推荐
       const modelResult = await this.aiModelManager.predict('exercise-recommendation', {
         profile,
-        context
+        context,
       });
 
       // 调整推荐以适应健康状况
       let recommendations = this.adjustForConditions(
         modelResult.recommendations,
-        profile.healthConditions
+        profile.healthConditions,
       );
 
       // 验证运动强度是否适合用户能力
       recommendations = recommendations.filter(rec =>
-        this.validateIntensity(rec, profile.capabilities)
+        this.validateIntensity(rec, profile.capabilities),
       );
 
       // 根据天气调整户外运动建议
@@ -132,20 +131,17 @@ export class UnifiedRecommendationService {
    */
   private async generateDietRecommendations(
     profile: IUserProfile,
-    context: IRecommendationContext
+    context: IRecommendationContext,
   ): Promise<IDietRecommendation[]> {
     try {
       // 使用AI模型生成初始推荐
       const modelResult = await this.aiModelManager.predict('diet-recommendation', {
         profile,
-        context
+        context,
       });
 
       // 考虑过敏情况
-      let recommendations = this.considerAllergies(
-        modelResult.recommendations,
-        profile.allergies
-      );
+      let recommendations = this.considerAllergies(modelResult.recommendations, profile.allergies);
 
       // 平衡营养摄入
       recommendations = this.balanceNutrition(recommendations);
@@ -168,13 +164,13 @@ export class UnifiedRecommendationService {
    */
   private async generateLifestyleRecommendations(
     profile: IUserProfile,
-    context: IRecommendationContext
+    context: IRecommendationContext,
   ): Promise<ILifestyleRecommendation[]> {
     try {
       // 使用AI模型生成初始推荐
       const modelResult = await this.aiModelManager.predict('lifestyle-recommendation', {
         profile,
-        context
+        context,
       });
 
       // 优先级排序
@@ -224,7 +220,7 @@ export class UnifiedRecommendationService {
           cardio: 'moderate',
           strength: 'moderate',
           flexibility: 'moderate',
-          balance: 'good'
+          balance: 'good',
         },
         schedule: {
           workDays: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'],
@@ -233,16 +229,16 @@ export class UnifiedRecommendationService {
           mealTimes: {
             breakfast: '08:00',
             lunch: '12:30',
-            dinner: '19:00'
-          }
-        }
+            dinner: '19:00',
+          },
+        },
       };
 
       // 缓存用户画像
       await this.cacheManager.set(
         cacheKey,
         profile,
-        Number(process.env.USER_PROFILE_CACHE_TTL) || 3600
+        Number(process.env.USER_PROFILE_CACHE_TTL) || 3600,
       );
 
       return profile;
@@ -257,7 +253,7 @@ export class UnifiedRecommendationService {
    */
   private adjustForConditions(
     recommendations: IExerciseRecommendation[],
-    conditions: IHealthCondition[]
+    conditions: IHealthCondition[],
   ): IExerciseRecommendation[] {
     if (!conditions || conditions.length === 0) {
       return recommendations;
@@ -277,16 +273,13 @@ export class UnifiedRecommendationService {
   /**
    * 检查运动是否禁忌
    */
-  private isExerciseContraindicated(
-    exerciseType: string,
-    condition: IHealthCondition
-  ): boolean {
+  private isExerciseContraindicated(exerciseType: string, condition: IHealthCondition): boolean {
     // 定义运动禁忌对照表
-    const contraindications: {[key: string]: string[]} = {
+    const contraindications: { [key: string]: string[] } = {
       'heart-disease': ['high-intensity', 'weightlifting', 'sprinting'],
-      'hypertension': ['high-intensity', 'inverted-poses'],
+      hypertension: ['high-intensity', 'inverted-poses'],
       'back-pain': ['heavy-lifting', 'high-impact', 'twisting'],
-      'joint-pain': ['high-impact', 'jumping', 'running']
+      'joint-pain': ['high-impact', 'jumping', 'running'],
     };
 
     return contraindications[condition.name]?.includes(exerciseType) || false;
@@ -297,21 +290,21 @@ export class UnifiedRecommendationService {
    */
   private validateIntensity(
     recommendation: IExerciseRecommendation,
-    capability: IUserCapability
+    capability: IUserCapability,
   ): boolean {
     // 定义强度等级对照表
-    const intensityLevels: {[key: string]: number} = {
+    const intensityLevels: { [key: string]: number } = {
       low: 1,
       moderate: 2,
-      high: 3
+      high: 3,
     };
 
     // 定义能力等级对照表
-    const capabilityLevels: {[key: string]: number} = {
+    const capabilityLevels: { [key: string]: number } = {
       poor: 1,
       moderate: 2,
       good: 3,
-      excellent: 4
+      excellent: 4,
     };
 
     const recommendedIntensity = intensityLevels[recommendation.intensity];
@@ -326,13 +319,13 @@ export class UnifiedRecommendationService {
    */
   private adjustForWeather(
     recommendations: IExerciseRecommendation[],
-    weather: string
+    weather: string,
   ): IExerciseRecommendation[] {
-    const indoorAlternatives: {[key: string]: string} = {
-      'running': 'treadmill',
-      'cycling': 'stationary-bike',
-      'swimming': 'indoor-pool',
-      'hiking': 'stair-climbing'
+    const indoorAlternatives: { [key: string]: string } = {
+      running: 'treadmill',
+      cycling: 'stationary-bike',
+      swimming: 'indoor-pool',
+      hiking: 'stair-climbing',
     };
 
     if (['rainy', 'snowy', 'stormy'].includes(weather)) {
@@ -342,7 +335,7 @@ export class UnifiedRecommendationService {
             ...rec,
             type: indoorAlternatives[rec.type] || rec.type,
             location: 'indoor',
-            notes: `Due to ${weather} weather, switched to indoor alternative`
+            notes: `Due to ${weather} weather, switched to indoor alternative`,
           };
         }
         return rec;
@@ -357,25 +350,25 @@ export class UnifiedRecommendationService {
    */
   private adjustForTimeOfDay(
     recommendations: IExerciseRecommendation[],
-    timeOfDay: string
+    timeOfDay: string,
   ): IExerciseRecommendation[] {
-    const timeBasedAdjustments: {[key: string]: any} = {
+    const timeBasedAdjustments: { [key: string]: any } = {
       'early-morning': {
         preferred: ['yoga', 'stretching', 'light-cardio'],
-        intensity: 'moderate'
+        intensity: 'moderate',
       },
-      'morning': {
+      morning: {
         preferred: ['running', 'cycling', 'swimming'],
-        intensity: 'high'
+        intensity: 'high',
       },
-      'afternoon': {
+      afternoon: {
         preferred: ['weightlifting', 'sports', 'cardio'],
-        intensity: 'high'
+        intensity: 'high',
       },
-      'evening': {
+      evening: {
         preferred: ['walking', 'light-yoga', 'stretching'],
-        intensity: 'low'
-      }
+        intensity: 'low',
+      },
     };
 
     const adjustment = timeBasedAdjustments[timeOfDay];
@@ -386,7 +379,7 @@ export class UnifiedRecommendationService {
     return recommendations.map(rec => ({
       ...rec,
       intensity: rec.type === 'high-intensity' ? adjustment.intensity : rec.intensity,
-      priority: adjustment.preferred.includes(rec.type) ? rec.priority + 1 : rec.priority
+      priority: adjustment.preferred.includes(rec.type) ? rec.priority + 1 : rec.priority,
     }));
   }
 
@@ -395,7 +388,7 @@ export class UnifiedRecommendationService {
    */
   private considerAllergies(
     recommendations: IDietRecommendation[],
-    allergies: IAllergy[]
+    allergies: IAllergy[],
   ): IDietRecommendation[] {
     if (!allergies || allergies.length === 0) {
       return recommendations;
@@ -405,10 +398,10 @@ export class UnifiedRecommendationService {
 
     return recommendations.map(rec => ({
       ...rec,
-      foods: rec.foods.filter(food =>
-        !allergyIngredients.some(allergen => food.toLowerCase().includes(allergen))
+      foods: rec.foods.filter(
+        food => !allergyIngredients.some(allergen => food.toLowerCase().includes(allergen)),
       ),
-      notes: [...(rec.notes || []), '已考虑过敏原进行调整']
+      notes: [...(rec.notes || []), '已考虑过敏原进行调整'],
     }));
   }
 
@@ -420,7 +413,7 @@ export class UnifiedRecommendationService {
       calories: 0,
       protein: 0,
       carbs: 0,
-      fat: 0
+      fat: 0,
     };
 
     // 计算总营养摄入
@@ -437,23 +430,23 @@ export class UnifiedRecommendationService {
         calories: rec.nutrients.calories,
         protein: rec.nutrients.protein,
         carbs: rec.nutrients.carbs,
-        fat: rec.nutrients.fat
+        fat: rec.nutrients.fat,
       };
 
       // 如果总蛋白质摄入不足，增加高蛋白食物
-      if (dailyNutrients.protein < 0.8 * dailyNutrients.calories / 4) {
+      if (dailyNutrients.protein < (0.8 * dailyNutrients.calories) / 4) {
         adjustedNutrients.protein *= 1.2;
       }
 
       // 如果碳水化合物比例过高，减少碳水食物
-      if (dailyNutrients.carbs > 0.6 * dailyNutrients.calories / 4) {
+      if (dailyNutrients.carbs > (0.6 * dailyNutrients.calories) / 4) {
         adjustedNutrients.carbs *= 0.8;
       }
 
       return {
         ...rec,
         nutrients: adjustedNutrients,
-        notes: [...(rec.notes || []), '已调整营养比例']
+        notes: [...(rec.notes || []), '已调整营养比例'],
       };
     });
   }
@@ -462,23 +455,23 @@ export class UnifiedRecommendationService {
    * 根据季节调整建议
    */
   private adjustForSeason(recommendations: any[], season: string): any[] {
-    const seasonalAdjustments: {[key: string]: any} = {
+    const seasonalAdjustments: { [key: string]: any } = {
       spring: {
         foods: ['leafy-greens', 'asparagus', 'peas'],
-        activities: ['outdoor-walking', 'gardening', 'cycling']
+        activities: ['outdoor-walking', 'gardening', 'cycling'],
       },
       summer: {
         foods: ['berries', 'tomatoes', 'cucumber'],
-        activities: ['swimming', 'morning-exercise', 'evening-walks']
+        activities: ['swimming', 'morning-exercise', 'evening-walks'],
       },
       autumn: {
         foods: ['pumpkin', 'apples', 'root-vegetables'],
-        activities: ['hiking', 'outdoor-yoga', 'running']
+        activities: ['hiking', 'outdoor-yoga', 'running'],
       },
       winter: {
         foods: ['citrus', 'winter-squash', 'root-vegetables'],
-        activities: ['indoor-exercise', 'hot-yoga', 'indoor-swimming']
-      }
+        activities: ['indoor-exercise', 'hot-yoga', 'indoor-swimming'],
+      },
     };
 
     const adjustment = seasonalAdjustments[season];
@@ -491,7 +484,7 @@ export class UnifiedRecommendationService {
         return {
           ...rec,
           foods: [...rec.foods, ...adjustment.foods],
-          notes: [...(rec.notes || []), `已根据${season}季节特点调整`]
+          notes: [...(rec.notes || []), `已根据${season}季节特点调整`],
         };
       }
       if (rec.type === 'activity') {
@@ -500,7 +493,7 @@ export class UnifiedRecommendationService {
           activities: adjustment.activities.includes(rec.activity)
             ? { ...rec.activity, priority: rec.priority + 1 }
             : rec.activity,
-          notes: [...(rec.notes || []), `已根据${season}季节特点调整`]
+          notes: [...(rec.notes || []), `已根据${season}季节特点调整`],
         };
       }
       return rec;
@@ -512,29 +505,29 @@ export class UnifiedRecommendationService {
    */
   private adjustForMealTime(
     recommendations: IDietRecommendation[],
-    timeOfDay: string
+    timeOfDay: string,
   ): IDietRecommendation[] {
-    const mealTimeAdjustments: {[key: string]: any} = {
+    const mealTimeAdjustments: { [key: string]: any } = {
       'early-morning': {
         preferred: ['light', 'protein-rich', 'easy-digest'],
-        avoid: ['heavy', 'spicy', 'fatty']
+        avoid: ['heavy', 'spicy', 'fatty'],
       },
-      'morning': {
+      morning: {
         preferred: ['protein-rich', 'whole-grain', 'fruit'],
-        avoid: ['heavy', 'processed']
+        avoid: ['heavy', 'processed'],
       },
-      'noon': {
+      noon: {
         preferred: ['balanced', 'protein', 'vegetables'],
-        avoid: ['very-heavy', 'high-sugar']
+        avoid: ['very-heavy', 'high-sugar'],
       },
-      'afternoon': {
+      afternoon: {
         preferred: ['light', 'protein-snack', 'fruit'],
-        avoid: ['heavy', 'high-carb']
+        avoid: ['heavy', 'high-carb'],
       },
-      'evening': {
+      evening: {
         preferred: ['light-protein', 'vegetables', 'easy-digest'],
-        avoid: ['heavy', 'high-carb', 'spicy']
-      }
+        avoid: ['heavy', 'high-carb', 'spicy'],
+      },
     };
 
     const adjustment = mealTimeAdjustments[timeOfDay];
@@ -544,15 +537,15 @@ export class UnifiedRecommendationService {
 
     return recommendations.map(rec => ({
       ...rec,
-      foods: rec.foods.filter(food =>
-        !adjustment.avoid.some((avoid: string) => food.toLowerCase().includes(avoid))
+      foods: rec.foods.filter(
+        food => !adjustment.avoid.some((avoid: string) => food.toLowerCase().includes(avoid)),
       ),
       priority: adjustment.preferred.some((pref: string) =>
-        rec.foods.some(food => food.toLowerCase().includes(pref))
+        rec.foods.some(food => food.toLowerCase().includes(pref)),
       )
         ? rec.priority + 1
         : rec.priority,
-      notes: [...(rec.notes || []), `已根据${timeOfDay}时段调整`]
+      notes: [...(rec.notes || []), `已根据${timeOfDay}时段调整`],
     }));
   }
 
@@ -578,16 +571,16 @@ export class UnifiedRecommendationService {
    */
   private adaptToSchedule(
     recommendations: ILifestyleRecommendation[],
-    schedule: IUserSchedule
+    schedule: IUserSchedule,
   ): ILifestyleRecommendation[] {
     return recommendations.map(rec => {
       // 检查建议的时间是否与用户日程冲突
       const timeSlot = this.findSuitableTimeSlot(rec, schedule);
-      
+
       return {
         ...rec,
         suggestedTime: timeSlot,
-        notes: [...(rec.notes || []), '已根据个人日程调整时间']
+        notes: [...(rec.notes || []), '已根据个人日程调整时间'],
       };
     });
   }
@@ -597,7 +590,7 @@ export class UnifiedRecommendationService {
    */
   private findSuitableTimeSlot(
     recommendation: ILifestyleRecommendation,
-    schedule: IUserSchedule
+    schedule: IUserSchedule,
   ): string {
     // 获取活动所需时间
     const duration = recommendation.duration || 30; // 默认30分钟
@@ -611,7 +604,7 @@ export class UnifiedRecommendationService {
 
     // 寻找其他可用时间段
     const availableSlots = this.findAvailableTimeSlots(duration, schedule);
-    
+
     if (availableSlots.length > 0) {
       // 返回第一个可用时间段
       return availableSlots[0];
@@ -624,11 +617,7 @@ export class UnifiedRecommendationService {
   /**
    * 检查时间段是否可用
    */
-  private isTimeSlotAvailable(
-    time: string,
-    duration: number,
-    schedule: IUserSchedule
-  ): boolean {
+  private isTimeSlotAvailable(time: string, duration: number, schedule: IUserSchedule): boolean {
     const timeDate = new Date(`1970-01-01T${time}`);
     const endTime = new Date(timeDate.getTime() + duration * 60000);
 
@@ -644,17 +633,14 @@ export class UnifiedRecommendationService {
     const fixedTimes = [
       schedule.mealTimes.breakfast,
       schedule.mealTimes.lunch,
-      schedule.mealTimes.dinner
+      schedule.mealTimes.dinner,
     ];
 
     for (const fixedTime of fixedTimes) {
       const fixed = new Date(`1970-01-01T${fixedTime}`);
       const fixedEnd = new Date(fixed.getTime() + 30 * 60000); // 假设用餐时间30分钟
 
-      if (
-        (timeDate >= fixed && timeDate < fixedEnd) ||
-        (endTime > fixed && endTime <= fixedEnd)
-      ) {
+      if ((timeDate >= fixed && timeDate < fixedEnd) || (endTime > fixed && endTime <= fixedEnd)) {
         return false;
       }
     }
@@ -665,10 +651,7 @@ export class UnifiedRecommendationService {
   /**
    * 寻找可用时间段
    */
-  private findAvailableTimeSlots(
-    duration: number,
-    schedule: IUserSchedule
-  ): string[] {
+  private findAvailableTimeSlots(duration: number, schedule: IUserSchedule): string[] {
     const slots: string[] = [];
     const day = new Date('1970-01-01');
     const endOfDay = new Date('1970-01-02');
@@ -689,7 +672,7 @@ export class UnifiedRecommendationService {
    */
   private suggestAlternativeTime(
     recommendation: ILifestyleRecommendation,
-    schedule: IUserSchedule
+    schedule: IUserSchedule,
   ): string {
     // 如果是运动建议，优先考虑清晨或下班后
     if (recommendation.category === 'exercise') {
@@ -716,7 +699,7 @@ export class UnifiedRecommendationService {
    */
   private adjustForWorkRestPattern(
     recommendations: ILifestyleRecommendation[],
-    schedule: IUserSchedule
+    schedule: IUserSchedule,
   ): ILifestyleRecommendation[] {
     return recommendations.map(rec => {
       // 如果是工作日
@@ -725,7 +708,7 @@ export class UnifiedRecommendationService {
           ...rec,
           intensity: rec.intensity === 'high' ? 'moderate' : rec.intensity,
           duration: Math.min(rec.duration || 30, 60), // 限制持续时间
-          notes: [...(rec.notes || []), '已考虑工作日强度和时间限制']
+          notes: [...(rec.notes || []), '已考虑工作日强度和时间限制'],
         };
       }
 
@@ -733,8 +716,8 @@ export class UnifiedRecommendationService {
       return {
         ...rec,
         duration: rec.duration ? rec.duration * 1.5 : 45, // 增加持续时间
-        notes: [...(rec.notes || []), '休息日活动时间可适当延长']
+        notes: [...(rec.notes || []), '休息日活动时间可适当延长'],
       };
     });
   }
-} 
+}

@@ -1,15 +1,16 @@
-import { Injectable } from '@nestjs/common';
-import { ExercisePlan, ExerciseRecommendation } from '../exercise/types/exercise.types';
-import { 
-  MealPlan, 
-  FoodAnalysis, 
-  NutritionAnalysis,
-  NutrientIntake,
-  NutrientBalance 
+import {
+  IMealPlan,
+  IFoodAnalysis,
+  INutritionAnalysis,
+  INutrientIntake,
+  INutrientBalance,
 } from '../nutrition/types/nutrition.types';
+import { ExercisePlan, IExerciseRecommendation } from '../exercise/types/exercise.types';
 import { HealthProfile } from '../health/types/health-base.types';
+import { Injectable } from '@nestjs/common';
 
-@Injectable()
+@Injec
+table()
 export class AIService {
   // 运动相关
   async generateExercisePlan(params: {
@@ -37,26 +38,26 @@ export class AIService {
     preferences: string[];
     restrictions: string[];
     budget?: number;
-  }): Promise<MealPlan> {
+  }): Promise<IMealPlan> {
     // 实现AI生成膳食计划的逻辑
     return null;
   }
 
-  async recognizeFood(imageData: Buffer): Promise<FoodAnalysis> {
+  async recognizeFood(imageData: Buffer): Promise<IFoodAnalysis> {
     // 实现食物识别逻辑
     return null;
   }
 
   async analyzeNutrition(data: {
-    intake: NutrientIntake;
+    intake: INutrientIntake;
     profile: HealthProfile;
     goals: any;
-  }): Promise<NutritionAnalysis> {
+  }): Promise<INutritionAnalysis> {
     // 实现营养分析逻辑
     return null;
   }
 
-  async generateNutrientBalance(intake: NutrientIntake): Promise<NutrientBalance> {
+  async generateNutrientBalance(intake: INutrientIntake): Promise<INutrientBalance> {
     // 实现营养平衡分析逻辑
     return null;
   }
@@ -85,7 +86,7 @@ export class AIService {
     profile: HealthProfile;
     fitnessLevel: any;
     preferences: any;
-  }): Promise<ExerciseRecommendation[]> {
+  }): Promise<IExerciseRecommendation[]> {
     // 实现运动建议生成逻辑
     return [];
   }
@@ -154,4 +155,4 @@ export class AIService {
     // 实现紧急情况分析的逻辑
     return {};
   }
-} 
+}

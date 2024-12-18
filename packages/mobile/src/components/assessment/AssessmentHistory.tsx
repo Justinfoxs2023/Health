@@ -1,32 +1,43 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+
 import { Card, Text, useTheme, Button } from 'react-native-paper';
 import { LineChart } from 'react-native-chart-kit';
+import { View, StyleSheet, ScrollView } from 'react-native';
 
-interface AssessmentRecord {
+interface IAssessmentRecord {
+  /** id 的描述 */
   id: string;
+  /** date 的描述 */
   date: string;
+  /** healthScore 的描述 */
   healthScore: number;
+  /** bmi 的描述 */
   bmi: number;
+  /** metrics 的描述 */
   metrics: {
     [key: string]: number;
   };
+  /** recommendations 的描述 */
   recommendations: string[];
 }
 
-interface AssessmentHistoryProps {
-  records: AssessmentRecord[];
-  onViewDetail: (record: AssessmentRecord) => void;
+interface IAssessmentHistoryProps {
+  /** records 的描述 */
+  records: IAssessmentRecord[];
+  /** onViewDetail 的描述 */
+  onViewDetail: (record: IAssessmentRecord) => void;
 }
 
-export const AssessmentHistory = ({ records, onViewDetail }: AssessmentHistoryProps) => {
+export const AssessmentHistory = ({ records, onViewDetail }: IAssessmentHistoryProps) => {
   const theme = useTheme();
 
   const healthScoreData = {
     labels: records.map(r => r.date.slice(5)), // 只显示月日
-    datasets: [{
-      data: records.map(r => r.healthScore)
-    }]
+    datasets: [
+      {
+        data: records.map(r => r.healthScore),
+      },
+    ],
   };
 
   return (
@@ -59,7 +70,7 @@ export const AssessmentHistory = ({ records, onViewDetail }: AssessmentHistoryPr
               <Text style={styles.date}>{record.date}</Text>
               <Text style={styles.score}>评分: {record.healthScore}</Text>
             </View>
-            
+
             <View style={styles.metricsContainer}>
               {Object.entries(record.metrics).map(([key, value]) => (
                 <View key={key} style={styles.metric}>
@@ -136,4 +147,4 @@ const styles = StyleSheet.create({
   detailButton: {
     marginTop: 8,
   },
-}); 
+});

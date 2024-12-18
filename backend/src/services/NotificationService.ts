@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
-import { Notification, INotification } from '../schemas/Notification';
 import { CacheService } from './CacheService';
+import { InjectModel } from '@nestjs/mongoose';
+import { Injectable } from '@nestjs/common';
+import { Model } from 'mongoose';
+import { Notification, INotification } from '../schemas/Notification';
+import { Server, Socket } from 'socket.io';
+import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 
 @Injectable()
 @WebSocketGateway({
@@ -20,7 +20,7 @@ export class NotificationService {
 
   constructor(
     @InjectModel(Notification.name) private notificationModel: Model<INotification>,
-    private cacheService: CacheService
+    private cacheService: CacheService,
   ) {}
 
   // 获取用户通知列表
@@ -38,11 +38,11 @@ export class NotificationService {
     await this.notificationModel.updateMany(
       {
         _id: { $in: notificationIds },
-        userId
+        userId,
       },
       {
-        $set: { status: 'read' }
-      }
+        $set: { status: 'read' },
+      },
     );
 
     // 更新未读数量缓存
@@ -53,14 +53,14 @@ export class NotificationService {
   async getUnreadCount(userId: string): Promise<number> {
     const cacheKey = `user:${userId}:unread-count`;
     const cached = await this.cacheService.get(cacheKey);
-    
+
     if (cached) {
       return parseInt(cached);
     }
 
     const count = await this.notificationModel.countDocuments({
       userId,
-      status: 'unread'
+      status: 'unread',
     });
 
     await this.cacheService.set(cacheKey, count.toString(), 300); // 缓存5分钟
@@ -70,13 +70,13 @@ export class NotificationService {
   // 创建新通知
   async createNotification(data: Partial<INotification>): Promise<INotification> {
     const notification = await this.notificationModel.create(data);
-    
+
     // 发送实时通知
     this.sendRealTimeNotification(data.userId.toString(), notification);
-    
+
     // 更新未读数量缓存
     await this.cacheService.invalidatePattern(`user:${data.userId}:unread-count`);
-    
+
     return notification;
   }
 
@@ -95,9 +95,9 @@ export class NotificationService {
           title: data.title,
           content: data.content,
           priority: data.priority || 'normal',
-          status: 'unread'
-        })
-      )
+          status: 'unread',
+        }),
+      ),
     );
 
     return notifications;
@@ -110,7 +110,7 @@ export class NotificationService {
 
     await this.notificationModel.deleteMany({
       createdAt: { $lt: expiryDate },
-      status: 'archived'
+      status: 'archived',
     });
   }
 
@@ -159,7 +159,7 @@ export class NotificationService {
   async getNotificationSettings(userId: string) {
     const cacheKey = `user:${userId}:notification-settings`;
     const cached = await this.cacheService.get(cacheKey);
-    
+
     if (cached) {
       return JSON.parse(cached);
     }
@@ -173,8 +173,8 @@ export class NotificationService {
         like: true,
         comment: true,
         follow: true,
-        system: true
-      }
+        system: true,
+      },
     };
 
     await this.cacheService.set(cacheKey, JSON.stringify(settings), 3600);
@@ -187,4 +187,4 @@ export class NotificationService {
     await this.cacheService.invalidatePattern(`user:${userId}:notification-settings`);
     return settings;
   }
-} 
+}

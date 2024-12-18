@@ -48,4 +48,4 @@ export class DoctorService extends BaseService {
       throw error;
     }
   }
-} 
+}

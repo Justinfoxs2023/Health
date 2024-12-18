@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 index.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // 导出核心服务
 export * from './api';
 export * from './auth';
@@ -23,7 +30,7 @@ export class BaseApiService {
   }
 
   protected handleError(error: any) {
-    console.error('API Error:', error);
+    console.error('Error in index.ts:', 'API Error:', error);
     throw error;
   }
 
@@ -102,7 +109,7 @@ export class StorageService {
       const serializedValue = JSON.stringify(value);
       localStorage.setItem(key, serializedValue);
     } catch (error) {
-      console.error('Storage Error:', error);
+      console.error('Error in index.ts:', 'Storage Error:', error);
     }
   }
 
@@ -111,7 +118,7 @@ export class StorageService {
       const serializedValue = localStorage.getItem(key);
       return serializedValue ? JSON.parse(serializedValue) : null;
     } catch (error) {
-      console.error('Storage Error:', error);
+      console.error('Error in index.ts:', 'Storage Error:', error);
       return null;
     }
   }
@@ -120,7 +127,7 @@ export class StorageService {
     try {
       localStorage.removeItem(key);
     } catch (error) {
-      console.error('Storage Error:', error);
+      console.error('Error in index.ts:', 'Storage Error:', error);
     }
   }
 
@@ -128,7 +135,7 @@ export class StorageService {
     try {
       localStorage.clear();
     } catch (error) {
-      console.error('Storage Error:', error);
+      console.error('Error in index.ts:', 'Storage Error:', error);
     }
   }
-} 
+}

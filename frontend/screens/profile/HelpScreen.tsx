@@ -1,14 +1,9 @@
 import React from 'react';
+
+import { MenuSection, MenuItem, FormInput, ImageUploader, LoadingOverlay } from '../../components';
 import { View, ScrollView, StyleSheet, TouchableOpacity, Text } from 'react-native';
-import { useMutation } from 'react-query';
 import { submitFeedback } from '../../api/feedback';
-import {
-  MenuSection,
-  MenuItem,
-  FormInput,
-  ImageUploader,
-  LoadingOverlay
-} from '../../components';
+import { useMutation } from 'react-query';
 
 export const HelpScreen = ({ navigation }) => {
   const [feedbackType, setFeedbackType] = React.useState('');
@@ -19,7 +14,7 @@ export const HelpScreen = ({ navigation }) => {
   const mutation = useMutation(submitFeedback, {
     onSuccess: () => {
       navigation.goBack();
-    }
+    },
   });
 
   const handleSubmit = () => {
@@ -32,7 +27,7 @@ export const HelpScreen = ({ navigation }) => {
       type: feedbackType,
       content,
       images,
-      contact
+      contact,
     });
   };
 
@@ -65,12 +60,7 @@ export const HelpScreen = ({ navigation }) => {
             value={feedbackType}
             onChangeText={setFeedbackType}
             type="select"
-            options={[
-              '功能建议',
-              '问题反馈',
-              '内容纠错',
-              '其他'
-            ]}
+            options={['功能建议', '问题反馈', '内容纠错', '其他']}
           />
 
           <FormInput
@@ -100,7 +90,7 @@ export const HelpScreen = ({ navigation }) => {
           <TouchableOpacity
             style={[
               styles.submitButton,
-              (!feedbackType || !content) && styles.submitButtonDisabled
+              (!feedbackType || !content) && styles.submitButtonDisabled,
             ]}
             onPress={handleSubmit}
             disabled={!feedbackType || !content}
@@ -111,21 +101,9 @@ export const HelpScreen = ({ navigation }) => {
       </MenuSection>
 
       <MenuSection title="联系我们">
-        <MenuItem
-          title="客服电话"
-          value="400-123-4567"
-          showArrow={false}
-        />
-        <MenuItem
-          title="服务时间"
-          value="周一至周日 9:00-18:00"
-          showArrow={false}
-        />
-        <MenuItem
-          title="官方邮箱"
-          value="support@health.com"
-          showArrow={false}
-        />
+        <MenuItem title="客服电话" value="400-123-4567" showArrow={false} />
+        <MenuItem title="服务时间" value="周一至周日 9:00-18:00" showArrow={false} />
+        <MenuItem title="官方邮箱" value="support@health.com" showArrow={false} />
       </MenuSection>
 
       {mutation.isLoading && <LoadingOverlay />}
@@ -136,30 +114,30 @@ export const HelpScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   feedbackSection: {
     padding: 15,
     backgroundColor: '#fff',
-    borderRadius: 8
+    borderRadius: 8,
   },
   contentInput: {
     height: 120,
-    textAlignVertical: 'top'
+    textAlignVertical: 'top',
   },
   submitButton: {
     backgroundColor: '#2E7D32',
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',
-    marginTop: 20
+    marginTop: 20,
   },
   submitButtonDisabled: {
-    backgroundColor: '#ccc'
+    backgroundColor: '#ccc',
   },
   submitButtonText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: 'bold'
-  }
-}); 
+    fontWeight: 'bold',
+  },
+});

@@ -1,25 +1,23 @@
+import { Activity } from './schemas/Activity';
+import { ActivityController } from './controllers/ActivityController';
+import { ActivityService } from './services/ActivityService';
+import { CacheService } from './services/CacheService';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { Favorite } from './schemas/Favorite';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { Notification } from './schemas/Notification';
+import { NotificationController } from './controllers/NotificationController';
+import { NotificationService } from './services/NotificationService';
 import { RedisModule } from '@liaoliaots/nestjs-redis';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { Timeline } from './schemas/Timeline';
+import { UserInteractionController } from './controllers/UserInteractionController';
+import { UserInteractionService } from './services/UserInteractionService';
+import { UserRelation } from './schemas/UserRelation';
 
 // 导入模型
-import { UserRelation } from './schemas/UserRelation';
-import { Favorite } from './schemas/Favorite';
-import { Timeline } from './schemas/Timeline';
-import { Activity } from './schemas/Activity';
-import { Notification } from './schemas/Notification';
-
 // 导入服务
-import { UserInteractionService } from './services/UserInteractionService';
-import { ActivityService } from './services/ActivityService';
-import { NotificationService } from './services/NotificationService';
-import { CacheService } from './services/CacheService';
-
 // 导入控制器
-import { UserInteractionController } from './controllers/UserInteractionController';
-import { ActivityController } from './controllers/ActivityController';
-import { NotificationController } from './controllers/NotificationController';
 
 @Module({
   imports: [
@@ -50,22 +48,8 @@ import { NotificationController } from './controllers/NotificationController';
       { name: Notification.name, schema: Notification },
     ]),
   ],
-  controllers: [
-    UserInteractionController,
-    ActivityController,
-    NotificationController,
-  ],
-  providers: [
-    UserInteractionService,
-    ActivityService,
-    NotificationService,
-    CacheService,
-  ],
-  exports: [
-    UserInteractionService,
-    ActivityService,
-    NotificationService,
-    CacheService,
-  ],
+  controllers: [UserInteractionController, ActivityController, NotificationController],
+  providers: [UserInteractionService, ActivityService, NotificationService, CacheService],
+  exports: [UserInteractionService, ActivityService, NotificationService, CacheService],
 })
-export class AppModule {} 
+export class AppModule {}

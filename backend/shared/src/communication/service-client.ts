@@ -1,17 +1,20 @@
-import { injectable, inject } from 'inversify';
-import { TYPES } from '../di/types';
-import { Logger } from '../types/logger';
 import { ConfigLoader } from '../config/config.loader';
+import { Logger } from '../types/logger';
+import { TYPES } from '../di/types';
+import { injectable, inject } from 'inversify';
 
 @injectable()
 export class ServiceClient {
   private config = ConfigLoader.getInstance();
 
-  constructor(
-    @inject(TYPES.Logger) private readonly logger: Logger
-  ) {}
+  constructor(@inject(TYPES.Logger) private readonly logger: Logger) {}
 
-  async callService(serviceName: string, endpoint: string, method: string, data?: any): Promise<any> {
+  async callService(
+    serviceName: string,
+    endpoint: string,
+    method: string,
+    data?: any,
+  ): Promise<any> {
     try {
       const serviceUrl = this.config.get(`${serviceName.toUpperCase()}_URL`);
       // 实现服务间调用逻辑
@@ -20,4 +23,4 @@ export class ServiceClient {
       throw error;
     }
   }
-} 
+}

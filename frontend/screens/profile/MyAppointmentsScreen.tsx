@@ -1,15 +1,15 @@
 import React from 'react';
-import { View, FlatList, StyleSheet } from 'react-native';
-import { useQuery } from 'react-query';
-import { getMyAppointments } from '../../api/appointment';
+
 import { AppointmentCard, LoadingSpinner, TabFilter } from '../../components';
+import { View, FlatList, StyleSheet } from 'react-native';
+import { getMyAppointments } from '../../api/appointment';
+import { useQuery } from 'react-query';
 
 export const MyAppointmentsScreen = ({ navigation }) => {
   const [status, setStatus] = React.useState('全部');
 
-  const { data, isLoading, refetch } = useQuery(
-    ['myAppointments', status],
-    () => getMyAppointments(status !== '全部' ? status : undefined)
+  const { data, isLoading, refetch } = useQuery(['myAppointments', status], () =>
+    getMyAppointments(status !== '全部' ? status : undefined),
   );
 
   return (
@@ -19,7 +19,7 @@ export const MyAppointmentsScreen = ({ navigation }) => {
         activeTab={status}
         onChangeTab={setStatus}
       />
-      
+
       {isLoading ? (
         <LoadingSpinner />
       ) : (
@@ -44,9 +44,9 @@ export const MyAppointmentsScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   list: {
-    padding: 15
-  }
-}); 
+    padding: 15,
+  },
+});

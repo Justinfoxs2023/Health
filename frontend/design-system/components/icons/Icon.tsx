@@ -1,20 +1,20 @@
 import React from 'react';
+
+import { IconNameType, IconResources } from '../../icons/IconManager';
 import { Image, ImageStyle, StyleSheet } from 'react-native';
-import { IconName, IconResources } from '../../icons/IconManager';
 
 interface IconProps {
-  name: IconName;
+  /** name 的描述 */
+  name: IconNameType;
+  /** size 的描述 */
   size?: number;
+  /** color 的描述 */
   color?: string;
+  /** style 的描述 */
   style?: ImageStyle;
 }
 
-export const Icon: React.FC<IconProps> = ({
-  name,
-  size = 24,
-  color,
-  style
-}) => {
+export const Icon: React.FC<IconProps> = ({ name, size = 24, color, style }) => {
   return (
     <Image
       source={IconResources[name].source}
@@ -23,9 +23,9 @@ export const Icon: React.FC<IconProps> = ({
         {
           width: size,
           height: size,
-          tintColor: color
+          tintColor: color,
         },
-        style
+        style,
       ]}
     />
   );
@@ -33,6 +33,6 @@ export const Icon: React.FC<IconProps> = ({
 
 const styles = StyleSheet.create({
   icon: {
-    resizeMode: 'contain'
-  }
-}); 
+    resizeMode: 'contain',
+  },
+});

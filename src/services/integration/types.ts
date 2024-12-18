@@ -1,12 +1,20 @@
+/**
+ * @fileoverview TS 文件 types.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // 集成体验类型定义
 export interface IntegratedExperience {
-  // 健康分析结果
-  analysis: {
+   
+  /** analysis 的描述 */
+    analysis: {
     predictiveHealth: {
-      risks: Array<{
+      risks: Array{
         type: string;
-        level: 'low' | 'medium' | 'high';
-        factors: string[];
+        level: low  medium  high;
+        factors: string;
       }>;
       trends: Array<{
         metric: string;
@@ -81,23 +89,27 @@ export interface IntegratedExperience {
 
 // 集成上下文类型
 export interface IntegrationContext {
-  userId: string;
-  healthProfile: {
-    conditions: string[];
-    medications: string[];
-    allergies: string[];
-    preferences: Record<string, any>;
+  /** userId 的描述 */
+    userId: string;
+  /** healthProfile 的描述 */
+    healthProfile: {
+    conditions: string;
+    medications: string;
+    allergies: string;
+    preferences: Recordstring, any;
   };
-  socialContext: {
+  /** socialContext 的描述 */
+    socialContext: {
     circles: string[];
     connections: string[];
     activityLevel: number;
     preferences: Record<string, any>;
   };
-  goals: Array<{
+  /** goals 的描述 */
+    goals: Array<{
     id: string;
     type: string;
     priority: number;
     progress: number;
   }>;
-} 
+}

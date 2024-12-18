@@ -1,8 +1,8 @@
-import { Request, Response } from 'express';
 import { Image } from '../schemas/Image';
+import { Request, Response } from 'express';
 import { addImageToQueue, getQueueStatus } from '../services/imageProcessing/queue';
-import { performSecurityCheck, extractMetadata } from '../services/imageProcessing/processor';
 import { logger } from '../services/logger';
+import { performSecurityCheck, extractMetadata } from '../services/imageProcessing/processor';
 
 /** 上传图片 */
 export const uploadImage = async (req: Request, res: Response) => {
@@ -133,4 +133,4 @@ export const deleteImage = async (req: Request, res: Response) => {
     logger.error('删除图片失败:', error);
     res.status(500).json({ error: '删除图片失败' });
   }
-}; 
+};

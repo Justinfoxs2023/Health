@@ -1,41 +1,50 @@
 import React from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
+
 import { PieChart as RNPieChart } from 'react-native-chart-kit';
 import { Text } from '../common';
+import { View, StyleSheet, Dimensions } from 'react-native';
 
-interface PieChartData {
+interface IPieChartData {
+  /** name 的描述 */
   name: string;
+  /** value 的描述 */
   value: number;
+  /** color 的描述 */
   color: string;
+  /** legendFontColor 的描述 */
   legendFontColor?: string;
 }
 
-interface Props {
-  data: PieChartData[];
+interface IProps {
+  /** data 的描述 */
+  data: IPieChartData[];
+  /** title 的描述 */
   title?: string;
+  /** width 的描述 */
   width?: number;
+  /** height 的描述 */
   height?: number;
 }
 
-export const PieChart: React.FC<Props> = ({
+export const PieChart: React.FC<IProps> = ({
   data,
   title,
   width = Dimensions.get('window').width - 40,
-  height = 220
+  height = 220,
 }) => {
   const chartData = data.map(item => ({
     name: item.name,
     population: item.value,
     color: item.color,
     legendFontColor: item.legendFontColor || '#666',
-    legendFontSize: 12
+    legendFontSize: 12,
   }));
 
   const chartConfig = {
     backgroundColor: '#fff',
     backgroundGradientFrom: '#fff',
     backgroundGradientTo: '#fff',
-    color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`
+    color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
   };
 
   return (
@@ -65,5 +74,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     marginBottom: 15,
-  }
-}); 
+  },
+});

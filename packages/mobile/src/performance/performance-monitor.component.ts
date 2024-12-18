@@ -1,10 +1,15 @@
+import {
+  IPerformanceMetrics,
+  IPerformanceWarning,
+  IOptimizationSuggestion,
+} from './performance.types';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { PerformanceService } from './performance.service';
-import { PerformanceMetrics, PerformanceWarning, OptimizationSuggestion } from './performance.types';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-@Component({
+@Com
+ponent({
   selector: 'app-performance-monitor',
   template: `
     <div class="performance-monitor">
@@ -16,14 +21,15 @@ import { takeUntil } from 'rxjs/operators';
             <span>内存使用</span>
           </div>
           <div class="metric-value">
-            {{ formatMemory(metrics.memory.used) }} / 
+            {{ formatMemory(metrics.memory.used) }} /
             {{ formatMemory(metrics.memory.total) }}
           </div>
           <div class="metric-progress">
-            <div class="progress-bar" 
-                 [style.width]="getMemoryUsage() + '%'"
-                 [class.critical]="isMemoryCritical">
-            </div>
+            <div
+              class="progress-bar"
+              [style.width]="getMemoryUsage() + '%'"
+              [class.critical]="isMemoryCritical"
+            ></div>
           </div>
         </div>
 
@@ -32,12 +38,8 @@ import { takeUntil } from 'rxjs/operators';
             <i class="icon-cpu"></i>
             <span>CPU使用率</span>
           </div>
-          <div class="metric-value">
-            {{ (metrics.cpu.usage * 100).toFixed(1) }}%
-          </div>
-          <div class="metric-detail">
-            温度: {{ metrics.cpu.temperature }}°C
-          </div>
+          <div class="metric-value">{{ (metrics.cpu.usage * 100).toFixed(1) }}%</div>
+          <div class="metric-detail">温度: {{ metrics.cpu.temperature }}°C</div>
         </div>
 
         <div class="metric-card fps" [class.warning]="isFPSWarning">
@@ -45,12 +47,8 @@ import { takeUntil } from 'rxjs/operators';
             <i class="icon-fps"></i>
             <span>帧率</span>
           </div>
-          <div class="metric-value">
-            {{ metrics.fps.current }} FPS
-          </div>
-          <div class="metric-detail">
-            掉帧: {{ metrics.fps.drops }}次
-          </div>
+          <div class="metric-value">{{ metrics.fps.current }} FPS</div>
+          <div class="metric-detail">掉帧: {{ metrics.fps.drops }}次</div>
         </div>
 
         <div class="metric-card network">
@@ -61,9 +59,7 @@ import { takeUntil } from 'rxjs/operators';
           <div class="metric-value">
             {{ metrics.network.effectiveType }}
           </div>
-          <div class="metric-detail">
-            延迟: {{ metrics.network.rtt }}ms
-          </div>
+          <div class="metric-detail">延迟: {{ metrics.network.rtt }}ms</div>
         </div>
       </section>
 
@@ -71,14 +67,12 @@ import { takeUntil } from 'rxjs/operators';
       <section class="warnings" *ngIf="warnings.length">
         <h3>性能警告</h3>
         <div class="warning-list">
-          <div *ngFor="let warning of warnings"
-               class="warning-item"
-               [class]="warning.level">
+          <div *ngFor="let warning of warnings" class="warning-item" [class]="warning.level">
             <i [class]="getWarningIcon(warning)"></i>
             <div class="warning-content">
               <div class="warning-message">{{ warning.message }}</div>
               <div class="warning-time">
-                {{ warning.timestamp | date:'HH:mm:ss' }}
+                {{ warning.timestamp | date : 'HH:mm:ss' }}
               </div>
             </div>
           </div>
@@ -89,17 +83,21 @@ import { takeUntil } from 'rxjs/operators';
       <section class="suggestions" *ngIf="suggestions.length">
         <h3>优化建议</h3>
         <div class="suggestion-list">
-          <div *ngFor="let suggestion of suggestions"
-               class="suggestion-item"
-               [class]="suggestion.priority">
+          <div
+            *ngFor="let suggestion of suggestions"
+            class="suggestion-item"
+            [class]="suggestion.priority"
+          >
             <div class="suggestion-header">
               <span class="suggestion-title">{{ suggestion.title }}</span>
               <span class="suggestion-priority">{{ suggestion.priority }}</span>
             </div>
             <p class="suggestion-description">{{ suggestion.description }}</p>
             <div class="suggestion-actions">
-              <button *ngFor="let action of suggestion.actions"
-                      (click)="executeSuggestion(suggestion, action)">
+              <button
+                *ngFor="let action of suggestion.actions"
+                (click)="executeSuggestion(suggestion, action)"
+              >
                 {{ action }}
               </button>
             </div>
@@ -108,20 +106,21 @@ import { takeUntil } from 'rxjs/operators';
       </section>
     </div>
   `,
-  styleUrls: ['./performance-monitor.component.scss']
+  styleUrls: ['./performance-monitor.component.scss'],
 })
 export class PerformanceMonitorComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
-  metrics: PerformanceMetrics;
-  warnings: PerformanceWarning[] = [];
-  suggestions: OptimizationSuggestion[] = [];
+  metrics: IPerformanceMetrics;
+  warnings: IPerformanceWarning[] = [];
+  suggestions: IOptimizationSuggestion[] = [];
 
   constructor(private performanceService: PerformanceService) {}
 
   ngOnInit() {
     // 订阅性能指标更新
-    this.performanceService.getMetrics()
+    this.performanceService
+      .getMetrics()
       .pipe(takeUntil(this.destroy$))
       .subscribe(metrics => {
         this.metrics = metrics;
@@ -129,7 +128,8 @@ export class PerformanceMonitorComponent implements OnInit, OnDestroy {
       });
 
     // 订阅性能警告
-    this.performanceService.getWarnings()
+    this.performanceService
+      .getWarnings()
       .pipe(takeUntil(this.destroy$))
       .subscribe(warnings => {
         this.warnings = warnings;
@@ -166,25 +166,31 @@ export class PerformanceMonitorComponent implements OnInit, OnDestroy {
   }
 
   // 获取警告图标
-  getWarningIcon(warning: PerformanceWarning): string {
+  getWarningIcon(warning: IPerformanceWarning): string {
     switch (warning.type) {
-      case 'memory': return 'icon-memory-warning';
-      case 'cpu': return 'icon-cpu-warning';
-      case 'fps': return 'icon-fps-warning';
-      case 'network': return 'icon-network-warning';
-      case 'battery': return 'icon-battery-warning';
-      default: return 'icon-warning';
+      case 'memory':
+        return 'icon-memory-warning';
+      case 'cpu':
+        return 'icon-cpu-warning';
+      case 'fps':
+        return 'icon-fps-warning';
+      case 'network':
+        return 'icon-network-warning';
+      case 'battery':
+        return 'icon-battery-warning';
+      default:
+        return 'icon-warning';
     }
   }
 
   // 执行优化建议
-  async executeSuggestion(suggestion: OptimizationSuggestion, action: string) {
+  async executeSuggestion(suggestion: IOptimizationSuggestion, action: string) {
     try {
       await this.performanceService.optimize([suggestion.type]);
       // 更新建议状态
       this.updateSuggestions();
     } catch (error) {
-      console.error('Failed to execute suggestion:', error);
+      console.error('Error in performance-monitor.component.ts:', 'Failed to execute suggestion:', error);
     }
   }
 
@@ -203,4 +209,4 @@ export class PerformanceMonitorComponent implements OnInit, OnDestroy {
     const report = await this.performanceService.generateReport();
     this.suggestions = report.suggestions;
   }
-} 
+}

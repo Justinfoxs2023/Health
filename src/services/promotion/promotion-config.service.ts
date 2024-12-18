@@ -1,14 +1,19 @@
+/**
+ * @fileoverview TS 文件 promotion-config.service.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 @Injectable()
 export class PromotionConfigService {
   constructor(
     private readonly adminService: AdminService,
-    private readonly validationService: ValidationService
+    private readonly validationService: ValidationService,
   ) {}
 
   // 设置佣金比例
-  async setCommissionRates(
-    rateConfig: CommissionRateConfig
-  ): Promise<ConfigUpdateResult> {
+  async setCommissionRates(rateConfig: CommissionRateConfig): Promise<ConfigUpdateResult> {
     try {
       // 验证配置合规性
       await this.validateCommissionRates(rateConfig);
@@ -21,15 +26,15 @@ export class PromotionConfigService {
           level2Rate: rateConfig.level2Rate,
           minimumAmount: rateConfig.minimumAmount,
           maximumRate: rateConfig.maximumRate,
-          updatedAt: new Date()
-        }
+          updatedAt: new Date(),
+        },
       });
 
       // 记录配置变更
       await this.logConfigChange({
         type: 'COMMISSION_RATE_UPDATE',
         oldConfig: rateConfig.currentConfig,
-        newConfig: updatedConfig
+        newConfig: updatedConfig,
       });
 
       // 通知相关服务
@@ -38,7 +43,7 @@ export class PromotionConfigService {
       return {
         success: true,
         config: updatedConfig,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     } catch (error) {
       this.logger.error('佣金比例设置失败', error);
@@ -50,4 +55,4 @@ export class PromotionConfigService {
   async getCurrentConfig(): Promise<PromotionConfig> {
     // 实现配置获取逻辑
   }
-} 
+}

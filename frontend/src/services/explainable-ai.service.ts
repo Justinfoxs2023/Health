@@ -1,10 +1,14 @@
 import * as tf from '@tensorflow/tfjs';
-import { LocalDatabase, createDatabase } from '../utils/local-database';
+import { ILocalDatabase, createDatabase } from '../utils/local-database';
 
-interface ExplanationConfig {
+interface IExplanationConfig {
+  /** methods 的描述 */
   methods: Array<'lime' | 'shap' | 'gradcam' | 'integrated-gradients'>;
+  /** sampleSize 的描述 */
   sampleSize: number;
+  /** featureImportanceThreshold 的描述 */
   featureImportanceThreshold: number;
+  /** visualizationOptions 的描述 */
   visualizationOptions: {
     heatmapColors: string[];
     opacity: number;
@@ -12,21 +16,30 @@ interface ExplanationConfig {
   };
 }
 
-interface ExplanationResult {
+interface IExplanationResult {
+  /** method 的描述 */
   method: string;
+  /** featureImportance 的描述 */
   featureImportance: Record<string, number>;
+  /** attributions 的描述 */
   attributions: number[];
+  /** visualization 的描述 */
   visualization: any;
+  /** confidence 的描述 */
   confidence: number;
+  /** interpretability 的描述 */
   interpretability: {
-    local: LocalExplanation;
-    global: GlobalExplanation;
+    local: ILocalExplanation;
+    global: IGlobalExplanation;
   };
 }
 
-interface LocalExplanation {
+interface ILocalExplanation {
+  /** featureContributions 的描述 */
   featureContributions: Record<string, number>;
+  /** decisionPath 的描述 */
   decisionPath: string[];
+  /** counterfactuals 的描述 */
   counterfactuals: Array<{
     input: tf.Tensor;
     output: tf.Tensor;
@@ -34,19 +47,22 @@ interface LocalExplanation {
   }>;
 }
 
-interface GlobalExplanation {
+interface IGlobalExplanation {
+  /** featureImportance 的描述 */
   featureImportance: Record<string, number>;
+  /** modelBehavior 的描述 */
   modelBehavior: {
     interactions: Record<string, number>;
     biases: Record<string, number>;
   };
+  /** performanceMetrics 的描述 */
   performanceMetrics: Record<string, number>;
 }
 
 export class ExplainableAIService {
-  private db: LocalDatabase;
+  private db: ILocalDatabase;
   private model: tf.LayersModel | null = null;
-  private config: ExplanationConfig;
+  private config: IExplanationConfig;
   private featureNames: string[] = [];
 
   constructor() {
@@ -58,8 +74,8 @@ export class ExplainableAIService {
       visualizationOptions: {
         heatmapColors: ['#ff0000', '#00ff00', '#0000ff'],
         opacity: 0.7,
-        resolution: 100
-      }
+        resolution: 100,
+      },
     };
   }
 
@@ -70,14 +86,14 @@ export class ExplainableAIService {
   }
 
   // 生成综合解释
-  async explainPrediction(input: tf.Tensor): Promise<ExplanationResult> {
+  async explainPrediction(input: tf.Tensor): Promise<IExplanationResult> {
     if (!this.model) {
       throw new Error('模型未设置');
     }
 
     // 并行执行多种解释方法
     const explanations = await Promise.all(
-      this.config.methods.map(method => this.generateExplanation(method, input))
+      this.config.methods.map(method => this.generateExplanation(method, input)),
     );
 
     // 合并解释结果
@@ -87,8 +103,8 @@ export class ExplainableAIService {
   // 生成局部解释
   private async generateLocalExplanation(
     input: tf.Tensor,
-    method: string
-  ): Promise<LocalExplanation> {
+    method: string,
+  ): Promise<ILocalExplanation> {
     return tf.tidy(() => {
       // 计算特征贡献
       const contributions = this.computeFeatureContributions(input);
@@ -102,13 +118,13 @@ export class ExplainableAIService {
       return {
         featureContributions: contributions,
         decisionPath,
-        counterfactuals
+        counterfactuals,
       };
     });
   }
 
   // 生成全局解释
-  private async generateGlobalExplanation(): Promise<GlobalExplanation> {
+  private async generateGlobalExplanation(): Promise<IGlobalExplanation> {
     return tf.tidy(() => {
       // 计算全局特征重要性
       const featureImportance = this.computeGlobalFeatureImportance();
@@ -123,9 +139,9 @@ export class ExplainableAIService {
         featureImportance,
         modelBehavior: {
           interactions: this.analyzeFeatureInteractions(),
-          biases: this.detectModelBiases()
+          biases: this.detectModelBiases(),
         },
-        performanceMetrics
+        performanceMetrics,
       };
     });
   }
@@ -137,9 +153,7 @@ export class ExplainableAIService {
       const perturbations = this.generatePerturbations(input);
 
       // 获取预测
-      const predictions = perturbations.map(p => 
-        this.model!.predict(p) as tf.Tensor
-      );
+      const predictions = perturbations.map(p => this.model!.predict(p) as tf.Tensor);
 
       // 训练局部线性模型
       const linearModel = this.trainLocalLinearModel(perturbations, predictions);
@@ -175,9 +189,7 @@ export class ExplainableAIService {
   }
 
   // 集成梯度解释
-  private async generateIntegratedGradientsExplanation(
-    input: tf.Tensor
-  ): Promise<any> {
+  private async generateIntegratedGradientsExplanation(input: tf.Tensor): Promise<any> {
     return tf.tidy(() => {
       // 生成基线
       const baseline = this.generateBaseline(input);
@@ -191,10 +203,7 @@ export class ExplainableAIService {
   }
 
   // 生成可视化
-  private generateVisualization(
-    explanation: any,
-    method: string
-  ): any {
+  private generateVisualization(explanation: any, method: string): any {
     switch (method) {
       case 'lime':
         return this.generateLIMEVisualization(explanation);
@@ -210,42 +219,42 @@ export class ExplainableAIService {
   }
 
   // 保存解释结果
-  private async saveExplanation(explanation: ExplanationResult): Promise<void> {
+  private async saveExplanation(explanation: IExplanationResult): Promise<void> {
     await this.db.put('explanations', {
       timestamp: new Date(),
-      explanation
+      explanation,
     });
   }
 
   // 加载历史解释
-  async loadExplanationHistory(): Promise<ExplanationResult[]> {
-    return await this.db.get('explanations') || [];
+  async loadExplanationHistory(): Promise<IExplanationResult[]> {
+    return (await this.db.get('explanations')) || [];
   }
 
   // 生成解释报告
   async generateExplanationReport(input: tf.Tensor): Promise<{
     summary: string;
-    details: ExplanationResult;
+    details: IExplanationResult;
     recommendations: string[];
   }> {
     const explanation = await this.explainPrediction(input);
-    
+
     return {
       summary: this.generateSummary(explanation),
       details: explanation,
-      recommendations: this.generateRecommendations(explanation)
+      recommendations: this.generateRecommendations(explanation),
     };
   }
 
   // 生成摘要
-  private generateSummary(explanation: ExplanationResult): string {
+  private generateSummary(explanation: IExplanationResult): string {
     // 实现摘要生成逻辑
     return '';
   }
 
   // 生成建议
-  private generateRecommendations(explanation: ExplanationResult): string[] {
+  private generateRecommendations(explanation: IExplanationResult): string[] {
     // 实现建议生成逻辑
     return [];
   }
-} 
+}

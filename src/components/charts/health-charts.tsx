@@ -1,8 +1,11 @@
-export const HealthTrendChart: React.FC<TrendChartProps> = ({
-  data,
-  metrics,
-  timeRange
-}) => {
+/**
+ * @fileoverview TSX 文件 health-charts.tsx 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
+export const HealthTrendChart: React.FC<TrendChartProps> = ({ data, metrics, timeRange }) => {
   const chartConfig = {
     type: 'line',
     data: {
@@ -11,27 +14,27 @@ export const HealthTrendChart: React.FC<TrendChartProps> = ({
         label: metric.label,
         data: data.map(d => d[metric.key]),
         borderColor: metric.color,
-        fill: false
-      }))
+        fill: false,
+      })),
     },
     options: {
       responsive: true,
       interaction: {
         mode: 'index',
-        intersect: false
+        intersect: false,
       },
       scales: {
         x: {
           type: 'time',
           time: {
-            unit: timeRange
-          }
+            unit: timeRange,
+          },
         },
         y: {
-          beginAtZero: true
-        }
-      }
-    }
+          beginAtZero: true,
+        },
+      },
+    },
   };
 
   return (
@@ -42,4 +45,4 @@ export const HealthTrendChart: React.FC<TrendChartProps> = ({
       </CardContent>
     </Card>
   );
-}; 
+};

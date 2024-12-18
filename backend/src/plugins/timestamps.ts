@@ -1,8 +1,11 @@
 import mongoose from 'mongoose';
 
-interface TimestampOptions {
+interface ITimestampOptions {
+  /** createdAt 的描述 */
   createdAt?: string;
+  /** updatedAt 的描述 */
   updatedAt?: string;
+  /** currentTime 的描述 */
   currentTime?: () => Date;
 }
 
@@ -10,7 +13,7 @@ class TimestampPlugin {
   /**
    * 添加时间戳到schema
    */
-  static addTimestamps(schema: mongoose.Schema, options: TimestampOptions = {}): void {
+  static addTimestamps(schema: mongoose.Schema, options: ITimestampOptions = {}): void {
     const createdAtField = options.createdAt || 'createdAt';
     const updatedAtField = options.updatedAt || 'updatedAt';
     const getCurrentTime = options.currentTime || (() => new Date());
@@ -22,7 +25,7 @@ class TimestampPlugin {
     schema.add(schemaAddition);
 
     // 保存前中间件
-    schema.pre('save', function(next) {
+    schema.pre('save', function (next) {
       const currentTime = getCurrentTime();
 
       if (this.isNew) {
@@ -34,7 +37,7 @@ class TimestampPlugin {
     });
 
     // 更新中间件
-    schema.pre(['updateOne', 'findOneAndUpdate', 'updateMany'], function(next) {
+    schema.pre(['updateOne', 'findOneAndUpdate', 'updateMany'], function (next) {
       const currentTime = getCurrentTime();
       const update = this.getUpdate() as any;
 
@@ -49,13 +52,9 @@ class TimestampPlugin {
     });
 
     // 添加查询助手方法
-    schema.query.byTimeRange = function(
-      field: string,
-      startDate?: Date,
-      endDate?: Date
-    ) {
+    schema.query.byTimeRange = function (field: string, startDate?: Date, endDate?: Date) {
       const query: any = {};
-      
+
       if (startDate || endDate) {
         query[field] = {};
         if (startDate) {
@@ -66,15 +65,15 @@ class TimestampPlugin {
         }
         return this.where(query);
       }
-      
+
       return this;
     };
 
     // 添加实例方法
-    schema.methods.touch = async function(fields?: string[]): Promise<void> {
+    schema.methods.touch = async function (fields?: string[]): Promise<void> {
       const currentTime = getCurrentTime();
       const updates: any = {
-        [updatedAtField]: currentTime
+        [updatedAtField]: currentTime,
       };
 
       if (fields && Array.isArray(fields)) {
@@ -88,35 +87,35 @@ class TimestampPlugin {
     };
 
     // 添加静态方法
-    schema.statics.findByTimeRange = async function(
+    schema.statics.findByTimeRange = async function (
       field: string,
       startDate?: Date,
-      endDate?: Date
+      endDate?: Date,
     ) {
       return this.find().byTimeRange(field, startDate, endDate);
     };
 
-    schema.statics.findOneByTimeRange = async function(
+    schema.statics.findOneByTimeRange = async function (
       field: string,
       startDate?: Date,
-      endDate?: Date
+      endDate?: Date,
     ) {
       return this.findOne().byTimeRange(field, startDate, endDate);
     };
 
-    schema.statics.countByTimeRange = async function(
+    schema.statics.countByTimeRange = async function (
       field: string,
       startDate?: Date,
-      endDate?: Date
+      endDate?: Date,
     ) {
       return this.find().byTimeRange(field, startDate, endDate).countDocuments();
     };
 
     // 添加虚拟字段
-    schema.virtual('age').get(function() {
+    schema.virtual('age').get(function () {
       const createdAt = this.get(createdAtField);
       if (!createdAt) return null;
-      
+
       const now = getCurrentTime();
       const ageInMs = now.getTime() - createdAt.getTime();
       return {
@@ -124,7 +123,7 @@ class TimestampPlugin {
         seconds: Math.floor(ageInMs / 1000),
         minutes: Math.floor(ageInMs / (1000 * 60)),
         hours: Math.floor(ageInMs / (1000 * 60 * 60)),
-        days: Math.floor(ageInMs / (1000 * 60 * 60 * 24))
+        days: Math.floor(ageInMs / (1000 * 60 * 60 * 24)),
       };
     });
 
@@ -138,10 +137,10 @@ class TimestampPlugin {
    */
   static addVersioning(schema: mongoose.Schema): void {
     schema.add({
-      version: { type: Number, default: 0 }
+      version: { type: Number, default: 0 },
     });
 
-    schema.pre('save', function(next) {
+    schema.pre('save', function (next) {
       if (this.isModified()) {
         this.increment();
       }
@@ -154,11 +153,11 @@ class TimestampPlugin {
    */
   static addSoftDelete(schema: mongoose.Schema): void {
     schema.add({
-      deletedAt: { type: Date, default: null }
+      deletedAt: { type: Date, default: null },
     });
 
     // 添加查询中间件
-    schema.pre(['find', 'findOne'], function(next) {
+    schema.pre(['find', 'findOne'], function (next) {
       if (!(this as any)._conditions.includeDeleted) {
         this.where({ deletedAt: null });
       }
@@ -166,28 +165,28 @@ class TimestampPlugin {
     });
 
     // 添加软删除方法
-    schema.methods.softDelete = async function(): Promise<void> {
+    schema.methods.softDelete = async function (): Promise<void> {
       this.set('deletedAt', new Date());
       await this.save();
     };
 
     // 添加恢复方法
-    schema.methods.restore = async function(): Promise<void> {
+    schema.methods.restore = async function (): Promise<void> {
       this.set('deletedAt', null);
       await this.save();
     };
 
     // 添加静态方法
-    schema.statics.findWithDeleted = function() {
+    schema.statics.findWithDeleted = function () {
       return this.find().where({ includeDeleted: true });
     };
   }
 }
 
 // 导出插件
-export { TimestampPlugin, TimestampOptions };
+export { TimestampPlugin, ITimestampOptions };
 
 // 默认导出插件函数
-export default function(schema: mongoose.Schema, options?: TimestampOptions) {
+export default function (schema: mongoose.Schema, options?: ITimestampOptions): void {
   TimestampPlugin.addTimestamps(schema, options);
-} 
+}

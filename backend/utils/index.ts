@@ -1,10 +1,7 @@
-import { upload } from './upload/upload';
 import { logger } from './logger';
+import { upload } from './upload/upload';
 
-export {
-  upload,
-  logger
-};
+export { upload, logger };
 
 // 重新导出类型
-export type { UploadedFile } from './upload/types';
+export type { IUploadedFile } from './upload/types';

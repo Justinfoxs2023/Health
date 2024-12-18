@@ -1,19 +1,29 @@
 import * as tf from '@tensorflow/tfjs';
-import { LocalDatabase } from '../utils/local-database';
+import { ILocalDatabase } from '../utils/local-database';
 
-interface QuantizationConfig {
+interface IQuantizationConfig {
+  /** method 的描述 */
   method: 'dynamic' | 'float16' | 'int8' | 'hybrid';
+  /** optimizationTarget 的描述 */
   optimizationTarget: 'size' | 'latency' | 'balanced';
+  /** calibrationDataSize 的描述 */
   calibrationDataSize: number;
+  /** accuracyThreshold 的描述 */
   accuracyThreshold: number;
 }
 
-interface QuantizationResult {
+interface IQuantizationResult {
+  /** originalSize 的描述 */
   originalSize: number;
+  /** quantizedSize 的描述 */
   quantizedSize: number;
+  /** compressionRatio 的描述 */
   compressionRatio: number;
+  /** accuracyDrop 的描述 */
   accuracyDrop: number;
+  /** latencyImprovement 的描述 */
   latencyImprovement: number;
+  /** metrics 的描述 */
   metrics: {
     mae: number;
     rmse: number;
@@ -22,10 +32,10 @@ interface QuantizationResult {
 }
 
 export class ModelQuantizationService {
-  private db: LocalDatabase;
+  private db: ILocalDatabase;
   private originalModel: tf.LayersModel | null = null;
   private quantizedModel: tf.LayersModel | null = null;
-  private config: QuantizationConfig;
+  private config: IQuantizationConfig;
 
   constructor() {
     this.db = createDatabase('model-quantization');
@@ -33,7 +43,7 @@ export class ModelQuantizationService {
       method: 'dynamic',
       optimizationTarget: 'balanced',
       calibrationDataSize: 1000,
-      accuracyThreshold: 0.02
+      accuracyThreshold: 0.02,
     };
     this.initialize();
   }
@@ -45,23 +55,16 @@ export class ModelQuantizationService {
   // 量化模型
   async quantizeModel(
     model: tf.LayersModel,
-    calibrationData?: tf.Tensor
-  ): Promise<QuantizationResult> {
+    calibrationData?: tf.Tensor,
+  ): Promise<IQuantizationResult> {
     try {
       this.originalModel = model;
 
       // 执行量化
-      const quantizedModel = await this.performQuantization(
-        model,
-        calibrationData
-      );
+      const quantizedModel = await this.performQuantization(model, calibrationData);
 
       // 评估量化效果
-      const result = await this.evaluateQuantization(
-        model,
-        quantizedModel,
-        calibrationData
-      );
+      const result = await this.evaluateQuantization(model, quantizedModel, calibrationData);
 
       if (this.meetsAccuracyRequirement(result)) {
         this.quantizedModel = quantizedModel;
@@ -71,7 +74,7 @@ export class ModelQuantizationService {
         throw new Error('量化后的模型未达到精度要求');
       }
     } catch (error) {
-      console.error('模型量化失败:', error);
+      console.error('Error in model-quantization.service.ts:', '模型量化失败:', error);
       throw error;
     }
   }
@@ -79,7 +82,7 @@ export class ModelQuantizationService {
   // 执行量化
   private async performQuantization(
     model: tf.LayersModel,
-    calibrationData?: tf.Tensor
+    calibrationData?: tf.Tensor,
   ): Promise<tf.LayersModel> {
     switch (this.config.method) {
       case 'dynamic':
@@ -96,17 +99,13 @@ export class ModelQuantizationService {
   }
 
   // 动态范围量化
-  private async dynamicRangeQuantization(
-    model: tf.LayersModel
-  ): Promise<tf.LayersModel> {
+  private async dynamicRangeQuantization(model: tf.LayersModel): Promise<tf.LayersModel> {
     // 实现动态范围量化
     return model;
   }
 
   // Float16量化
-  private async float16Quantization(
-    model: tf.LayersModel
-  ): Promise<tf.LayersModel> {
+  private async float16Quantization(model: tf.LayersModel): Promise<tf.LayersModel> {
     // 实现Float16量化
     return model;
   }
@@ -114,7 +113,7 @@ export class ModelQuantizationService {
   // Int8量化
   private async int8Quantization(
     model: tf.LayersModel,
-    calibrationData?: tf.Tensor
+    calibrationData?: tf.Tensor,
   ): Promise<tf.LayersModel> {
     // 实现Int8量化
     return model;
@@ -123,7 +122,7 @@ export class ModelQuantizationService {
   // 混合量化
   private async hybridQuantization(
     model: tf.LayersModel,
-    calibrationData?: tf.Tensor
+    calibrationData?: tf.Tensor,
   ): Promise<tf.LayersModel> {
     // 实现混合量化
     return model;
@@ -133,28 +132,17 @@ export class ModelQuantizationService {
   private async evaluateQuantization(
     originalModel: tf.LayersModel,
     quantizedModel: tf.LayersModel,
-    testData?: tf.Tensor
-  ): Promise<QuantizationResult> {
+    testData?: tf.Tensor,
+  ): Promise<IQuantizationResult> {
     const originalSize = await this.getModelSize(originalModel);
     const quantizedSize = await this.getModelSize(quantizedModel);
     const compressionRatio = originalSize / quantizedSize;
 
-    const accuracyDrop = await this.measureAccuracyDrop(
-      originalModel,
-      quantizedModel,
-      testData
-    );
+    const accuracyDrop = await this.measureAccuracyDrop(originalModel, quantizedModel, testData);
 
-    const latencyImprovement = await this.measureLatencyImprovement(
-      originalModel,
-      quantizedModel
-    );
+    const latencyImprovement = await this.measureLatencyImprovement(originalModel, quantizedModel);
 
-    const metrics = await this.calculateMetrics(
-      originalModel,
-      quantizedModel,
-      testData
-    );
+    const metrics = await this.calculateMetrics(originalModel, quantizedModel, testData);
 
     return {
       originalSize,
@@ -162,12 +150,12 @@ export class ModelQuantizationService {
       compressionRatio,
       accuracyDrop,
       latencyImprovement,
-      metrics
+      metrics,
     };
   }
 
   // 检查是否满足精度要求
-  private meetsAccuracyRequirement(result: QuantizationResult): boolean {
+  private meetsAccuracyRequirement(result: IQuantizationResult): boolean {
     return result.accuracyDrop <= this.config.accuracyThreshold;
   }
 
@@ -181,7 +169,7 @@ export class ModelQuantizationService {
   private async measureAccuracyDrop(
     originalModel: tf.LayersModel,
     quantizedModel: tf.LayersModel,
-    testData?: tf.Tensor
+    testData?: tf.Tensor,
   ): Promise<number> {
     // 实现精度下降测量
     return 0;
@@ -190,7 +178,7 @@ export class ModelQuantizationService {
   // ��量延迟改进
   private async measureLatencyImprovement(
     originalModel: tf.LayersModel,
-    quantizedModel: tf.LayersModel
+    quantizedModel: tf.LayersModel,
   ): Promise<number> {
     // 实现延迟改进测量
     return 0;
@@ -200,7 +188,7 @@ export class ModelQuantizationService {
   private async calculateMetrics(
     originalModel: tf.LayersModel,
     quantizedModel: tf.LayersModel,
-    testData?: tf.Tensor
+    testData?: tf.Tensor,
   ): Promise<{
     mae: number;
     rmse: number;
@@ -210,7 +198,7 @@ export class ModelQuantizationService {
     return {
       mae: 0,
       rmse: 0,
-      psnr: 0
+      psnr: 0,
     };
   }
 
@@ -228,15 +216,15 @@ export class ModelQuantizationService {
       const config = await this.db.get('quantization-config');
       if (config) this.config = config;
     } catch (error) {
-      console.error('加载量化模型失败:', error);
+      console.error('Error in model-quantization.service.ts:', '加载量化模型失败:', error);
     }
   }
 
   // 更新配置
-  async updateConfig(config: Partial<QuantizationConfig>): Promise<void> {
+  async updateConfig(config: Partial<IQuantizationConfig>): Promise<void> {
     this.config = {
       ...this.config,
-      ...config
+      ...config,
     };
     await this.db.put('quantization-config', this.config);
   }
@@ -244,34 +232,31 @@ export class ModelQuantizationService {
   // 生成量化报告
   async generateQuantizationReport(): Promise<{
     summary: string;
-    details: QuantizationResult;
+    details: IQuantizationResult;
     recommendations: string[];
   }> {
     if (!this.originalModel || !this.quantizedModel) {
       throw new Error('模型未完全加载');
     }
 
-    const result = await this.evaluateQuantization(
-      this.originalModel,
-      this.quantizedModel
-    );
+    const result = await this.evaluateQuantization(this.originalModel, this.quantizedModel);
 
     return {
       summary: this.generateSummary(result),
       details: result,
-      recommendations: this.generateRecommendations(result)
+      recommendations: this.generateRecommendations(result),
     };
   }
 
   // 生成摘要
-  private generateSummary(result: QuantizationResult): string {
+  private generateSummary(result: IQuantizationResult): string {
     // 实现摘要生成
     return '';
   }
 
   // 生成建议
-  private generateRecommendations(result: QuantizationResult): string[] {
+  private generateRecommendations(result: IQuantizationResult): string[] {
     // 实现建议生成
     return [];
   }
-} 
+}

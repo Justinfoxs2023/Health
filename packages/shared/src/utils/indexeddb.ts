@@ -1,12 +1,12 @@
-import { CacheOptions, CacheEntry } from '../types/cache';
+import { ICacheOptions, ICacheEntry } from '../types/cache';
 
 export class IndexedDB {
   private db: IDBDatabase | null = null;
   private readonly dbName: string;
   private readonly version: number;
-  private readonly options: CacheOptions;
+  private readonly options: ICacheOptions;
 
-  constructor(dbName: string, version: number = 1, options: CacheOptions = {}) {
+  constructor(dbName: string, version = 1, options: ICacheOptions = {}) {
     this.dbName = dbName;
     this.version = version;
     this.options = options;
@@ -23,7 +23,7 @@ export class IndexedDB {
         resolve();
       };
 
-      request.onupgradeneeded = (event) => {
+      request.onupgradeneeded = event => {
         const db = (event.target as IDBOpenDBRequest).result;
         if (!db.objectStoreNames.contains('cache')) {
           db.createObjectStore('cache', { keyPath: 'key' });
@@ -36,11 +36,11 @@ export class IndexedDB {
   async set<T>(key: string, value: T): Promise<void> {
     if (!this.db) throw new Error('Database not initialized');
 
-    const entry: CacheEntry<T> = {
+    const entry: ICacheEntry<T> = {
       data: value,
       createdAt: Date.now(),
       lastAccessed: Date.now(),
-      accessCount: 0
+      accessCount: 0,
     };
 
     if (this.options.ttl) {
@@ -68,7 +68,7 @@ export class IndexedDB {
 
       request.onerror = () => reject(request.error);
       request.onsuccess = () => {
-        const entry = request.result as CacheEntry<T> & { key: string };
+        const entry = request.result as ICacheEntry<T> & { key: string };
         if (!entry) return resolve(null);
 
         if (entry.expireAt && entry.expireAt < Date.now()) {
@@ -121,4 +121,4 @@ export class IndexedDB {
       this.db = null;
     }
   }
-} 
+}

@@ -1,27 +1,41 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+
 import { Card, Text, ProgressBar, useTheme } from 'react-native-paper';
 import { LineChart } from 'react-native-chart-kit';
+import { View, StyleSheet, ScrollView } from 'react-native';
 
-interface NutrientGoal {
+interface INutrientGoal {
+  /** name 的描述 */
   name: string;
+  /** current 的描述 */
   current: number;
+  /** target 的描述 */
   target: number;
+  /** unit 的描述 */
   unit: string;
 }
 
-interface DailyNutrition {
+interface IDailyNutrition {
+  /** date 的描述 */
   date: string;
+  /** calories 的描述 */
   calories: number;
+  /** protein 的描述 */
   protein: number;
+  /** carbs 的描述 */
   carbs: number;
+  /** fat 的描述 */
   fat: number;
+  /** fiber 的描述 */
   fiber: number;
+  /** water 的描述 */
   water: number;
 }
 
-interface NutritionTrend {
+interface INutritionTrend {
+  /** labels 的描述 */
   labels: string[];
+  /** datasets 的描述 */
   datasets: {
     label: string;
     data: number[];
@@ -29,13 +43,16 @@ interface NutritionTrend {
   }[];
 }
 
-interface NutritionTrackerProps {
-  goals: NutrientGoal[];
-  dailyLog: DailyNutrition[];
-  trends: NutritionTrend;
+interface INutritionTrackerProps {
+  /** goals 的描述 */
+  goals: INutrientGoal[];
+  /** dailyLog 的描述 */
+  dailyLog: IDailyNutrition[];
+  /** trends 的描述 */
+  trends: INutritionTrend;
 }
 
-export const NutritionTracker = ({ goals, dailyLog, trends }: NutritionTrackerProps) => {
+export const NutritionTracker = ({ goals, dailyLog, trends }: INutritionTrackerProps) => {
   const theme = useTheme();
 
   const getProgressColor = (progress: number) => {
@@ -73,7 +90,7 @@ export const NutritionTracker = ({ goals, dailyLog, trends }: NutritionTrackerPr
           <LineChart
             data={{
               labels: trends.labels,
-              datasets: trends.datasets
+              datasets: trends.datasets,
             }}
             width={320}
             height={220}
@@ -85,13 +102,13 @@ export const NutritionTracker = ({ goals, dailyLog, trends }: NutritionTrackerPr
               color: (opacity = 1) => theme.colors.primary,
               labelColor: (opacity = 1) => theme.colors.text,
               style: {
-                borderRadius: 16
+                borderRadius: 16,
               },
               propsForDots: {
                 r: '6',
                 strokeWidth: '2',
-                stroke: theme.colors.primary
-              }
+                stroke: theme.colors.primary,
+              },
             }}
             bezier
             style={styles.chart}
@@ -124,12 +141,8 @@ export const NutritionTracker = ({ goals, dailyLog, trends }: NutritionTrackerPr
                 </View>
               </View>
               <View style={styles.extraNutrients}>
-                <Text style={styles.extraNutrient}>
-                  膳食纤维: {day.fiber}g
-                </Text>
-                <Text style={styles.extraNutrient}>
-                  饮水量: {day.water}ml
-                </Text>
+                <Text style={styles.extraNutrient}>膳食纤维: {day.fiber}g</Text>
+                <Text style={styles.extraNutrient}>饮水量: {day.water}ml</Text>
               </View>
             </View>
           ))}
@@ -212,4 +225,4 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
   },
-}); 
+});

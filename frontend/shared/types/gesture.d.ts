@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 gesture.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 declare module 'react-native' {
   export interface GestureResponderHandlers {
     onStartShouldSetResponder?: (event: GestureResponderEvent) => boolean;
@@ -51,30 +58,30 @@ declare module 'react-native' {
     create: (config: {
       onStartShouldSetPanResponder?: (
         e: GestureResponderEvent,
-        gestureState: PanResponderGestureState
+        gestureState: PanResponderGestureState,
       ) => boolean;
       onMoveShouldSetPanResponder?: (
         e: GestureResponderEvent,
-        gestureState: PanResponderGestureState
+        gestureState: PanResponderGestureState,
       ) => boolean;
       onPanResponderGrant?: (
         e: GestureResponderEvent,
-        gestureState: PanResponderGestureState
+        gestureState: PanResponderGestureState,
       ) => void;
       onPanResponderMove?: (
         e: GestureResponderEvent,
-        gestureState: PanResponderGestureState
+        gestureState: PanResponderGestureState,
       ) => void;
       onPanResponderRelease?: (
         e: GestureResponderEvent,
-        gestureState: PanResponderGestureState
+        gestureState: PanResponderGestureState,
       ) => void;
       onPanResponderTerminate?: (
         e: GestureResponderEvent,
-        gestureState: PanResponderGestureState
+        gestureState: PanResponderGestureState,
       ) => void;
     }) => {
       panHandlers: GestureResponderHandlers;
     };
   };
-} 
+}

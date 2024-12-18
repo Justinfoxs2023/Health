@@ -1,72 +1,89 @@
+/**
+ * @fileoverview TS 文件 international-payment.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // 国际支付方式配置
 export interface InternationalPaymentConfig {
-  // 信用卡支付
-  creditCard: {
+   
+  /** creditCard 的描述 */
+    creditCard: {
     providers: {
-      visa: PaymentProviderConfig;
-      mastercard: PaymentProviderConfig;
-      americanExpress: PaymentProviderConfig;
-      discover: PaymentProviderConfig;
+      visa: IPaymentProviderConfig;
+      mastercard: IPaymentProviderConfig;
+      americanExpress: IPaymentProviderConfig;
+      discover: IPaymentProviderConfig;
     };
     processingRules: ProcessingRule[];
     securityMeasures: SecurityMeasure[];
   };
-  
+
   // 数字支付钱包
-  digitalWallet: {
+  /** digitalWallet 的描述 */
+    digitalWallet: {
     providers: {
-      paypal: PaymentProviderConfig;
-      stripe: PaymentProviderConfig;
-      amazonPay: PaymentProviderConfig;
-      googlePay: PaymentProviderConfig;
-      applePay: PaymentProviderConfig;
+      paypal: IPaymentProviderConfig;
+      stripe: IPaymentProviderConfig;
+      amazonPay: IPaymentProviderConfig;
+      googlePay: IPaymentProviderConfig;
+      applePay: IPaymentProviderConfig;
     };
     integrationSettings: IntegrationSetting[];
     securityProtocols: SecurityProtocol[];
   };
-  
+
   // 加密货币支付
-  cryptocurrency: {
+  /** cryptocurrency 的描述 */
+    cryptocurrency: {
     supportedCoins: CryptoCurrency[];
     exchangeRates: ExchangeRateConfig;
     walletIntegration: WalletIntegration[];
     riskManagement: RiskManagementRule[];
   };
-  
+
   // 区域支付方式
-  regionalPayments: {
+  /** regionalPayments 的描述 */
+    regionalPayments: {
     europe: {
-      sepa: PaymentProviderConfig;
-      ideal: PaymentProviderConfig;
-      sofort: PaymentProviderConfig;
+      sepa: IPaymentProviderConfig;
+      ideal: IPaymentProviderConfig;
+      sofort: IPaymentProviderConfig;
     };
     americas: {
-      venmo: PaymentProviderConfig;
-      cashApp: PaymentProviderConfig;
+      venmo: IPaymentProviderConfig;
+      cashApp: IPaymentProviderConfig;
     };
     asia: {
-      grabPay: PaymentProviderConfig;
-      linePay: PaymentProviderConfig;
-      paytm: PaymentProviderConfig;
+      grabPay: IPaymentProviderConfig;
+      linePay: IPaymentProviderConfig;
+      paytm: IPaymentProviderConfig;
     };
   };
 }
 
 // 支付提供商配置
-export interface PaymentProviderConfig {
-  enabled: boolean;
-  apiCredentials: {
+export interface IPaymentProviderConfig {
+  /** enabled 的描述 */
+    enabled: false | true;
+  /** apiCredentials 的描述 */
+    apiCredentials: {
     apiKey: string;
     secretKey: string;
     merchantId: string;
-    environment: 'sandbox' | 'production';
+    environment: sandbox  production;
   };
-  processingFees: {
+  /** processingFees 的描述 */
+    processingFees: {
     percentage: number;
     fixedFee: number;
     currency: string;
   };
-  supportedCurrencies: string[];
-  paymentMethods: string[];
-  webhookConfig: WebhookConfig;
-} 
+  /** supportedCurrencies 的描述 */
+    supportedCurrencies: string[];
+  /** paymentMethods 的描述 */
+    paymentMethods: string[];
+  /** webhookConfig 的描述 */
+    webhookConfig: WebhookConfig;
+}

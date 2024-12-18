@@ -1,5 +1,5 @@
-import { Router } from 'express';
 import { DevAssistantController } from '../controllers/dev-assistant.controller';
+import { Router } from 'express';
 import { auth } from '../middleware/auth.middleware';
 import { rateLimit } from '../middleware/rate-limit.middleware';
 
@@ -11,7 +11,7 @@ router.post(
   '/review',
   auth.verifyToken,
   rateLimit.standard,
-  devAssistantController.reviewCode.bind(devAssistantController)
+  devAssistantController.reviewCode.bind(devAssistantController),
 );
 
 // 生成测试
@@ -19,7 +19,7 @@ router.post(
   '/tests',
   auth.verifyToken,
   rateLimit.standard,
-  devAssistantController.generateTests.bind(devAssistantController)
+  devAssistantController.generateTests.bind(devAssistantController),
 );
 
-export default router; 
+export default router;

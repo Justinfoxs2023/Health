@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { User } from '../models/user.model';
 import { IAuthRequest, IAuth } from '../types/auth';
+import { Request, Response, NextFunction } from 'express';
+import { User } from '../models/user.model';
 
 class Auth implements IAuth {
   /**
@@ -13,18 +13,18 @@ class Auth implements IAuth {
       if (!token) {
         res.status(401).json({
           success: false,
-          message: '未登录'
+          message: '未登录',
         });
         return;
       }
 
       const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { id: string };
       const user = await User.findById(decoded.id);
-      
+
       if (!user) {
         res.status(401).json({
           success: false,
-          message: '用户不存在'
+          message: '用户不存在',
         });
         return;
       }
@@ -35,7 +35,7 @@ class Auth implements IAuth {
     } catch (error) {
       res.status(401).json({
         success: false,
-        message: '认证失败'
+        message: '认证失败',
       });
     }
   };
@@ -43,13 +43,17 @@ class Auth implements IAuth {
   /**
    * 验证是否为营养师
    */
-  public nutritionistRequired = async (req: IAuthRequest, res: Response, next: NextFunction): Promise<void> => {
+  public nutritionistRequired = async (
+    req: IAuthRequest,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
     try {
       await this.required(req, res, () => {
         if (req.user?.role !== 'nutritionist') {
           res.status(403).json({
             success: false,
-            message: '需要营养师权限'
+            message: '需要营养师权限',
           });
           return;
         }
@@ -58,7 +62,7 @@ class Auth implements IAuth {
     } catch (error) {
       res.status(401).json({
         success: false,
-        message: '认证失败'
+        message: '认证失败',
       });
     }
   };
@@ -66,13 +70,17 @@ class Auth implements IAuth {
   /**
    * 验证是否为管理员
    */
-  public adminRequired = async (req: IAuthRequest, res: Response, next: NextFunction): Promise<void> => {
+  public adminRequired = async (
+    req: IAuthRequest,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
     try {
       await this.required(req, res, () => {
         if (req.user?.role !== 'admin') {
           res.status(403).json({
             success: false,
-            message: '需要管理员权限'
+            message: '需要管理员权限',
           });
           return;
         }
@@ -81,10 +89,10 @@ class Auth implements IAuth {
     } catch (error) {
       res.status(401).json({
         success: false,
-        message: '认证失败'
+        message: '认证失败',
       });
     }
   };
 }
 
-export const auth = new Auth(); 
+export const auth = new Auth();

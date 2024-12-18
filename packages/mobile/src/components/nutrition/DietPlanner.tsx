@@ -1,11 +1,15 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
-import { Text, useTheme } from 'react-native-paper';
-import { DietaryIntakeCard } from './DietaryIntakeCard';
 
-interface NutritionData {
+import { DietaryIntakeCard } from './DietaryIntakeCard';
+import { Text, useTheme } from 'react-native-paper';
+import { View, StyleSheet, ScrollView } from 'react-native';
+
+interface INutritionData {
+  /** calories 的描述 */
   calories: number;
+  /** goal 的描述 */
   goal: number;
+  /** nutrients 的描述 */
   nutrients: Array<{
     name: string;
     value: number;
@@ -17,14 +21,14 @@ export const DietPlanner = () => {
   const theme = useTheme();
 
   // 模拟数据，实际应从API获取
-  const nutritionData: NutritionData = {
+  const nutritionData: INutritionData = {
     calories: 1800,
     goal: 2000,
     nutrients: [
       { name: '蛋白质', value: 25, color: '#FF6B6B' },
       { name: '碳水化合物', value: 55, color: '#4ECDC4' },
-      { name: '脂肪', value: 20, color: '#45B7D1' }
-    ]
+      { name: '脂肪', value: 20, color: '#45B7D1' },
+    ],
   };
 
   return (
@@ -68,4 +72,4 @@ const styles = StyleSheet.create({
     color: '#666',
     marginBottom: 8,
   },
-}); 
+});

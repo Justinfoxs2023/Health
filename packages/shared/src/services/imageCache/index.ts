@@ -1,25 +1,33 @@
 import { BehaviorSubject } from 'rxjs';
 
-interface CacheStats {
+interface ICacheStats {
+  /** size 的描述 */
   size: number; // MB
+  /** entries 的描述 */
   entries: number;
+  /** hits 的描述 */
   hits: number;
+  /** misses 的描述 */
   misses: number;
+  /** hitRate 的描述 */
   hitRate: number;
 }
 
-interface CacheEntry {
+interface ICacheEntry {
+  /** blob 的描述 */
   blob: Blob;
+  /** timestamp 的描述 */
   timestamp: number;
+  /** size 的描述 */
   size: number;
 }
 
 export class ImageCacheService {
-  private cache: Map<string, CacheEntry>;
-  private stats: CacheStats;
+  private cache: Map<string, ICacheEntry>;
+  private stats: ICacheStats;
   private maxSize: number; // MB
   private maxAge: number; // ms
-  private state$: BehaviorSubject<CacheStats>;
+  private state$: BehaviorSubject<ICacheStats>;
 
   constructor(maxSize = 100, maxAge = 24 * 60 * 60 * 1000) {
     this.cache = new Map();
@@ -30,9 +38,9 @@ export class ImageCacheService {
       entries: 0,
       hits: 0,
       misses: 0,
-      hitRate: 0
+      hitRate: 0,
     };
-    this.state$ = new BehaviorSubject<CacheStats>(this.stats);
+    this.state$ = new BehaviorSubject<ICacheStats>(this.stats);
   }
 
   public async set(key: string, blob: Blob): Promise<void> {
@@ -49,10 +57,10 @@ export class ImageCacheService {
       return;
     }
 
-    const entry: CacheEntry = {
+    const entry: ICacheEntry = {
       blob,
       timestamp: Date.now(),
-      size
+      size,
     };
 
     this.cache.set(key, entry);
@@ -93,12 +101,12 @@ export class ImageCacheService {
       entries: 0,
       hits: 0,
       misses: 0,
-      hitRate: 0
+      hitRate: 0,
     };
     this.state$.next(this.stats);
   }
 
-  public getStats(): CacheStats {
+  public getStats(): ICacheStats {
     return { ...this.stats };
   }
 
@@ -108,8 +116,9 @@ export class ImageCacheService {
 
   private async cleanup(): Promise<void> {
     // 按时间戳排序,删除最旧的条目
-    const entries = Array.from(this.cache.entries())
-      .sort(([, a], [, b]) => a.timestamp - b.timestamp);
+    const entries = Array.from(this.cache.entries()).sort(
+      ([, a], [, b]) => a.timestamp - b.timestamp,
+    );
 
     while (this.stats.size > this.maxSize * 0.8 && entries.length > 0) {
       const [key, entry] = entries.shift()!;
@@ -118,7 +127,7 @@ export class ImageCacheService {
     }
   }
 
-  private updateStats(operation: 'set' | 'delete' | 'hit' | 'miss', size: number = 0) {
+  private updateStats(operation: 'set' | 'delete' | 'hit' | 'miss', size = 0) {
     switch (operation) {
       case 'set':
         this.stats.size += size;
@@ -141,4 +150,4 @@ export class ImageCacheService {
 
     this.state$.next({ ...this.stats });
   }
-} 
+}

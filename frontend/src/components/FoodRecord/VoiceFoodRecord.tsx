@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Button, Card, List, Input, Modal, message } from 'antd';
+
 import { AudioOutlined, EditOutlined } from '@ant-design/icons';
-import { VoiceRecognitionService } from '../../services/voice-recognition.service';
+import { Button, Card, List, Input, Modal, message } from 'antd';
 import { FoodNutritionAnalysisService } from '../../services/food-nutrition-analysis.service';
+import { VoiceRecognitionService } from '../../services/voice-recognition.service';
 
 export const VoiceFoodRecord: React.FC = () => {
   const [recording, setRecording] = useState(false);
@@ -17,7 +18,7 @@ export const VoiceFoodRecord: React.FC = () => {
     try {
       setRecording(true);
       const result = await voiceService.startRecording();
-      
+
       if (result.foodItems) {
         setFoodItems(result.foodItems);
       }
@@ -40,7 +41,7 @@ export const VoiceFoodRecord: React.FC = () => {
 
   const handleSaveEdit = async (values: any) => {
     const updatedItems = foodItems.map(item =>
-      item === editingItem ? { ...item, ...values } : item
+      item === editingItem ? { ...item, ...values } : item,
     );
     setFoodItems(updatedItems);
     setModalVisible(false);
@@ -70,12 +71,9 @@ export const VoiceFoodRecord: React.FC = () => {
         renderItem={item => (
           <List.Item
             actions={[
-              <Button 
-                icon={<EditOutlined />}
-                onClick={() => handleEditItem(item)}
-              >
+              <Button icon={<EditOutlined />} onClick={() => handleEditItem(item)}>
                 编辑
-              </Button>
+              </Button>,
             ]}
           >
             <List.Item.Meta
@@ -97,21 +95,21 @@ export const VoiceFoodRecord: React.FC = () => {
             <Input
               placeholder="食物名称"
               defaultValue={editingItem.name}
-              onChange={e => editingItem.name = e.target.value}
+              onChange={e => (editingItem.name = e.target.value)}
             />
             <Input
               placeholder="数量"
               defaultValue={editingItem.quantity}
-              onChange={e => editingItem.quantity = e.target.value}
+              onChange={e => (editingItem.quantity = e.target.value)}
             />
             <Input
               placeholder="单位"
               defaultValue={editingItem.unit}
-              onChange={e => editingItem.unit = e.target.value}
+              onChange={e => (editingItem.unit = e.target.value)}
             />
           </div>
         )}
       </Modal>
     </Card>
   );
-}; 
+};

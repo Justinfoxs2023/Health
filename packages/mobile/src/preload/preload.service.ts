@@ -1,33 +1,33 @@
+import { IPreloadConfig } from '../skeleton/skeleton.types';
 import { Injectable } from '@angular/core';
-import { PreloadConfig } from '../skeleton/skeleton.types';
 import { Platform } from '@ionic/angular';
 import { from, Observable } from 'rxjs';
 import { mergeMap, retry, timeout } from 'rxjs/operators';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PreloadService {
-  private readonly config: PreloadConfig = {
+  private readonly config: IPreloadConfig = {
     strategy: 'progressive',
     priority: {
       critical: ['/api/config', '/api/user'],
       high: ['/api/content/featured'],
       medium: ['/api/content/list'],
-      low: ['/api/recommendations']
+      low: ['/api/recommendations'],
     },
     cache: {
       enabled: true,
       maxAge: 3600,
       maxSize: 50,
-      strategy: 'LRU'
+      strategy: 'LRU',
     },
     network: {
       timeout: 5000,
       retries: 3,
       concurrency: 4,
-      throttle: 1000
-    }
+      throttle: 1000,
+    },
   };
 
   private cache: Map<string, any> = new Map();
@@ -38,7 +38,7 @@ export class PreloadService {
   // 预加载资源
   preload(resources: string[]): Observable<any> {
     return from(resources).pipe(
-      mergeMap(resource => this.loadResource(resource), this.config.network.concurrency)
+      mergeMap(resource => this.loadResource(resource), this.config.network.concurrency),
     );
   }
 
@@ -100,13 +100,10 @@ export class PreloadService {
           observer.complete();
         })
         .catch(error => observer.error(error));
-    }).pipe(
-      timeout(this.config.network.timeout),
-      retry(this.config.network.retries)
-    );
+    }).pipe(timeout(this.config.network.timeout), retry(this.config.network.retries));
   }
 
-  private async preloadByPriority(priority: keyof PreloadConfig['priority']): Promise<void> {
+  private async preloadByPriority(priority: keyof IPreloadConfig['priority']): Promise<void> {
     const resources = this.config.priority[priority];
     await this.preload(resources).toPromise();
   }
@@ -119,7 +116,7 @@ export class PreloadService {
     this.cache.set(url, {
       data,
       timestamp: Date.now(),
-      hits: 0
+      hits: 0,
     });
   }
 
@@ -174,4 +171,4 @@ export class PreloadService {
     const firstKey = this.cache.keys().next().value;
     this.cache.delete(firstKey);
   }
-} 
+}

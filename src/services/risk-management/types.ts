@@ -1,20 +1,29 @@
+/**
+ * @fileoverview TS 文件 types.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // 健康风险类型
-export interface HealthRisk {
-  id: string;
-  type: 'chronic' | 'acute' | 'lifestyle' | 'genetic';
+export interface IHealthRisk {
+  /** id 的描述 */
+    id: string;
+  /** type 的描述 */
+    type: chronic  acute  lifestyle  genetic;
   name: string;
   description: string;
-  severity: 'low' | 'medium' | 'high' | 'critical';
-  probability: number; // 0-1
-  
-  // 风险因素
-  factors: Array<{
+  severity: low  medium  high  critical;
+  probability: number;  01
+
+   
+  factors: Array{
     name: string;
     weight: number;
     currentValue: number;
     threshold: {
-      min?: number;
-      max?: number;
+      min: number;
+      max: number;
       optimal: number;
     };
   }>;
@@ -47,22 +56,29 @@ export interface HealthRisk {
 }
 
 // 风险评估结果
-export interface RiskAssessment {
-  userId: string;
-  timestamp: Date;
-  
-  // 总体风险评分
-  overallScore: number; // 0-100
-  
-  // 具体风险项
-  risks: HealthRisk[];
-  
-  // 关键指标
-  keyMetrics: Array<{
+export interface IRiskAssessment {
+  /** userId 的描述 */
+    userId: string;
+  /** timestamp 的描述 */
+    timestamp: Date;
+
+   
+  /** overallScore 的描述 */
+    overallScore: number;  /** 0100 的描述 */
+    /** 0100 的描述 */
+    0100
+
+   
+  /** risks 的描述 */
+    risks: IHealthRisk;
+
+   
+  /** keyMetrics 的描述 */
+    keyMetrics: Array{
     name: string;
     value: number;
-    status: 'normal' | 'warning' | 'critical';
-    trend: 'improving' | 'stable' | 'worsening';
+    status: normal  warning  critical;
+    trend: improving  stable  worsening;
   }>;
 
   // 建议行动
@@ -85,10 +101,11 @@ export interface RiskAssessment {
 }
 
 // 风险预警配置
-export interface RiskAlertConfig {
-  // 预警阈值
-  thresholds: {
-    [metric: string]: {
+export interface IRiskAlertConfig {
+   
+  /** thresholds 的描述 */
+    thresholds: {
+    metric: string: {
       warning: number;
       critical: number;
     };
@@ -109,4 +126,4 @@ export interface RiskAlertConfig {
       };
     };
   };
-} 
+}

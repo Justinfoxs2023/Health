@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { IDietPlan } from '../../services/personalization/types';
+import { ITheme } from '../../design-system/types';
 import { PersonalizationService } from '../../services/personalization/personalization.service';
-import { DietPlan } from '../../services/personalization/types';
-import { Theme } from '../../design-system/types';
 
 @Component({
   selector: 'app-diet-plan',
@@ -9,24 +9,24 @@ import { Theme } from '../../design-system/types';
     <div class="diet-plan" [class]="theme">
       <!-- 营养目标 -->
       <section class="nutrition-targets">
-        <h2>每日营养目标</h2>
+        <h2></h2>
         <div class="targets-grid">
           <div class="target-card calories">
-            <div class="target-value">{{ plan?.nutritionTargets.calories }}千卡</div>
-            <div class="target-label">总热量</div>
+            <div class="targetvalue">{{ plannutritionTargetscalories }}</div>
+            <div class="targetlabel"></div>
           </div>
           <div class="macros-grid">
             <div class="macro-card protein">
-              <div class="macro-value">{{ plan?.nutritionTargets.macros.protein }}g</div>
-              <div class="macro-label">蛋白质</div>
+              <div class="macrovalue">{{ plannutritionTargetsmacrosprotein }}g</div>
+              <div class="macrolabel"></div>
             </div>
             <div class="macro-card carbs">
-              <div class="macro-value">{{ plan?.nutritionTargets.macros.carbs }}g</div>
-              <div class="macro-label">碳水化合物</div>
+              <div class="macrovalue">{{ plannutritionTargetsmacroscarbs }}g</div>
+              <div class="macrolabel"></div>
             </div>
             <div class="macro-card fat">
-              <div class="macro-value">{{ plan?.nutritionTargets.macros.fat }}g</div>
-              <div class="macro-label">脂肪</div>
+              <div class="macrovalue">{{ plannutritionTargetsmacrosfat }}g</div>
+              <div class="macrolabel"></div>
             </div>
           </div>
         </div>
@@ -34,28 +34,26 @@ import { Theme } from '../../design-system/types';
 
       <!-- 每日膳食安排 -->
       <section class="meal-schedule">
-        <h3>今日膳食安排</h3>
+        <h3></h3>
         <div class="meals-timeline">
-          <div *ngFor="let meal of plan?.mealSchedule" 
-               class="meal-card"
-               [class]="meal.type">
+          <div *ngFor="let meal of plan?.mealSchedule" class="meal-card" [class]="meal.type">
             <div class="meal-header">
-              <span class="meal-type">{{ getMealTypeName(meal.type) }}</span>
-              <span class="meal-time">{{ meal.time }}</span>
+              <span class="mealtype">{{ getMealTypeNamemealtype }}</span>
+              <span class="mealtime">{{ mealtime }}</span>
             </div>
             <div class="suggestions-list">
               <div *ngFor="let food of meal.suggestions" class="food-item">
                 <div class="food-info">
-                  <span class="food-name">{{ food.name }}</span>
-                  <span class="food-portion">{{ food.portion }}克</span>
+                  <span class="foodname">{{ foodname }}</span>
+                  <span class="foodportion">{{ foodportion }}</span>
                 </div>
                 <div class="food-nutrients">
-                  <span class="calories">{{ food.nutrients.calories }}千卡</span>
-                  <span class="protein">蛋白质{{ food.nutrients.protein }}g</span>
+                  <span class="calories">{{ foodnutrientscalories }}</span>
+                  <span class="protein">{{ foodnutrientsprotein }}g</span>
                 </div>
                 <div class="food-ingredients" *ngIf="food.preparation">
-                  <h5>准备方法</h5>
-                  <p>{{ food.preparation }}</p>
+                  <h5></h5>
+                  <p>{{ foodpreparation }}</p>
                 </div>
               </div>
             </div>
@@ -65,24 +63,26 @@ import { Theme } from '../../design-system/types';
 
       <!-- 饮食限制 -->
       <section class="diet-restrictions" *ngIf="plan?.restrictions.length">
-        <h3>饮食注意事项</h3>
+        <h3></h3>
         <div class="restrictions-list">
-          <div *ngFor="let restriction of plan.restrictions" 
-               class="restriction-card"
-               [class]="restriction.type">
+          <div
+            *ngFor="let restriction of plan.restrictions"
+            class="restriction-card"
+            [class]="restriction.type"
+          >
             <div class="restriction-header">
-              <span class="restriction-type">{{ getRestrictionType(restriction.type) }}</span>
+              <span class="restrictiontype">{{ getRestrictionTyperestrictiontype }}</span>
             </div>
             <div class="restricted-items">
-              <span>需要避免:</span>
+              <span></span>
               <ul>
-                <li *ngFor="let item of restriction.items">{{ item }}</li>
+                <li ngFor="let item of restrictionitems">{{ item }}</li>
               </ul>
             </div>
             <div class="alternatives">
-              <span>建议替代:</span>
+              <span></span>
               <ul>
-                <li *ngFor="let alt of restriction.alternatives">{{ alt }}</li>
+                <li ngFor="let alt of restrictionalternatives">{{ alt }}</li>
               </ul>
             </div>
           </div>
@@ -91,19 +91,19 @@ import { Theme } from '../../design-system/types';
 
       <!-- 水分摄入 -->
       <section class="hydration-tracker">
-        <h3>水分摄入</h3>
+        <h3></h3>
         <div class="hydration-card">
           <div class="target-display">
-            <div class="water-icon">💧</div>
+            <div class="watericon"></div>
             <div class="target-info">
-              <div class="target-value">{{ plan?.hydration.dailyTarget }}ml</div>
-              <div class="target-label">每日目标</div>
+              <div class="targetvalue">{{ planhydrationdailyTarget }}ml</div>
+              <div class="targetlabel"></div>
             </div>
           </div>
           <div class="reminders">
-            <h4>温馨提示</h4>
+            <h4></h4>
             <ul>
-              <li *ngFor="let reminder of plan?.hydration.reminders">
+              <li ngFor="let reminder of planhydrationreminders">
                 {{ reminder }}
               </li>
             </ul>
@@ -112,17 +112,15 @@ import { Theme } from '../../design-system/types';
       </section>
     </div>
   `,
-  styleUrls: ['./diet-plan.component.scss']
+  styleUrls: ['./diet-plan.component.scss'],
 })
 export class DietPlanComponent implements OnInit {
-  plan: DietPlan;
-  theme: Theme;
+  plan: IDietPlan;
+  theme: ITheme;
   loading = false;
   error: string;
 
-  constructor(
-    private personalizationService: PersonalizationService
-  ) {}
+  constructor(private personalizationService: PersonalizationService) {}
 
   async ngOnInit() {
     try {
@@ -130,16 +128,14 @@ export class DietPlanComponent implements OnInit {
       await this.loadPlan();
     } catch (error) {
       this.error = '无法加载饮食方案';
-      console.error('Diet plan loading error:', error);
+      console.error('Error in diet-plan.component.ts:', 'Diet plan loading error:', error);
     } finally {
       this.loading = false;
     }
   }
 
   private async loadPlan() {
-    this.plan = await this.personalizationService.createDietPlan(
-      'current-user-id'
-    );
+    this.plan = await this.personalizationService.createDietPlan('current-user-id');
   }
 
   getMealTypeName(type: string): string {
@@ -147,7 +143,7 @@ export class DietPlanComponent implements OnInit {
       breakfast: '早餐',
       lunch: '午餐',
       dinner: '晚餐',
-      snack: '加餐'
+      snack: '加餐',
     };
     return mealTypes[type] || type;
   }
@@ -156,8 +152,8 @@ export class DietPlanComponent implements OnInit {
     const types = {
       allergy: '过敏源',
       preference: '个人偏好',
-      medical: '医疗建议'
+      medical: '医疗建议',
     };
     return types[type] || type;
   }
-} 
+}

@@ -1,71 +1,71 @@
-import { SystemSettings } from '../types/system-settings';
+import { ISystemSettings } from '../types/system-settings';
 
-export const defaultSettings: SystemSettings = {
+export const defaultSettings: ISystemSettings = {
   security: {
     passwordPolicy: {
       minLength: 8,
       requireNumbers: true,
       requireSpecialChars: true,
       requireUppercase: true,
-      maxLoginAttempts: 5
+      maxLoginAttempts: 5,
     },
     sessionTimeout: 3600,
     tokenExpiry: {
       access: 3600,
-      refresh: 604800
+      refresh: 604800,
     },
-    ipWhitelist: []
+    ipWhitelist: [],
   },
   notifications: {
     email: {
       enabled: true,
       provider: 'smtp',
       from: 'noreply@health-app.com',
-      templates: {}
+      templates: {},
     },
     push: {
       enabled: true,
       provider: 'firebase',
-      config: {}
+      config: {},
     },
     sms: {
       enabled: false,
       provider: 'aliyun',
-      templates: {}
-    }
+      templates: {},
+    },
   },
   features: {
     socialLogin: {
       google: true,
       apple: true,
-      wechat: true
+      wechat: true,
     },
     healthTracking: {
       steps: true,
       heartRate: true,
       sleep: true,
-      nutrition: true
+      nutrition: true,
     },
     premium: {
       enabled: false,
-      features: []
-    }
+      features: [],
+    },
   },
   monitoring: {
     performance: {
       enabled: true,
       sampleRate: 0.1,
-      errorThreshold: 1000
+      errorThreshold: 1000,
     },
     health: {
       enabled: true,
       checkInterval: 60,
-      endpoints: []
+      endpoints: [],
     },
     alerts: {
       channels: ['email'],
-      thresholds: {}
-    }
+      thresholds: {},
+    },
   },
   storage: {
     provider: 's3',
@@ -75,24 +75,24 @@ export const defaultSettings: SystemSettings = {
     allowedTypes: ['image/jpeg', 'image/png'],
     compression: {
       enabled: true,
-      quality: 80
-    }
+      quality: 80,
+    },
   },
   ai: {
     imageRecognition: {
       enabled: true,
       provider: 'tensorflow',
-      minConfidence: 0.8
+      minConfidence: 0.8,
     },
     healthAssessment: {
       enabled: true,
       updateFrequency: 'daily',
-      models: []
+      models: [],
     },
     recommendations: {
       enabled: true,
       algorithms: ['collaborative', 'content-based'],
-      weights: {}
-    }
-  }
-}; 
+      weights: {},
+    },
+  },
+};

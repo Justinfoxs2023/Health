@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, StyleSheet } from 'react-native';
+
 import { Card, Text, Button, LoadingSpinner } from '../common';
-import { MorningRoutine } from './MorningRoutine';
 import { DaytimeTracking } from './DaytimeTracking';
-import { EveningAssessment } from './EveningAssessment';
 import { EmergencySupport } from './EmergencySupport';
+import { EveningAssessment } from './EveningAssessment';
+import { MorningRoutine } from './MorningRoutine';
+import { View, ScrollView, StyleSheet } from 'react-native';
 import { useHealthAssistant } from '../../hooks/health-assistant';
 
 export const HealthAssistant: React.FC = () => {
@@ -31,7 +32,7 @@ export const HealthAssistant: React.FC = () => {
 
       {routine && (
         <>
-          <MorningRoutine 
+          <MorningRoutine
             vitalSigns={routine.morning.vitalSigns}
             breakfast={routine.morning.breakfast}
             exercise={routine.morning.exercise}
@@ -57,20 +58,20 @@ export const HealthAssistant: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   header: {
     padding: 15,
-    marginBottom: 10
+    marginBottom: 10,
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#2E7D32'
+    color: '#2E7D32',
   },
   subtitle: {
     fontSize: 14,
     color: '#666',
-    marginTop: 5
-  }
-}); 
+    marginTop: 5,
+  },
+});

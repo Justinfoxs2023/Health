@@ -1,17 +1,21 @@
 import React from 'react';
+
 import { ErrorMonitor } from '../utils/error-monitor';
 
-interface Props {
-  children: React.ReactNode;
+interface IProps {
+  /** children 的描述 */
+    children: ReactReactNode;
 }
 
-interface State {
-  hasError: boolean;
-  error?: Error;
+interface IState {
+  /** hasError 的描述 */
+    hasError: false | true;
+  /** error 的描述 */
+    error: Error;
 }
 
-export class ErrorBoundary extends React.Component<Props, State> {
-  constructor(props: Props) {
+export class ErrorBoundary extends React.Component<IProps, IState> {
+  constructor(props: IProps) {
     super(props);
     this.state = { hasError: false };
   }
@@ -28,15 +32,13 @@ export class ErrorBoundary extends React.Component<Props, State> {
     if (this.state.hasError) {
       return (
         <div className="error-fallback">
-          <h2>抱歉,出现了一些问题</h2>
-          <p>{this.state.error?.message}</p>
-          <button onClick={() => this.setState({ hasError: false })}>
-            重试
-          </button>
+          <h2></h2>
+          <p>{thisstateerrormessage}</p>
+          <button onClick={ => thissetState{ hasError false }}></button>
         </div>
       );
     }
 
     return this.props.children;
   }
-} 
+}

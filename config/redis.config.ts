@@ -1,5 +1,5 @@
-import { createClient, RedisClientType } from 'redis';
 import { Logger } from '../utils/logger';
+import { createClient, RedisClientType } from 'redis';
 
 const logger = new Logger('Redis');
 
@@ -20,7 +20,7 @@ export const connectRedis = async () => {
     console.log('Redis连接成功');
     return redis;
   } catch (error) {
-    console.error('Redis连接失败:', error);
+    console.error('Error in redis.config.ts:', 'Redis连接失败:', error);
     throw error;
   }
 

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, StyleSheet } from 'react-native';
+
 import { Card, Text, Button, LoadingSpinner } from '../common';
+import { MetricsPanel } from './MetricsPanel';
 import { SleepQualityChart } from './SleepQualityChart';
 import { SleepStagesChart } from './SleepStagesChart';
-import { MetricsPanel } from './MetricsPanel';
+import { View, ScrollView, StyleSheet } from 'react-native';
 import { useSleepMonitoring } from '../../hooks/sleep';
 
 export const SleepMonitoring: React.FC = () => {
@@ -32,7 +33,7 @@ export const SleepMonitoring: React.FC = () => {
         <>
           <SleepQualityChart data={metrics.quality} />
           <SleepStagesChart data={metrics.stages} />
-          <MetricsPanel 
+          <MetricsPanel
             efficiency={metrics.efficiency}
             breathing={metrics.breathingQuality}
             hrv={metrics.heartRateVariability}
@@ -46,20 +47,20 @@ export const SleepMonitoring: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   header: {
     padding: 15,
-    marginBottom: 10
+    marginBottom: 10,
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#2E7D32'
+    color: '#2E7D32',
   },
   subtitle: {
     fontSize: 14,
     color: '#666',
-    marginTop: 5
-  }
-}); 
+    marginTop: 5,
+  },
+});

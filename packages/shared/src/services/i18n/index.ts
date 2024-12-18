@@ -1,13 +1,18 @@
 import { useState, useEffect } from 'react';
+
 import { BehaviorSubject } from 'rxjs';
 
-export type Locale = 'zh-CN' | 'en-US';
+export type LocaleType = 'zh-CN' | 'en-US';
 
 interface I18nConfig {
+  /** dateFormat 的描述 */
   dateFormat: string;
+  /** timeFormat 的描述 */
   timeFormat: string;
-  numberFormat: Record<Locale, Intl.NumberFormatOptions>;
-  dateTimeFormat: Record<Locale, Intl.DateTimeFormatOptions>;
+  /** numberFormat 的描述 */
+  numberFormat: Record<LocaleType, Intl.NumberFormatOptions>;
+  /** dateTimeFormat 的描述 */
+  dateTimeFormat: Record<LocaleType, Intl.DateTimeFormatOptions>;
 }
 
 const defaultConfig: I18nConfig = {
@@ -17,13 +22,13 @@ const defaultConfig: I18nConfig = {
     'zh-CN': {
       style: 'decimal',
       minimumFractionDigits: 2,
-      maximumFractionDigits: 2
+      maximumFractionDigits: 2,
     },
     'en-US': {
       style: 'decimal',
       minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }
+      maximumFractionDigits: 2,
+    },
   },
   dateTimeFormat: {
     'zh-CN': {
@@ -33,7 +38,7 @@ const defaultConfig: I18nConfig = {
       hour: '2-digit',
       minute: '2-digit',
       second: '2-digit',
-      hour12: false
+      hour12: false,
     },
     'en-US': {
       year: 'numeric',
@@ -42,17 +47,17 @@ const defaultConfig: I18nConfig = {
       hour: '2-digit',
       minute: '2-digit',
       second: '2-digit',
-      hour12: true
-    }
-  }
+      hour12: true,
+    },
+  },
 };
 
 class I18nService {
-  private locale$ = new BehaviorSubject<Locale>('zh-CN');
+  private locale$ = new BehaviorSubject<LocaleType>('zh-CN');
   private config$ = new BehaviorSubject<I18nConfig>(defaultConfig);
-  private messages: Record<Locale, Record<string, string>> = {
+  private messages: Record<LocaleType, Record<string, string>> = {
     'zh-CN': {},
-    'en-US': {}
+    'en-US': {},
   };
 
   constructor() {
@@ -61,7 +66,7 @@ class I18nService {
 
   private initI18n() {
     // 从localStorage读取语言设置
-    const savedLocale = localStorage.getItem('locale') as Locale;
+    const savedLocale = localStorage.getItem('locale') as LocaleType;
     if (savedLocale) {
       this.setLocale(savedLocale);
     } else {
@@ -77,7 +82,7 @@ class I18nService {
         const config = JSON.parse(savedConfig);
         this.setConfig(config);
       } catch (error) {
-        console.error('Failed to parse i18n config:', error);
+        console.error('Error in index.ts:', 'Failed to parse i18n config:', error);
       }
     }
   }
@@ -90,7 +95,7 @@ class I18nService {
     return this.config$.value;
   }
 
-  setLocale(locale: Locale) {
+  setLocale(locale: LocaleType) {
     this.locale$.next(locale);
     localStorage.setItem('locale', locale);
     document.documentElement.setAttribute('lang', locale);
@@ -100,16 +105,16 @@ class I18nService {
       new CustomEvent('localechange', {
         detail: {
           locale: this.locale$.value,
-          config: this.config$.value
-        }
-      })
+          config: this.config$.value,
+        },
+      }),
     );
   }
 
   setConfig(config: Partial<I18nConfig>) {
     const newConfig = {
       ...this.config$.value,
-      ...config
+      ...config,
     };
     this.config$.next(newConfig);
     localStorage.setItem('i18nConfig', JSON.stringify(newConfig));
@@ -119,16 +124,16 @@ class I18nService {
       new CustomEvent('localechange', {
         detail: {
           locale: this.locale$.value,
-          config: newConfig
-        }
-      })
+          config: newConfig,
+        },
+      }),
     );
   }
 
-  async loadMessages(locale: Locale, messages: Record<string, string>) {
+  async loadMessages(locale: LocaleType, messages: Record<string, string>) {
     this.messages[locale] = {
       ...this.messages[locale],
-      ...messages
+      ...messages,
     };
   }
 
@@ -155,18 +160,18 @@ class I18nService {
     return new Intl.DateTimeFormat(locale, options).format(date);
   }
 
-  formatCurrency(value: number, currency: string = 'CNY') {
+  formatCurrency(value: number, currency = 'CNY') {
     const locale = this.locale$.value;
     return new Intl.NumberFormat(locale, {
       style: 'currency',
-      currency
+      currency,
     }).format(value);
   }
 
   formatRelativeTime(value: number, unit: Intl.RelativeTimeFormatUnit) {
     const locale = this.locale$.value;
     return new Intl.RelativeTimeFormat(locale, {
-      numeric: 'auto'
+      numeric: 'auto',
     }).format(value, unit);
   }
 }
@@ -174,7 +179,19 @@ class I18nService {
 export const i18n = new I18nService();
 
 /** 国际化Hook */
-export function useI18n() {
+export function useI18n(): {
+  locale: any;
+  config: any;
+  t: (key: string, params?: Record<string, string | number> | undefined) => any;
+  setLocale: (
+    locale: import('D:/Health/packages/shared/src/services/i18n/index').LocaleType,
+  ) => void;
+  setConfig: (config: Partial<I18nConfig>) => void;
+  formatNumber: (value: number) => string;
+  formatDate: (date: number | Date) => string;
+  formatCurrency: (value: number, currency?: string) => string;
+  formatRelativeTime: (value: number, unit: Intl.RelativeTimeFormatUnit) => string;
+} {
   const [locale, setLocale] = useState(i18n.getLocale());
   const [config, setConfig] = useState(i18n.getConfig());
 
@@ -199,6 +216,6 @@ export function useI18n() {
     formatNumber: i18n.formatNumber.bind(i18n),
     formatDate: i18n.formatDate.bind(i18n),
     formatCurrency: i18n.formatCurrency.bind(i18n),
-    formatRelativeTime: i18n.formatRelativeTime.bind(i18n)
+    formatRelativeTime: i18n.formatRelativeTime.bind(i18n),
   };
-} 
+}

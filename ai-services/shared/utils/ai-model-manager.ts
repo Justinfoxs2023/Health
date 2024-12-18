@@ -1,7 +1,7 @@
+import * as tf from '@tensorflow/tfjs';
+import { IProcessedData } from '../types/data-processor.types';
 import { Injectable } from '@nestjs/common';
 import { Logger } from './logger';
-import * as tf from '@tensorflow/tfjs';
-import { ProcessedData } from '../types/data-processor.types';
 
 @Injectable()
 export class AIModelManager {
@@ -20,10 +20,10 @@ export class AIModelManager {
     try {
       // 初始化生命体征评估模型
       await this.loadModel('vital-signs', 'models/vital-signs/model.json', '1.0.0');
-      
+
       // 初始化生活方式评估模型
       await this.loadModel('lifestyle', 'models/lifestyle/model.json', '1.0.0');
-      
+
       this.logger.info('AI模型初始化完成');
     } catch (error) {
       this.logger.error('AI模型初始化失败', error);
@@ -34,11 +34,7 @@ export class AIModelManager {
   /**
    * 加载模型
    */
-  private async loadModel(
-    name: string,
-    path: string,
-    version: string
-  ): Promise<void> {
+  private async loadModel(name: string, path: string, version: string): Promise<void> {
     try {
       const model = await tf.loadLayersModel(path);
       this.models.set(name, model);
@@ -53,7 +49,7 @@ export class AIModelManager {
   /**
    * 预测
    */
-  async predict(modelName: string, data: ProcessedData | any): Promise<any> {
+  async predict(modelName: string, data: IProcessedData | any): Promise<any> {
     try {
       const model = this.models.get(modelName);
       if (!model) {
@@ -71,7 +67,7 @@ export class AIModelManager {
 
       return {
         ...result,
-        modelVersion: this.modelVersions.get(modelName)
+        modelVersion: this.modelVersions.get(modelName),
       };
     } catch (error) {
       this.logger.error(`预测失败: ${modelName}`, error);
@@ -82,7 +78,7 @@ export class AIModelManager {
   /**
    * 数据预处理
    */
-  private preprocessData(data: ProcessedData | any): tf.Tensor {
+  private preprocessData(data: IProcessedData | any): tf.Tensor {
     try {
       if (data.features) {
         // ProcessedData 类型的处理
@@ -111,10 +107,10 @@ export class AIModelManager {
    */
   private async executePrediction(
     model: tf.LayersModel,
-    tensorData: tf.Tensor
+    tensorData: tf.Tensor,
   ): Promise<tf.Tensor> {
     try {
-      const predictions = await model.predict(tensorData) as tf.Tensor;
+      const predictions = (await model.predict(tensorData)) as tf.Tensor;
       return predictions;
     } catch (error) {
       this.logger.error('执行预测失败', error);
@@ -157,7 +153,7 @@ export class AIModelManager {
         bloodPressure: 0.85,
         heartRate: 0.9,
         bodyTemperature: 0.95,
-        bloodOxygen: 0.8
+        bloodOxygen: 0.8,
       },
       recommendations: [],
       alerts: [],
@@ -167,9 +163,9 @@ export class AIModelManager {
           bloodPressure: 0.85,
           heartRate: 0.9,
           bodyTemperature: 0.95,
-          bloodOxygen: 0.8
-        }
-      }
+          bloodOxygen: 0.8,
+        },
+      },
     };
   }
 
@@ -184,7 +180,7 @@ export class AIModelManager {
         sleep: 0.8,
         activity: 0.7,
         nutrition: 0.75,
-        stress: 0.7
+        stress: 0.7,
       },
       recommendations: [],
       alerts: [],
@@ -194,9 +190,9 @@ export class AIModelManager {
           sleep: 0.8,
           activity: 0.7,
           nutrition: 0.75,
-          stress: 0.7
-        }
-      }
+          stress: 0.7,
+        },
+      },
     };
   }
-} 
+}

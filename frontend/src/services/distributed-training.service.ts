@@ -1,19 +1,28 @@
 import * as tf from '@tensorflow/tfjs';
-import { LocalDatabase, createDatabase } from '../utils/local-database';
+import { ILocalDatabase, createDatabase } from '../utils/local-database';
 import { PrivacyPreservingService } from './privacy-preserving.service';
 
-interface WorkerConfig {
+interface IWorkerConfig {
+  /** id 的描述 */
   id: string;
+  /** endpoint 的描述 */
   endpoint: string;
+  /** capacity 的描述 */
   capacity: number;
+  /** status 的描述 */
   status: 'idle' | 'training' | 'error';
 }
 
-interface DistributedConfig {
+interface IDistributedConfig {
+  /** syncInterval 的描述 */
   syncInterval: number;
+  /** batchSize 的描述 */
   batchSize: number;
+  /** localEpochs 的描述 */
   localEpochs: number;
+  /** aggregationStrategy 的描述 */
   aggregationStrategy: 'fedavg' | 'fedprox' | 'scaffold';
+  /** communicationCompression 的描述 */
   communicationCompression: {
     enabled: boolean;
     method: 'quantization' | 'sparsification';
@@ -22,10 +31,10 @@ interface DistributedConfig {
 }
 
 export class DistributedTrainingService {
-  private db: LocalDatabase;
+  private db: ILocalDatabase;
   private model: tf.LayersModel | null = null;
-  private workers: Map<string, WorkerConfig> = new Map();
-  private config: DistributedConfig;
+  private workers: Map<string, IWorkerConfig> = new Map();
+  private config: IDistributedConfig;
   private privacyService: PrivacyPreservingService;
 
   constructor() {
@@ -39,22 +48,19 @@ export class DistributedTrainingService {
       communicationCompression: {
         enabled: true,
         method: 'quantization',
-        ratio: 0.1
-      }
+        ratio: 0.1,
+      },
     };
   }
 
   // 注册工作节点
-  async registerWorker(worker: WorkerConfig): Promise<void> {
+  async registerWorker(worker: IWorkerConfig): Promise<void> {
     this.workers.set(worker.id, worker);
     await this.db.put(`worker-${worker.id}`, worker);
   }
 
   // 分发模型和数据
-  async distributeTraining(
-    data: tf.Tensor,
-    labels: tf.Tensor
-  ): Promise<void> {
+  async distributeTraining(data: tf.Tensor, labels: tf.Tensor): Promise<void> {
     // 数据分片
     const dataShards = this.splitData(data, labels);
 
@@ -66,9 +72,9 @@ export class DistributedTrainingService {
           model: this.model,
           data: shard.data,
           labels: shard.labels,
-          config: this.config
+          config: this.config,
         });
-      })
+      }),
     );
   }
 
@@ -102,7 +108,7 @@ export class DistributedTrainingService {
     return {
       workerStatus,
       globalMetrics: await this.evaluateGlobalModel(),
-      communicationCosts: totalCommunication
+      communicationCosts: totalCommunication,
     };
   }
 
@@ -126,13 +132,13 @@ export class DistributedTrainingService {
   private quantizeUpdate(update: tf.Tensor[]): tf.Tensor[] {
     return tf.tidy(() => {
       return update.map(tensor => {
-        const {min, max} = tf.moments(tensor);
-        const scale = (max.sub(min)).div(tf.scalar(255));
+        const { min, max } = tf.moments(tensor);
+        const scale = max.sub(min).div(tf.scalar(255));
         const quantized = tensor.sub(min).div(scale).round();
         return {
           quantized,
           scale,
-          min
+          min,
         };
       });
     });
@@ -164,8 +170,9 @@ export class DistributedTrainingService {
 
   // 负载均衡
   private async balanceLoad(): Promise<void> {
-    const workerLoads = Array.from(this.workers.values())
-      .map(worker => this.calculateWorkerLoad(worker));
+    const workerLoads = Array.from(this.workers.values()).map(worker =>
+      this.calculateWorkerLoad(worker),
+    );
 
     // 检测负载不均衡
     if (this.isLoadImbalanced(workerLoads)) {
@@ -176,40 +183,42 @@ export class DistributedTrainingService {
   // 辅助方法
   private splitData(
     data: tf.Tensor,
-    labels: tf.Tensor
-  ): Array<{data: tf.Tensor, labels: tf.Tensor}> {
+    labels: tf.Tensor,
+  ): Array<{ data: tf.Tensor; labels: tf.Tensor }> {
     const numWorkers = this.workers.size;
     const batchSize = Math.floor(data.shape[0] / numWorkers);
 
-    return Array(numWorkers).fill(null).map((_, i) => {
-      const start = i * batchSize;
-      const end = (i === numWorkers - 1) ? data.shape[0] : (i + 1) * batchSize;
+    return Array(numWorkers)
+      .fill(null)
+      .map((_, i) => {
+        const start = i * batchSize;
+        const end = i === numWorkers - 1 ? data.shape[0] : (i + 1) * batchSize;
 
-      return {
-        data: data.slice(start, end),
-        labels: labels.slice(start, end)
-      };
-    });
+        return {
+          data: data.slice(start, end),
+          labels: labels.slice(start, end),
+        };
+      });
   }
 
-  private async sendToWorker(
-    worker: WorkerConfig,
-    payload: any
-  ): Promise<void> {
+  private async sendToWorker(worker: IWorkerConfig, payload: any): Promise<void> {
     // 实现向工作节点发送数据
   }
 
-  private async collectWorkerUpdates(): Promise<Array<{
-    gradients: tf.Tensor[],
-    weights: tf.Tensor[]
-  }>> {
+  private async collectWorkerUpdates(): Promise<
+    Array<{
+      gradients: tf.Tensor[];
+      weights: tf.Tensor[];
+    }>
+  > {
     // 实现收集工作节点更新
     return [];
   }
 
-  private async applyModelUpdate(
-    update: {gradients: tf.Tensor[], weights: tf.Tensor[]}
-  ): Promise<void> {
+  private async applyModelUpdate(update: {
+    gradients: tf.Tensor[];
+    weights: tf.Tensor[];
+  }): Promise<void> {
     // 实现应用模型更新
   }
 
@@ -222,7 +231,7 @@ export class DistributedTrainingService {
     // 实现工作重新分配
   }
 
-  private calculateWorkerLoad(worker: WorkerConfig): number {
+  private calculateWorkerLoad(worker: IWorkerConfig): number {
     // 实现计算工作节点负载
     return 0;
   }
@@ -235,4 +244,4 @@ export class DistributedTrainingService {
   private async rebalanceWork(loads: number[]): Promise<void> {
     // 实现负载重新平衡
   }
-} 
+}

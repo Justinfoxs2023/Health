@@ -1,9 +1,11 @@
 import React from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
+
 import { BarChart as RNBarChart } from 'react-native-chart-kit';
 import { Text } from '../common';
+import { View, StyleSheet, Dimensions } from 'react-native';
 
-interface Props {
+interface IProps {
+  /** data 的描述 */
   data: {
     labels: string[];
     datasets: {
@@ -11,16 +13,19 @@ interface Props {
       colors?: string[];
     }[];
   };
+  /** title 的描述 */
   title?: string;
+  /** width 的描述 */
   width?: number;
+  /** height 的描述 */
   height?: number;
 }
 
-export const BarChart: React.FC<Props> = ({
+export const BarChart: React.FC<IProps> = ({
   data,
   title,
   width = Dimensions.get('window').width - 40,
-  height = 220
+  height = 220,
 }) => {
   const chartConfig = {
     backgroundColor: '#fff',
@@ -29,7 +34,7 @@ export const BarChart: React.FC<Props> = ({
     decimalPlaces: 0,
     color: (opacity = 1) => `rgba(46, 125, 50, ${opacity})`,
     labelColor: () => '#666',
-    barPercentage: 0.7
+    barPercentage: 0.7,
   };
 
   return (
@@ -62,5 +67,5 @@ const styles = StyleSheet.create({
   chart: {
     marginVertical: 8,
     borderRadius: 8,
-  }
-}); 
+  },
+});

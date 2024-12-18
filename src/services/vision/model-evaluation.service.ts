@@ -15,9 +15,9 @@ export class ModelEvaluationService {
     try {
       const metrics = await this.calculateMetrics(modelId, testData);
       const evaluation = await this.analyzePerformance(metrics);
-      
+
       await this.storeEvaluationResults(modelId, evaluation);
-      
+
       return evaluation;
     } catch (error) {
       this.logger.error('模型评估失败:', error);
@@ -28,13 +28,13 @@ export class ModelEvaluationService {
   // 计算评估指标
   private async calculateMetrics(modelId: string, testData: any) {
     const predictions = await this.getPredictions(modelId, testData);
-    
+
     return {
       accuracy: this.calculateAccuracy(predictions, testData.labels),
       precision: this.calculatePrecision(predictions, testData.labels),
       recall: this.calculateRecall(predictions, testData.labels),
       f1Score: this.calculateF1Score(predictions, testData.labels),
-      confusionMatrix: this.generateConfusionMatrix(predictions, testData.labels)
+      confusionMatrix: this.generateConfusionMatrix(predictions, testData.labels),
     };
   }
 
@@ -43,7 +43,7 @@ export class ModelEvaluationService {
     return {
       overallScore: this.calculateOverallScore(metrics),
       strengthsAndWeaknesses: this.analyzeStrengthsAndWeaknesses(metrics),
-      recommendations: this.generateRecommendations(metrics)
+      recommendations: this.generateRecommendations(metrics),
     };
   }
 
@@ -52,16 +52,16 @@ export class ModelEvaluationService {
     try {
       const evaluation = await this.getEvaluationResults(modelId);
       const visualizations = await this.createPerformanceVisualizations(evaluation);
-      
+
       return {
         summary: this.generateSummary(evaluation),
         detailedMetrics: evaluation.metrics,
         visualizations,
-        recommendations: evaluation.recommendations
+        recommendations: evaluation.recommendations,
       };
     } catch (error) {
       this.logger.error('生成性能报告失败:', error);
       throw error;
     }
   }
-} 
+}

@@ -1,8 +1,8 @@
+import * as mongoose from 'mongoose';
+import { IHealthData } from '../types/health.types';
 import { Injectable } from '@nestjs/common';
 import { Logger } from '../utils/logger';
 import { PerformanceMonitor } from '../monitoring/performance-monitor';
-import { HealthData } from '../types/health.types';
-import * as mongoose from 'mongoose';
 
 @Injectable()
 export class DataPersistenceService {
@@ -10,87 +10,105 @@ export class DataPersistenceService {
   private readonly monitor = new PerformanceMonitor();
 
   // 健康数据模型
-  private readonly HealthDataModel = mongoose.model('HealthData', new mongoose.Schema({
-    userId: { type: String, required: true, index: true },
-    timestamp: { type: Date, required: true, index: true },
-    physicalData: {
-      height: Number,
-      weight: Number,
-      bloodPressure: {
-        systolic: Number,
-        diastolic: Number
+  private readonly HealthDataModel = mongoose.model(
+    'HealthData',
+    new mongoose.Schema(
+      {
+        userId: { type: String, required: true, index: true },
+        timestamp: { type: Date, required: true, index: true },
+        physicalData: {
+          height: Number,
+          weight: Number,
+          bloodPressure: {
+            systolic: Number,
+            diastolic: Number,
+          },
+          heartRate: Number,
+          bodyTemperature: Number,
+          bloodOxygen: Number,
+        },
+        mentalData: {
+          stressLevel: Number,
+          moodScore: Number,
+          sleepQuality: Number,
+        },
+        nutritionData: {
+          calorieIntake: Number,
+          waterIntake: Number,
+          meals: [
+            {
+              type: String,
+              time: Date,
+              items: [
+                {
+                  name: String,
+                  amount: Number,
+                  unit: String,
+                  calories: Number,
+                },
+              ],
+            },
+          ],
+        },
+        lifestyleData: {
+          sleepHours: Number,
+          activityLevel: Number,
+          activities: [
+            {
+              type: String,
+              duration: Number,
+              intensity: Number,
+              caloriesBurned: Number,
+            },
+          ],
+        },
       },
-      heartRate: Number,
-      bodyTemperature: Number,
-      bloodOxygen: Number
-    },
-    mentalData: {
-      stressLevel: Number,
-      moodScore: Number,
-      sleepQuality: Number
-    },
-    nutritionData: {
-      calorieIntake: Number,
-      waterIntake: Number,
-      meals: [{
-        type: String,
-        time: Date,
-        items: [{
-          name: String,
-          amount: Number,
-          unit: String,
-          calories: Number
-        }]
-      }]
-    },
-    lifestyleData: {
-      sleepHours: Number,
-      activityLevel: Number,
-      activities: [{
-        type: String,
-        duration: Number,
-        intensity: Number,
-        caloriesBurned: Number
-      }]
-    }
-  }, {
-    timestamps: true,
-    versionKey: false
-  }));
+      {
+        timestamps: true,
+        versionKey: false,
+      },
+    ),
+  );
 
   // 模型数据模型
-  private readonly ModelDataModel = mongoose.model('ModelData', new mongoose.Schema({
-    modelType: { type: String, required: true, index: true },
-    version: { type: String, required: true },
-    timestamp: { type: Date, required: true },
-    modelPath: { type: String, required: true },
-    metrics: {
-      loss: Number,
-      accuracy: Number,
-      precision: Number,
-      recall: Number,
-      f1Score: Number
-    },
-    hyperparameters: mongoose.Schema.Types.Mixed,
-    trainingDuration: Number,
-    datasetSize: Number
-  }, {
-    timestamps: true,
-    versionKey: false
-  }));
+  private readonly ModelDataModel = mongoose.model(
+    'ModelData',
+    new mongoose.Schema(
+      {
+        modelType: { type: String, required: true, index: true },
+        version: { type: String, required: true },
+        timestamp: { type: Date, required: true },
+        modelPath: { type: String, required: true },
+        metrics: {
+          loss: Number,
+          accuracy: Number,
+          precision: Number,
+          recall: Number,
+          f1Score: Number,
+        },
+        hyperparameters: mongoose.Schema.Types.Mixed,
+        trainingDuration: Number,
+        datasetSize: Number,
+      },
+      {
+        timestamps: true,
+        versionKey: false,
+      },
+    ),
+  );
 
   /**
    * 保存健康数据
    */
   @PerformanceMonitor.Monitor({
     type: 'data_processing',
-    operationType: 'save_health_data'
+    operationType: 'save_health_data',
   })
-  async saveHealthData(data: HealthData): Promise<string> {
+  async saveHealthData(data: IHealthData): Promise<string> {
     try {
       const healthData = new this.HealthDataModel(data);
       const result = await healthData.save();
-      
+
       this.logger.info('保存健康数据成功', { userId: data.userId });
       return result._id.toString();
     } catch (error) {
@@ -104,18 +122,18 @@ export class DataPersistenceService {
    */
   @PerformanceMonitor.Monitor({
     type: 'data_processing',
-    operationType: 'bulk_save_health_data'
+    operationType: 'bulk_save_health_data',
   })
-  async bulkSaveHealthData(dataList: HealthData[]): Promise<string[]> {
+  async bulkSaveHealthData(dataList: IHealthData[]): Promise<string[]> {
     try {
       const operations = dataList.map(data => ({
-        insertOne: { document: data }
+        insertOne: { document: data },
       }));
 
       const result = await this.HealthDataModel.bulkWrite(operations);
-      
+
       this.logger.info('批量保存健康数据成功', {
-        count: result.insertedCount
+        count: result.insertedCount,
       });
 
       return Object.values(result.insertedIds).map(id => id.toString());
@@ -130,14 +148,14 @@ export class DataPersistenceService {
    */
   @PerformanceMonitor.Monitor({
     type: 'data_processing',
-    operationType: 'query_health_data'
+    operationType: 'query_health_data',
   })
   async queryHealthData(
     userId: string,
     startTime?: Date,
     endTime?: Date,
-    limit?: number
-  ): Promise<HealthData[]> {
+    limit?: number,
+  ): Promise<IHealthData[]> {
     try {
       const query: any = { userId };
 
@@ -147,15 +165,14 @@ export class DataPersistenceService {
         if (endTime) query.timestamp.$lte = endTime;
       }
 
-      const result = await this.HealthDataModel
-        .find(query)
+      const result = await this.HealthDataModel.find(query)
         .sort({ timestamp: -1 })
         .limit(limit || 100)
         .lean();
 
       this.logger.info('查询健康数据成功', {
         userId,
-        count: result.length
+        count: result.length,
       });
 
       return result;
@@ -170,7 +187,7 @@ export class DataPersistenceService {
    */
   @PerformanceMonitor.Monitor({
     type: 'data_processing',
-    operationType: 'save_model_data'
+    operationType: 'save_model_data',
   })
   async saveModelData(data: {
     modelType: string;
@@ -190,13 +207,13 @@ export class DataPersistenceService {
     try {
       const modelData = new this.ModelDataModel({
         ...data,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
       const result = await modelData.save();
 
       this.logger.info('保存模型数据成功', {
         modelType: data.modelType,
-        version: data.version
+        version: data.version,
       });
 
       return result._id.toString();
@@ -211,7 +228,7 @@ export class DataPersistenceService {
    */
   @PerformanceMonitor.Monitor({
     type: 'data_processing',
-    operationType: 'query_model_data'
+    operationType: 'query_model_data',
   })
   async getLatestModelData(modelType: string): Promise<{
     version: string;
@@ -227,8 +244,7 @@ export class DataPersistenceService {
     timestamp: Date;
   } | null> {
     try {
-      const result = await this.ModelDataModel
-        .findOne({ modelType })
+      const result = await this.ModelDataModel.findOne({ modelType })
         .sort({ timestamp: -1 })
         .lean();
 
@@ -239,7 +255,7 @@ export class DataPersistenceService {
 
       this.logger.info('查询模型数据成功', {
         modelType,
-        version: result.version
+        version: result.version,
       });
 
       return {
@@ -247,7 +263,7 @@ export class DataPersistenceService {
         modelPath: result.modelPath,
         metrics: result.metrics,
         hyperparameters: result.hyperparameters,
-        timestamp: result.timestamp
+        timestamp: result.timestamp,
       };
     } catch (error) {
       this.logger.error('查询模型数据失败', error);
@@ -260,7 +276,7 @@ export class DataPersistenceService {
    */
   @PerformanceMonitor.Monitor({
     type: 'data_processing',
-    operationType: 'cleanup_data'
+    operationType: 'cleanup_data',
   })
   async cleanupOldData(retentionDays: number): Promise<void> {
     try {
@@ -269,7 +285,7 @@ export class DataPersistenceService {
 
       // 删除旧的健康数据
       const healthResult = await this.HealthDataModel.deleteMany({
-        timestamp: { $lt: cutoffDate }
+        timestamp: { $lt: cutoffDate },
       });
 
       // 保留每个模型类型的最新N个版本
@@ -277,14 +293,13 @@ export class DataPersistenceService {
       let totalModelsDeleted = 0;
 
       for (const modelType of modelTypes) {
-        const models = await this.ModelDataModel
-          .find({ modelType })
-          .sort({ timestamp: -1 });
+        const models = await this.ModelDataModel.find({ modelType }).sort({ timestamp: -1 });
 
-        if (models.length > 5) { // 保留最新的5个版本
+        if (models.length > 5) {
+          // 保留最新的5个版本
           const modelsToDelete = models.slice(5);
           const deleteResult = await this.ModelDataModel.deleteMany({
-            _id: { $in: modelsToDelete.map(m => m._id) }
+            _id: { $in: modelsToDelete.map(m => m._id) },
           });
           totalModelsDeleted += deleteResult.deletedCount;
         }
@@ -292,7 +307,7 @@ export class DataPersistenceService {
 
       this.logger.info('清理过期数据完成', {
         healthDataDeleted: healthResult.deletedCount,
-        modelDataDeleted: totalModelsDeleted
+        modelDataDeleted: totalModelsDeleted,
       });
     } catch (error) {
       this.logger.error('清理过期数据失败', error);
@@ -311,30 +326,27 @@ export class DataPersistenceService {
     storageSize: number;
   }> {
     try {
-      const [
-        totalHealthRecords,
-        totalUsers,
-        totalModels,
-        latestHealthRecord,
-        latestModelRecord
-      ] = await Promise.all([
-        this.HealthDataModel.countDocuments(),
-        this.HealthDataModel.distinct('userId').then(users => users.length),
-        this.ModelDataModel.countDocuments(),
-        this.HealthDataModel.findOne().sort({ timestamp: -1 }).select('timestamp'),
-        this.ModelDataModel.findOne().sort({ timestamp: -1 }).select('timestamp')
-      ]);
+      const [totalHealthRecords, totalUsers, totalModels, latestHealthRecord, latestModelRecord] =
+        await Promise.all([
+          this.HealthDataModel.countDocuments(),
+          this.HealthDataModel.distinct('userId').then(users => users.length),
+          this.ModelDataModel.countDocuments(),
+          this.HealthDataModel.findOne().sort({ timestamp: -1 }).select('timestamp'),
+          this.ModelDataModel.findOne().sort({ timestamp: -1 }).select('timestamp'),
+        ]);
 
-      const latestUpdate = new Date(Math.max(
-        latestHealthRecord?.timestamp?.getTime() || 0,
-        latestModelRecord?.timestamp?.getTime() || 0
-      ));
+      const latestUpdate = new Date(
+        Math.max(
+          latestHealthRecord?.timestamp?.getTime() || 0,
+          latestModelRecord?.timestamp?.getTime() || 0,
+        ),
+      );
 
       // 获取集合大小
       const db = mongoose.connection.db;
       const [healthStats, modelStats] = await Promise.all([
         db.collection('healthdata').stats(),
-        db.collection('modeldata').stats()
+        db.collection('modeldata').stats(),
       ]);
 
       const storageSize = healthStats.storageSize + modelStats.storageSize;
@@ -344,11 +356,11 @@ export class DataPersistenceService {
         totalUsers,
         totalModels,
         latestUpdate,
-        storageSize
+        storageSize,
       };
     } catch (error) {
       this.logger.error('获取数据统计信息失败', error);
       throw error;
     }
   }
-} 
+}

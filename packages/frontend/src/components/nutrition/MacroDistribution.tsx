@@ -1,9 +1,11 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { PieChart } from 'react-native-chart-kit';
-import { Card, Text } from '../common';
 
-interface Props {
+import { Card, Text } from '../common';
+import { PieChart } from 'react-native-chart-kit';
+import { View, StyleSheet } from 'react-native';
+
+interface IProps {
+  /** data 的描述 */
   data: {
     protein: number;
     carbs: number;
@@ -11,7 +13,7 @@ interface Props {
   };
 }
 
-export const MacroDistribution: React.FC<Props> = ({ data }) => {
+export const MacroDistribution: React.FC<IProps> = ({ data }) => {
   const chartData = [
     {
       name: '蛋白质',
@@ -51,11 +53,11 @@ export const MacroDistribution: React.FC<Props> = ({ data }) => {
 const styles = StyleSheet.create({
   container: {
     padding: 15,
-    marginBottom: 10
+    marginBottom: 10,
   },
   title: {
     fontSize: 16,
     fontWeight: '600',
-    marginBottom: 15
-  }
-}); 
+    marginBottom: 15,
+  },
+});

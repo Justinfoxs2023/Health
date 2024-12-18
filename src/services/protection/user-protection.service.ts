@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 user-protection.service.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export class UserProtectionService {
   private readonly protectionRepo: ProtectionRepository;
   private readonly securityService: SecurityService;
@@ -11,44 +18,44 @@ export class UserProtectionService {
   async manageRightsGuarantee(userId: string): Promise<RightsGuarantee> {
     try {
       const guaranteeConfig = await this.getGuaranteeConfig();
-      
+
       return {
         serviceGuarantee: {
           qualityDeposit: await this.manageQualityDeposit({
             depositAmount: await this.calculateDepositAmount(),
             usageRules: await this.defineDepositRules(),
-            claimProcess: await this.setupClaimProcess()
+            claimProcess: await this.setupClaimProcess(),
           }),
           refundPolicy: await this.setupRefundPolicy({
             noReasonRefund: await this.setupNoReasonRefund(),
             refundTimeline: await this.defineRefundTimeline(),
-            refundProcess: await this.setupRefundProcess()
+            refundProcess: await this.setupRefundProcess(),
           }),
           priceCompensation: await this.setupPriceCompensation({
             priceDifference: await this.calculatePriceDifference(),
             compensationRules: await this.defineCompensationRules(),
-            paymentProcess: await this.setupPaymentProcess()
-          })
+            paymentProcess: await this.setupPaymentProcess(),
+          }),
         },
         privacyProtection: {
           dataEncryption: await this.setupDataEncryption({
             encryptionStandards: await this.defineEncryptionStandards(),
-            storageProtection: await this.setupStorageProtection()
+            storageProtection: await this.setupStorageProtection(),
           }),
           accessControl: await this.setupAccessControl({
             authorizationRules: await this.defineAuthorizationRules(),
-            accessMonitoring: await this.setupAccessMonitoring()
+            accessMonitoring: await this.setupAccessMonitoring(),
           }),
           privacyCompensation: await this.setupPrivacyCompensation({
             breachHandling: await this.defineBreachHandling(),
-            compensationStandards: await this.defineCompensationStandards()
-          })
+            compensationStandards: await this.defineCompensationStandards(),
+          }),
         },
         disputeResolution: {
           arbitrationChannel: await this.setupArbitrationChannel(),
           thirdPartyEvaluation: await this.setupEvaluationSystem(),
-          mediationService: await this.setupMediationService()
-        }
+          mediationService: await this.setupMediationService(),
+        },
       };
     } catch (error) {
       this.logger.error('管理权益保障失败', error);
@@ -60,41 +67,41 @@ export class UserProtectionService {
   async manageFeedbackSystem(userId: string): Promise<FeedbackSystem> {
     try {
       const feedbackConfig = await this.getFeedbackConfig();
-      
+
       return {
         complaintChannels: {
           hotline: await this.setupComplaintHotline({
-            serviceHours: "24/7",
-            responseTime: "10分钟内",
-            escalationProcess: await this.setupEscalation()
+            serviceHours: '24/7',
+            responseTime: '10分钟内',
+            escalationProcess: await this.setupEscalation(),
           }),
           onlineSupport: await this.setupOnlineSupport({
             instantMessaging: await this.setupInstantMessaging(),
-            responseTime: "实时",
-            serviceQuality: await this.monitorServiceQuality()
+            responseTime: '实时',
+            serviceQuality: await this.monitorServiceQuality(),
           }),
           ticketSystem: await this.setupTicketSystem({
-            processingTime: "2小时内",
+            processingTime: '2小时内',
             trackingSystem: await this.setupTicketTracking(),
-            resolutionProcess: await this.setupResolutionProcess()
-          })
+            resolutionProcess: await this.setupResolutionProcess(),
+          }),
         },
         improvementMechanism: {
           suggestionRewards: await this.setupSuggestionRewards({
             rewardCriteria: await this.defineRewardCriteria(),
-            rewardProcess: await this.setupRewardProcess()
+            rewardProcess: await this.setupRewardProcess(),
           }),
           problemTracking: await this.setupProblemTracking({
             correctionMonitoring: await this.setupCorrectionMonitoring(),
-            progressTracking: await this.setupProgressTracking()
+            progressTracking: await this.setupProgressTracking(),
           }),
           serviceOptimization: await this.setupServiceOptimization({
             feedbackAnalysis: await this.setupFeedbackAnalysis(),
-            improvementImplementation: await this.setupImprovement()
-          })
+            improvementImplementation: await this.setupImprovement(),
+          }),
         },
         feedbackAnalytics: await this.setupFeedbackAnalytics(),
-        satisfactionTracking: await this.setupSatisfactionTracking()
+        satisfactionTracking: await this.setupSatisfactionTracking(),
       };
     } catch (error) {
       this.logger.error('管理反馈系统失败', error);
@@ -106,24 +113,24 @@ export class UserProtectionService {
   async manageProtectionMonitoring(): Promise<ProtectionMonitoring> {
     try {
       const monitoringConfig = await this.getMonitoringConfig();
-      
+
       return {
         rightsProtection: {
           guaranteeMonitoring: await this.monitorGuarantees(),
           privacyMonitoring: await this.monitorPrivacyProtection(),
-          disputeMonitoring: await this.monitorDisputeResolution()
+          disputeMonitoring: await this.monitorDisputeResolution(),
         },
         feedbackEffectiveness: {
           responseEfficiency: await this.monitorResponseEfficiency(),
           resolutionRate: await this.calculateResolutionRate(),
-          satisfactionLevel: await this.measureSatisfactionLevel()
+          satisfactionLevel: await this.measureSatisfactionLevel(),
         },
         systemPerformance: await this.monitorSystemPerformance(),
-        improvementTracking: await this.trackImprovements()
+        improvementTracking: await this.trackImprovements(),
       };
     } catch (error) {
       this.logger.error('管理保护监控失败', error);
       throw error;
     }
   }
-} 
+}

@@ -1,14 +1,14 @@
 import { HealthData } from '../../types';
-import { storage } from '../storage';
 import { logger } from '../logger';
+import { storage } from '../storage';
 
 /** 导出格式类型 */
-export type ExportFormat = 'json' | 'csv' | 'excel';
+export type ExportFormatType = 'json' | 'csv' | 'excel';
 
 /** 导出配置 */
-export interface ExportConfig {
+export interface IExportConfig {
   /** 导出格式 */
-  format: ExportFormat;
+  format: ExportFormatType;
   /** 是否包含元数据 */
   includeMetadata?: boolean;
   /** 是否加密 */
@@ -20,7 +20,7 @@ export interface ExportConfig {
 }
 
 /** 备份配置 */
-export interface BackupConfig {
+export interface IBackupConfig {
   /** 备份描述 */
   description?: string;
   /** 是否加密 */
@@ -32,7 +32,7 @@ export interface BackupConfig {
 }
 
 /** 备份元数据 */
-export interface BackupMetadata {
+export interface IBackupMetadata {
   /** 备份ID */
   id: string;
   /** 创建时间 */
@@ -67,10 +67,7 @@ class ExportService {
   }
 
   /** 导出数据 */
-  public async exportData(
-    data: HealthData[],
-    config: ExportConfig
-  ): Promise<Blob> {
+  public async exportData(data: HealthData[], config: IExportConfig): Promise<Blob> {
     try {
       // 准备导出数据
       const exportData = this.prepareExportData(data, config);
@@ -98,13 +95,13 @@ class ExportService {
 
       // 创建Blob
       const blob = new Blob([content], {
-        type: this.getContentType(config.format)
+        type: this.getContentType(config.format),
       });
 
       logger.info('数据导出成功', {
         format: config.format,
         size: blob.size,
-        recordCount: data.length
+        recordCount: data.length,
       });
 
       return blob;
@@ -117,14 +114,14 @@ class ExportService {
   /** 创建备份 */
   public async createBackup(
     data: HealthData[],
-    config: BackupConfig = {}
-  ): Promise<BackupMetadata> {
+    config: IBackupConfig = {},
+  ): Promise<IBackupMetadata> {
     try {
       // 准备备份数据
       const backupData = {
         version: this.VERSION,
         createdAt: new Date(),
-        data
+        data,
       };
 
       // 序列化数据
@@ -136,29 +133,23 @@ class ExportService {
       }
 
       // 压缩数据
-      const compressedContent = await this.compress(
-        content,
-        config.compressionLevel
-      );
+      const compressedContent = await this.compress(content, config.compressionLevel);
 
       // 生成备份ID
       const backupId = this.generateBackupId();
 
       // 保存备份数据
-      await storage.setItem(
-        this.BACKUP_KEY_PREFIX + backupId,
-        compressedContent
-      );
+      await storage.setItem(this.BACKUP_KEY_PREFIX + backupId, compressedContent);
 
       // 创建备份元数据
-      const metadata: BackupMetadata = {
+      const metadata: IBackupMetadata = {
         id: backupId,
         createdAt: new Date(),
         version: this.VERSION,
         description: config.description,
         size: compressedContent.length,
         encrypted: Boolean(config.encrypt),
-        recordCount: data.length
+        recordCount: data.length,
       };
 
       // 更新备份元数据列表
@@ -174,15 +165,10 @@ class ExportService {
   }
 
   /** 恢复备份 */
-  public async restoreBackup(
-    backupId: string,
-    encryptionKey?: string
-  ): Promise<HealthData[]> {
+  public async restoreBackup(backupId: string, encryptionKey?: string): Promise<HealthData[]> {
     try {
       // 获取备份数据
-      const compressedContent = await storage.getItem(
-        this.BACKUP_KEY_PREFIX + backupId
-      );
+      const compressedContent = await storage.getItem(this.BACKUP_KEY_PREFIX + backupId);
 
       if (!compressedContent) {
         throw new Error('备份不存在');
@@ -192,9 +178,7 @@ class ExportService {
       const content = await this.decompress(compressedContent);
 
       // 解密处理
-      const decryptedContent = encryptionKey
-        ? this.decrypt(content, encryptionKey)
-        : content;
+      const decryptedContent = encryptionKey ? this.decrypt(content, encryptionKey) : content;
 
       // 解析数据
       const backupData = JSON.parse(decryptedContent);
@@ -206,7 +190,7 @@ class ExportService {
 
       logger.info('恢复备份成功', {
         backupId,
-        recordCount: backupData.data.length
+        recordCount: backupData.data.length,
       });
 
       return backupData.data;
@@ -217,7 +201,7 @@ class ExportService {
   }
 
   /** 获取备份列表 */
-  public async getBackupList(): Promise<BackupMetadata[]> {
+  public async getBackupList(): Promise<IBackupMetadata[]> {
     try {
       const metadataList = await storage.getItem(this.BACKUP_META_KEY);
       return metadataList || [];
@@ -246,19 +230,16 @@ class ExportService {
   }
 
   /** 准备导出数据 */
-  private prepareExportData(
-    data: HealthData[],
-    config: ExportConfig
-  ): any {
+  private prepareExportData(data: HealthData[], config: IExportConfig): any {
     const exportData = {
       data,
       metadata: config.includeMetadata
         ? {
             exportedAt: new Date(),
             version: this.VERSION,
-            recordCount: data.length
+            recordCount: data.length,
           }
-        : undefined
+        : undefined,
     };
     return exportData;
   }
@@ -271,9 +252,7 @@ class ExportService {
   /** 格式化为CSV */
   private formatAsCsv(data: any): string {
     const headers = Object.keys(data.data[0]);
-    const rows = data.data.map((item: any) =>
-      headers.map(header => item[header])
-    );
+    const rows = data.data.map((item: any) => headers.map(header => item[header]));
     return [headers.join(','), ...rows.map(row => row.join(','))].join('\n');
   }
 
@@ -284,7 +263,7 @@ class ExportService {
   }
 
   /** 获取内容类型 */
-  private getContentType(format: ExportFormat): string {
+  private getContentType(format: ExportFormatType): string {
     switch (format) {
       case 'json':
         return 'application/json';
@@ -303,7 +282,7 @@ class ExportService {
   }
 
   /** 更新备份元数据 */
-  private async updateBackupMetadata(metadata: BackupMetadata): Promise<void> {
+  private async updateBackupMetadata(metadata: IBackupMetadata): Promise<void> {
     const metadataList = await this.getBackupList();
     metadataList.push(metadata);
     await storage.setItem(this.BACKUP_META_KEY, metadataList);
@@ -322,10 +301,7 @@ class ExportService {
   }
 
   /** 压缩数据 */
-  private async compress(
-    content: string,
-    level: number = 6
-  ): Promise<string> {
+  private async compress(content: string, level = 6): Promise<string> {
     // 这里返回原始内容，实际项目中可以使用compression库进行压缩
     return content;
   }
@@ -337,4 +313,4 @@ class ExportService {
   }
 }
 
-export const exportService = ExportService.getInstance(); 
+export const exportService = ExportService.getInstance();

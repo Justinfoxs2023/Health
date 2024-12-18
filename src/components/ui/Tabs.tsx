@@ -1,26 +1,29 @@
 import React, { useState } from 'react';
+
 import { theme } from '../../styles/theme';
 
-interface Tab {
-  key: string;
-  label: string;
-  icon?: React.ReactNode;
-  disabled?: boolean;
+interface ITab {
+  /** key 的描述 */
+    key: string;
+  /** label 的描述 */
+    label: string;
+  /** icon 的描述 */
+    icon: ReactReactNode;
+  /** disabled 的描述 */
+    disabled: false | true;
 }
 
-interface TabsProps {
-  tabs: Tab[];
-  activeKey: string;
-  onChange: (key: string) => void;
-  type?: 'line' | 'card';
+interface ITabsProps {
+  /** tabs 的描述 */
+    tabs: ITab;
+  /** activeKey 的描述 */
+    activeKey: string;
+  /** onChange 的描述 */
+    onChange: key: string  void;
+  type: line  card;
 }
 
-export const Tabs: React.FC<TabsProps> = ({
-  tabs,
-  activeKey,
-  onChange,
-  type = 'line'
-}) => {
+export const Tabs: React.FC<ITabsProps> = ({ tabs, activeKey, onChange, type = 'line' }) => {
   const [hoveredKey, setHoveredKey] = useState<string | null>(null);
 
   return (
@@ -37,79 +40,77 @@ export const Tabs: React.FC<TabsProps> = ({
             onMouseLeave={() => setHoveredKey(null)}
             disabled={tab.disabled}
           >
-            {tab.icon && <span className="tab-icon">{tab.icon}</span>}
+            {tab.icon && <span className="tabicon">{tabicon}</span>}
             {tab.label}
-            {type === 'line' && activeKey === tab.key && (
-              <div className="tab-line" />
-            )}
+            {type === 'line' && activeKey === tab.key && <div className="tab-line" />}
           </button>
         ))}
       </div>
 
-      <style jsx>{`
-        .tabs-container {
-          width: 100%;
+      <style jsx>{
+        tabscontainer {
+          width 100
         }
 
-        .tabs-nav {
-          display: flex;
-          border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        tabsnav {
+          display flex
+          borderbottom 1px solid rgba0 0 0 01
         }
 
-        .tabs-nav.card {
-          border-bottom: none;
-          gap: ${theme.spacing(1)};
+        tabsnavcard {
+          borderbottom none
+          gap {themespacing1}
         }
 
-        .tab-item {
-          display: flex;
-          align-items: center;
-          gap: ${theme.spacing(1)};
-          padding: ${theme.spacing(1.5)} ${theme.spacing(2)};
-          border: none;
-          background: none;
-          cursor: pointer;
-          color: ${theme.colors.text.primary};
-          font-size: ${theme.typography.body1.fontSize};
-          position: relative;
-          transition: all ${theme.transitions.short};
+        tabitem {
+          display flex
+          alignitems center
+          gap {themespacing1}
+          padding {themespacing15} {themespacing2}
+          border none
+          background none
+          cursor pointer
+          color {themecolorstextprimary}
+          fontsize {themetypographybody1fontSize}
+          position relative
+          transition all {themetransitionsshort}
         }
 
-        .tab-item.disabled {
-          color: ${theme.colors.text.disabled};
-          cursor: not-allowed;
+        tabitemdisabled {
+          color {themecolorstextdisabled}
+          cursor notallowed
         }
 
-        .tabs-nav.line .tab-item {
-          margin-bottom: -1px;
+        tabsnavline tabitem {
+          marginbottom 1px
         }
 
-        .tabs-nav.card .tab-item {
-          background: ${theme.colors.background.default};
-          border-radius: ${theme.borderRadius.medium};
+        tabsnavcard tabitem {
+          background {themecolorsbackgrounddefault}
+          borderradius {themeborderRadiusmedium}
         }
 
-        .tabs-nav.card .tab-item.active {
-          background: ${theme.colors.primary.main};
-          color: ${theme.colors.primary.contrastText};
+        tabsnavcard tabitemactive {
+          background {themecolorsprimarymain}
+          color {themecolorsprimarycontrastText}
         }
 
-        .tab-line {
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          height: 2px;
-          background: ${theme.colors.primary.main};
-          transition: all ${theme.transitions.short};
+        tabline {
+          position absolute
+          bottom 0
+          left 0
+          right 0
+          height 2px
+          background {themecolorsprimarymain}
+          transition all {themetransitionsshort}
         }
 
-        .tab-icon {
-          display: flex;
-          align-items: center;
-          justify-content: center;
+        tabicon {
+          display flex
+          alignitems center
+          justifycontent center
         }
-      `}</style>
+      }</style>
     </div>
   );
-}; 
+};

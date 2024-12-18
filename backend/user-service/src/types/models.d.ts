@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 models.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 declare module '../models/*' {
   import { Document } from 'mongoose';
 
@@ -30,4 +37,4 @@ declare module '../models/*' {
     createdAt: Date;
     updatedAt: Date;
   }
-} 
+}

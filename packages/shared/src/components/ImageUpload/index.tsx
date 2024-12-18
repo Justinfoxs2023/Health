@@ -1,16 +1,24 @@
 import React, { useState } from 'react';
+
+import { ImageService } from '../../services/image';
+import { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface';
 import { Upload, Button, Progress, message } from 'antd';
 import { UploadOutlined, LoadingOutlined } from '@ant-design/icons';
-import { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface';
-import { ImageService } from '../../services/image';
 
 interface ImageUploadProps {
+  /** value 的描述 */
   value?: string;
+  /** onChange 的描述 */
   onChange?: (value: string) => void;
+  /** maxSize 的描述 */
   maxSize?: number;
+  /** accept 的描述 */
   accept?: string;
+  /** imageService 的描述 */
   imageService?: ImageService;
+  /** className 的描述 */
   className?: string;
+  /** style 的描述 */
   style?: React.CSSProperties;
 }
 
@@ -21,7 +29,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
   accept = 'image/*',
   imageService = new ImageService(),
   className,
-  style
+  style,
 }) => {
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -66,8 +74,8 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
           name: webpFile.name,
           status: 'done',
           url,
-          thumbUrl: url
-        }
+          thumbUrl: url,
+        },
       ]);
 
       subscription.unsubscribe();
@@ -98,8 +106,8 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
     showUploadList: {
       showPreviewIcon: true,
       showRemoveIcon: true,
-      showDownloadIcon: false
-    }
+      showDownloadIcon: false,
+    },
   };
 
   return (
@@ -122,4 +130,4 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
       </div>
     </div>
   );
-}; 
+};

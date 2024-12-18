@@ -1,15 +1,33 @@
+/**
+ * @fileoverview TS 文件 enhanced-gamification.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // 健康目标相关类型
-export interface HealthGoal {
+export interface IHealthGoal {
+  /** id 的描述 */
   id: string;
+  /** userId 的描述 */
   userId: string;
+  /** type 的描述 */
   type: GoalType;
-  category: GoalCategory;
+  /** category 的描述 */
+  category: GoalCategoryType;
+  /** target 的描述 */
   target: number;
+  /** unit 的描述 */
   unit: string;
+  /** startDate 的描述 */
   startDate: Date;
+  /** endDate 的描述 */
   endDate: Date;
+  /** progress 的描述 */
   progress: number;
-  status: GoalStatus;
+  /** status 的描述 */
+  status: GoalStatusType;
+  /** adjustments 的描述 */
   adjustments: GoalAdjustment[];
 }
 
@@ -17,7 +35,7 @@ export interface HealthGoal {
 export type GoalType = 'daily' | 'weekly' | 'monthly' | 'long_term';
 
 // 目标分类
-export type GoalCategory = 
+export type GoalCategoryType =
   | 'steps'
   | 'water_intake'
   | 'exercise_time'
@@ -26,66 +44,90 @@ export type GoalCategory =
   | 'health_indicators';
 
 // 目标状态
-export type GoalStatus = 
-  | 'not_started'
-  | 'in_progress'
-  | 'completed'
-  | 'failed'
-  | 'adjusted';
+export type GoalStatusType = 'not_started' | 'in_progress' | 'completed' | 'failed' | 'adjusted';
 
 // 奖励系统类型
-export interface RewardSystem {
-  points: PointsSystem;
-  badges: BadgeSystem;
-  levels: LevelSystem;
-  achievements: AchievementSystem;
+export interface IRewardSystem {
+  /** points 的描述 */
+  points: IPointsSystem;
+  /** badges 的描述 */
+  badges: IBadgeSystem;
+  /** levels 的描述 */
+  levels: ILevelSystem;
+  /** achievements 的描述 */
+  achievements: IAchievementSystem;
 }
 
 // 积分系统
-export interface PointsSystem {
+export interface IPointsSystem {
+  /** totalPoints 的描述 */
   totalPoints: number;
+  /** currentPoints 的描述 */
   currentPoints: number;
+  /** history 的描述 */
   history: PointsHistory[];
+  /** redemptionOptions 的描述 */
   redemptionOptions: RedemptionOption[];
 }
 
 // 徽章系统
-export interface BadgeSystem {
+export interface IBadgeSystem {
+  /** earnedBadges 的描述 */
   earnedBadges: Badge[];
+  /** availableBadges 的描述 */
   availableBadges: Badge[];
+  /** progress 的描述 */
   progress: BadgeProgress[];
 }
 
 // 等级系统
-export interface LevelSystem {
+export interface ILevelSystem {
+  /** currentLevel 的描述 */
   currentLevel: number;
+  /** currentExp 的描述 */
   currentExp: number;
+  /** nextLevelExp 的描述 */
   nextLevelExp: number;
+  /** levelBenefits 的描述 */
   levelBenefits: LevelBenefit[];
 }
 
 // 成就系统
-export interface AchievementSystem {
+export interface IAchievementSystem {
+  /** achievements 的描述 */
   achievements: Achievement[];
+  /** progress 的描述 */
   progress: AchievementProgress[];
+  /** rewards 的描述 */
   rewards: AchievementReward[];
 }
 
 // 社交互动类型
-export interface SocialInteraction {
+export interface ISocialInteraction {
+  /** type 的描述 */
   type: InteractionType;
+  /** userId 的描述 */
   userId: string;
+  /** targetId 的描述 */
   targetId: string;
+  /** content 的描述 */
   content: any;
+  /** timestamp 的描述 */
   timestamp: Date;
+  /** metadata 的描述 */
   metadata: InteractionMetadata;
 }
 
 // 用户画像类型
-export interface UserProfile {
+export interface IUserProfile {
+  /** healthMetrics 的描述 */
   healthMetrics: HealthMetrics;
+  /** behaviors 的描述 */
   behaviors: UserBehavior[];
-  socialInteractions: SocialInteraction[];
+  /** socialInteractions 的描述 */
+  socialInteractions: ISocialInteraction[];
+  /** preferences 的描述 */
   preferences: UserPreferences;
+  /** achievements 的描述 */
   achievements: Achievement[];
-} 
+}

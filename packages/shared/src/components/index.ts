@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 index.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // 导出基础组件
 export * from './Button';
 export * from './Input';
@@ -18,4 +25,4 @@ export * from './VirtualScroll';
 export * from './ThemeSwitch';
 export * from './Animation';
 export * from './HealthAnalysis';
-export * from './HealthAdvice'; 
+export * from './HealthAdvice';

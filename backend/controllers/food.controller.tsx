@@ -1,6 +1,6 @@
-import { Response } from 'express';
-import { IAuthRequest } from '../types/models';
 import { Food } from '../models/food.model';
+import { IAuthRequest } from '../types/models';
+import { Response } from 'express';
 
 export class FoodController {
   /**
@@ -8,20 +8,14 @@ export class FoodController {
    */
   public async getFoodList(req: IAuthRequest, res: Response) {
     try {
-      const { 
-        category,
-        search,
-        page = 1,
-        limit = 20,
-        sort = 'name'
-      } = req.query;
+      const { category, search, page = 1, limit = 20, sort = 'name' } = req.query;
 
       const query: any = {};
-      
+
       if (category) {
         query.category = category;
       }
-      
+
       if (search) {
         query.name = { $regex: search, $options: 'i' };
       }
@@ -40,14 +34,14 @@ export class FoodController {
           pagination: {
             total,
             page: Number(page),
-            limit: Number(limit)
-          }
-        }
+            limit: Number(limit),
+          },
+        },
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: error instanceof Error ? error.message : '未知错误'
+        message: error instanceof Error ? error.message : '未知错误',
       });
     }
   }
@@ -63,18 +57,18 @@ export class FoodController {
       if (!food) {
         return res.status(404).json({
           success: false,
-          message: '食物不存在'
+          message: '食物不存在',
         });
       }
 
       res.json({
         success: true,
-        data: food
+        data: food,
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: error instanceof Error ? error.message : '未知错误'
+        message: error instanceof Error ? error.message : '未知错误',
       });
     }
   }
@@ -89,12 +83,12 @@ export class FoodController {
 
       res.status(201).json({
         success: true,
-        data: food
+        data: food,
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: error instanceof Error ? error.message : '未知错误'
+        message: error instanceof Error ? error.message : '未知错误',
       });
     }
   }
@@ -110,18 +104,18 @@ export class FoodController {
       if (!food) {
         return res.status(404).json({
           success: false,
-          message: '食物不存在'
+          message: '食物不存在',
         });
       }
 
       res.json({
         success: true,
-        data: food
+        data: food,
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: error instanceof Error ? error.message : '未知错误'
+        message: error instanceof Error ? error.message : '未知错误',
       });
     }
   }
@@ -137,21 +131,21 @@ export class FoodController {
       if (!food) {
         return res.status(404).json({
           success: false,
-          message: '食物不存在'
+          message: '食物不存在',
         });
       }
 
       res.json({
         success: true,
-        message: '删除成功'
+        message: '删除成功',
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: error instanceof Error ? error.message : '未知错误'
+        message: error instanceof Error ? error.message : '未知错误',
       });
     }
   }
 }
 
-export const foodController = new FoodController(); 
+export const foodController = new FoodController();

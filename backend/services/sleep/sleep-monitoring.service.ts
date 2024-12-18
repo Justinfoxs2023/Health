@@ -1,25 +1,35 @@
+import { AI } from '../../utils/ai';
 import { EventEmitter } from 'events';
 import { Logger } from '../../utils/logger';
-import { AI } from '../../utils/ai';
 
-interface SleepMetrics {
+interface ISleepMetrics {
+  /** duration 的描述 */
   duration: number;
+  /** stages 的描述 */
   stages: {
     deep: number;
     light: number;
     rem: number;
     awake: number;
   };
+  /** efficiency 的描述 */
   efficiency: number;
+  /** breathingQuality 的描述 */
   breathingQuality: number;
+  /** heartRateVariability 的描述 */
   heartRateVariability: number;
 }
 
-interface SleepAnalysis {
+interface ISleepAnalysis {
+  /** pattern 的描述 */
   pattern: string;
+  /** environmentalFactors 的描述 */
   environmentalFactors: Record<string, number>;
+  /** lifestyleImpact 的描述 */
   lifestyleImpact: Record<string, number>;
+  /** stressLevel 的描述 */
   stressLevel: number;
+  /** recommendations 的描述 */
   recommendations: string[];
 }
 
@@ -33,13 +43,13 @@ export class SleepMonitoringService extends EventEmitter {
     this.ai = new AI();
   }
 
-  async analyzeSleepQuality(userId: string, metrics: SleepMetrics): Promise<SleepAnalysis> {
+  async analyzeSleepQuality(userId: string, metrics: ISleepMetrics): Promise<ISleepAnalysis> {
     try {
       // 使用AI分析睡眠数据
       const analysis = await this.ai.analyze('sleep_quality', {
         userId,
         metrics,
-        history: await this.getSleepHistory(userId)
+        history: await this.getSleepHistory(userId),
       });
 
       // 生成建议
@@ -47,7 +57,7 @@ export class SleepMonitoringService extends EventEmitter {
 
       return {
         ...analysis,
-        recommendations
+        recommendations,
       };
     } catch (error) {
       this.logger.error('睡眠质量分析失败:', error);
@@ -55,7 +65,7 @@ export class SleepMonitoringService extends EventEmitter {
     }
   }
 
-  private async getSleepHistory(userId: string): Promise<SleepMetrics[]> {
+  private async getSleepHistory(userId: string): Promise<ISleepMetrics[]> {
     // 获取历史睡眠数据
     return [];
   }
@@ -64,4 +74,4 @@ export class SleepMonitoringService extends EventEmitter {
     // 生成个性化建议
     return [];
   }
-} 
+}

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+
 import { View, StyleSheet, Animated } from 'react-native';
 
 export const VoiceWaveform: React.FC = () => {
@@ -7,18 +8,18 @@ export const VoiceWaveform: React.FC = () => {
 
   useEffect(() => {
     const animate = () => {
-      const animationSequence = animations.map((anim) => {
+      const animationSequence = animations.map(anim => {
         return Animated.sequence([
           Animated.timing(anim, {
             toValue: Math.random(),
             duration: 500,
-            useNativeDriver: true
+            useNativeDriver: true,
           }),
           Animated.timing(anim, {
             toValue: 0,
             duration: 500,
-            useNativeDriver: true
-          })
+            useNativeDriver: true,
+          }),
         ]);
       });
 
@@ -40,11 +41,11 @@ export const VoiceWaveform: React.FC = () => {
                 {
                   scaleY: anim.interpolate({
                     inputRange: [0, 1],
-                    outputRange: [0.4, 1]
-                  })
-                }
-              ]
-            }
+                    outputRange: [0.4, 1],
+                  }),
+                },
+              ],
+            },
           ]}
         />
       ))}
@@ -57,13 +58,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     height: 40,
-    marginTop: 10
+    marginTop: 10,
   },
   bar: {
     width: 3,
     height: 20,
     backgroundColor: '#2E7D32',
     marginHorizontal: 1,
-    borderRadius: 1.5
-  }
-}); 
+    borderRadius: 1.5,
+  },
+});

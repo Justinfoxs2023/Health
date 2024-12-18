@@ -1,25 +1,38 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
-import { Card, Text, ProgressBar, useTheme, Avatar } from 'react-native-paper';
 
-interface Achievement {
+import { Card, Text, ProgressBar, useTheme, Avatar } from 'react-native-paper';
+import { View, StyleSheet, ScrollView } from 'react-native';
+
+interface IAchievement {
+  /** id 的描述 */
   id: string;
+  /** title 的描述 */
   title: string;
+  /** description 的描述 */
   description: string;
+  /** icon 的描述 */
   icon: string;
+  /** progress 的描述 */
   progress: number;
+  /** target 的描述 */
   target: number;
+  /** completed 的描述 */
   completed: boolean;
+  /** reward 的描述 */
   reward: {
     type: 'points' | 'badge' | 'level';
     value: number | string;
   };
 }
 
-interface AchievementSystemProps {
-  achievements: Achievement[];
+interface IAchievementSystemProps {
+  /** achievements 的描述 */
+  achievements: IAchievement[];
+  /** userLevel 的描述 */
   userLevel: number;
+  /** totalPoints 的描述 */
   totalPoints: number;
+  /** onClaimReward 的描述 */
   onClaimReward: (achievementId: string) => void;
 }
 
@@ -27,8 +40,8 @@ export const AchievementSystem = ({
   achievements,
   userLevel,
   totalPoints,
-  onClaimReward
-}: AchievementSystemProps) => {
+  onClaimReward,
+}: IAchievementSystemProps) => {
   const theme = useTheme();
 
   return (
@@ -49,29 +62,24 @@ export const AchievementSystem = ({
       </Card>
 
       {achievements.map(achievement => (
-        <Card 
-          key={achievement.id} 
-          style={[
-            styles.achievementCard,
-            achievement.completed && styles.completedCard
-          ]}
+        <Card
+          key={achievement.id}
+          style={[styles.achievementCard, achievement.completed && styles.completedCard]}
         >
           <Card.Content>
             <View style={styles.achievementHeader}>
-              <Avatar.Icon 
-                size={40} 
+              <Avatar.Icon
+                size={40}
                 icon={achievement.icon}
                 style={{
-                  backgroundColor: achievement.completed 
-                    ? theme.colors.primary 
-                    : theme.colors.disabled
+                  backgroundColor: achievement.completed
+                    ? theme.colors.primary
+                    : theme.colors.disabled,
                 }}
               />
               <View style={styles.achievementTitles}>
                 <Text style={styles.achievementTitle}>{achievement.title}</Text>
-                <Text style={styles.achievementDescription}>
-                  {achievement.description}
-                </Text>
+                <Text style={styles.achievementDescription}>{achievement.description}</Text>
               </View>
             </View>
 
@@ -89,12 +97,12 @@ export const AchievementSystem = ({
             {achievement.completed && (
               <View style={styles.rewardSection}>
                 <Text style={styles.rewardText}>
-                  奖励: {achievement.reward.type === 'points' 
+                  奖励:{' '}
+                  {achievement.reward.type === 'points'
                     ? `${achievement.reward.value} 积分`
                     : achievement.reward.type === 'badge'
                     ? `${achievement.reward.value} 徽章`
-                    : `提升至 ${achievement.reward.value} 级`
-                  }
+                    : `提升至 ${achievement.reward.value} 级`}
                 </Text>
                 <Button
                   mode="contained"
@@ -185,4 +193,4 @@ const styles = StyleSheet.create({
   claimButton: {
     marginLeft: 8,
   },
-}); 
+});

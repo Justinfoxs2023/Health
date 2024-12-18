@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+
 import { FadeTransition } from '@/components/animation/FadeTransition';
 
 const Card = styled.div`
@@ -26,25 +27,31 @@ const ServiceDescription = styled.p`
 const ServiceStatus = styled.div<{ status: 'available' | 'busy' | 'offline' }>`
   color: ${({ theme, status }) => {
     switch (status) {
-      case 'available': return theme.colors.success.main;
-      case 'busy': return theme.colors.warning.main;
-      case 'offline': return theme.colors.error.main;
+      case 'available':
+        return theme.colors.success.main;
+      case 'busy':
+        return theme.colors.warning.main;
+      case 'offline':
+        return theme.colors.error.main;
     }
   }};
 `;
 
-interface ServiceCardProps {
-  title: string;
-  description: string;
-  status: 'available' | 'busy' | 'offline';
-  onClick: () => void;
+interface IServiceCardProps {
+  /** title 的描述 */
+    title: string;
+  /** description 的描述 */
+    description: string;
+  /** status 的描述 */
+    status: available  busy  offline;
+  onClick:   void;
 }
 
-export const ServiceCard: React.FC<ServiceCardProps> = ({
+export const ServiceCard: React.FC<IServiceCardProps> = ({
   title,
   description,
   status,
-  onClick
+  onClick,
 }) => {
   return (
     <FadeTransition>
@@ -52,11 +59,11 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
         <ServiceTitle>{title}</ServiceTitle>
         <ServiceDescription>{description}</ServiceDescription>
         <ServiceStatus status={status}>
-          {status === 'available' && '可预约'}
-          {status === 'busy' && '繁忙中'}
-          {status === 'offline' && '暂停服务'}
+          {status === available  }
+          {status === busy  }
+          {status === offline  }
         </ServiceStatus>
       </Card>
     </FadeTransition>
   );
-}; 
+};

@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 performance-monitor.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export class PerformanceMonitor {
   static init() {
     // 页面加载性能
@@ -9,22 +16,22 @@ export class PerformanceMonitor {
 
     // 组件渲染性能
     if (process.env.NODE_ENV === 'development') {
-      const measures: {[key: string]: number} = {};
-      
+      const measures: { [key: string]: number } = {};
+
       const originalComponentDidMount = React.Component.prototype.componentDidMount;
       const originalComponentDidUpdate = React.Component.prototype.componentDidUpdate;
 
-      React.Component.prototype.componentDidMount = function() {
+      React.Component.prototype.componentDidMount = function () {
         const start = performance.now();
         originalComponentDidMount?.apply(this);
         measures[this.constructor.name] = performance.now() - start;
       };
 
-      React.Component.prototype.componentDidUpdate = function() {
+      React.Component.prototype.componentDidUpdate = function () {
         const start = performance.now();
         originalComponentDidUpdate?.apply(this);
         measures[this.constructor.name] = performance.now() - start;
       };
     }
   }
-} 
+}

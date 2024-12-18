@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Statistic, Row, Col, Progress, Button, Space } from 'antd';
+
 import {
   CloudUploadOutlined,
   CloudDownloadOutlined,
   DeleteOutlined,
-  ReloadOutlined
+  ReloadOutlined,
 } from '@ant-design/icons';
+import { Card, Statistic, Row, Col, Progress, Button, Space } from 'antd';
 import { ImageCacheService } from '../../services/imageCache';
 
-interface ImageCacheStatusProps {
+inter
+face ImageCacheStatusProps {
   imageCacheService: ImageCacheService;
   className?: string;
   style?: React.CSSProperties;
@@ -17,14 +19,14 @@ interface ImageCacheStatusProps {
 export const ImageCacheStatus: React.FC<ImageCacheStatusProps> = ({
   imageCacheService,
   className,
-  style
+  style,
 }) => {
   const [stats, setStats] = useState({
     size: 0,
     entries: 0,
     hits: 0,
     misses: 0,
-    hitRate: 0
+    hitRate: 0,
   });
 
   useEffect(() => {
@@ -46,17 +48,10 @@ export const ImageCacheStatus: React.FC<ImageCacheStatusProps> = ({
       style={style}
       extra={
         <Space>
-          <Button
-            icon={<DeleteOutlined />}
-            onClick={handleClear}
-            disabled={stats.entries === 0}
-          >
+          <Button icon={<DeleteOutlined />} onClick={handleClear} disabled={stats.entries === 0}>
             清理缓存
           </Button>
-          <Button
-            icon={<ReloadOutlined />}
-            onClick={() => setStats(imageCacheService.getStats())}
-          >
+          <Button icon={<ReloadOutlined />} onClick={() => setStats(imageCacheService.getStats())}>
             刷新
           </Button>
         </Space>
@@ -72,11 +67,7 @@ export const ImageCacheStatus: React.FC<ImageCacheStatusProps> = ({
           />
         </Col>
         <Col span={12}>
-          <Statistic
-            title="缓存条目"
-            value={stats.entries}
-            prefix={<CloudDownloadOutlined />}
-          />
+          <Statistic title="缓存条目" value={stats.entries} prefix={<CloudDownloadOutlined />} />
         </Col>
         <Col span={24}>
           <div style={{ padding: '0 24px' }}>
@@ -88,20 +79,12 @@ export const ImageCacheStatus: React.FC<ImageCacheStatusProps> = ({
           </div>
         </Col>
         <Col span={12}>
-          <Statistic
-            title="缓存命中"
-            value={stats.hits}
-            valueStyle={{ color: '#3f8600' }}
-          />
+          <Statistic title="缓存命中" value={stats.hits} valueStyle={{ color: '#3f8600' }} />
         </Col>
         <Col span={12}>
-          <Statistic
-            title="缓存未命中"
-            value={stats.misses}
-            valueStyle={{ color: '#cf1322' }}
-          />
+          <Statistic title="缓存未命中" value={stats.misses} valueStyle={{ color: '#cf1322' }} />
         </Col>
       </Row>
     </Card>
   );
-}; 
+};

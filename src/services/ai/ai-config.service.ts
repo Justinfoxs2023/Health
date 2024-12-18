@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { Subject } from 'rxjs';
 import { StorageService } from '../storage/storage.service';
+import { Subject } from 'rxjs';
 
-export interface AIModelConfig {
-  // 模型基础配置
-  modelType: 'basic' | 'advanced' | 'expert';
+export interface IAIModelConfig {
+   
+  /** modelType 的描述 */
+    modelType: basic  advanced  expert;
   version: string;
-  language: string[];
-  
-  // 性能配置
+  language: string;
+
+   
   performance: {
     maxBatchSize: number;
     timeout: number;
@@ -42,23 +43,23 @@ export interface AIModelConfig {
 @Injectable()
 export class AIConfigService {
   private readonly configKey = 'ai_config';
-  private readonly config$ = new Subject<AIModelConfig>();
+  private readonly config$ = new Subject<IAIModelConfig>();
 
   constructor(private storage: StorageService) {
     this.initialize();
   }
 
   // 获取配置
-  getConfig(): Subject<AIModelConfig> {
+  getConfig(): Subject<IAIModelConfig> {
     return this.config$;
   }
 
   // 更新配置
-  async updateConfig(updates: Partial<AIModelConfig>): Promise<void> {
+  async updateConfig(updates: Partial<IAIModelConfig>): Promise<void> {
     const currentConfig = this.config$.value;
     const newConfig = {
       ...currentConfig,
-      ...updates
+      ...updates,
     };
 
     await this.validateConfig(newConfig);
@@ -75,59 +76,59 @@ export class AIConfigService {
 
   // 私有方法
   private async initialize(): Promise<void> {
-    const savedConfig = await this.storage.get<AIModelConfig>(this.configKey);
+    const savedConfig = await this.storage.get<IAIModelConfig>(this.configKey);
     if (savedConfig) {
       this.config$.next(savedConfig);
     }
   }
 
-  private getDefaultConfig(): AIModelConfig {
+  private getDefaultConfig(): IAIModelConfig {
     return {
       modelType: 'basic',
       version: '1.0.0',
       language: ['zh-CN'],
-      
+
       performance: {
         maxBatchSize: 32,
         timeout: 5000,
         cacheEnabled: true,
-        cacheSize: 1000
+        cacheSize: 1000,
       },
 
       training: {
         enabled: true,
         schedule: 'weekly',
         dataRetentionDays: 90,
-        minSampleSize: 1000
+        minSampleSize: 1000,
       },
 
       inference: {
         confidenceThreshold: 0.8,
         maxConcurrentRequests: 10,
-        timeout: 3000
+        timeout: 3000,
       },
 
       resources: {
         maxMemory: 4096,
         maxCPU: 4,
-        gpuEnabled: false
-      }
+        gpuEnabled: false,
+      },
     };
   }
 
-  private async validateConfig(config: AIModelConfig): Promise<void> {
+  private async validateConfig(config: IAIModelConfig): Promise<void> {
     // 实现配置验证逻辑
     const validations = [
       this.validatePerformance(config.performance),
       this.validateTraining(config.training),
       this.validateInference(config.inference),
-      this.validateResources(config.resources)
+      this.validateResources(config.resources),
     ];
 
     await Promise.all(validations);
   }
 
-  private async validatePerformance(config: AIModelConfig['performance']): Promise<void> {
+  private async validatePerformance(config: IAIModelConfig['performance']): Promise<void> {
     if (config.maxBatchSize < 1 || config.maxBatchSize > 128) {
       throw new Error('Invalid batch size');
     }
@@ -139,7 +140,7 @@ export class AIConfigService {
     }
   }
 
-  private async validateTraining(config: AIModelConfig['training']): Promise<void> {
+  private async validateTraining(config: IAIModelConfig['training']): Promise<void> {
     if (config.enabled) {
       if (config.dataRetentionDays < 1 || config.dataRetentionDays > 365) {
         throw new Error('Invalid data retention period');
@@ -150,7 +151,7 @@ export class AIConfigService {
     }
   }
 
-  private async validateInference(config: AIModelConfig['inference']): Promise<void> {
+  private async validateInference(config: IAIModelConfig['inference']): Promise<void> {
     if (config.confidenceThreshold < 0.5 || config.confidenceThreshold > 1) {
       throw new Error('Invalid confidence threshold');
     }
@@ -162,7 +163,7 @@ export class AIConfigService {
     }
   }
 
-  private async validateResources(config: AIModelConfig['resources']): Promise<void> {
+  private async validateResources(config: IAIModelConfig['resources']): Promise<void> {
     if (config.maxMemory < 1024 || config.maxMemory > 16384) {
       throw new Error('Invalid memory limit');
     }
@@ -171,7 +172,7 @@ export class AIConfigService {
     }
   }
 
-  private async saveConfig(config: AIModelConfig): Promise<void> {
+  private async saveConfig(config: IAIModelConfig): Promise<void> {
     await this.storage.set(this.configKey, config);
   }
-} 
+}

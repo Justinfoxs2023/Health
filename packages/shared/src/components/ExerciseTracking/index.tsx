@@ -1,44 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Card } from '../Card';
-import { Loading } from '../Loading';
-import {
-  ExerciseType,
-  ExerciseData,
-  exerciseService
-} from '../../services/exercise';
-import {
-  PlayIcon,
-  PauseIcon,
-  StopIcon,
-  RefreshIcon,
-  FlagIcon
-} from '@heroicons/react/outline';
 
-interface Props {
+import { Card } from '../Card';
+import { ExerciseType, IExerciseData, exerciseService } from '../../services/exercise';
+import { Loading } from '../Loading';
+import { PlayIcon, PauseIcon, StopIcon, RefreshIcon, FlagIcon } from '@heroicons/react/outline';
+import { useTranslation } from 'react-i18next';
+
+interface IProps {
   /** 运动类型 */
   exerciseType: ExerciseType;
   /** 运动数据回调 */
-  onDataUpdate?: (data: ExerciseData) => void;
+  onDataUpdate?: (data: IExerciseData) => void;
   /** 运动结束回调 */
-  onComplete?: (data: ExerciseData) => void;
+  onComplete?: (data: IExerciseData) => void;
   /** 错误回调 */
   onError?: (error: Error) => void;
 }
 
 /** 运动状态 */
-type TrackingStatus = 'notStarted' | 'inProgress' | 'paused' | 'completed';
+type TrackingStatusType = 'notStarted' | 'inProgress' | 'paused' | 'completed';
 
 /** 运动数据采集组件 */
-export const ExerciseTrackingComponent: React.FC<Props> = ({
+export const ExerciseTrackingComponent: React.FC<IProps> = ({
   exerciseType,
   onDataUpdate,
   onComplete,
-  onError
+  onError,
 }) => {
   const { t } = useTranslation();
-  const [status, setStatus] = useState<TrackingStatus>('notStarted');
-  const [exerciseData, setExerciseData] = useState<ExerciseData>();
+  const [status, setStatus] = useState<TrackingStatusType>('notStarted');
+  const [exerciseData, setExerciseData] = useState<IExerciseData>();
   const [error, setError] = useState<string>();
   const [startTime, setStartTime] = useState<Date>();
   const [elapsedTime, setElapsedTime] = useState(0);
@@ -94,14 +85,14 @@ export const ExerciseTrackingComponent: React.FC<Props> = ({
   const handleStop = async () => {
     try {
       setStatus('completed');
-      
+
       // 停止数据采集
       const deviceData = await stopDataCollection();
       if (exerciseData) {
         const finalData = {
           ...exerciseData,
           endTime: new Date(),
-          duration: Math.floor(elapsedTime / 60) // 转换为分钟
+          duration: Math.floor(elapsedTime / 60), // 转换为分钟
         };
         setExerciseData(finalData);
         onComplete?.(finalData);
@@ -145,9 +136,9 @@ export const ExerciseTrackingComponent: React.FC<Props> = ({
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
-    return `${hours.toString().padStart(2, '0')}:${minutes
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs
       .toString()
-      .padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+      .padStart(2, '0')}`;
   };
 
   /** 格式化配速 */
@@ -160,27 +151,17 @@ export const ExerciseTrackingComponent: React.FC<Props> = ({
   return (
     <Card className="p-6">
       {/* 错误提示 */}
-      {error && (
-        <div className="mb-4 p-4 bg-red-50 text-red-500 rounded-lg">
-          {error}
-        </div>
-      )}
+      {error && <div className="mb-4 p-4 bg-red-50 text-red-500 rounded-lg">{error}</div>}
 
       {/* 运动类型 */}
       <div className="mb-6">
-        <h3 className="text-lg font-medium mb-2">
-          {t(`exercise.types.${exerciseType}`)}
-        </h3>
-        <div className="text-sm text-gray-500">
-          {t('exercise.tips.beforeExercise')}
-        </div>
+        <h3 className="text-lg font-medium mb-2">{t(`exercise.types.${exerciseType}`)}</h3>
+        <div className="text-sm text-gray-500">{t('exercise.tips.beforeExercise')}</div>
       </div>
 
       {/* 计时器 */}
       <div className="mb-8 text-center">
-        <div className="text-4xl font-bold font-mono">
-          {formatTime(elapsedTime)}
-        </div>
+        <div className="text-4xl font-bold font-mono">{formatTime(elapsedTime)}</div>
       </div>
 
       {/* 实时数据 */}
@@ -190,14 +171,10 @@ export const ExerciseTrackingComponent: React.FC<Props> = ({
             {/* 心率 */}
             {exerciseData.heartRate && (
               <div className="p-4 bg-gray-50 rounded-lg">
-                <div className="text-sm text-gray-500 mb-1">
-                  {t('exercise.metrics.heartRate')}
-                </div>
+                <div className="text-sm text-gray-500 mb-1">{t('exercise.metrics.heartRate')}</div>
                 <div className="text-2xl font-bold">
                   {exerciseData.heartRate.average}
-                  <span className="text-sm font-normal ml-1">
-                    {t('exercise.units.bpm')}
-                  </span>
+                  <span className="text-sm font-normal ml-1">{t('exercise.units.bpm')}</span>
                 </div>
               </div>
             )}
@@ -205,14 +182,10 @@ export const ExerciseTrackingComponent: React.FC<Props> = ({
             {/* 配速 */}
             {exerciseData.pace && (
               <div className="p-4 bg-gray-50 rounded-lg">
-                <div className="text-sm text-gray-500 mb-1">
-                  {t('exercise.metrics.pace')}
-                </div>
+                <div className="text-sm text-gray-500 mb-1">{t('exercise.metrics.pace')}</div>
                 <div className="text-2xl font-bold">
                   {formatPace(exerciseData.pace.average)}
-                  <span className="text-sm font-normal ml-1">
-                    {t('exercise.units.minKm')}
-                  </span>
+                  <span className="text-sm font-normal ml-1">{t('exercise.units.minKm')}</span>
                 </div>
               </div>
             )}
@@ -220,14 +193,10 @@ export const ExerciseTrackingComponent: React.FC<Props> = ({
             {/* 距离 */}
             {exerciseData.distance && (
               <div className="p-4 bg-gray-50 rounded-lg">
-                <div className="text-sm text-gray-500 mb-1">
-                  {t('exercise.metrics.distance')}
-                </div>
+                <div className="text-sm text-gray-500 mb-1">{t('exercise.metrics.distance')}</div>
                 <div className="text-2xl font-bold">
                   {(exerciseData.distance / 1000).toFixed(2)}
-                  <span className="text-sm font-normal ml-1">
-                    {t('exercise.units.kilometers')}
-                  </span>
+                  <span className="text-sm font-normal ml-1">{t('exercise.units.kilometers')}</span>
                 </div>
               </div>
             )}
@@ -239,9 +208,7 @@ export const ExerciseTrackingComponent: React.FC<Props> = ({
               </div>
               <div className="text-2xl font-bold">
                 {exerciseData.caloriesBurned}
-                <span className="text-sm font-normal ml-1">
-                  {t('exercise.units.kcal')}
-                </span>
+                <span className="text-sm font-normal ml-1">{t('exercise.units.kcal')}</span>
               </div>
             </div>
           </div>
@@ -251,15 +218,10 @@ export const ExerciseTrackingComponent: React.FC<Props> = ({
       {/* 计圈记录 */}
       {laps.length > 0 && (
         <div className="mb-8">
-          <h4 className="text-sm font-medium text-gray-500 mb-2">
-            {t('exercise.tracking.lap')}
-          </h4>
+          <h4 className="text-sm font-medium text-gray-500 mb-2">{t('exercise.tracking.lap')}</h4>
           <div className="space-y-2">
             {laps.map((lapTime, index) => (
-              <div
-                key={index}
-                className="flex items-center justify-between p-2 bg-gray-50 rounded"
-              >
+              <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded">
                 <div>Lap {index + 1}</div>
                 <div className="font-mono">{formatTime(lapTime)}</div>
               </div>
@@ -346,4 +308,4 @@ export const ExerciseTrackingComponent: React.FC<Props> = ({
   );
 };
 
-export default ExerciseTrackingComponent; 
+export default ExerciseTrackingComponent;

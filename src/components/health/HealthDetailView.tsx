@@ -1,19 +1,24 @@
 import React, { useState, useEffect } from 'react';
+
 import { Card, Box, Typography, Tabs, Tab, IconButton } from '@mui/material';
 import { Share, Favorite, Timeline, Assessment } from '@mui/icons-material';
 
-interface HealthDetailProps {
-  data: HealthData;
-  metrics: HealthMetric[];
-  timeRange: string;
-  onShare?: (data: HealthData) => void;
+interface IHealthDetailProps {
+  /** data 的描述 */
+    data: HealthData;
+  /** metrics 的描述 */
+    metrics: HealthMetric;
+  /** timeRange 的描述 */
+    timeRange: string;
+  /** onShare 的描述 */
+    onShare: data: HealthData  void;
 }
 
-export const HealthDetailView: React.FC<HealthDetailProps> = ({
+export const HealthDetailView: React.FC<IHealthDetailProps> = ({
   data,
   metrics,
   timeRange,
-  onShare
+  onShare,
 }) => {
   const [activeTab, setActiveTab] = useState(0);
   const [detailData, setDetailData] = useState<DetailedHealthData | null>(null);
@@ -30,7 +35,7 @@ export const HealthDetailView: React.FC<HealthDetailProps> = ({
   return (
     <Card className="health-detail-view">
       <Box className="detail-header">
-        <Typography variant="h6">{data.title}</Typography>
+        <Typography variant="h6">{datatitle}</Typography>
         <Box className="header-actions">
           <IconButton onClick={() => onShare?.(data)}>
             <Share />
@@ -41,30 +46,17 @@ export const HealthDetailView: React.FC<HealthDetailProps> = ({
         </Box>
       </Box>
 
-      <Tabs 
-        value={activeTab} 
-        onChange={(_, value) => setActiveTab(value)}
-        className="detail-tabs"
-      >
+      <Tabs value={activeTab} onChange={(_, value) => setActiveTab(value)} className="detail-tabs">
         <Tab label="概览" icon={<Assessment />} />
         <Tab label="趋势" icon={<Timeline />} />
         <Tab label="分析" icon={<Assessment />} />
       </Tabs>
 
       <Box className="detail-content">
-        {activeTab === 0 && (
-          <OverviewPanel data={detailData?.overview} />
-        )}
-        {activeTab === 1 && (
-          <TrendPanel 
-            data={detailData?.trends} 
-            timeRange={timeRange} 
-          />
-        )}
-        {activeTab === 2 && (
-          <AnalysisPanel analysis={detailData?.analysis} />
-        )}
+        {activeTab === 0 && <OverviewPanel data={detailData?.overview} />}
+        {activeTab === 1 && <TrendPanel data={detailData?.trends} timeRange={timeRange} />}
+        {activeTab === 2 && <AnalysisPanel analysis={detailData?.analysis} />}
       </Box>
     </Card>
   );
-}; 
+};

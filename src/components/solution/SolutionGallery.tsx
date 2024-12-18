@@ -1,20 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Grid, 
-  Card, 
-  Box, 
-  Typography, 
+
+import {
+  Grid,
+  Card,
+  Box,
+  Typography,
   TextField,
   InputAdornment,
   Chip,
-  Rating 
+  Rating,
 } from '@mui/material';
+import { ISolution } from '../../types/solution';
+import { ISolutionScore, ISearchScore } from '../../types/ranking';
 import { Search } from '@mui/icons-material';
-import { Solution } from '../../types/solution';
-import { SolutionScore, SearchScore } from '../../types/ranking';
 
-interface SolutionGalleryProps {
-  solutions: (Solution & { score: SolutionScore })[];
+interface
+ SolutionGalleryProps {
+  solutions: Solution  { score: SolutionScore })[];
   onSearch: (keyword: string) => Promise<void>;
   onSortChange: (type: string) => void;
 }
@@ -22,7 +24,7 @@ interface SolutionGalleryProps {
 export const SolutionGallery: React.FC<SolutionGalleryProps> = ({
   solutions,
   onSearch,
-  onSortChange
+  onSortChange,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortType, setSortType] = useState('score');
@@ -55,20 +57,20 @@ export const SolutionGallery: React.FC<SolutionGalleryProps> = ({
             ),
           }}
         />
-        
+
         <Box className="sort-options">
-          <Chip 
-            label="综合排序" 
+          <Chip
+            label="综合排序"
             onClick={() => handleSortChange('score')}
             color={sortType === 'score' ? 'primary' : 'default'}
           />
-          <Chip 
-            label="最新" 
+          <Chip
+            label="最新"
             onClick={() => handleSortChange('date')}
             color={sortType === 'date' ? 'primary' : 'default'}
           />
-          <Chip 
-            label="最热" 
+          <Chip
+            label="最热"
             onClick={() => handleSortChange('popularity')}
             color={sortType === 'popularity' ? 'primary' : 'default'}
           />
@@ -87,7 +89,7 @@ export const SolutionGallery: React.FC<SolutionGalleryProps> = ({
 };
 
 const SolutionCard: React.FC<{
-  solution: Solution & { score: SolutionScore }
+  solution: ISolution & { score: ISolutionScore };
 }> = ({ solution }) => {
   return (
     <Card className="solution-card">
@@ -95,18 +97,16 @@ const SolutionCard: React.FC<{
         <img src={solution.coverImage} alt={solution.title} />
         <Box className="card-stats">
           <Rating value={solution.stats.rating} readOnly size="small" />
-          <Typography variant="caption">
-            {solution.stats.views} 浏览
-          </Typography>
+          <Typography variant="caption">{solutionstatsviews} </Typography>
         </Box>
       </Box>
-      
+
       <Box className="card-content">
-        <Typography variant="h6">{solution.title}</Typography>
+        <Typography variant="h6">{solutiontitle}</Typography>
         <Typography variant="body2" color="textSecondary">
-          {solution.description}
+          {solutiondescription}
         </Typography>
-        
+
         <Box className="card-footer">
           <Box className="tags">
             {solution.tags.map(tag => (
@@ -114,10 +114,10 @@ const SolutionCard: React.FC<{
             ))}
           </Box>
           <Typography variant="caption" color="primary">
-            得分: {solution.score.finalScore.toFixed(1)}
+             {solutionscorefinalScoretoFixed1}
           </Typography>
         </Box>
       </Box>
     </Card>
   );
-}; 
+};

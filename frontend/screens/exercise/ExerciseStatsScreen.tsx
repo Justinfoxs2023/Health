@@ -1,28 +1,33 @@
 import React from 'react';
-import { View, ScrollView, StyleSheet, Text, TouchableOpacity } from 'react-native';
-import { useQuery } from '@tanstack/react-query';
-import { getExerciseStats } from '../../api/exercise';
-import { LoadingSpinner, Icon, LineChart, BarChart } from '../../components';
 
-interface ExerciseStats {
+import { LoadingSpinner, Icon, LineChart, BarChart } from '../../components';
+import { View, ScrollView, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { getExerciseStats } from '../../api/exercise';
+import { useQuery } from '@tanstack/react-query';
+
+interface IExerciseStats {
+  /** weeklyStats 的描述 */
   weeklyStats: {
     date: string;
     duration: number;
     calories: number;
     completedExercises: number;
   }[];
+  /** monthlyStats 的描述 */
   monthlyStats: {
     month: string;
     totalDuration: number;
     totalCalories: number;
     completedDays: number;
   }[];
+  /** exerciseTypeStats 的描述 */
   exerciseTypeStats: {
     type: string;
     duration: number;
     calories: number;
     count: number;
   }[];
+  /** achievements 的描述 */
   achievements: {
     id: string;
     title: string;
@@ -36,20 +41,20 @@ interface ExerciseStats {
 
 export const ExerciseStatsScreen = () => {
   const [timeRange, setTimeRange] = React.useState<'week' | 'month'>('week');
-  const { data: stats, isLoading } = useQuery<ExerciseStats>('exerciseStats', getExerciseStats);
+  const { data: stats, isLoading } = useQuery<IExerciseStats>('exerciseStats', getExerciseStats);
 
   if (isLoading) return <LoadingSpinner />;
 
   const weeklyData = stats?.weeklyStats.map(day => ({
     date: new Date(day.date).toLocaleDateString('zh-CN', { weekday: 'short' }),
     calories: day.calories,
-    duration: Math.round(day.duration / 60) // 转换为小时
+    duration: Math.round(day.duration / 60), // 转换为小时
   }));
 
   const monthlyData = stats?.monthlyStats.map(month => ({
     month: month.month,
     calories: month.totalCalories,
-    duration: Math.round(month.totalDuration / 60)
+    duration: Math.round(month.totalDuration / 60),
   }));
 
   return (
@@ -114,7 +119,7 @@ export const ExerciseStatsScreen = () => {
           xKey={timeRange === 'week' ? 'date' : 'month'}
           lines={[
             { key: 'calories', color: '#2E7D32', label: '卡路里' },
-            { key: 'duration', color: '#1976D2', label: '时长' }
+            { key: 'duration', color: '#1976D2', label: '时长' },
           ]}
         />
       </View>
@@ -126,7 +131,7 @@ export const ExerciseStatsScreen = () => {
           data={stats?.exerciseTypeStats.map(type => ({
             label: type.type,
             value: type.duration,
-            calories: type.calories
+            calories: type.calories,
           }))}
           height={200}
           barColor="#2E7D32"
@@ -136,26 +141,25 @@ export const ExerciseStatsScreen = () => {
       {/* 成就系统 */}
       <View style={styles.achievementsSection}>
         <Text style={styles.sectionTitle}>运动成就</Text>
-        {stats?.achievements.map((achievement) => (
+        {stats?.achievements.map(achievement => (
           <View key={achievement.id} style={styles.achievementCard}>
             <View style={styles.achievementHeader}>
               <Text style={styles.achievementTitle}>{achievement.title}</Text>
-              {achievement.achieved && (
-                <Icon name="award" size={20} color="#FFA000" />
-              )}
+              {achievement.achieved && <Icon name="award" size={20} color="#FFA000" />}
             </View>
             <Text style={styles.achievementDesc}>{achievement.description}</Text>
             <View style={styles.progressBar}>
               <View
                 style={[
                   styles.progressFill,
-                  { width: `${(achievement.progress / achievement.target) * 100}%` }
+                  { width: `${(achievement.progress / achievement.target) * 100}%` },
                 ]}
               />
             </View>
             <Text style={styles.progressText}>
               {achievement.progress}/{achievement.target}
-              {achievement.achieved && ` · ${new Date(achievement.achievedAt || '').toLocaleDateString()}`}
+              {achievement.achieved &&
+                ` · ${new Date(achievement.achievedAt || '').toLocaleDateString()}`}
             </Text>
           </View>
         ))}
@@ -167,101 +171,101 @@ export const ExerciseStatsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   timeRangeSelector: {
     flexDirection: 'row',
     padding: 15,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   timeRangeButton: {
     flex: 1,
     paddingVertical: 8,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   activeTimeRange: {
     borderBottomWidth: 2,
-    borderBottomColor: '#2E7D32'
+    borderBottomColor: '#2E7D32',
   },
   timeRangeText: {
     fontSize: 16,
-    color: '#666'
+    color: '#666',
   },
   activeTimeRangeText: {
     color: '#2E7D32',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   statsOverview: {
     flexDirection: 'row',
     padding: 15,
     backgroundColor: '#fff',
-    marginTop: 10
+    marginTop: 10,
   },
   statCard: {
     flex: 1,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   statValue: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#333',
-    marginVertical: 5
+    marginVertical: 5,
   },
   statLabel: {
     fontSize: 12,
-    color: '#666'
+    color: '#666',
   },
   chartSection: {
     backgroundColor: '#fff',
     marginTop: 10,
-    padding: 15
+    padding: 15,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 15
+    marginBottom: 15,
   },
   achievementsSection: {
     backgroundColor: '#fff',
     marginTop: 10,
-    padding: 15
+    padding: 15,
   },
   achievementCard: {
     backgroundColor: '#f5f5f5',
     borderRadius: 8,
     padding: 15,
-    marginBottom: 10
+    marginBottom: 10,
   },
   achievementHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 5
+    marginBottom: 5,
   },
   achievementTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333'
+    color: '#333',
   },
   achievementDesc: {
     fontSize: 14,
     color: '#666',
-    marginBottom: 10
+    marginBottom: 10,
   },
   progressBar: {
     height: 4,
     backgroundColor: '#E0E0E0',
     borderRadius: 2,
-    marginBottom: 5
+    marginBottom: 5,
   },
   progressFill: {
     height: '100%',
     backgroundColor: '#2E7D32',
-    borderRadius: 2
+    borderRadius: 2,
   },
   progressText: {
     fontSize: 12,
-    color: '#666'
-  }
-}); 
+    color: '#666',
+  },
+});

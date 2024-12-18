@@ -1,5 +1,5 @@
+import { IProductReview, IHealthProductReview } from '../types';
 import { Injectable } from '@nestjs/common';
-import { ProductReview, HealthProductReview } from '../types';
 
 @Injectable()
 export class ReviewService {
@@ -12,22 +12,22 @@ export class ReviewService {
     content: string;
     images?: string[];
     tags?: string[];
-  }): Promise<ProductReview> {
+  }): Promise<IProductReview> {
     // 1. 验证订单
     await this.validateOrder(params.orderId);
-    
+
     // 2. 创建评价
-    const review: ProductReview = {
+    const review: IProductReview = {
       id: this.generateReviewId(),
       ...params,
       likes: 0,
       createdAt: new Date(),
-      verifiedPurchase: true
+      verifiedPurchase: true,
     };
 
     // 3. 保存评价
     await this.saveReview(review);
-    
+
     // 4. 更新商品评分
     await this.updateProductRating(params.productId);
 
@@ -49,8 +49,8 @@ export class ReviewService {
       review: string;
       recommendation: 'recommended' | 'neutral' | 'not_recommended';
     };
-  }): Promise<HealthProductReview> {
+  }): Promise<IHealthProductReview> {
     // 实现健康商品评价逻辑
     return null;
   }
-} 
+}

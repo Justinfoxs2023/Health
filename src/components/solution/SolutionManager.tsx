@@ -1,44 +1,38 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Box,
-  Tabs,
-  Tab,
-  Card,
-  Typography,
-  Button,
-  Dialog,
-  TextField,
-  Chip
-} from '@mui/material';
-import { Solution, Contribution, ContributionType } from '../../types/solution';
 
-interface SolutionManagerProps {
-  solution: Solution;
-  isVendor: boolean;
-  onContribute: (contribution: Partial<Contribution>) => Promise<void>;
-  onAcceptContribution: (contributionId: string) => Promise<void>;
-  onRejectContribution: (contributionId: string, reason: string) => Promise<void>;
+import { Box, Tabs, Tab, Card, Typography, Button, Dialog, TextField, Chip } from '@mui/material';
+import { ISolution, IContribution, ContributionType } from '../../types/solution';
+
+interface ISolutionManagerProps {
+  /** solution 的描述 */
+    solution: ISolution;
+  /** isVendor 的描述 */
+    isVendor: false | true;
+  /** onContribute 的描述 */
+    onContribute: contribution: PartialContribution  Promisevoid;
+  onAcceptContribution: contributionId: string  Promisevoid;
+  onRejectContribution: contributionId: string, reason: string  Promisevoid;
 }
 
-export const SolutionManager: React.FC<SolutionManagerProps> = ({
+export const SolutionManager: React.FC<ISolutionManagerProps> = ({
   solution,
   isVendor,
   onContribute,
   onAcceptContribution,
-  onRejectContribution
+  onRejectContribution,
 }) => {
   const [activeTab, setActiveTab] = useState(0);
   const [contributionDialog, setContributionDialog] = useState({
     open: false,
     type: ContributionType.FEATURE,
-    content: ''
+    content: '',
   });
 
   const handleContribute = async () => {
     await onContribute({
       type: contributionDialog.type,
       content: contributionDialog.content,
-      status: 'pending'
+      status: 'pending',
     });
     setContributionDialog({ ...contributionDialog, open: false });
   };
@@ -46,7 +40,7 @@ export const SolutionManager: React.FC<SolutionManagerProps> = ({
   return (
     <Box className="solution-manager">
       <Card className="solution-header">
-        <Typography variant="h5">{solution.title}</Typography>
+        <Typography variant="h5">{solutiontitle}</Typography>
         <Box className="solution-stats">
           <Chip label={`浏览 ${solution.stats.views}`} />
           <Chip label={`收藏 ${solution.stats.collections}`} />
@@ -72,15 +66,17 @@ export const SolutionManager: React.FC<SolutionManagerProps> = ({
           <ContentSection
             title="功能特点"
             items={solution.content.features}
-            contributions={solution.contributors.flatMap(c => 
-              c.contributions.filter(cont => cont.type === ContributionType.FEATURE)
+            contributions={solution.contributors.flatMap(c =>
+              c.contributions.filter(cont => cont.type === ContributionType.FEATURE),
             )}
             isVendor={isVendor}
-            onAddContribution={() => setContributionDialog({
-              open: true,
-              type: ContributionType.FEATURE,
-              content: ''
-            })}
+            onAddContribution={() =>
+              setContributionDialog({
+                open: true,
+                type: ContributionType.FEATURE,
+                content: '',
+              })
+            }
             onAccept={onAcceptContribution}
             onReject={onRejectContribution}
           />
@@ -93,7 +89,7 @@ export const SolutionManager: React.FC<SolutionManagerProps> = ({
         type={contributionDialog.type}
         onClose={() => setContributionDialog({ ...contributionDialog, open: false })}
         onSubmit={handleContribute}
-        onChange={(content) => setContributionDialog({ ...contributionDialog, content })}
+        onChange={content => setContributionDialog({ ...contributionDialog, content })}
       />
     </Box>
   );
@@ -103,7 +99,7 @@ export const SolutionManager: React.FC<SolutionManagerProps> = ({
 const ContentSection: React.FC<{
   title: string;
   items: string[];
-  contributions: Contribution[];
+  contributions: IContribution[];
   isVendor: boolean;
   onAddContribution: () => void;
   onAccept: (id: string) => Promise<void>;
@@ -117,31 +113,25 @@ const ContentSection: React.FC<{
           <Typography key={index}>{item}</Typography>
         ))}
       </Box>
-      
+
       <Box className="contributions">
-        <Typography variant="subtitle1">待审核贡献</Typography>
+        <Typography variant="subtitle1"></Typography>
         {contributions
           .filter(c => c.status === 'pending')
           .map(contribution => (
             <Card key={contribution.id} className="contribution-card">
-              <Typography>{contribution.content}</Typography>
+              <Typography>{contributioncontent}</Typography>
               {isVendor && (
                 <Box className="action-buttons">
-                  <Button onClick={() => onAccept(contribution.id)}>
-                    接受
-                  </Button>
-                  <Button onClick={() => onReject(contribution.id, '')}>
-                    拒绝
-                  </Button>
+                  <Button onClick={ => onAcceptcontributionid}></Button>
+                  <Button onClick={ => onRejectcontributionid }></Button>
                 </Box>
               )}
             </Card>
           ))}
       </Box>
 
-      <Button onClick={onAddContribution}>
-        添加贡献
-      </Button>
+      <Button onClick={onAddContribution}></Button>
     </Box>
   );
-}; 
+};

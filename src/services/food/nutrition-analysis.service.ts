@@ -1,5 +1,5 @@
+import { INutritionInfo, IFood } from '../../types/food';
 import { Logger } from '../../utils/logger';
-import { NutritionInfo, Food } from '../../types/food';
 import { UserProfile } from '../../types/user';
 
 export class NutritionAnalysisService {
@@ -11,25 +11,25 @@ export class NutritionAnalysisService {
 
   // 分析营养平衡
   async analyzeNutritionBalance(
-    intake: NutritionInfo,
-    userProfile: UserProfile
+    intake: INutritionInfo,
+    userProfile: UserProfile,
   ): Promise<NutritionBalance> {
     try {
       // 1. 计算需求
       const requirements = this.calculateRequirements(userProfile);
-      
+
       // 2. 比较摄入
       const comparison = this.compareWithRequirements(intake, requirements);
-      
+
       // 3. 评分营养
       const scores = this.scoreNutrition(comparison);
-      
+
       // 4. 生成建议
       return {
         scores,
         deficiencies: this.identifyDeficiencies(comparison),
         excesses: this.identifyExcesses(comparison),
-        recommendations: await this.generateRecommendations(comparison)
+        recommendations: await this.generateRecommendations(comparison),
       };
     } catch (error) {
       this.logger.error('营养平衡分析失败', error);
@@ -38,10 +38,7 @@ export class NutritionAnalysisService {
   }
 
   // 计算营养摄��
-  async calculateNutritionIntake(
-    foods: Food[],
-    portions: number[]
-  ): Promise<NutritionInfo> {
+  async calculateNutritionIntake(foods: IFood[], portions: number[]): Promise<INutritionInfo> {
     try {
       return foods.reduce((total, food, index) => {
         const portion = portions[index];
@@ -52,4 +49,4 @@ export class NutritionAnalysisService {
       throw error;
     }
   }
-} 
+}

@@ -1,7 +1,8 @@
+import { AIService } from '../ai/AIService';
+import { Expert } from '../models/ExpertTypes';
+
 import { Logger } from '@/utils/Logger';
 import { MatchingError } from '@/utils/errors';
-import { Expert } from '../models/ExpertTypes';
-import { AIService } from '../ai/AIService';
 
 export class ExpertMatchingService {
   private logger: Logger;
@@ -21,10 +22,7 @@ export class ExpertMatchingService {
       const availableExperts = await this.getAvailableExperts();
 
       // 2. 计算匹配分数
-      const expertScores = await this.calculateMatchingScores(
-        availableExperts,
-        questionType
-      );
+      const expertScores = await this.calculateMatchingScores(availableExperts, questionType);
 
       // 3. 选择最佳匹配
       const bestMatch = this.selectBestMatch(expertScores);
@@ -46,10 +44,10 @@ export class ExpertMatchingService {
     try {
       // 使用AI分析问题类型
       const analysis = await this.ai.analyzeText(question);
-      
+
       // 提取关键词和主题
       const keywords = await this.extractKeywords(question);
-      
+
       // 确定问题类别
       return this.determineQuestionCategory(analysis, keywords);
     } catch (error) {
@@ -85,18 +83,15 @@ export class ExpertMatchingService {
     return [];
   }
 
-  private async calculateMatchingScores(
-    experts: Expert[],
-    questionType: string
-  ): Promise<any[]> {
+  private async calculateMatchingScores(experts: Expert[], questionType: string): Promise<any[]> {
     return Promise.all(
       experts.map(async expert => {
         const score = await this.calculateExpertScore(expert, questionType);
         return {
           expert,
-          score
+          score,
         };
-      })
+      }),
     );
   }
 
@@ -119,4 +114,4 @@ export class ExpertMatchingService {
     // 实现问题类别判断逻辑
     return '';
   }
-} 
+}

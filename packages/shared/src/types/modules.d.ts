@@ -1,17 +1,14 @@
+/**
+ * @fileoverview TS 文件 modules.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // Material UI 相关模块声明
 declare module '@mui/material' {
-  export { 
-    Box,
-    Card,
-    Grid,
-    Typography,
-    Button,
-    Chip,
-    Dialog,
-    DialogTitle,
-    DialogContent
-  };
-  
+  export { Box, Card, Grid, Typography, Button, Chip, Dialog, DialogTitle, DialogContent };
+
   export interface BoxProps {
     className?: string;
     children?: React.ReactNode;
@@ -125,4 +122,4 @@ declare namespace Services {
     claimReward(rewardId: string): Promise<void>;
     checkEligibility(userId: string, rewardId: string): Promise<boolean>;
   }
-} 
+}

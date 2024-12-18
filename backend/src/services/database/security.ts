@@ -1,5 +1,5 @@
-import mongoose from 'mongoose';
 import crypto from 'crypto';
+import mongoose from 'mongoose';
 import { logger } from '../logger';
 
 class DatabaseSecurityService {
@@ -10,13 +10,13 @@ class DatabaseSecurityService {
     try {
       // 配置数据库角色和权限
       await this.configureRoles();
-      
+
       // 配置数据库加密
       await this.configureEncryption();
-      
+
       // 配置审计日志
       await this.configureAuditLogging();
-      
+
       logger.info('数据库安全配置完成');
     } catch (error) {
       logger.error('数据库安全配置失败:', error);
@@ -29,38 +29,43 @@ class DatabaseSecurityService {
    */
   private async configureRoles() {
     const db = mongoose.connection.db;
-    
+
     try {
       // 创建只读角色
       await db.command({
         createRole: 'readOnlyRole',
-        privileges: [{
-          resource: { db: 'health_management', collection: '' },
-          actions: ['find']
-        }],
-        roles: []
+        privileges: [
+          {
+            resource: { db: 'health_management', collection: '' },
+            actions: ['find'],
+          },
+        ],
+        roles: [],
       });
 
       // 创建读写角色
       await db.command({
         createRole: 'readWriteRole',
-        privileges: [{
-          resource: { db: 'health_management', collection: '' },
-          actions: ['find', 'insert', 'update', 'remove']
-        }],
-        roles: []
+        privileges: [
+          {
+            resource: { db: 'health_management', collection: '' },
+            actions: ['find', 'insert', 'update', 'remove'],
+          },
+        ],
+        roles: [],
       });
 
       // 创建管理员���色
       await db.command({
         createRole: 'adminRole',
-        privileges: [{
-          resource: { db: 'health_management', collection: '' },
-          actions: ['find', 'insert', 'update', 'remove', 'createIndex', 'dropIndex']
-        }],
-        roles: []
+        privileges: [
+          {
+            resource: { db: 'health_management', collection: '' },
+            actions: ['find', 'insert', 'update', 'remove', 'createIndex', 'dropIndex'],
+          },
+        ],
+        roles: [],
       });
-
     } catch (error) {
       logger.error('角色配置失败:', error);
       throw error;
@@ -75,14 +80,13 @@ class DatabaseSecurityService {
       // 检查是否启用了加密
       const adminDb = mongoose.connection.db.admin();
       const serverStatus = await adminDb.serverStatus();
-      
+
       if (!serverStatus.security || !serverStatus.security.SSLServerHasCertificateAuthority) {
         logger.warn('数据库SSL/TLS未配置');
       }
 
       // 配置字段级加密
       await this.configureFieldLevelEncryption();
-
     } catch (error) {
       logger.error('加密配置失败:', error);
       throw error;
@@ -100,25 +104,25 @@ class DatabaseSecurityService {
 
     // 创建加密密钥
     const key = crypto.createHash('sha256').update(encryptionKey).digest();
-    
+
     // 配置加密选项
     const encryptionOptions = {
       keyId: 'main',
       key,
-      algorithm: 'aes-256-cbc'
+      algorithm: 'aes-256-cbc',
     };
 
     // 存储加密配置
     await mongoose.connection.db.collection('encryption_keys').updateOne(
       { _id: 'main' },
-      { 
-        $set: { 
+      {
+        $set: {
           key: encryptionKey,
           createdAt: new Date(),
-          algorithm: encryptionOptions.algorithm
-        }
+          algorithm: encryptionOptions.algorithm,
+        },
       },
-      { upsert: true }
+      { upsert: true },
     );
   }
 
@@ -130,16 +134,15 @@ class DatabaseSecurityService {
       // 启用审计日志
       await mongoose.connection.db.command({
         setParameter: 1,
-        auditAuthorizationSuccess: true
+        auditAuthorizationSuccess: true,
       });
 
       // 创建审计日志集合
       await mongoose.connection.db.createCollection('audit_log', {
         capped: true,
         size: 5242880, // 5MB
-        max: 5000
+        max: 5000,
       });
-
     } catch (error) {
       logger.error('审计日志配置失败:', error);
       throw error;
@@ -157,11 +160,7 @@ class DatabaseSecurityService {
       }
 
       const iv = crypto.randomBytes(16);
-      const cipher = crypto.createCipheriv(
-        'aes-256-cbc',
-        Buffer.from(encryptionKey, 'hex'),
-        iv
-      );
+      const cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(encryptionKey, 'hex'), iv);
 
       let encrypted = cipher.update(data, 'utf8', 'hex');
       encrypted += cipher.final('hex');
@@ -188,7 +187,7 @@ class DatabaseSecurityService {
       const decipher = crypto.createDecipheriv(
         'aes-256-cbc',
         Buffer.from(encryptionKey, 'hex'),
-        iv
+        iv,
       );
 
       let decrypted = decipher.update(encrypted, 'hex', 'utf8');
@@ -204,18 +203,13 @@ class DatabaseSecurityService {
   /**
    * 审计日志记录
    */
-  async logAuditEvent(event: {
-    userId: string;
-    action: string;
-    resource: string;
-    details?: any;
-  }) {
+  async logAuditEvent(event: { userId: string; action: string; resource: string; details?: any }) {
     try {
       await mongoose.connection.db.collection('audit_log').insertOne({
         ...event,
         timestamp: new Date(),
         ipAddress: this.getClientIp(),
-        userAgent: this.getUserAgent()
+        userAgent: this.getUserAgent(),
       });
     } catch (error) {
       logger.error('审计日志记录失败:', error);
@@ -246,13 +240,13 @@ class DatabaseSecurityService {
     try {
       const adminDb = mongoose.connection.db.admin();
       const serverStatus = await adminDb.serverStatus();
-      
+
       return {
         sslEnabled: serverStatus.security?.SSLServerHasCertificateAuthority || false,
         authEnabled: serverStatus.security?.authentication?.mechanisms?.length > 0,
         auditingEnabled: serverStatus.auditLog?.destination ? true : false,
         encryptionEnabled: process.env.DB_ENCRYPTION_KEY ? true : false,
-        rolesConfigured: await this.checkRolesExist()
+        rolesConfigured: await this.checkRolesExist(),
       };
     } catch (error) {
       logger.error('安全状态检查失败:', error);
@@ -267,13 +261,11 @@ class DatabaseSecurityService {
     try {
       const roles = await mongoose.connection.db.command({ rolesInfo: 1 });
       const requiredRoles = ['readOnlyRole', 'readWriteRole', 'adminRole'];
-      return requiredRoles.every(role => 
-        roles.roles.some((r: any) => r.role === role)
-      );
+      return requiredRoles.every(role => roles.roles.some((r: any) => r.role === role));
     } catch (error) {
       return false;
     }
   }
 }
 
-export const databaseSecurityService = new DatabaseSecurityService(); 
+export const databaseSecurityService = new DatabaseSecurityService();

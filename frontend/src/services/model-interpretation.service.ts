@@ -1,10 +1,14 @@
 import * as tf from '@tensorflow/tfjs';
-import { LocalDatabase } from '../utils/local-database';
+import { ILocalDatabase } from '../utils/local-database';
 
 interface InterpretationConfig {
+  /** methods 的描述 */
   methods: Array<'lime' | 'shap' | 'gradcam'>;
+  /** sampleSize 的描述 */
   sampleSize: number;
+  /** confidenceThreshold 的描述 */
   confidenceThreshold: number;
+  /** visualizationOptions 的描述 */
   visualizationOptions: {
     heatmapColors: string[];
     opacity: number;
@@ -13,7 +17,9 @@ interface InterpretationConfig {
 }
 
 interface InterpretationResult {
+  /** featureImportance 的描述 */
   featureImportance: Record<string, number>;
+  /** localExplanations 的描述 */
   localExplanations: Array<{
     input: any;
     prediction: any;
@@ -23,6 +29,7 @@ interface InterpretationResult {
       visualization: any;
     };
   }>;
+  /** globalInsights 的描述 */
   globalInsights: {
     modelBehavior: string[];
     biasAnalysis: any;
@@ -31,7 +38,7 @@ interface InterpretationResult {
 }
 
 export class ModelInterpretationService {
-  private db: LocalDatabase;
+  private db: ILocalDatabase;
   private model: tf.LayersModel | null = null;
   private config: InterpretationConfig;
 
@@ -44,8 +51,8 @@ export class ModelInterpretationService {
       visualizationOptions: {
         heatmapColors: ['#ff0000', '#00ff00', '#0000ff'],
         opacity: 0.7,
-        resolution: 100
-      }
+        resolution: 100,
+      },
     };
     this.initialize();
   }
@@ -58,14 +65,14 @@ export class ModelInterpretationService {
     try {
       this.model = await tf.loadLayersModel('/models/current/model.json');
     } catch (error) {
-      console.error('加载模型失败:', error);
+      console.error('Error in model-interpretation.service.ts:', '加载模型失败:', error);
     }
   }
 
   // 生成模型解释
   async interpretModel(
     input: tf.Tensor,
-    options?: Partial<InterpretationConfig>
+    options?: Partial<InterpretationConfig>,
   ): Promise<InterpretationResult> {
     if (!this.model) {
       throw new Error('模型未加载');
@@ -74,29 +81,23 @@ export class ModelInterpretationService {
     try {
       // 应用配置选项
       const config = { ...this.config, ...options };
-      
+
       // 生成局部解释
-      const localExplanations = await this.generateLocalExplanations(
-        input,
-        config
-      );
-      
+      const localExplanations = await this.generateLocalExplanations(input, config);
+
       // 生成全局洞察
       const globalInsights = await this.generateGlobalInsights(config);
-      
+
       // 计算特征重要性
-      const featureImportance = await this.calculateFeatureImportance(
-        input,
-        config
-      );
+      const featureImportance = await this.calculateFeatureImportance(input, config);
 
       return {
         featureImportance,
         localExplanations,
-        globalInsights
+        globalInsights,
       };
     } catch (error) {
-      console.error('生成模型解释失败:', error);
+      console.error('Error in model-interpretation.service.ts:', '生成模型解释失败:', error);
       throw error;
     }
   }
@@ -104,16 +105,18 @@ export class ModelInterpretationService {
   // 生成局部解释
   private async generateLocalExplanations(
     input: tf.Tensor,
-    config: InterpretationConfig
-  ): Promise<Array<{
-    input: any;
-    prediction: any;
-    explanation: {
-      features: string[];
-      weights: number[];
-      visualization: any;
-    };
-  }>> {
+    config: InterpretationConfig,
+  ): Promise<
+    Array<{
+      input: any;
+      prediction: any;
+      explanation: {
+        features: string[];
+        weights: number[];
+        visualization: any;
+      };
+    }>
+  > {
     const explanations = [];
 
     for (const method of config.methods) {
@@ -142,8 +145,8 @@ export class ModelInterpretationService {
       explanation: {
         features: [],
         weights: [],
-        visualization: null
-      }
+        visualization: null,
+      },
     };
   }
 
@@ -156,8 +159,8 @@ export class ModelInterpretationService {
       explanation: {
         features: [],
         weights: [],
-        visualization: null
-      }
+        visualization: null,
+      },
     };
   }
 
@@ -170,39 +173,37 @@ export class ModelInterpretationService {
       explanation: {
         features: [],
         weights: [],
-        visualization: null
-      }
+        visualization: null,
+      },
     };
   }
 
   // 生成全局洞察
-  private async generateGlobalInsights(
-    config: InterpretationConfig
-  ): Promise<{
+  private async generateGlobalInsights(config: InterpretationConfig): Promise<{
     modelBehavior: string[];
     biasAnalysis: any;
     robustness: number;
   }> {
     // 分析模型行为
     const modelBehavior = await this.analyzeModelBehavior();
-    
+
     // 分析偏差
     const biasAnalysis = await this.analyzeBias();
-    
+
     // 评估鲁棒性
     const robustness = await this.evaluateRobustness();
 
     return {
       modelBehavior,
       biasAnalysis,
-      robustness
+      robustness,
     };
   }
 
   // 计算特征重要性
   private async calculateFeatureImportance(
     input: tf.Tensor,
-    config: InterpretationConfig
+    config: InterpretationConfig,
   ): Promise<Record<string, number>> {
     // 实现特征重要性计算
     return {};
@@ -229,7 +230,7 @@ export class ModelInterpretationService {
   // 生成可视化
   private async generateVisualization(
     explanation: any,
-    options: InterpretationConfig['visualizationOptions']
+    options: InterpretationConfig['visualizationOptions'],
   ): Promise<any> {
     // 实现可视化生成
     return null;
@@ -239,20 +240,18 @@ export class ModelInterpretationService {
   async updateConfig(config: Partial<InterpretationConfig>): Promise<void> {
     this.config = {
       ...this.config,
-      ...config
+      ...config,
     };
     await this.db.put('interpretation-config', this.config);
   }
 
   // 获取解释历史
   async getInterpretationHistory(): Promise<InterpretationResult[]> {
-    return await this.db.get('interpretation-history') || [];
+    return (await this.db.get('interpretation-history')) || [];
   }
 
   // 保存解释结果
-  private async saveInterpretationResult(
-    result: InterpretationResult
-  ): Promise<void> {
+  private async saveInterpretationResult(result: InterpretationResult): Promise<void> {
     const history = await this.getInterpretationHistory();
     history.push(result);
     await this.db.put('interpretation-history', history);
@@ -265,11 +264,11 @@ export class ModelInterpretationService {
     recommendations: string[];
   }> {
     const history = await this.getInterpretationHistory();
-    
+
     return {
       summary: this.generateSummary(history),
       details: this.generateDetails(history),
-      recommendations: this.generateRecommendations(history)
+      recommendations: this.generateRecommendations(history),
     };
   }
 
@@ -290,4 +289,4 @@ export class ModelInterpretationService {
     // 实现建议生成
     return [];
   }
-} 
+}

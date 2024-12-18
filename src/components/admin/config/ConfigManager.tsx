@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
+
 import {
   SystemConfig,
   FeatureConfig,
   IntegrationConfig,
   NotificationConfig,
   StorageConfig,
-  PerformanceConfig
+  PerformanceConfig,
 } from './components';
 import { useConfigManagement } from '../../../hooks/useConfigManagement';
 
-export const ConfigManager: React.FC = () => {
+export 
+const ConfigManager: React.FC = () => {
   const [activeTab, setActiveTab] = useState('system');
   const { config, updateConfig, loading } = useConfigManagement();
 
@@ -17,100 +19,96 @@ export const ConfigManager: React.FC = () => {
     try {
       await updateConfig(section, data);
     } catch (error) {
-      console.error('配置更新失败:', error);
+      console.error('Error in ConfigManager.tsx:', '配置更新失败:', error);
     }
   };
 
   return (
     <div className="config-manager">
       <div className="config-header">
-        <h2>系统配置</h2>
+        <h2></h2>
         <div className="config-actions">
-          <button onClick={() => handleConfigUpdate('all', config)}>
-            保存所有更改
-          </button>
-          <button onClick={() => window.location.reload()}>
-            重新加载配置
-          </button>
+          <button onClick={ => handleConfigUpdateall config}></button>
+          <button onClick={ => windowlocationreload}></button>
         </div>
       </div>
 
       <div className="config-nav">
-        <button 
-          className={activeTab === 'system' ? 'active' : ''}
-          onClick={() => setActiveTab('system')}
+        <button
+          className={activeTab === system  active  }
+          onClick={ => setActiveTabsystem}
         >
-          系统设置
+          
         </button>
-        <button 
-          className={activeTab === 'features' ? 'active' : ''}
-          onClick={() => setActiveTab('features')}
+        <button
+          className={activeTab === features  active  }
+          onClick={ => setActiveTabfeatures}
         >
-          功能配置
+          
         </button>
-        <button 
-          className={activeTab === 'integrations' ? 'active' : ''}
-          onClick={() => setActiveTab('integrations')}
+        <button
+          className={activeTab === integrations  active  }
+          onClick={ => setActiveTabintegrations}
         >
-          集成配置
+          
         </button>
-        <button 
-          className={activeTab === 'notifications' ? 'active' : ''}
-          onClick={() => setActiveTab('notifications')}
+        <button
+          className={activeTab === notifications  active  }
+          onClick={ => setActiveTabnotifications}
         >
-          通知配置
+          
         </button>
-        <button 
-          className={activeTab === 'storage' ? 'active' : ''}
-          onClick={() => setActiveTab('storage')}
+        <button
+          className={activeTab === storage  active  }
+          onClick={ => setActiveTabstorage}
         >
-          存储配置
+          
         </button>
-        <button 
-          className={activeTab === 'performance' ? 'active' : ''}
-          onClick={() => setActiveTab('performance')}
+        <button
+          className={activeTab === performance  active  }
+          onClick={ => setActiveTabperformance}
         >
-          性能配置
+          
         </button>
       </div>
 
       <div className="config-content">
         {loading ? (
-          <div>加载中...</div>
+          <div></div>
         ) : (
           <>
             {activeTab === 'system' && (
-              <SystemConfig 
+              <SystemConfig
                 config={config.system}
                 onChange={data => handleConfigUpdate('system', data)}
               />
             )}
             {activeTab === 'features' && (
-              <FeatureConfig 
+              <FeatureConfig
                 config={config.features}
                 onChange={data => handleConfigUpdate('features', data)}
               />
             )}
             {activeTab === 'integrations' && (
-              <IntegrationConfig 
+              <IntegrationConfig
                 config={config.integrations}
                 onChange={data => handleConfigUpdate('integrations', data)}
               />
             )}
             {activeTab === 'notifications' && (
-              <NotificationConfig 
+              <NotificationConfig
                 config={config.notifications}
                 onChange={data => handleConfigUpdate('notifications', data)}
               />
             )}
             {activeTab === 'storage' && (
-              <StorageConfig 
+              <StorageConfig
                 config={config.storage}
                 onChange={data => handleConfigUpdate('storage', data)}
               />
             )}
             {activeTab === 'performance' && (
-              <PerformanceConfig 
+              <PerformanceConfig
                 config={config.performance}
                 onChange={data => handleConfigUpdate('performance', data)}
               />
@@ -120,4 +118,4 @@ export const ConfigManager: React.FC = () => {
       </div>
     </div>
   );
-}; 
+};

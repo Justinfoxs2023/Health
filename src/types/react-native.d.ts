@@ -1,14 +1,21 @@
+/**
+ * @fileoverview TS 文件 react-native.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 declare module 'react-native' {
   import React from 'react';
-  
+
   export interface ViewProps {
-    style?: any;
-    children?: React.ReactNode;
+    style: any;
+    children: ReactReactNode;
   }
 
   export interface TextProps {
-    style?: any;
-    children?: React.ReactNode;
+    style: any;
+    children: ReactReactNode;
   }
 
   export interface TouchableOpacityProps extends ViewProps {
@@ -17,19 +24,22 @@ declare module 'react-native' {
   }
 
   export interface TextInputProps {
-    value?: string;
-    onChangeText?: (text: string) => void;
-    style?: TextStyle;
-    placeholder?: string;
-    secureTextEntry?: boolean;
-    keyboardType?: string;
-    autoCapitalize?: string;
+    value: string;
+    onChangeText: text: string  void;
+    style: TextStyle;
+    placeholder: string;
+    secureTextEntry: boolean;
+    keyboardType: string;
+    autoCapitalize: string;
   }
 
   export interface ImageProps {
-    source: any;
-    style?: any;
-    resizeMode?: 'cover' | 'contain' | 'stretch' | 'center';
+    /** source 的描述 */
+      source: any;
+    /** style 的描述 */
+      style: any;
+    /** resizeMode 的描述 */
+      resizeMode: cover  contain  stretch  center;
   }
 
   export const View: React.ComponentType<ViewProps>;
@@ -61,16 +71,25 @@ declare module 'react-native-chart-kit' {
   // 添加其他图表类型
 }
 
-export interface ViewStyle {
-  [key: string]: any;
+export interface IViewStyle {
+  /** key 的描述 */
+    key: string: /** any 的描述 */
+    /** any 的描述 */
+    any;
 }
 
-export interface TextStyle {
-  [key: string]: any;
+export interface ITextStyle {
+  /** key 的描述 */
+    key: string: /** any 的描述 */
+    /** any 的描述 */
+    any;
 }
 
 export interface ImageStyle {
-  [key: string]: any;
+  /** key 的描述 */
+    key: string: /** any 的描述 */
+    /** any 的描述 */
+    any;
 }
 
 export const SafeAreaView: React.ComponentType<ViewProps>;
@@ -94,4 +113,4 @@ export const Dimensions: {
 };
 export const Vibration: {
   vibrate: (pattern?: number | number[], repeat?: boolean) => void;
-}; 
+};

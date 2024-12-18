@@ -1,15 +1,15 @@
 import React from 'react';
-import { View, ScrollView, StyleSheet } from 'react-native';
-import { useQuery } from 'react-query';
-import { getDashboardOverview } from '../../api/nutritionist';
+
 import {
   DashboardCard,
   AppointmentList,
   ConsultationList,
   StatisticsChart,
-  LoadingSpinner
+  LoadingSpinner,
 } from '../../components';
-
+import { View, ScrollView, StyleSheet } from 'react-native';
+import { getDashboardOverview } from '../../api/nutritionist';
+import { useQuery } from 'react-query';
 export const DashboardScreen = () => {
   const { data, isLoading } = useQuery('dashboardOverview', getDashboardOverview);
 
@@ -52,11 +52,7 @@ export const DashboardScreen = () => {
       />
 
       <View style={styles.listContainer}>
-        <AppointmentList
-          title="今日预约"
-          appointments={todayAppointments}
-          style={styles.list}
-        />
+        <AppointmentList title="今日预约" appointments={todayAppointments} style={styles.list} />
 
         <ConsultationList
           title="待处理咨询"
@@ -71,27 +67,27 @@ export const DashboardScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   cardRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 15
+    padding: 15,
   },
   chart: {
     marginVertical: 15,
     backgroundColor: '#fff',
     borderRadius: 8,
     padding: 15,
-    marginHorizontal: 15
+    marginHorizontal: 15,
   },
   listContainer: {
-    padding: 15
+    padding: 15,
   },
   list: {
     marginBottom: 15,
     backgroundColor: '#fff',
     borderRadius: 8,
-    padding: 15
-  }
-}); 
+    padding: 15,
+  },
+});

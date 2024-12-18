@@ -1,14 +1,16 @@
+import { CircuitBreaker } from './circuit-breaker';
 import { EventEmitter } from 'events';
+import { LoadBalancer } from './load-balancer';
 import { Logger } from '../../utils/logger';
 import { ServiceRegistry } from '../service-registry.service';
-import { CircuitBreaker } from './circuit-breaker';
-import { LoadBalancer } from './load-balancer';
 
-interface GovernanceConfig {
+interface IGovernanceConfig {
+  /** circuitBreaker 的描述 */
   circuitBreaker: {
     failureThreshold: number;
     resetTimeout: number;
   };
+  /** loadBalancer 的描述 */
   loadBalancer: {
     strategy: 'round-robin' | 'weighted' | 'least-conn';
   };
@@ -20,13 +22,13 @@ export class ServiceGovernance extends EventEmitter {
   private circuitBreakers: Map<string, CircuitBreaker>;
   private loadBalancer: LoadBalancer;
 
-  constructor(registry: ServiceRegistry, config: GovernanceConfig) {
+  constructor(registry: ServiceRegistry, config: IGovernanceConfig) {
     super();
     this.logger = new Logger('ServiceGovernance');
     this.registry = registry;
     this.circuitBreakers = new Map();
     this.loadBalancer = new LoadBalancer(config.loadBalancer);
-    
+
     this.initializeCircuitBreakers();
     this.startHealthCheck();
   }
@@ -58,8 +60,8 @@ export class ServiceGovernance extends EventEmitter {
         service.name,
         new CircuitBreaker(service.name, {
           failureThreshold: this.config.circuitBreaker.failureThreshold,
-          resetTimeout: this.config.circuitBreaker.resetTimeout
-        })
+          resetTimeout: this.config.circuitBreaker.resetTimeout,
+        }),
       );
     });
   }
@@ -71,4 +73,4 @@ export class ServiceGovernance extends EventEmitter {
       });
     }, 30000);
   }
-} 
+}

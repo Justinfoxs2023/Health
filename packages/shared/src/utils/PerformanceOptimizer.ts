@@ -23,7 +23,7 @@ export class PerformanceOptimizer {
     try {
       await Promise.all(preloadPromises);
     } catch (error) {
-      console.error('数据预加载失败:', error);
+      console.error('Error in PerformanceOptimizer.ts:', '数据预加载失败:', error);
     }
   };
 
@@ -38,22 +38,22 @@ export class PerformanceOptimizer {
       const item = {
         data,
         timestamp: Date.now(),
-        ttl
+        ttl,
       };
       localStorage.setItem(key, JSON.stringify(item));
     },
-    
+
     get: (key: string) => {
       const item = localStorage.getItem(key);
       if (!item) return null;
-      
+
       const { data, timestamp, ttl } = JSON.parse(item);
       if (Date.now() - timestamp > ttl) {
         localStorage.removeItem(key);
         return null;
       }
-      
+
       return data;
-    }
+    },
   };
-} 
+}

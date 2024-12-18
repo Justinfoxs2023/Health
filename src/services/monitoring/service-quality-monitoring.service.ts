@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 service-quality-monitoring.service.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export class ServiceQualityMonitoringService {
   private readonly metricsRepo: MetricsRepository;
   private readonly feedbackService: FeedbackService;
@@ -13,13 +20,13 @@ export class ServiceQualityMonitoringService {
     try {
       // 获取服务类型
       const serviceType = await this.getServiceType(serviceId);
-      
+
       // 获取响应时间标准
       const standard = this.getResponseTimeStandard(serviceType);
-      
+
       // 收集响应时间数据
       const responseData = await this.metricsRepo.getResponseTimeData(serviceId);
-      
+
       // 分析响应时间
       const analysis = await this.analyzeResponseTime(responseData, standard);
 
@@ -28,7 +35,7 @@ export class ServiceQualityMonitoringService {
         await this.notificationService.sendAlert({
           type: 'response_time_alert',
           serviceId,
-          metrics: analysis
+          metrics: analysis,
         });
       }
 
@@ -37,7 +44,7 @@ export class ServiceQualityMonitoringService {
         standardTime: standard,
         compliance: analysis.compliance,
         trend: analysis.trend,
-        recommendations: await this.generateOptimizationSuggestions(analysis)
+        recommendations: await this.generateOptimizationSuggestions(analysis),
       };
     } catch (error) {
       this.logger.error('监控响应时间失败', error);
@@ -50,13 +57,13 @@ export class ServiceQualityMonitoringService {
     try {
       // 收集评估数据
       const evaluationData = await this.collectEvaluationData(serviceId);
-      
+
       // 评估各个因素
       const factors = await Promise.all([
         this.evaluateProfessionalism(evaluationData),
         this.evaluateTimeliness(evaluationData),
         this.evaluateEffectiveness(evaluationData),
-        this.evaluateSatisfaction(evaluationData)
+        this.evaluateSatisfaction(evaluationData),
       ]);
 
       // 生成综合评估
@@ -67,11 +74,11 @@ export class ServiceQualityMonitoringService {
           professionalism: factors[0],
           timeliness: factors[1],
           effectiveness: factors[2],
-          satisfaction: factors[3]
+          satisfaction: factors[3],
         },
         overallScore: overallEvaluation.score,
         improvements: overallEvaluation.suggestedImprovements,
-        trends: await this.analyzeQualityTrends(serviceId)
+        trends: await this.analyzeQualityTrends(serviceId),
       };
     } catch (error) {
       this.logger.error('评估服务质量失败', error);
@@ -84,13 +91,13 @@ export class ServiceQualityMonitoringService {
     try {
       // 获取服务标准
       const standards = await this.getServiceStandards(serviceId);
-      
+
       // 检查流程合规性
       const processCompliance = await this.checkProcessCompliance(serviceId, standards);
-      
+
       // 检查专业资质
       const professionalCompliance = await this.checkProfessionalCompliance(serviceId);
-      
+
       // 检查培训状况
       const trainingCompliance = await this.checkTrainingCompliance(serviceId);
 
@@ -101,13 +108,13 @@ export class ServiceQualityMonitoringService {
         overallCompliance: await this.calculateOverallCompliance([
           processCompliance,
           professionalCompliance,
-          trainingCompliance
+          trainingCompliance,
         ]),
         requiredActions: await this.generateComplianceActions({
           processCompliance,
           professionalCompliance,
-          trainingCompliance
-        })
+          trainingCompliance,
+        }),
       };
     } catch (error) {
       this.logger.error('检查服务标准失败', error);
@@ -120,13 +127,13 @@ export class ServiceQualityMonitoringService {
     try {
       // 分析反馈数据
       const feedbackAnalysis = await this.analyzeFeedbackData(serviceId);
-      
+
       // 识别改进机会
       const improvements = await this.identifyImprovementOpportunities(feedbackAnalysis);
-      
+
       // 生成改进计划
       const plan = await this.generateImprovementPlan(improvements);
-      
+
       // 实施改进措施
       await this.implementImprovementMeasures(plan);
 
@@ -135,11 +142,11 @@ export class ServiceQualityMonitoringService {
         identifiedImprovements: improvements,
         implementationPlan: plan,
         expectedOutcomes: await this.predictImprovementOutcomes(plan),
-        timeline: await this.generateImplementationTimeline(plan)
+        timeline: await this.generateImplementationTimeline(plan),
       };
     } catch (error) {
       this.logger.error('管理持续改进失败', error);
       throw error;
     }
   }
-} 
+}

@@ -1,24 +1,31 @@
 import React from 'react';
-import { View, Text, StyleSheet, Animated, ViewStyle } from 'react-native';
-import { DesignTokens } from '../../tokens';
-import { CustomIcon } from '../../icons';
 
-interface LoadingStatesProps {
+import { CustomIcon } from '../../icons';
+import { DesignTokens } from '../../tokens';
+import { View, Text, StyleSheet, Animated, ViewStyle } from 'react-native';
+
+interface ILoadingStatesProps {
+  /** type 的描述 */
   type?: 'spinner' | 'skeleton' | 'progress' | 'shimmer';
+  /** size 的描述 */
   size?: 'small' | 'medium' | 'large';
+  /** text 的描述 */
   text?: string;
+  /** style 的描述 */
   style?: ViewStyle;
+  /** color 的描述 */
   color?: string;
+  /** fullscreen 的描述 */
   fullscreen?: boolean;
 }
 
-export const LoadingStates: React.FC<LoadingStatesProps> = ({
+export const LoadingStates: React.FC<ILoadingStatesProps> = ({
   type = 'spinner',
   size = 'medium',
   text,
   style,
   color = DesignTokens.colors.brand.primary,
-  fullscreen = false
+  fullscreen = false,
 }) => {
   const spinAnimation = React.useRef(new Animated.Value(0)).current;
   const shimmerAnimation = React.useRef(new Animated.Value(0)).current;
@@ -29,8 +36,8 @@ export const LoadingStates: React.FC<LoadingStatesProps> = ({
         Animated.timing(spinAnimation, {
           toValue: 1,
           duration: 1000,
-          useNativeDriver: true
-        })
+          useNativeDriver: true,
+        }),
       ).start();
     } else if (type === 'shimmer') {
       Animated.loop(
@@ -38,14 +45,14 @@ export const LoadingStates: React.FC<LoadingStatesProps> = ({
           Animated.timing(shimmerAnimation, {
             toValue: 1,
             duration: 1000,
-            useNativeDriver: true
+            useNativeDriver: true,
           }),
           Animated.timing(shimmerAnimation, {
             toValue: 0,
             duration: 1000,
-            useNativeDriver: true
-          })
-        ])
+            useNativeDriver: true,
+          }),
+        ]),
       ).start();
     }
   }, [type]);
@@ -72,13 +79,15 @@ export const LoadingStates: React.FC<LoadingStatesProps> = ({
                 width: getSize(),
                 height: getSize(),
                 borderColor: color,
-                transform: [{
-                  rotate: spinAnimation.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: ['0deg', '360deg']
-                  })
-                }]
-              }
+                transform: [
+                  {
+                    rotate: spinAnimation.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: ['0deg', '360deg'],
+                    }),
+                  },
+                ],
+              },
             ]}
           />
         );
@@ -96,12 +105,7 @@ export const LoadingStates: React.FC<LoadingStatesProps> = ({
         return (
           <View style={styles.progressContainer}>
             <View style={styles.progressBar}>
-              <Animated.View
-                style={[
-                  styles.progressFill,
-                  { backgroundColor: color }
-                ]}
-              />
+              <Animated.View style={[styles.progressFill, { backgroundColor: color }]} />
             </View>
             {text && <Text style={styles.progressText}>{text}</Text>}
           </View>
@@ -113,8 +117,8 @@ export const LoadingStates: React.FC<LoadingStatesProps> = ({
             style={[
               styles.shimmerContainer,
               {
-                opacity: shimmerAnimation
-              }
+                opacity: shimmerAnimation,
+              },
             ]}
           >
             <View style={styles.shimmerContent} />
@@ -124,15 +128,9 @@ export const LoadingStates: React.FC<LoadingStatesProps> = ({
   };
 
   return (
-    <View style={[
-      styles.container,
-      fullscreen && styles.fullscreen,
-      style
-    ]}>
+    <View style={[styles.container, fullscreen && styles.fullscreen, style]}>
       {renderContent()}
-      {text && type !== 'progress' && (
-        <Text style={[styles.text, { color }]}>{text}</Text>
-      )}
+      {text && type !== 'progress' && <Text style={[styles.text, { color }]}>{text}</Text>}
     </View>
   );
 };
@@ -141,7 +139,7 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
-    padding: DesignTokens.spacing.md
+    padding: DesignTokens.spacing.md,
   },
   fullscreen: {
     position: 'absolute',
@@ -149,53 +147,53 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)'
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
   },
   spinner: {
     borderWidth: 3,
     borderRadius: 50,
-    borderTopColor: 'transparent'
+    borderTopColor: 'transparent',
   },
   text: {
     marginTop: DesignTokens.spacing.sm,
     fontSize: DesignTokens.typography.sizes.sm,
-    fontWeight: String(DesignTokens.typography.weights.medium)
+    fontWeight: String(DesignTokens.typography.weights.medium),
   },
   skeletonContainer: {
     width: '100%',
-    gap: DesignTokens.spacing.sm
+    gap: DesignTokens.spacing.sm,
   },
   skeletonLine: {
     height: 12,
     backgroundColor: DesignTokens.colors.neutral.gray[200],
-    borderRadius: DesignTokens.radius.sm
+    borderRadius: DesignTokens.radius.sm,
   },
   progressContainer: {
     width: '100%',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   progressBar: {
     width: '100%',
     height: 4,
     backgroundColor: DesignTokens.colors.neutral.gray[200],
     borderRadius: DesignTokens.radius.full,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   progressFill: {
     height: '100%',
-    width: '60%'
+    width: '60%',
   },
   progressText: {
     marginTop: DesignTokens.spacing.xs,
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.text.secondary
+    color: DesignTokens.colors.text.secondary,
   },
   shimmerContainer: {
     width: '100%',
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   shimmerContent: {
     height: 200,
-    backgroundColor: DesignTokens.colors.neutral.gray[100]
-  }
-}); 
+    backgroundColor: DesignTokens.colors.neutral.gray[100],
+  },
+});

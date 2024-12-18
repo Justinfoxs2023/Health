@@ -3,7 +3,9 @@ import { Request, Response, NextFunction } from 'express';
 export interface IAuthMiddleware {
   verifyToken(req: Request, res: Response, next: NextFunction): Promise<void>;
   checkRole(role: string): (req: Request, res: Response, next: NextFunction) => Promise<void>;
-  checkPermission(permission: string): (req: Request, res: Response, next: NextFunction) => Promise<void>;
+  checkPermission(
+    permission: string,
+  ): (req: Request, res: Response, next: NextFunction) => Promise<void>;
 }
 
 export interface IRateLimitMiddleware {
@@ -20,4 +22,4 @@ export interface IValidationMiddleware {
 
 export interface IErrorMiddleware {
   handle(err: Error, req: Request, res: Response, next: NextFunction): void;
-} 
+}

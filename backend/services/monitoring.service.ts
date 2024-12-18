@@ -2,32 +2,46 @@ import { EventEmitter } from 'events';
 import { Logger } from '../utils/logger';
 import { ServiceRegistry } from './service-registry.service';
 
-interface MetricConfig {
+interface IMetricConfig {
+  /** name 的描述 */
   name: string;
+  /** type 的描述 */
   type: 'counter' | 'gauge' | 'histogram';
+  /** labels 的描述 */
   labels?: string[];
+  /** description 的描述 */
   description?: string;
 }
 
-interface AlertRule {
+interface IAlertRule {
+  /** id 的描述 */
   id: string;
+  /** name 的描述 */
   name: string;
+  /** metric 的描述 */
   metric: string;
+  /** condition 的描述 */
   condition: string;
+  /** threshold 的描述 */
   threshold: number;
+  /** duration 的描述 */
   duration: number;
+  /** severity 的描述 */
   severity: 'critical' | 'warning' | 'info';
-  actions: AlertAction[];
+  /** actions 的描述 */
+  actions: IAlertAction[];
 }
 
-interface AlertAction {
+interface IAlertAction {
+  /** type 的描述 */
   type: 'email' | 'webhook' | 'notification';
+  /** config 的描述 */
   config: Record<string, any>;
 }
 
 export class MonitoringService extends EventEmitter {
   private metrics: Map<string, any>;
-  private alertRules: Map<string, AlertRule>;
+  private alertRules: Map<string, IAlertRule>;
   private activeAlerts: Map<string, any>;
   private logger: Logger;
   private registry: ServiceRegistry;
@@ -50,13 +64,13 @@ export class MonitoringService extends EventEmitter {
     this.registerMetric({
       name: 'system_cpu_usage',
       type: 'gauge',
-      description: 'CPU使用率'
+      description: 'CPU使用率',
     });
 
     this.registerMetric({
       name: 'system_memory_usage',
       type: 'gauge',
-      description: '内存使用率'
+      description: '内存使用率',
     });
 
     // 服务指标
@@ -64,7 +78,7 @@ export class MonitoringService extends EventEmitter {
       name: 'service_health_score',
       type: 'gauge',
       labels: ['service_id', 'service_name'],
-      description: '服务健康分数'
+      description: '服务健康分数',
     });
 
     // API指标
@@ -72,16 +86,16 @@ export class MonitoringService extends EventEmitter {
       name: 'api_request_total',
       type: 'counter',
       labels: ['method', 'path', 'status'],
-      description: 'API请求总数'
+      description: 'API请求总数',
     });
   }
 
   // 注册指标
-  registerMetric(config: MetricConfig): void {
+  registerMetric(config: IMetricConfig): void {
     this.metrics.set(config.name, {
       ...config,
       value: config.type === 'counter' ? 0 : null,
-      history: []
+      history: [],
     });
   }
 
@@ -99,24 +113,28 @@ export class MonitoringService extends EventEmitter {
     metric.history.push({
       value,
       labels,
-      timestamp: new Date()
+      timestamp: new Date(),
     });
 
     this.checkAlertRules(name, value, labels);
   }
 
   // 添加告警规则
-  addAlertRule(rule: AlertRule): void {
+  addAlertRule(rule: IAlertRule): void {
     this.alertRules.set(rule.id, rule);
     this.logger.info(`添加告警规则: ${rule.name}`);
   }
 
   // 检查告警规则
-  private checkAlertRules(metricName: string, value: number, labels?: Record<string, string>): void {
+  private checkAlertRules(
+    metricName: string,
+    value: number,
+    labels?: Record<string, string>,
+  ): void {
     this.alertRules.forEach(rule => {
       if (rule.metric === metricName) {
         const isTriggered = this.evaluateAlertCondition(rule, value);
-        
+
         if (isTriggered && !this.activeAlerts.has(rule.id)) {
           this.triggerAlert(rule, value, labels);
         } else if (!isTriggered && this.activeAlerts.has(rule.id)) {
@@ -127,14 +145,14 @@ export class MonitoringService extends EventEmitter {
   }
 
   // 触发告警
-  private triggerAlert(rule: AlertRule, value: number, labels?: Record<string, string>): void {
+  private triggerAlert(rule: IAlertRule, value: number, labels?: Record<string, string>): void {
     const alert = {
       ruleId: rule.id,
       ruleName: rule.name,
       value,
       labels,
       triggeredAt: new Date(),
-      status: 'active'
+      status: 'active',
     };
 
     this.activeAlerts.set(rule.id, alert);
@@ -156,7 +174,7 @@ export class MonitoringService extends EventEmitter {
   }
 
   // 执行告警动作
-  private executeAlertActions(rule: AlertRule, alert: any): void {
+  private executeAlertActions(rule: IAlertRule, alert: any): void {
     rule.actions.forEach(action => {
       try {
         switch (action.type) {
@@ -177,7 +195,7 @@ export class MonitoringService extends EventEmitter {
   }
 
   // 评估告警条件
-  private evaluateAlertCondition(rule: AlertRule, value: number): boolean {
+  private evaluateAlertCondition(rule: IAlertRule, value: number): boolean {
     try {
       const condition = rule.condition.replace('value', value.toString());
       return eval(condition);
@@ -194,7 +212,7 @@ export class MonitoringService extends EventEmitter {
       result[name] = {
         value: metric.value,
         type: metric.type,
-        description: metric.description
+        description: metric.description,
       };
     });
     return result;
@@ -214,7 +232,7 @@ export class MonitoringService extends EventEmitter {
         const healthScore = this.calculateServiceHealth(service);
         this.updateMetric('service_health_score', healthScore, {
           service_id: service.id,
-          service_name: service.name
+          service_name: service.name,
         });
       });
     }, 60000);
@@ -240,4 +258,4 @@ export class MonitoringService extends EventEmitter {
   stop(): void {
     // 清理定时器等资源
   }
-} 
+}

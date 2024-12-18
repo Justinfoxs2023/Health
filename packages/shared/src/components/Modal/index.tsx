@@ -1,33 +1,54 @@
 import React, { useState, useEffect, useCallback } from 'react';
+
+import './styles.less';
 import { Modal as AntModal, Button } from 'antd';
 import { useI18n } from '../../hooks/useI18n';
 import { useTheme } from '../../hooks/useTheme';
-import './styles.less';
 
-interface ModalProps {
-  visible: boolean;
-  title?: React.ReactNode;
-  content?: React.ReactNode;
-  width?: number | string;
-  centered?: boolean;
-  closable?: boolean;
-  maskClosable?: boolean;
-  confirmLoading?: boolean;
-  okText?: React.ReactNode;
-  cancelText?: React.ReactNode;
-  onOk?: () => void | Promise<void>;
-  onCancel?: () => void;
-  afterClose?: () => void;
-  className?: string;
-  style?: React.CSSProperties;
-  bodyStyle?: React.CSSProperties;
-  maskStyle?: React.CSSProperties;
-  okButtonProps?: React.ComponentProps<typeof Button>;
-  cancelButtonProps?: React.ComponentProps<typeof Button>;
-  children?: React.ReactNode;
+interface IModalProps {
+  /** visible 的描述 */
+    visible: boolean;
+  /** title 的描述 */
+    title?: React.ReactNode;
+  /** content 的描述 */
+    content?: React.ReactNode;
+  /** width 的描述 */
+    width?: number | string;
+  /** centered 的描述 */
+    centered?: boolean;
+  /** closable 的描述 */
+    closable?: boolean;
+  /** maskClosable 的描述 */
+    maskClosable?: boolean;
+  /** confirmLoading 的描述 */
+    confirmLoading?: boolean;
+  /** okText 的描述 */
+    okText?: React.ReactNode;
+  /** cancelText 的描述 */
+    cancelText?: React.ReactNode;
+  /** onOk 的描述 */
+    onOk?: () => void | Promise<void>;
+  /** onCancel 的描述 */
+    onCancel?: () => void;
+  /** afterClose 的描述 */
+    afterClose?: () => void;
+  /** className 的描述 */
+    className?: string;
+  /** style 的描述 */
+    style?: React.CSSProperties;
+  /** bodyStyle 的描述 */
+    bodyStyle?: React.CSSProperties;
+  /** maskStyle 的描述 */
+    maskStyle?: React.CSSProperties;
+  /** okButtonProps 的描述 */
+    okButtonProps?: React.ComponentProps<typeof Button>;
+  /** cancelButtonProps 的描述 */
+    cancelButtonProps?: React.ComponentProps<typeof Button>;
+  /** children 的描述 */
+    children?: React.ReactNode;
 }
 
-export const Modal: React.FC<ModalProps> = ({
+export const Modal: React.FC<IModalProps> = ({
   visible,
   title,
   content,
@@ -79,7 +100,7 @@ export const Modal: React.FC<ModalProps> = ({
 }
 
 /** 模态框组件 */
-export const Modal: React.FC<ModalProps> = ({
+export const Modal: React.FC<IModalProps> = ({
   visible,
   title,
   children,
@@ -112,7 +133,7 @@ export const Modal: React.FC<ModalProps> = ({
       await onOk?.();
       onClose();
     } catch (error) {
-      console.error('Modal onOk error:', error);
+      console.error('Error in index.tsx:', 'Modal onOk error:', error);
     }
   };
 

@@ -1,8 +1,9 @@
 import React from 'react';
-import { useI18n } from '../../services/i18n';
-import { Button } from '../Button';
 
-export interface LocaleSwitchProps {
+import { Button } from '../Button';
+import { useI18n } from '../../services/i18n';
+
+export interface ILocaleSwitchProps {
   /** 自定义类名 */
   className?: string;
   /** 自定义样式 */
@@ -12,7 +13,7 @@ export interface LocaleSwitchProps {
 /**
  * 语言切换组件
  */
-export const LocaleSwitch: React.FC<LocaleSwitchProps> = ({ className, style }) => {
+export const LocaleSwitch: React.FC<ILocaleSwitchProps> = ({ className, style }) => {
   const { locale, setLocale, config } = useI18n();
   const locales = i18n.getSupportedLocales();
 
@@ -22,11 +23,7 @@ export const LocaleSwitch: React.FC<LocaleSwitchProps> = ({ className, style }) 
 
   return (
     <div className={`locale-switch ${className || ''}`} style={style}>
-      <select
-        value={locale}
-        onChange={handleLocaleChange}
-        className="locale-switch__select"
-      >
+      <select value={locale} onChange={handleLocaleChange} className="locale-switch__select">
         {locales.map(l => (
           <option key={l.code} value={l.code}>
             {l.name}
@@ -71,4 +68,4 @@ style.textContent = `
     color: var(--theme-text-color);
   }
 `;
-document.head.appendChild(style); 
+document.head.appendChild(style);

@@ -1,9 +1,9 @@
-import { VoiceRecognitionService, VoiceRecognitionResult } from './voice-recognition.service';
-import { LocalDatabase } from '../utils/local-database';
+import { ILocalDatabase } from '../utils/local-database';
+import { VoiceRecognitionService, IVoiceRecognitionResult } from './voice-recognition.service';
 
 export class EnhancedVoiceRecognitionService extends VoiceRecognitionService {
-  private db: LocalDatabase;
-  private noiseReductionEnabled: boolean = true;
+  private db: ILocalDatabase;
+  private noiseReductionEnabled = true;
   private customVocabulary: Set<string> = new Set();
 
   constructor() {
@@ -46,15 +46,17 @@ export class EnhancedVoiceRecognitionService extends VoiceRecognitionService {
       // 保存更新后的词汇表
       await this.db.put('custom-vocabulary', Array.from(this.customVocabulary));
     } catch (error) {
-      console.error('初始化词汇表失败:', error);
+      console.error('Error in voice-recognition-enhanced.service.ts:', '初始化词汇表失败:', error);
     }
   }
 
   // 语音识别结果优化
-  private async optimizeRecognitionResult(result: VoiceRecognitionResult): Promise<VoiceRecognitionResult> {
+  private async optimizeRecognitionResult(
+    result: IVoiceRecognitionResult,
+  ): Promise<IVoiceRecognitionResult> {
     // 应用自定义词汇表纠正
     const correctedText = this.applyVocabularyCorrection(result.text);
-    
+
     // 上下文理解优化
     const enhancedResult = await this.enhanceWithContext(correctedText);
 
@@ -62,7 +64,7 @@ export class EnhancedVoiceRecognitionService extends VoiceRecognitionService {
       ...result,
       text: enhancedResult.text,
       confidence: enhancedResult.confidence,
-      foodItems: enhancedResult.foodItems
+      foodItems: enhancedResult.foodItems,
     };
   }
 
@@ -91,9 +93,9 @@ export class EnhancedVoiceRecognitionService extends VoiceRecognitionService {
 
   // 计算编辑距离
   private calculateLevenshteinDistance(a: string, b: string): number {
-    const matrix = Array(b.length + 1).fill(null).map(() => 
-      Array(a.length + 1).fill(null)
-    );
+    const matrix = Array(b.length + 1)
+      .fill(null)
+      .map(() => Array(a.length + 1).fill(null));
 
     for (let i = 0; i <= a.length; i++) matrix[0][i] = i;
     for (let j = 0; j <= b.length; j++) matrix[j][0] = j;
@@ -104,7 +106,7 @@ export class EnhancedVoiceRecognitionService extends VoiceRecognitionService {
         matrix[j][i] = Math.min(
           matrix[j][i - 1] + 1,
           matrix[j - 1][i] + 1,
-          matrix[j - 1][i - 1] + substitutionCost
+          matrix[j - 1][i - 1] + substitutionCost,
         );
       }
     }
@@ -113,8 +115,8 @@ export class EnhancedVoiceRecognitionService extends VoiceRecognitionService {
   }
 
   // 重写开始录音方法
-  async startRecording(): Promise<VoiceRecognitionResult> {
+  async startRecording(): Promise<IVoiceRecognitionResult> {
     const result = await super.startRecording();
     return this.optimizeRecognitionResult(result);
   }
-} 
+}

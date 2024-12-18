@@ -1,6 +1,6 @@
+import { Logger } from '../utils/logger';
 import { Request, Response } from 'express';
 import { TCMService } from '../services/tcm.service';
-import { Logger } from '../utils/logger';
 
 export class TCMController {
   private tcmService: TCMService;
@@ -25,19 +25,19 @@ export class TCMController {
         signs,
         pulseData,
         tongueData,
-        date: new Date()
+        date: new Date(),
       });
 
       return res.json({
         code: 200,
         data: assessment,
-        message: '体质辨识完成'
+        message: '体质辨识完成',
       });
     } catch (error) {
       this.logger.error('体质辨识失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
@@ -57,19 +57,19 @@ export class TCMController {
         herbs,
         instructions,
         duration,
-        date: new Date()
+        date: new Date(),
       });
 
       return res.status(201).json({
         code: 201,
         data: prescription,
-        message: '处方创建成功'
+        message: '处方创建成功',
       });
     } catch (error) {
       this.logger.error('创建处方失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
@@ -89,19 +89,19 @@ export class TCMController {
         recommendations,
         lifestyle,
         diet,
-        startDate: new Date()
+        startDate: new Date(),
       });
 
       return res.status(201).json({
         code: 201,
         data: wellnessPlan,
-        message: '养生方案创建成功'
+        message: '养生方案创建成功',
       });
     } catch (error) {
       this.logger.error('创建养生方案失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
@@ -119,20 +119,20 @@ export class TCMController {
         acupoints,
         techniques,
         precautions,
-        date: new Date()
+        date: new Date(),
       });
 
       return res.json({
         code: 200,
         data: guidance,
-        message: '推拿指导创建成功'
+        message: '推拿指导创建成功',
       });
     } catch (error) {
       this.logger.error('创建推拿指导失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
-} 
+}

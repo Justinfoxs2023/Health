@@ -1,10 +1,12 @@
 import { Express, Router } from 'express';
-import { Logger } from '@utils/logger';
-import { healthAssessmentRoutes } from './health-assessment.routes';
-import { recommendationRoutes } from './recommendation.routes';
+import logger from '../utils/logger';
 import { analyticsRoutes } from './analytics.routes';
+import { healthAssessmentRoutes as healthRoutes } from './health-assessment.routes';
+import { recommendationRoutes } from './recommendation.routes';
+import healthMonitoringRoutes from './health-monitoring';
 
-const logger = new Logger('Routes');
+// 创建路由实例
+const router = Router();
 
 export function setupRoutes(app: Express): void {
   try {
@@ -15,7 +17,7 @@ export function setupRoutes(app: Express): void {
     router.get('/health', (req, res) => {
       res.json({
         status: 'ok',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     });
 
@@ -23,14 +25,15 @@ export function setupRoutes(app: Express): void {
     router.get('/version', (req, res) => {
       res.json({
         version: process.env.npm_package_version || '1.0.0',
-        environment: process.env.NODE_ENV
+        environment: process.env.NODE_ENV,
       });
     });
 
     // 业务路由
-    router.use('/health-assessment', healthAssessmentRoutes);
+    router.use('/health-assessment', healthRoutes);
     router.use('/recommendation', recommendationRoutes);
     router.use('/analytics', analyticsRoutes);
+    router.use('/health-monitoring', healthMonitoringRoutes);
 
     // 注册所有路由
     app.use(apiPrefix, router);
@@ -43,10 +46,11 @@ export function setupRoutes(app: Express): void {
 }
 
 // 健康评估路由
-export const healthAssessmentRoutes = Router();
-healthAssessmentRoutes.post('/assess', async (req, res, next) => {
+export const healthAssessmentRouter = Router();
+healthAssessmentRouter.post('/assess', async (req, res, next) => {
   try {
     // 实现健康评估逻辑
+    res.json({ success: true });
   } catch (error) {
     next(error);
   }
@@ -57,6 +61,7 @@ export const recommendationRoutes = Router();
 recommendationRoutes.post('/generate', async (req, res, next) => {
   try {
     // 实现推荐生成逻辑
+    res.json({ success: true });
   } catch (error) {
     next(error);
   }
@@ -67,7 +72,8 @@ export const analyticsRoutes = Router();
 analyticsRoutes.post('/analyze', async (req, res, next) => {
   try {
     // 实现数据分析逻辑
+    res.json({ success: true });
   } catch (error) {
     next(error);
   }
-}); 
+});

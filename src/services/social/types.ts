@@ -1,52 +1,62 @@
+/**
+ * @fileoverview TS 文件 types.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // 用户档案类型
-export interface UserProfile {
-  id: string;
-  basicInfo: {
+export interface IUserProfile {
+  /** id 的描述 */
+    id: string;
+  /** basicInfo 的描述 */
+    basicInfo: {
     username: string;
     avatar: string;
     bio: string;
-    location?: string;
+    location: string;
     joinDate: Date;
   };
 
   // 健康标签
-  healthTags: {
-    interests: string[];      // 健康兴趣
-    goals: string[];         // 健康目标
-    achievements: string[];  // 健康成就
-    expertise?: string[];    // 专业领域(适用于专家用户)
+  /** healthTags 的描述 */
+    healthTags: {
+    interests: string[]; // 健康兴趣
+    goals: string[]; // 健康目标
+    achievements: string[]; // 健康成就
+    expertise?: string[]; // 专业领域(适用于专家用户)
   };
 
   // 社交统计
-  stats: {
+  /** stats 的描述 */
+    stats: {
     followers: number;
     following: number;
     posts: number;
-    kudos: number;      // 获赞数
+    kudos: number; // 获赞数
     helpfulness: number; // 帮助他人评分
   };
 
   // 认证信息
-  verification?: {
-    type: 'expert' | 'trainer' | 'nutritionist' | 'doctor';
-    credentials: string[];
-    verifiedAt: Date;
-  };
+  /** verification 的描述 */
+    verification?: undefined | { type: "expert" | "trainer" | "nutritionist" | "doctor"; credentials: string[]; verifiedAt: Date; };
 }
 
 // 健康圈子类型
-export interface HealthCircle {
-  id: string;
-  type: 'condition' | 'lifestyle' | 'fitness' | 'nutrition';
+export interface IHealthCircle {
+  /** id 的描述 */
+    id: string;
+  /** type 的描述 */
+    type: condition  lifestyle  fitness  nutrition;
   name: string;
   description: string;
   avatar: string;
-  
-  // 圈子规则
+
+   
   rules: {
-    guidelines: string[];
-    moderation: string[];
-    privacyLevel: 'public' | 'private' | 'invitation';
+    guidelines: string;
+    moderation: string;
+    privacyLevel: public  private  invitation;
   };
 
   // 成员管理
@@ -74,17 +84,20 @@ export interface HealthCircle {
 }
 
 // 社交内容类型
-export interface SocialPost {
-  id: string;
-  author: {
+export interface ISocialPost {
+  /** id 的描述 */
+    id: string;
+  /** author 的描述 */
+    author: {
     id: string;
     username: string;
     avatar: string;
     isExpert: boolean;
   };
-  
+
   // 内容
-  content: {
+  /** content 的描述 */
+    content: {
     type: 'text' | 'image' | 'video' | 'article' | 'question';
     title?: string;
     body: string;
@@ -98,7 +111,8 @@ export interface SocialPost {
   };
 
   // 互动数据
-  engagement: {
+  /** engagement 的描述 */
+    engagement: {
     likes: number;
     comments: number;
     shares: number;
@@ -107,7 +121,8 @@ export interface SocialPost {
   };
 
   // 元数据
-  metadata: {
+  /** metadata 的描述 */
+    metadata: {
     createdAt: Date;
     updatedAt?: Date;
     location?: string;
@@ -116,27 +131,27 @@ export interface SocialPost {
   };
 
   // 专业认证
-  verification?: {
-    factChecked: boolean;
-    expertReviewed: boolean;
-    reviewedBy?: string;
-  };
+  /** verification 的描述 */
+    verification?: undefined | { factChecked: boolean; expertReviewed: boolean; reviewedBy?: string | undefined; };
 }
 
 // 专家问答类型
-export interface ExpertQA {
-  id: string;
-  question: {
+export interface IExpertQA {
+  /** id 的描述 */
+    id: string;
+  /** question 的描述 */
+    question: {
     userId: string;
     title: string;
     description: string;
-    tags: string[];
+    tags: string;
     askedAt: Date;
-    visibility: 'public' | 'private';
+    visibility: public  private;
   };
 
   // 回答
-  answers: Array<{
+  /** answers 的描述 */
+    answers: Array<{
     expertId: string;
     content: string;
     credentials: string[];
@@ -147,7 +162,8 @@ export interface ExpertQA {
   }>;
 
   // 状态
-  status: {
+  /** status 的描述 */
+    status: {
     isAnswered: boolean;
     isResolved: boolean;
     lastActivityAt: Date;
@@ -155,27 +171,27 @@ export interface ExpertQA {
   };
 
   // 相关推荐
-  related?: {
-    similarQuestions: string[];
-    recommendedResources: string[];
-  };
+  /** related 的描述 */
+    related?: undefined | { similarQuestions: string[]; recommendedResources: string[]; };
 }
 
 // 健康活动类型
-export interface HealthEvent {
-  id: string;
-  type: 'workshop' | 'challenge' | 'seminar' | 'group_activity';
+export interface IHealthEvent {
+  /** id 的描述 */
+    id: string;
+  /** type 的描述 */
+    type: workshop  challenge  seminar  group_activity;
   title: string;
   description: string;
 
-  // 活动详情
+   
   details: {
     startDate: Date;
     endDate: Date;
     location: {
-      type: 'online' | 'offline' | 'hybrid';
-      venue?: string;
-      link?: string;
+      type: online  offline  hybrid;
+      venue: string;
+      link: string;
     };
     capacity: number;
     requirements?: string[];
@@ -221,18 +237,20 @@ export interface HealthEvent {
 }
 
 // 健康挑战类型
-export interface HealthChallenge {
-  id: string;
-  type: 'personal' | 'group' | 'community';
+export interface IHealthChallenge {
+  /** id 的描述 */
+    id: string;
+  /** type 的描述 */
+    type: personal  group  community;
   title: string;
   description: string;
 
-  // 挑战规则
+   
   rules: {
     duration: number;
     startDate: Date;
     endDate: Date;
-    goals: Array<{
+    goals: Array{
       metric: string;
       target: number;
       unit: string;
@@ -287,17 +305,19 @@ export interface HealthChallenge {
 }
 
 // 社交互动类型
-export interface SocialInteraction {
-  id: string;
-  type: 'comment' | 'like' | 'share' | 'save';
+export interface ISocialInteraction {
+  /** id 的描述 */
+    id: string;
+  /** type 的描述 */
+    type: comment  like  share  save;
   userId: string;
   targetId: string;
-  targetType: 'post' | 'comment' | 'event' | 'challenge';
-  
-  // 互动内容
-  content?: {
-    text?: string;
-    media?: Array<{
+  targetType: post  comment  event  challenge;
+
+   
+  content: {
+    text: string;
+    media: Array{
       url: string;
       type: string;
     }>;
@@ -318,4 +338,4 @@ export interface SocialInteraction {
     replies: number;
     reports: number;
   };
-} 
+}

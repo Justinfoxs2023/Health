@@ -1,16 +1,26 @@
+/**
+ * @fileoverview TS 文件 provider.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // 服务供应商类型
-export interface ServiceProvider {
-  id: string;
-  name: string;
-  type: 'hospital' | 'clinic' | 'pharmacy' | 'rehabilitation' | 'fitness';
-  status: 'active' | 'suspended' | 'pending';
-  
-  // 基本信息
+export interface IServiceProvider {
+  /** id 的描述 */
+    id: string;
+  /** name 的描述 */
+    name: string;
+  /** type 的描述 */
+    type: hospital  clinic  pharmacy  rehabilitation  fitness;
+  status: active  suspended  pending;
+
+   
   basicInfo: {
     logo: string;
     description: string;
     establishedYear: number;
-    scale: 'small' | 'medium' | 'large';
+    scale: small  medium  large;
     staffCount: number;
     operatingHours: string;
   };
@@ -64,4 +74,4 @@ export interface ServiceProvider {
     commissionRate: number;
     minimumPayout: number;
   };
-} 
+}

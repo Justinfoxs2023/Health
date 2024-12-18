@@ -1,6 +1,6 @@
-import { Logger } from '../../utils/logger';
-import { AdminConfig } from '../../types/admin';
 import { DataSyncService } from '../sync/data-sync.service';
+import { IAdminConfig } from '../../types/admin';
+import { Logger } from '../../utils/logger';
 
 export class AdminService {
   private logger: Logger;
@@ -71,4 +71,4 @@ export class AdminService {
       throw error;
     }
   }
-} 
+}

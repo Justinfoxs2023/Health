@@ -2,7 +2,9 @@ import { Request, Response, NextFunction } from 'express';
 
 // 基础服务接口
 export interface IBaseService {
+  /** logger 的描述 */
   logger: Logger;
+  /** redis 的描述 */
   redis: Redis;
 }
 
@@ -27,4 +29,4 @@ export interface ISecurityService extends IBaseService {
   validateRequest(req: Request): Promise<boolean>;
   encryptData(data: any): Promise<string>;
   decryptData(encryptedData: string): Promise<any>;
-} 
+}
