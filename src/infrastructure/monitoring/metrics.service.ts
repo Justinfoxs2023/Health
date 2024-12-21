@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
 import { Counter, Registry } from 'prom-client';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class MetricsService {
@@ -17,19 +17,19 @@ export class MetricsService {
     this.requestCounter = new Counter({
       name: 'service_requests_total',
       help: 'Total number of requests',
-      labelNames: ['service']
+      labelNames: ['service'],
     });
 
     this.errorCounter = new Counter({
       name: 'service_errors_total',
       help: 'Total number of errors',
-      labelNames: ['service']
+      labelNames: ['service'],
     });
 
     this.successCounter = new Counter({
       name: 'service_success_total',
       help: 'Total number of successful requests',
-      labelNames: ['service']
+      labelNames: ['service'],
     });
 
     this.registry.registerMetric(this.requestCounter);
@@ -48,4 +48,4 @@ export class MetricsService {
   recordSuccess(serviceName: string) {
     this.successCounter.labels(serviceName).inc();
   }
-} 
+}

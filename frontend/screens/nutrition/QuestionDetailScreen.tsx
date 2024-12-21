@@ -1,18 +1,16 @@
 import React from 'react';
-import { View, ScrollView, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import { useQuery } from 'react-query';
-import { getQuestionDetails } from '../../api/nutrition';
+
 import { LoadingSpinner, UserInfo, Tag, ImageViewer } from '../../components';
+import { View, ScrollView, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { getQuestionDetails } from '../../api/nutrition';
 import { useAuth } from '../../hooks/useAuth';
+import { useQuery } from 'react-query';
 
 export const QuestionDetailScreen = ({ route }) => {
   const { currentUser } = useAuth();
   const { id } = route.params;
-  
-  const { data, isLoading } = useQuery(
-    ['questionDetails', id],
-    () => getQuestionDetails(id)
-  );
+
+  const { data, isLoading } = useQuery(['questionDetails', id], () => getQuestionDetails(id));
 
   if (isLoading) return <LoadingSpinner />;
 
@@ -35,17 +33,11 @@ export const QuestionDetailScreen = ({ route }) => {
     }
   };
 
-  const renderAnswer = (answer) => (
+  const renderAnswer = answer => (
     <View style={styles.answerCard} key={answer._id}>
       <View style={styles.answerHeader}>
-        <UserInfo
-          user={answer.nutritionistId}
-          showRole
-          timestamp={answer.createdAt}
-        />
-        {answer.isAccepted && (
-          <Tag text="已采纳" type="success" />
-        )}
+        <UserInfo user={answer.nutritionistId} showRole timestamp={answer.createdAt} />
+        {answer.isAccepted && <Tag text="已采纳" type="success" />}
       </View>
       <Text style={styles.answerContent}>{answer.content}</Text>
       {answer.images?.length > 0 && (
@@ -60,7 +52,7 @@ export const QuestionDetailScreen = ({ route }) => {
           <Text>点赞 {answer.likes}</Text>
         </TouchableOpacity>
         {question.userId === currentUser?.id && !question.answers.find(a => a.isAccepted) && (
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.acceptButton}
             onPress={() => handleAcceptAnswer(answer._id)}
           >
@@ -78,10 +70,7 @@ export const QuestionDetailScreen = ({ route }) => {
           <Text style={styles.title}>{question.title}</Text>
           <Tag text={question.status} type={getStatusType(question.status)} />
         </View>
-        <UserInfo
-          user={question.userId}
-          timestamp={question.createdAt}
-        />
+        <UserInfo user={question.userId} timestamp={question.createdAt} />
         <Text style={styles.content}>{question.content}</Text>
         {question.images?.length > 0 && (
           <View style={styles.imageGrid}>
@@ -107,7 +96,7 @@ export const QuestionDetailScreen = ({ route }) => {
       </View>
 
       {currentUser?.role === 'nutritionist' && question.status !== '已关闭' && (
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.answerButton}
           onPress={() => navigation.navigate('AnswerQuestion', { questionId: id })}
         >
@@ -121,41 +110,41 @@ export const QuestionDetailScreen = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   questionCard: {
     padding: 15,
     borderBottomWidth: 8,
-    borderBottomColor: '#f5f5f5'
+    borderBottomColor: '#f5f5f5',
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10
+    marginBottom: 10,
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
     flex: 1,
-    marginRight: 10
+    marginRight: 10,
   },
   content: {
     fontSize: 16,
     lineHeight: 24,
-    marginVertical: 15
+    marginVertical: 15,
   },
   imageGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 8,
-    marginVertical: 10
+    marginVertical: 10,
   },
   tags: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 8,
-    marginTop: 10
+    marginTop: 10,
   },
   stats: {
     flexDirection: 'row',
@@ -163,15 +152,15 @@ const styles = StyleSheet.create({
     marginTop: 15,
     paddingTop: 15,
     borderTopWidth: 1,
-    borderTopColor: '#eee'
+    borderTopColor: '#eee',
   },
   answersSection: {
-    padding: 15
+    padding: 15,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 15
+    marginBottom: 15,
   },
   answerCard: {
     marginBottom: 15,
@@ -182,17 +171,17 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3
+    elevation: 3,
   },
   answerHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10
+    marginBottom: 10,
   },
   answerContent: {
     fontSize: 15,
-    lineHeight: 22
+    lineHeight: 22,
   },
   answerFooter: {
     flexDirection: 'row',
@@ -201,20 +190,20 @@ const styles = StyleSheet.create({
     marginTop: 15,
     paddingTop: 15,
     borderTopWidth: 1,
-    borderTopColor: '#eee'
+    borderTopColor: '#eee',
   },
   likeButton: {
-    padding: 8
+    padding: 8,
   },
   acceptButton: {
     backgroundColor: '#2E7D32',
     paddingHorizontal: 15,
     paddingVertical: 8,
-    borderRadius: 20
+    borderRadius: 20,
   },
   acceptButtonText: {
     color: '#fff',
-    fontSize: 14
+    fontSize: 14,
   },
   answerButton: {
     position: 'absolute',
@@ -224,11 +213,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 12,
     borderRadius: 25,
-    elevation: 5
+    elevation: 5,
   },
   answerButtonText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: 'bold'
-  }
-}); 
+    fontWeight: 'bold',
+  },
+});

@@ -1,20 +1,26 @@
 import React from 'react';
+
 import { View, ScrollView, TouchableOpacity, Text, StyleSheet } from 'react-native';
 
-interface Props {
+interface IProps {
+  /** value 的描述 */
   value: { hour: number; minute: number };
+  /** onChange 的描述 */
   onChange: (time: { hour: number; minute: number }) => void;
+  /** minHour 的描述 */
   minHour?: number;
+  /** maxHour 的描述 */
   maxHour?: number;
+  /** interval 的描述 */
   interval?: number;
 }
 
-export const TimePicker: React.FC<Props> = ({
+export const TimePicker: React.FC<IProps> = ({
   value,
   onChange,
   minHour = 9,
   maxHour = 18,
-  interval = 30
+  interval = 30,
 }) => {
   const timeSlots = React.useMemo(() => {
     const slots = [];
@@ -31,8 +37,8 @@ export const TimePicker: React.FC<Props> = ({
   };
 
   return (
-    <ScrollView 
-      horizontal 
+    <ScrollView
+      horizontal
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={styles.container}
     >
@@ -41,14 +47,16 @@ export const TimePicker: React.FC<Props> = ({
           key={index}
           style={[
             styles.timeSlot,
-            value.hour === slot.hour && value.minute === slot.minute && styles.selectedSlot
+            value.hour === slot.hour && value.minute === slot.minute && styles.selectedSlot,
           ]}
           onPress={() => onChange(slot)}
         >
-          <Text style={[
-            styles.timeText,
-            value.hour === slot.hour && value.minute === slot.minute && styles.selectedText
-          ]}>
+          <Text
+            style={[
+              styles.timeText,
+              value.hour === slot.hour && value.minute === slot.minute && styles.selectedText,
+            ]}
+          >
             {formatTime(slot.hour, slot.minute)}
           </Text>
         </TouchableOpacity>
@@ -60,24 +68,24 @@ export const TimePicker: React.FC<Props> = ({
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 16,
-    paddingVertical: 12
+    paddingVertical: 12,
   },
   timeSlot: {
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
     backgroundColor: '#f5f5f5',
-    marginRight: 8
+    marginRight: 8,
   },
   selectedSlot: {
-    backgroundColor: '#E8F5E9'
+    backgroundColor: '#E8F5E9',
   },
   timeText: {
     fontSize: 14,
-    color: '#666'
+    color: '#666',
   },
   selectedText: {
     color: '#2E7D32',
-    fontWeight: '500'
-  }
-}); 
+    fontWeight: '500',
+  },
+});

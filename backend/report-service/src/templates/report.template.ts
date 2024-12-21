@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 report.template.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export const ReportTemplate = {
   // PDF报告模板
   pdf: {
@@ -6,7 +13,7 @@ export const ReportTemplate = {
       title: '健康报告',
       subtitle: '{{timeRange}}',
       logo: 'path/to/logo.png',
-      footer: '{{generatedAt}}'
+      footer: '{{generatedAt}}',
     },
 
     // 摘要部分
@@ -17,19 +24,19 @@ export const ReportTemplate = {
           type: 'healthScore',
           title: '健康评分',
           chart: 'radar',
-          description: '{{summaryText}}'
+          description: '{{summaryText}}',
         },
         {
           type: 'keyMetrics',
           title: '关键指标',
-          layout: 'grid'
+          layout: 'grid',
         },
         {
           type: 'trends',
           title: '健康趋势',
-          chart: 'line'
-        }
-      ]
+          chart: 'line',
+        },
+      ],
     },
 
     // 详细指标
@@ -40,27 +47,27 @@ export const ReportTemplate = {
           type: 'vitalSigns',
           title: '生命体征',
           metrics: ['heartRate', 'bloodPressure', 'bloodOxygen'],
-          chart: 'line'
+          chart: 'line',
         },
         {
           type: 'activities',
           title: '活动数据',
           metrics: ['steps', 'distance', 'calories'],
-          chart: 'bar'
+          chart: 'bar',
         },
         {
           type: 'sleep',
           title: '睡眠分析',
           metrics: ['duration', 'quality', 'pattern'],
-          chart: 'area'
+          chart: 'area',
         },
         {
           type: 'nutrition',
           title: '营养摄入',
           metrics: ['calories', 'protein', 'carbs', 'fat'],
-          chart: 'pie'
-        }
-      ]
+          chart: 'pie',
+        },
+      ],
     },
 
     // 趋势分析
@@ -70,14 +77,14 @@ export const ReportTemplate = {
         {
           type: 'comparison',
           title: '同期对比',
-          chart: 'bar'
+          chart: 'bar',
         },
         {
           type: 'prediction',
           title: '趋势预测',
-          chart: 'line'
-        }
-      ]
+          chart: 'line',
+        },
+      ],
     },
 
     // 建议部分
@@ -86,22 +93,22 @@ export const ReportTemplate = {
       sections: [
         {
           type: 'lifestyle',
-          title: '生活方式建议'
+          title: '生活方式建议',
         },
         {
           type: 'exercise',
-          title: '运动建议'
+          title: '运动建议',
         },
         {
           type: 'diet',
-          title: '饮食建议'
+          title: '饮食建议',
         },
         {
           type: 'medical',
-          title: '医疗建议'
-        }
-      ]
-    }
+          title: '医疗建议',
+        },
+      ],
+    },
   },
 
   // Excel报告模板
@@ -113,14 +120,14 @@ export const ReportTemplate = {
           {
             type: 'summary',
             range: 'A1:E10',
-            format: 'table'
+            format: 'table',
           },
           {
             type: 'charts',
             range: 'A11:E30',
-            charts: ['healthScore', 'trends']
-          }
-        ]
+            charts: ['healthScore', 'trends'],
+          },
+        ],
       },
       {
         name: '详细数据',
@@ -129,9 +136,9 @@ export const ReportTemplate = {
             type: 'metrics',
             range: 'A1:Z1000',
             format: 'table',
-            filters: true
-          }
-        ]
+            filters: true,
+          },
+        ],
       },
       {
         name: '趋势分析',
@@ -139,9 +146,9 @@ export const ReportTemplate = {
           {
             type: 'trends',
             range: 'A1:E20',
-            charts: ['comparison', 'prediction']
-          }
-        ]
+            charts: ['comparison', 'prediction'],
+          },
+        ],
       },
       {
         name: '建议',
@@ -149,24 +156,24 @@ export const ReportTemplate = {
           {
             type: 'recommendations',
             range: 'A1:C100',
-            format: 'list'
-          }
-        ]
-      }
+            format: 'list',
+          },
+        ],
+      },
     ],
     styles: {
       header: {
         font: { bold: true, size: 12 },
-        fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE0E0E0' } }
+        fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE0E0E0' } },
       },
       data: {
         font: { size: 11 },
-        numberFormat: '#,##0.00'
+        numberFormat: '#,##0.00',
       },
       chart: {
         width: 600,
-        height: 400
-      }
-    }
-  }
-}; 
+        height: 400,
+      },
+    },
+  },
+};

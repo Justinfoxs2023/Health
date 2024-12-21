@@ -1,8 +1,8 @@
-import { HealthAnalysisService } from './health-analysis.service';
 import { DataVisualizationService } from './data-visualization.service';
-import { PDFGenerator } from '../utils/pdf-generator';
 import { ExcelGenerator } from '../utils/excel-generator';
+import { HealthAnalysisService } from './health-analysis.service';
 import { Logger } from '../utils/logger';
+import { PDFGenerator } from '../utils/pdf-generator';
 import { Redis } from '../utils/redis';
 
 export class ReportService {
@@ -25,13 +25,16 @@ export class ReportService {
   /**
    * 生成健康报告
    */
-  async generateHealthReport(userId: string, options: {
-    timeRange: string;
-    type: 'daily' | 'weekly' | 'monthly';
-    format: 'pdf' | 'excel';
-    includeCharts?: boolean;
-    language?: string;
-  }) {
+  async generateHealthReport(
+    userId: string,
+    options: {
+      timeRange: string;
+      type: 'daily' | 'weekly' | 'monthly';
+      format: 'pdf' | 'excel';
+      includeCharts?: boolean;
+      language?: string;
+    },
+  ) {
     try {
       // 获取健康数据
       const healthData = await this.healthAnalysis.getHealthData(userId, options.timeRange);
@@ -49,7 +52,7 @@ export class ReportService {
         healthData,
         trends,
         visualizations,
-        language: options.language || 'zh-CN'
+        language: options.language || 'zh-CN',
       });
 
       // 导出报告
@@ -86,7 +89,7 @@ export class ReportService {
       healthScore: await this.dataVisualization.generateHealthScoreRadar(healthData),
 
       // 趋势预测图
-      predictions: await this.dataVisualization.generatePredictionChart(trends)
+      predictions: await this.dataVisualization.generatePredictionChart(trends),
     };
 
     return visualizations;
@@ -102,7 +105,7 @@ export class ReportService {
     language: string;
   }) {
     const template = await this.loadReportTemplate(data.language);
-    
+
     return {
       summary: this.generateSummary(data.healthData, data.trends),
       metrics: this.formatMetricsData(data.healthData),
@@ -112,8 +115,8 @@ export class ReportService {
       metadata: {
         generatedAt: new Date(),
         timeRange: data.healthData.timeRange,
-        language: data.language
-      }
+        language: data.language,
+      },
     };
   }
 
@@ -133,11 +136,15 @@ export class ReportService {
    */
   private async cacheReport(userId: string, report: any, options: any) {
     const cacheKey = `report:${userId}:${options.type}:${options.timeRange}`;
-    await this.redis.setex(cacheKey, 3600, JSON.stringify({
-      report,
-      options,
-      timestamp: new Date()
-    }));
+    await this.redis.setex(
+      cacheKey,
+      3600,
+      JSON.stringify({
+        report,
+        options,
+        timestamp: new Date(),
+      }),
+    );
   }
 
   /**
@@ -179,4 +186,4 @@ export class ReportService {
     // 实现模板加载逻辑
     return {};
   }
-} 
+}

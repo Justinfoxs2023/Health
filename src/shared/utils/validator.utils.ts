@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 validator.utils.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export class ValidatorUtils {
   // 类型检查
   static isType(value: any, type: string): boolean {
@@ -13,29 +20,19 @@ export class ValidatorUtils {
   }
 
   // 数值范围检查
-  static validateRange(
-    value: number,
-    min?: number,
-    max?: number
-  ): boolean {
+  static validateRange(value: number, min?: number, max?: number): boolean {
     if (min !== undefined && value < min) return false;
     if (max !== undefined && value > max) return false;
     return true;
   }
 
   // 字符串格式检查
-  static validateFormat(
-    value: string,
-    format: RegExp
-  ): boolean {
+  static validateFormat(value: string, format: RegExp): boolean {
     return format.test(value);
   }
 
   // 自定义验证规则
-  static validateCustom(
-    value: any,
-    validator: (value: any) => boolean
-  ): boolean {
+  static validateCustom(value: any, validator: (value: any) => boolean): boolean {
     return validator(value);
   }
-} 
+}

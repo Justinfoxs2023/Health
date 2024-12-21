@@ -1,45 +1,59 @@
 import React from 'react';
-import { View, FlatList, StyleSheet, Text, TouchableOpacity, Image } from 'react-native';
-import { useQuery } from '@tanstack/react-query';
-import { getExperts } from '../../api/consultation';
-import { LoadingSpinner, Icon, RatingStars } from '../../components';
 
-interface Expert {
+import { LoadingSpinner, Icon, RatingStars } from '../../components';
+import { View, FlatList, StyleSheet, Text, TouchableOpacity, Image } from 'react-native';
+import { getExperts } from '../../api/consultation';
+import { useQuery } from '@tanstack/react-query';
+
+interface IExpert {
+  /** id 的描述 */
   id: string;
+  /** name 的描述 */
   name: string;
+  /** avatar 的描述 */
   avatar: string;
+  /** title 的描述 */
   title: string;
+  /** hospital 的描述 */
   hospital: string;
+  /** department 的描述 */
   department: string;
+  /** specialties 的描述 */
   specialties: string[];
+  /** rating 的描述 */
   rating: number;
+  /** consultCount 的描述 */
   consultCount: number;
+  /** price 的描述 */
   price: number;
+  /** availableTime 的描述 */
   availableTime: {
     date: string;
     slots: string[];
   }[];
+  /** introduction 的描述 */
   introduction: string;
+  /** tags 的描述 */
   tags: string[];
 }
 
 export const ExpertConsultScreen = ({ navigation }) => {
   const [selectedDepartment, setSelectedDepartment] = React.useState<string>('all');
-  const { data: experts, isLoading } = useQuery<Expert[]>('experts', getExperts);
+  const { data: experts, isLoading } = useQuery<IExpert[]>('experts', getExperts);
 
   const departments = [
     { id: 'all', name: '全部' },
     { id: 'nutrition', name: '营养科' },
     { id: 'sports', name: '运动医学科' },
     { id: 'rehabilitation', name: '康复科' },
-    { id: 'psychology', name: '心理咨询' }
+    { id: 'psychology', name: '心理咨询' },
   ];
 
-  const filteredExperts = experts?.filter(expert => 
-    selectedDepartment === 'all' || expert.department === selectedDepartment
+  const filteredExperts = experts?.filter(
+    expert => selectedDepartment === 'all' || expert.department === selectedDepartment,
   );
 
-  const renderExpert = ({ item: expert }: { item: Expert }) => (
+  const renderExpert = ({ item: expert }: { item: IExpert }) => (
     <TouchableOpacity
       style={styles.expertCard}
       onPress={() => navigation.navigate('ExpertDetail', { id: expert.id })}
@@ -82,7 +96,9 @@ export const ExpertConsultScreen = ({ navigation }) => {
           <Text style={styles.timeLabel}>近期可约时间</Text>
           <View style={styles.timeSlots}>
             {expert.availableTime[0]?.slots.slice(0, 2).map((slot, index) => (
-              <Text key={index} style={styles.timeSlot}>{slot}</Text>
+              <Text key={index} style={styles.timeSlot}>
+                {slot}
+              </Text>
             ))}
             {expert.availableTime[0]?.slots.length > 2 && (
               <Text style={styles.moreTimes}>更多...</Text>
@@ -121,14 +137,16 @@ export const ExpertConsultScreen = ({ navigation }) => {
             <TouchableOpacity
               style={[
                 styles.departmentButton,
-                selectedDepartment === item.id && styles.activeDepartmentButton
+                selectedDepartment === item.id && styles.activeDepartmentButton,
               ]}
               onPress={() => setSelectedDepartment(item.id)}
             >
-              <Text style={[
-                styles.departmentText,
-                selectedDepartment === item.id && styles.activeDepartmentText
-              ]}>
+              <Text
+                style={[
+                  styles.departmentText,
+                  selectedDepartment === item.id && styles.activeDepartmentText,
+                ]}
+              >
                 {item.name}
               </Text>
             </TouchableOpacity>
@@ -151,99 +169,99 @@ export const ExpertConsultScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 15,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#333'
+    color: '#333',
   },
   departmentBar: {
     backgroundColor: '#fff',
-    paddingVertical: 10
+    paddingVertical: 10,
   },
   departmentList: {
-    paddingHorizontal: 15
+    paddingHorizontal: 15,
   },
   departmentButton: {
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
     backgroundColor: '#f5f5f5',
-    marginRight: 10
+    marginRight: 10,
   },
   activeDepartmentButton: {
-    backgroundColor: '#E8F5E9'
+    backgroundColor: '#E8F5E9',
   },
   departmentText: {
     fontSize: 14,
-    color: '#666'
+    color: '#666',
   },
   activeDepartmentText: {
     color: '#2E7D32',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   list: {
-    padding: 15
+    padding: 15,
   },
   expertCard: {
     backgroundColor: '#fff',
     borderRadius: 12,
-    padding: 15
+    padding: 15,
   },
   expertHeader: {
     flexDirection: 'row',
-    marginBottom: 15
+    marginBottom: 15,
   },
   avatar: {
     width: 60,
     height: 60,
     borderRadius: 30,
-    marginRight: 15
+    marginRight: 15,
   },
   expertInfo: {
-    flex: 1
+    flex: 1,
   },
   nameRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 4
+    marginBottom: 4,
   },
   name: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#333',
-    marginRight: 8
+    marginRight: 8,
   },
   title: {
     fontSize: 14,
-    color: '#666'
+    color: '#666',
   },
   hospital: {
     fontSize: 14,
     color: '#666',
-    marginBottom: 4
+    marginBottom: 4,
   },
   ratingRow: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   consultCount: {
     fontSize: 12,
     color: '#999',
-    marginLeft: 8
+    marginLeft: 8,
   },
   specialtiesContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginBottom: 12
+    marginBottom: 12,
   },
   specialtyTag: {
     backgroundColor: '#E8F5E9',
@@ -251,17 +269,17 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 12,
     marginRight: 8,
-    marginBottom: 8
+    marginBottom: 8,
   },
   specialtyText: {
     fontSize: 12,
-    color: '#2E7D32'
+    color: '#2E7D32',
   },
   introduction: {
     fontSize: 14,
     color: '#666',
     lineHeight: 20,
-    marginBottom: 15
+    marginBottom: 15,
   },
   footer: {
     flexDirection: 'row',
@@ -269,39 +287,39 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingTop: 15,
     borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: '#f0f0f0'
+    borderTopColor: '#f0f0f0',
   },
   priceContainer: {
     flexDirection: 'row',
-    alignItems: 'baseline'
+    alignItems: 'baseline',
   },
   priceLabel: {
     fontSize: 12,
-    color: '#999'
+    color: '#999',
   },
   price: {
     fontSize: 20,
     fontWeight: 'bold',
     color: '#F57C00',
-    marginLeft: 4
+    marginLeft: 4,
   },
   priceUnit: {
     fontSize: 12,
     color: '#999',
-    marginLeft: 2
+    marginLeft: 2,
   },
   availableTimeContainer: {
     flex: 1,
-    marginLeft: 15
+    marginLeft: 15,
   },
   timeLabel: {
     fontSize: 12,
     color: '#999',
-    marginBottom: 4
+    marginBottom: 4,
   },
   timeSlots: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   timeSlot: {
     fontSize: 12,
@@ -310,25 +328,25 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 4,
-    marginRight: 6
+    marginRight: 6,
   },
   moreTimes: {
     fontSize: 12,
-    color: '#999'
+    color: '#999',
   },
   consultButton: {
     backgroundColor: '#2E7D32',
     paddingHorizontal: 15,
     paddingVertical: 8,
     borderRadius: 20,
-    marginLeft: 15
+    marginLeft: 15,
   },
   consultButtonText: {
     color: '#fff',
     fontSize: 14,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   separator: {
-    height: 10
-  }
-}); 
+    height: 10,
+  },
+});

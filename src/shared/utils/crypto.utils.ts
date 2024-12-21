@@ -10,7 +10,7 @@ export class CryptoUtils {
   // 生成密钥
   static async generateKey(
     password: string,
-    salt?: Buffer
+    salt?: Buffer,
   ): Promise<{ key: Buffer; salt: Buffer }> {
     const useSalt = salt || crypto.randomBytes(this.saltLength);
     const key = await new Promise<Buffer>((resolve, reject) => {
@@ -25,7 +25,7 @@ export class CryptoUtils {
   // 加密数据
   static async encrypt(
     data: string,
-    password: string
+    password: string,
   ): Promise<{ encrypted: string; iv: string; tag: string; salt: string }> {
     const { key, salt } = await this.generateKey(password);
     const iv = crypto.randomBytes(this.ivLength);
@@ -39,7 +39,7 @@ export class CryptoUtils {
       encrypted,
       iv: iv.toString('hex'),
       tag: tag.toString('hex'),
-      salt: salt.toString('hex')
+      salt: salt.toString('hex'),
     };
   }
 
@@ -49,18 +49,14 @@ export class CryptoUtils {
     password: string,
     iv: string,
     tag: string,
-    salt: string
+    salt: string,
   ): Promise<string> {
     const { key } = await this.generateKey(password, Buffer.from(salt, 'hex'));
-    const decipher = crypto.createDecipheriv(
-      this.algorithm,
-      key,
-      Buffer.from(iv, 'hex')
-    );
+    const decipher = crypto.createDecipheriv(this.algorithm, key, Buffer.from(iv, 'hex'));
     decipher.setAuthTag(Buffer.from(tag, 'hex'));
 
     let decrypted = decipher.update(encrypted, 'hex', 'utf8');
     decrypted += decipher.final('utf8');
     return decrypted;
   }
-} 
+}

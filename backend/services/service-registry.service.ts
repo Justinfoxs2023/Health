@@ -1,30 +1,40 @@
 import { EventEmitter } from 'events';
 import { Logger } from '../utils/logger';
 
-interface ServiceInfo {
+interface IServiceInfo {
+  /** id 的描述 */
   id: string;
+  /** name 的描述 */
   name: string;
+  /** version 的描述 */
   version: string;
+  /** endpoint 的描述 */
   endpoint: string;
+  /** status 的描述 */
   status: 'up' | 'down' | 'warning';
+  /** metadata 的描述 */
   metadata: Record<string, any>;
+  /** lastHeartbeat 的描述 */
   lastHeartbeat: Date;
 }
 
-interface RegistryConfig {
-  heartbeatInterval: number;  // 心跳检测间隔(ms)
-  timeoutThreshold: number;   // 服务超时阈值(ms)
-  cleanupInterval: number;    // 清理间隔(ms)
+interface IRegistryConfig {
+  /** heartbeatInterval 的描述 */
+  heartbeatInterval: number; // 心跳检测间隔(ms)
+  /** timeoutThreshold 的描述 */
+  timeoutThreshold: number; // 服务超时阈值(ms)
+  /** cleanupInterval 的描述 */
+  cleanupInterval: number; // 清理间隔(ms)
 }
 
 export class ServiceRegistry extends EventEmitter {
-  private services: Map<string, ServiceInfo>;
-  private config: RegistryConfig;
+  private services: Map<string, IServiceInfo>;
+  private config: IRegistryConfig;
   private logger: Logger;
   private heartbeatTimer: NodeJS.Timer;
   private cleanupTimer: NodeJS.Timer;
 
-  constructor(config?: Partial<RegistryConfig>) {
+  constructor(config?: Partial<IRegistryConfig>) {
     super();
     this.services = new Map();
     this.logger = new Logger('ServiceRegistry');
@@ -32,7 +42,7 @@ export class ServiceRegistry extends EventEmitter {
       heartbeatInterval: 30000,
       timeoutThreshold: 90000,
       cleanupInterval: 300000,
-      ...config
+      ...config,
     };
 
     this.startHeartbeatCheck();
@@ -40,10 +50,10 @@ export class ServiceRegistry extends EventEmitter {
   }
 
   // 注册服务
-  register(service: Omit<ServiceInfo, 'lastHeartbeat'>): void {
-    const serviceInfo: ServiceInfo = {
+  register(service: Omit<IServiceInfo, 'lastHeartbeat'>): void {
+    const serviceInfo: IServiceInfo = {
       ...service,
-      lastHeartbeat: new Date()
+      lastHeartbeat: new Date(),
     };
 
     this.services.set(service.id, serviceInfo);
@@ -72,20 +82,20 @@ export class ServiceRegistry extends EventEmitter {
   }
 
   // 获取服务信息
-  getService(serviceId: string): ServiceInfo | undefined {
+  getService(serviceId: string): IServiceInfo | undefined {
     return this.services.get(serviceId);
   }
 
   // 获取所有服务
-  getAllServices(): ServiceInfo[] {
+  getAllServices(): IServiceInfo[] {
     return Array.from(this.services.values());
   }
 
   // 根据条件查找服务
-  findServices(criteria: Partial<ServiceInfo>): ServiceInfo[] {
+  findServices(criteria: Partial<IServiceInfo>): IServiceInfo[] {
     return Array.from(this.services.values()).filter(service => {
-      return Object.entries(criteria).every(([key, value]) => 
-        service[key as keyof ServiceInfo] === value
+      return Object.entries(criteria).every(
+        ([key, value]) => service[key as keyof IServiceInfo] === value,
       );
     });
   }
@@ -96,7 +106,7 @@ export class ServiceRegistry extends EventEmitter {
       const now = Date.now();
       this.services.forEach((service, id) => {
         const timeSinceLastHeartbeat = now - service.lastHeartbeat.getTime();
-        
+
         if (timeSinceLastHeartbeat > this.config.timeoutThreshold) {
           service.status = 'down';
           this.emit('service:down', service);
@@ -124,4 +134,4 @@ export class ServiceRegistry extends EventEmitter {
     clearInterval(this.heartbeatTimer);
     clearInterval(this.cleanupTimer);
   }
-} 
+}

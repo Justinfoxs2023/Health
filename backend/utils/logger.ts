@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 logger.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export class Logger {
   private context: string;
 
@@ -6,7 +13,7 @@ export class Logger {
   }
 
   error(message: string, error?: any) {
-    console.error(`[${this.context}] ${message}`, error);
+    console.error('Error in logger.ts:', `[${this.context}] ${message}`, error);
   }
 
   info(message: string) {
@@ -22,4 +29,4 @@ export class Logger {
   }
 }
 
-export const logger = new Logger('App'); 
+export const logger = new Logger('App');

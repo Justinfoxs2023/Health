@@ -1,9 +1,11 @@
 import React from 'react';
+
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { format } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
 
-interface Props {
+interface IProps {
+  /** appointment 的描述 */
   appointment: {
     id: string;
     date: string;
@@ -15,13 +17,11 @@ interface Props {
     };
     topic: string;
   };
+  /** onPress 的描述 */
   onPress: () => void;
 }
 
-export const AppointmentCard: React.FC<Props> = ({
-  appointment,
-  onPress
-}) => {
+export const AppointmentCard: React.FC<IProps> = ({ appointment, onPress }) => {
   const getStatusColor = () => {
     switch (appointment.status) {
       case '待确认':
@@ -43,9 +43,7 @@ export const AppointmentCard: React.FC<Props> = ({
         <Text style={styles.date}>
           {format(new Date(appointment.date), 'yyyy年MM月dd日 HH:mm', { locale: zhCN })}
         </Text>
-        <Text style={[styles.status, { color: getStatusColor() }]}>
-          {appointment.status}
-        </Text>
+        <Text style={[styles.status, { color: getStatusColor() }]}>{appointment.status}</Text>
       </View>
       <View style={styles.content}>
         <Text style={styles.type}>{appointment.type}</Text>
@@ -54,9 +52,7 @@ export const AppointmentCard: React.FC<Props> = ({
         </Text>
       </View>
       <View style={styles.footer}>
-        <Text style={styles.nutritionist}>
-          营养师: {appointment.nutritionist.name}
-        </Text>
+        <Text style={styles.nutritionist}>营养师: {appointment.nutritionist.name}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -72,43 +68,43 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 4
+    shadowRadius: 4,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 12
+    marginBottom: 12,
   },
   date: {
     fontSize: 14,
-    color: '#333'
+    color: '#333',
   },
   status: {
     fontSize: 14,
-    fontWeight: '500'
+    fontWeight: '500',
   },
   content: {
-    marginBottom: 12
+    marginBottom: 12,
   },
   type: {
     fontSize: 16,
     fontWeight: '500',
     color: '#333',
-    marginBottom: 4
+    marginBottom: 4,
   },
   topic: {
     fontSize: 14,
     color: '#666',
-    lineHeight: 20
+    lineHeight: 20,
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   nutritionist: {
     fontSize: 14,
-    color: '#666'
-  }
-}); 
+    color: '#666',
+  },
+});

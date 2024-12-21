@@ -1,6 +1,6 @@
-import { Request, Response } from 'express';
 import { ContentService } from '../services/content.service';
 import { Logger } from '../utils/logger';
+import { Request, Response } from 'express';
 
 export class ContentController {
   private contentService: ContentService;
@@ -17,23 +17,23 @@ export class ContentController {
   async getContents(req: Request, res: Response) {
     try {
       const { page = 1, limit = 10, type, status } = req.query;
-      
+
       const contents = await this.contentService.getContents({
         page: Number(page),
         limit: Number(limit),
         type: type as string,
-        status: status as string
+        status: status as string,
       });
 
       return res.json({
         code: 200,
-        data: contents
+        data: contents,
       });
     } catch (error) {
       this.logger.error('获取内容列表失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
@@ -51,18 +51,18 @@ export class ContentController {
         contentId,
         status,
         remarks,
-        reviewerId: adminId
+        reviewerId: adminId,
       });
 
       return res.json({
         code: 200,
-        message: '内容审核成功'
+        message: '内容审核成功',
       });
     } catch (error) {
       this.logger.error('内容审核失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
@@ -79,18 +79,18 @@ export class ContentController {
       await this.contentService.publishContent({
         contentId,
         publishTime: publishTime ? new Date(publishTime) : new Date(),
-        publisherId: adminId
+        publisherId: adminId,
       });
 
       return res.json({
         code: 200,
-        message: '内容发布成功'
+        message: '内容发布成功',
       });
     } catch (error) {
       this.logger.error('内容发布失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
@@ -104,14 +104,14 @@ export class ContentController {
 
       return res.json({
         code: 200,
-        data: stats
+        data: stats,
       });
     } catch (error) {
       this.logger.error('获取内容统计失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
-} 
+}

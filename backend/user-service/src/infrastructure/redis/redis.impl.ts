@@ -1,10 +1,10 @@
-import { injectable } from 'inversify';
 import Redis from 'ioredis';
-import { RedisClient, RedisMulti } from './index';
+import { IRedisClient, IRedisMulti } from './index';
 import { config } from '../../config';
+import { injectable } from 'inversify';
 
 @injectable()
-export class RedisClientImpl implements RedisClient {
+export class RedisClientImpl implements IRedisClient {
   private client: Redis;
 
   constructor() {
@@ -35,7 +35,7 @@ export class RedisClientImpl implements RedisClient {
     return this.client.keys(pattern);
   }
 
-  multi(): RedisMulti {
-    return this.client.multi() as RedisMulti;
+  multi(): IRedisMulti {
+    return this.client.multi() as IRedisMulti;
   }
-} 
+}

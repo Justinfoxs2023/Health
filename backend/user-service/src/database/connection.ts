@@ -23,7 +23,7 @@ export class DatabaseConnection {
       this.logger.info('MongoDB connected');
     });
 
-    mongoose.connection.on('error', (err) => {
+    mongoose.connection.on('error', err => {
       this.logger.error('MongoDB connection error', err);
     });
 
@@ -45,7 +45,7 @@ export class DatabaseConnection {
         useNewUrlParser: true,
         useUnifiedTopology: true,
         useCreateIndex: true,
-        useFindAndModify: false
+        useFindAndModify: false,
       });
     } catch (error) {
       this.logger.error('Failed to connect to MongoDB', error);
@@ -62,4 +62,4 @@ export class DatabaseConnection {
       throw error;
     }
   }
-} 
+}

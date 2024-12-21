@@ -1,14 +1,17 @@
 import { EventEmitter } from 'events';
-import { Logger } from '../../utils/logger';
 import { Grafana } from '@grafana/api';
+import { Logger } from '../../utils/logger';
 import { Redis } from '../../utils/redis';
 
-interface DashboardConfig {
+interface IDashboardConfig {
+  /** grafana 的描述 */
   grafana: {
     url: string;
     apiKey: string;
   };
+  /** refresh 的描述 */
   refresh: number;
+  /** retention 的描述 */
   retention: number;
 }
 
@@ -16,14 +19,14 @@ export class DashboardService extends EventEmitter {
   private logger: Logger;
   private grafana: Grafana;
   private redis: Redis;
-  private config: DashboardConfig;
+  private config: IDashboardConfig;
 
-  constructor(config: DashboardConfig) {
+  constructor(config: IDashboardConfig) {
     super();
     this.logger = new Logger('DashboardService');
     this.config = config;
     this.redis = new Redis();
-    
+
     this.initializeGrafana();
   }
 
@@ -32,7 +35,7 @@ export class DashboardService extends EventEmitter {
     try {
       const dashboard = await this.grafana.createDashboard({
         ...template,
-        refresh: this.config.refresh
+        refresh: this.config.refresh,
       });
 
       await this.cacheDashboard(dashboard);
@@ -62,4 +65,4 @@ export class DashboardService extends EventEmitter {
       throw error;
     }
   }
-} 
+}

@@ -1,6 +1,6 @@
-import { Response } from 'express';
-import { NutritionArticle } from '../models/nutrition-article.model';
 import { IAuthRequest } from '../types/models';
+import { NutritionArticle } from '../models/nutrition-article.model';
+import { Response } from 'express';
 import { uploadImage } from '../utils/upload';
 
 export class NutritionArticleController {
@@ -20,19 +20,19 @@ export class NutritionArticleController {
 
       const article = new NutritionArticle({
         ...articleData,
-        author: userId
+        author: userId,
       });
 
       await article.save();
 
       res.status(201).json({
         success: true,
-        data: article
+        data: article,
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -42,13 +42,7 @@ export class NutritionArticleController {
    */
   public async getArticles(req: IAuthRequest, res: Response): Promise<void> {
     try {
-      const { 
-        category, 
-        status = '已发布',
-        search,
-        page = 1, 
-        limit = 10 
-      } = req.query;
+      const { category, status = '已发布', search, page = 1, limit = 10 } = req.query;
 
       const query: any = { status };
 
@@ -76,13 +70,13 @@ export class NutritionArticleController {
           total,
           page: Number(page),
           limit: Number(limit),
-          pages: Math.ceil(total / Number(limit))
-        }
+          pages: Math.ceil(total / Number(limit)),
+        },
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -94,13 +88,15 @@ export class NutritionArticleController {
     try {
       const { id } = req.params;
 
-      const article = await NutritionArticle.findById(id)
-        .populate('author', 'name avatar nutritionistProfile');
+      const article = await NutritionArticle.findById(id).populate(
+        'author',
+        'name avatar nutritionistProfile',
+      );
 
       if (!article) {
         res.status(404).json({
           success: false,
-          message: '未找到该文章'
+          message: '未找到该文章',
         });
         return;
       }
@@ -111,12 +107,12 @@ export class NutritionArticleController {
 
       res.json({
         success: true,
-        data: article
+        data: article,
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -133,13 +129,13 @@ export class NutritionArticleController {
 
       const article = await NutritionArticle.findOne({
         _id: id,
-        author: userId
+        author: userId,
       });
 
       if (!article) {
         res.status(404).json({
           success: false,
-          message: '未找到该文章'
+          message: '未找到该文章',
         });
         return;
       }
@@ -154,12 +150,12 @@ export class NutritionArticleController {
 
       res.json({
         success: true,
-        data: article
+        data: article,
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -176,7 +172,7 @@ export class NutritionArticleController {
       if (!article) {
         res.status(404).json({
           success: false,
-          message: '未找到该文章'
+          message: '未找到该文章',
         });
         return;
       }
@@ -189,15 +185,15 @@ export class NutritionArticleController {
 
       res.json({
         success: true,
-        data: article
+        data: article,
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
 }
 
-export const nutritionArticleController = new NutritionArticleController(); 
+export const nutritionArticleController = new NutritionArticleController();

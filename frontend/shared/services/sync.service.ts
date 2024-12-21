@@ -1,6 +1,6 @@
 import { ApiService } from './api.service';
-import { storage } from '../utils';
 import { EventEmitter } from 'events';
+import { storage } from '../utils';
 
 export class SyncService {
   private api: ApiService;
@@ -27,7 +27,7 @@ export class SyncService {
     const wsUrl = `${process.env.WS_URL}/sync`;
     this.ws = new WebSocket(wsUrl);
 
-    this.ws.onmessage = (event) => {
+    this.ws.onmessage = event => {
       const data = JSON.parse(event.data);
       this.handleSyncMessage(data);
     };
@@ -54,17 +54,13 @@ export class SyncService {
   /**
    * 同步数据
    */
-  async syncData(data: {
-    type: string;
-    operation: 'create' | 'update' | 'delete';
-    data: any;
-  }) {
+  async syncData(data: { type: string; operation: 'create' | 'update' | 'delete'; data: any }) {
     const syncId = `${Date.now()}-${Math.random()}`;
-    
+
     // 添加到同步队列
     this.syncQueue.set(syncId, {
       ...data,
-      version: await this.getLocalVersion(data.type)
+      version: await this.getLocalVersion(data.type),
     });
 
     // 如果在线则立即处理
@@ -82,7 +78,7 @@ export class SyncService {
     for (const [syncId, data] of this.syncQueue.entries()) {
       try {
         const response = await this.api.post('/sync', data);
-        
+
         if (response.conflictResolved) {
           // 处理冲突解决
           await this.handleConflictResolution(data.type, response.resolvedData);
@@ -90,11 +86,11 @@ export class SyncService {
 
         // 更新本地版本
         await this.updateLocalVersion(data.type, response.version);
-        
+
         // 移除已同步的数据
         this.syncQueue.delete(syncId);
         this.retryAttempts.delete(syncId);
-        
+
         // 触发同步成功事件
         this.eventEmitter.emit('syncSuccess', { syncId, data });
       } catch (error) {
@@ -133,10 +129,10 @@ export class SyncService {
    * 存储失败的同步
    */
   private async storeFailedSync(syncId: string, data: any) {
-    const failedSyncs = await storage.get('failedSyncs') || {};
+    const failedSyncs = (await storage.get('failedSyncs')) || {};
     failedSyncs[syncId] = {
       ...data,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
     await storage.set('failedSyncs', failedSyncs);
   }
@@ -154,4 +150,4 @@ export class SyncService {
         break;
     }
   }
-} 
+}

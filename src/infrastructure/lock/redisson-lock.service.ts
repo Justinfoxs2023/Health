@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
 import { ConfigService } from '../config/config.service';
+import { Injectable } from '@nestjs/common';
 import { RedisService } from '../redis/redis.service';
 
 @Injectable()
@@ -7,10 +7,7 @@ export class RedissonLockService {
   private readonly lockTimeout: number;
   private readonly retryInterval: number;
 
-  constructor(
-    private readonly config: ConfigService,
-    private readonly redis: RedisService
-  ) {
+  constructor(private readonly config: ConfigService, private readonly redis: RedisService) {
     this.lockTimeout = parseInt(config.get('LOCK_TIMEOUT') || '5000');
     this.retryInterval = parseInt(config.get('LOCK_RETRY_INTERVAL') || '100');
   }
@@ -19,13 +16,7 @@ export class RedissonLockService {
     const lockKey = `lock:${key}`;
     const lockValue = Date.now().toString();
 
-    const acquired = await this.redis.set(
-      lockKey,
-      lockValue,
-      'NX',
-      'PX',
-      timeout
-    );
+    const acquired = await this.redis.set(lockKey, lockValue, 'NX', 'PX', timeout);
 
     return !!acquired;
   }
@@ -35,11 +26,7 @@ export class RedissonLockService {
     await this.redis.del(lockKey);
   }
 
-  async tryLock(
-    key: string,
-    timeout: number = this.lockTimeout,
-    retries: number = 3
-  ): Promise<boolean> {
+  async tryLock(key: string, timeout: number = this.lockTimeout, retries = 3): Promise<boolean> {
     for (let i = 0; i < retries; i++) {
       const acquired = await this.lock(key, timeout);
       if (acquired) return true;
@@ -47,4 +34,4 @@ export class RedissonLockService {
     }
     return false;
   }
-} 
+}

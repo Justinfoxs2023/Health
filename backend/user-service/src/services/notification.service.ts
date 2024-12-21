@@ -1,8 +1,8 @@
-import { NotificationModel } from '../models/notification.model';
 import { EmailService } from '../utils/email.service';
+import { Logger } from '../utils/logger';
+import { NotificationModel } from '../models/notification.model';
 import { PushService } from '../utils/push.service';
 import { SMSService } from '../utils/sms.service';
-import { Logger } from '../utils/logger';
 
 export class NotificationService {
   private emailService: EmailService;
@@ -24,7 +24,7 @@ export class NotificationService {
     try {
       const code = this.generateVerificationCode();
       const key = `verification:${type}:${target}`;
-      
+
       // 存储验证码
       await this.redis.setex(key, config.verification.codeTTL, code);
 
@@ -49,7 +49,9 @@ export class NotificationService {
       const notification = {
         type: 'security_alert',
         title: '新设备登录提醒',
-        content: `检测到您的账号在新设备上登录\n设备信息: ${deviceInfo.device}\n位置: ${deviceInfo.location}\n时间: ${new Date().toLocaleString()}`
+        content: `检测到您的账号在新设备上登录\n设备信息: ${deviceInfo.device}\n位置: ${
+          deviceInfo.location
+        }\n时间: ${new Date().toLocaleString()}`,
       };
 
       // 发送邮件通知
@@ -78,7 +80,7 @@ export class NotificationService {
       const newNotification = new NotificationModel({
         userId,
         ...notification,
-        createdAt: new Date()
+        createdAt: new Date(),
       });
 
       await newNotification.save();
@@ -94,4 +96,4 @@ export class NotificationService {
   private generateVerificationCode(): string {
     return Math.random().toString().slice(2, 8);
   }
-} 
+}

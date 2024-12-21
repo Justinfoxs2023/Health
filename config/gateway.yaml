@@ -1,0 +1,127 @@
+# API网关配置
+
+# 基础配置
+server:
+  port: 3000
+  host: '0.0.0.0'
+  timeout: 30000
+
+# 路由配置
+routes:
+  - path: '/api/health'
+    target: 'http://health-service:3001'
+    methods: ['GET', 'POST']
+    auth: false
+    rateLimit: 100
+
+  - path: '/api/tcm'
+    target: 'http://tcm-service:3002'
+    methods: ['GET', 'POST', 'PUT', 'DELETE']
+    auth: true
+    rateLimit: 50
+
+  - path: '/api/mall'
+    target: 'http://mall-service:3003'
+    methods: ['GET', 'POST', 'PUT', 'DELETE']
+    auth: true
+    rateLimit: 200
+
+  - path: '/api/professional'
+    target: 'http://professional-service:3004'
+    methods: ['GET', 'POST', 'PUT', 'DELETE']
+    auth: true
+    rateLimit: 100
+
+# 速率限制配置
+rateLimit:
+  windowMs: 60000
+  max: 1000
+  message: '请求频率超限'
+
+# 安全配置
+security:
+  jwt:
+    secret: 'your-secret-key'
+    expiresIn: '24h'
+  cors:
+    origin:
+      - 'http://localhost:8080'
+      - 'https://health.example.com'
+    methods:
+      - 'GET'
+      - 'POST'
+      - 'PUT'
+      - 'DELETE'
+      - 'OPTIONS'
+  blacklist: []
+
+# 缓存配置
+cache:
+  enabled: true
+  ttl: 300
+  maxSize: 1000
+
+# 断路器配置
+circuitBreaker:
+  failureThreshold: 5
+  resetTimeout: 30000
+  halfOpenRequests: 3
+
+# 服务发现配置
+serviceDiscovery:
+  enabled: true
+  provider: 'consul'
+  refreshInterval: 30000
+
+# 负载均衡配置
+loadBalancer:
+  algorithm: 'round-robin'
+  healthCheck:
+    enabled: true
+    interval: 10000
+    timeout: 5000
+    unhealthyThreshold: 3
+
+# 监控配置
+monitoring:
+  metrics:
+    enabled: true
+    interval: 60000
+    retention: 86400
+  logging:
+    level: 'info'
+    format: 'json'
+    destination: '/var/log/gateway'
+  alerts:
+    enabled: true
+    channels:
+      - 'email'
+      - 'slack'
+    thresholds:
+      errorRate: 0.1
+      latency: 1000
+      memory: 0.8
+
+# 转换配置
+transformation:
+  request:
+    headers:
+      'X-Gateway-Version': '1.0'
+  response:
+    headers:
+      'X-Response-Time': '$responseTime'
+
+# 验证配置
+validation:
+  request:
+    headers:
+      'Content-Type': '^application/json$'
+    query:
+      'page': '^\d+$'
+      'limit': '^\d+$'
+
+# API密钥配置
+apiKeys:
+  - id: 'default'
+    permissions: ['read']
+    rateLimit: 1000

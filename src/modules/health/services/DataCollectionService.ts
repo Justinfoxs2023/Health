@@ -1,7 +1,8 @@
-import { Logger } from '@/utils/Logger';
-import { HealthData, VitalSigns, BodyMetrics, ActivityData } from '../models/HealthData';
 import { DataValidationService } from './DataValidationService';
+import { IHealthData, IVitalSigns, IBodyMetrics, IActivityData } from '../models/HealthData';
+
 import { DataEncryptionService } from '@/services/security/DataEncryptionService';
+import { Logger } from '@/utils/Logger';
 
 export class DataCollectionService {
   private logger: Logger;
@@ -19,7 +20,7 @@ export class DataCollectionService {
    * @param userId 用户ID
    * @param data 健康数据
    */
-  async collectHealthData(userId: string, data: HealthData): Promise<void> {
+  async collectHealthData(userId: string, data: IHealthData): Promise<void> {
     try {
       // 1. 数据验证
       await this.validator.validateHealthData(data);
@@ -46,15 +47,15 @@ export class DataCollectionService {
   /**
    * 采集生命体征数据
    */
-  async collectVitalSigns(userId: string, vitalSigns: VitalSigns): Promise<void> {
+  async collectVitalSigns(userId: string, vitalSigns: IVitalSigns): Promise<void> {
     try {
       await this.validator.validateVitalSigns(vitalSigns);
-      
+
       // 处理生命体征数据
       const processedData = {
         ...vitalSigns,
         timestamp: new Date(),
-        deviceInfo: await this.getDeviceInfo()
+        deviceInfo: await this.getDeviceInfo(),
       };
 
       await this.storeVitalSigns(userId, processedData);
@@ -67,14 +68,14 @@ export class DataCollectionService {
   /**
    * 采集身体指标数据
    */
-  async collectBodyMetrics(userId: string, metrics: BodyMetrics): Promise<void> {
+  async collectBodyMetrics(userId: string, metrics: IBodyMetrics): Promise<void> {
     try {
       await this.validator.validateBodyMetrics(metrics);
-      
+
       const processedMetrics = {
         ...metrics,
         timestamp: new Date(),
-        measurementMethod: await this.getMeasurementMethod()
+        measurementMethod: await this.getMeasurementMethod(),
       };
 
       await this.storeBodyMetrics(userId, processedMetrics);
@@ -87,14 +88,14 @@ export class DataCollectionService {
   /**
    * 采集活动数据
    */
-  async collectActivityData(userId: string, activity: ActivityData): Promise<void> {
+  async collectActivityData(userId: string, activity: IActivityData): Promise<void> {
     try {
       await this.validator.validateActivityData(activity);
-      
+
       const processedActivity = {
         ...activity,
         timestamp: new Date(),
-        location: await this.getLocationData()
+        location: await this.getLocationData(),
       };
 
       await this.storeActivityData(userId, processedActivity);
@@ -109,11 +110,11 @@ export class DataCollectionService {
     // 实现数据存储逻辑
   }
 
-  private async performRealTimeAnalysis(userId: string, data: HealthData): Promise<void> {
+  private async performRealTimeAnalysis(userId: string, data: IHealthData): Promise<void> {
     // 实现实时分析逻辑
   }
 
-  private async detectAnomalies(userId: string, data: HealthData): Promise<void> {
+  private async detectAnomalies(userId: string, data: IHealthData): Promise<void> {
     // 实现异常检测逻辑
   }
-} 
+}

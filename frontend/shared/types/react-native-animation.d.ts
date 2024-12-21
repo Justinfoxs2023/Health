@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 react-native-animation.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 declare module 'react-native' {
   export namespace Animated {
     export class Value {
@@ -34,27 +41,17 @@ declare module 'react-native' {
       stop: () => void;
     }
 
-    export function timing(
-      value: Animated.Value,
-      config: AnimationConfig
-    ): CompositeAnimation;
+    export function timing(value: Animated.Value, config: AnimationConfig): CompositeAnimation;
 
-    export function spring(
-      value: Animated.Value,
-      config: AnimationConfig
-    ): CompositeAnimation;
+    export function spring(value: Animated.Value, config: AnimationConfig): CompositeAnimation;
 
-    export function parallel(
-      animations: CompositeAnimation[]
-    ): CompositeAnimation;
+    export function parallel(animations: CompositeAnimation[]): CompositeAnimation;
 
-    export function sequence(
-      animations: CompositeAnimation[]
-    ): CompositeAnimation;
+    export function sequence(animations: CompositeAnimation[]): CompositeAnimation;
 
     export function loop(
       animation: CompositeAnimation,
-      config?: { iterations?: number }
+      config?: { iterations?: number },
     ): CompositeAnimation;
 
     export const View: React.ComponentType<ViewProps>;
@@ -62,4 +59,4 @@ declare module 'react-native' {
     export const Image: React.ComponentType<ImageProps>;
     export const ScrollView: React.ComponentType<ScrollViewProps>;
   }
-} 
+}

@@ -1,12 +1,16 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from './config.service';
-import { Logger } from '../logger/logger.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Logger } from '../logger/logger.service';
 
-interface ConfigChangeEvent {
+interface IConfigChangeEvent {
+  /** key 的描述 */
   key: string;
+  /** oldValue 的描述 */
   oldValue: any;
+  /** newValue 的描述 */
   newValue: any;
+  /** timestamp 的描述 */
   timestamp: Date;
 }
 
@@ -18,7 +22,7 @@ export class DynamicConfigService implements OnModuleInit {
 
   constructor(
     private readonly configService: ConfigService,
-    private readonly eventEmitter: EventEmitter2
+    private readonly eventEmitter: EventEmitter2,
   ) {
     this.refreshInterval = parseInt(configService.get('CONFIG_REFRESH_INTERVAL') || '30000');
   }
@@ -58,11 +62,11 @@ export class DynamicConfigService implements OnModuleInit {
   }
 
   private emitChangeEvent(key: string, oldValue: any, newValue: any) {
-    const event: ConfigChangeEvent = {
+    const event: IConfigChangeEvent = {
       key,
       oldValue,
       newValue,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
     this.eventEmitter.emit('config.changed', event);
     this.logger.log(`Config changed: ${key}`);
@@ -79,11 +83,11 @@ export class DynamicConfigService implements OnModuleInit {
     // 实现持久化到配置中心的逻辑
   }
 
-  watch(key: string, callback: (event: ConfigChangeEvent) => void): void {
-    this.eventEmitter.on('config.changed', (event: ConfigChangeEvent) => {
+  watch(key: string, callback: (event: IConfigChangeEvent) => void): void {
+    this.eventEmitter.on('config.changed', (event: IConfigChangeEvent) => {
       if (event.key === key) {
         callback(event);
       }
     });
   }
-} 
+}

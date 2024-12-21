@@ -1,7 +1,8 @@
-import { Logger } from '@/utils/Logger';
-import { AnalysisResult, HealthTrend, HealthRisk, HealthAdvice } from '../models/AnalysisTypes';
+import { IAnalysisResult, IHealthTrend, IHealthRisk, IHealthAdvice } from '../models/AnalysisTypes';
+
 import { AIService } from '@/services/ai/AIService';
 import { CacheService } from '@/services/cache/CacheService';
+import { Logger } from '@/utils/Logger';
 
 export class DataAnalysisService {
   private logger: Logger;
@@ -18,7 +19,7 @@ export class DataAnalysisService {
    * 分析健康数据
    * @param userId 用户ID
    */
-  async analyzeHealthData(userId: string): Promise<AnalysisResult> {
+  async analyzeHealthData(userId: string): Promise<IAnalysisResult> {
     try {
       // 1. 获取历史数据
       const historicalData = await this.getHistoricalData(userId);
@@ -39,7 +40,7 @@ export class DataAnalysisService {
         trends,
         risks,
         advice,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     } catch (error) {
       this.logger.error('健康数据分析失败', error);
@@ -50,7 +51,7 @@ export class DataAnalysisService {
   /**
    * 分析健康趋势
    */
-  private async analyzeTrends(data: any[]): Promise<HealthTrend[]> {
+  private async analyzeTrends(data: any[]): Promise<IHealthTrend[]> {
     try {
       // 1. 数据预处理
       const processedData = await this.preprocessData(data);
@@ -71,7 +72,7 @@ export class DataAnalysisService {
   /**
    * 评估健康风险
    */
-  private async assessRisks(data: any[], trends: HealthTrend[]): Promise<HealthRisk[]> {
+  private async assessRisks(data: any[], trends: IHealthTrend[]): Promise<IHealthRisk[]> {
     try {
       // 1. 风险因素分析
       const riskFactors = await this.analyzeRiskFactors(data);
@@ -90,7 +91,10 @@ export class DataAnalysisService {
   /**
    * 生成健康建议
    */
-  private async generateAdvice(risks: HealthRisk[], trends: HealthTrend[]): Promise<HealthAdvice[]> {
+  private async generateAdvice(
+    risks: IHealthRisk[],
+    trends: IHealthTrend[],
+  ): Promise<IHealthAdvice[]> {
     try {
       // 1. 基于风险生成建议
       const riskBasedAdvice = await this.generateRiskBasedAdvice(risks);
@@ -113,4 +117,4 @@ export class DataAnalysisService {
     const cacheKey = `analysis:${userId}`;
     await this.cacheService.set(cacheKey, result, 3600); // 缓存1小时
   }
-} 
+}

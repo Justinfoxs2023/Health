@@ -1,10 +1,12 @@
-import { Request, Response } from 'express';
-import { Redis } from 'ioredis';
 import { Logger } from '../../utils/logger';
+import { Redis } from 'ioredis';
+import { Request, Response } from 'express';
 
 // 基础服务接口
 export interface IBaseService {
+  /** logger 的描述 */
   logger: Logger;
+  /** redis 的描述 */
   redis: Redis;
 }
 
@@ -50,4 +52,4 @@ export interface IPermissionService extends IBaseService {
   checkPermission(userId: string, resource: string, action: string): Promise<boolean>;
   grantPermission(roleId: string, resource: string, action: string): Promise<void>;
   revokePermission(roleId: string, resource: string, action: string): Promise<void>;
-} 
+}

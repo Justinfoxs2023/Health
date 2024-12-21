@@ -1,19 +1,23 @@
-import { RedisClient } from 'redis';
 import { EventEmitter } from 'events';
 import { HealthMetrics } from '../interfaces/health.interface';
+import { RedisClient } from 'redis';
 
 // 健康数据消息类型
-type HealthMessageType = 
-  | 'health_data_update'    // 健康数据更新
-  | 'alert_notification'    // 健康预警通知
-  | 'reminder'             // 健康提醒
-  | 'report_generation'    // 报告生成
-  | 'sync_request';        // 数据同步请求
+type HealthMessageType =
+  | 'health_data_update' // 健康数据更新
+  | 'alert_notification' // 健康预警通知
+  | 'reminder' // 健康提醒
+  | 'report_generation' // 报告生成
+  | 'sync_request'; // 数据同步请求
 
-interface HealthMessage {
+interface IHealthMessage {
+  /** id 的描述 */
   id: string;
+  /** type 的描述 */
   type: HealthMessageType;
+  /** userId 的描述 */
   userId: string;
+  /** data 的描述 */
   data: {
     metrics?: Partial<HealthMetrics>;
     alertType?: string;
@@ -22,28 +26,38 @@ interface HealthMessage {
     syncData?: any;
     timestamp: Date;
   };
-  priority: 1 | 2 | 3;  // 1: 高优先级(预警), 2: 中优先级(实时数据), 3: 低优先级(报告)
+  /** priority 的描述 */
+  priority: 1 | 2 | 3; // 1: 高优先级(预警), 2: 中优先级(实时数据), 3: 低优先级(报告)
+  /** status 的描述 */
   status: 'pending' | 'processing' | 'completed' | 'failed';
+  /** attempts 的描述 */
   attempts: number;
+  /** createdAt 的描述 */
   createdAt: Date;
+  /** processedAt 的描述 */
   processedAt?: Date;
 }
 
-interface QueueConfig {
+interface IQueueConfig {
+  /** maxRetries 的描述 */
   maxRetries: number;
+  /** retryDelay 的描述 */
   retryDelay: number;
+  /** processingTimeout 的描述 */
   processingTimeout: number;
+  /** maxQueueSize 的描述 */
   maxQueueSize: number;
+  /** batchSize 的描述 */
   batchSize: number;
 }
 
 export class HealthMessageQueue extends EventEmitter {
   private redis: RedisClient;
-  private config: QueueConfig;
-  private handlers: Map<HealthMessageType, Set<(message: HealthMessage) => Promise<void>>>;
+  private config: IQueueConfig;
+  private handlers: Map<HealthMessageType, Set<(message: IHealthMessage) => Promise<void>>>;
   private processingMessages: Map<string, NodeJS.Timeout>;
 
-  constructor(config: QueueConfig) {
+  constructor(config: IQueueConfig) {
     super();
     this.config = config;
     this.handlers = new Map();
@@ -52,18 +66,15 @@ export class HealthMessageQueue extends EventEmitter {
   }
 
   // 发布健康数据更新消息
-  async publishHealthUpdate(
-    userId: string,
-    metrics: Partial<HealthMetrics>
-  ): Promise<string> {
+  async publishHealthUpdate(userId: string, metrics: Partial<HealthMetrics>): Promise<string> {
     return this.publishMessage({
       type: 'health_data_update',
       userId,
       data: {
         metrics,
-        timestamp: new Date()
+        timestamp: new Date(),
       },
-      priority: 2
+      priority: 2,
     });
   }
 
@@ -71,7 +82,7 @@ export class HealthMessageQueue extends EventEmitter {
   async publishHealthAlert(
     userId: string,
     alertType: string,
-    metrics: Partial<HealthMetrics>
+    metrics: Partial<HealthMetrics>,
   ): Promise<string> {
     return this.publishMessage({
       type: 'alert_notification',
@@ -79,32 +90,29 @@ export class HealthMessageQueue extends EventEmitter {
       data: {
         alertType,
         metrics,
-        timestamp: new Date()
+        timestamp: new Date(),
       },
-      priority: 1
+      priority: 1,
     });
   }
 
   // 发布健康提醒消息
-  async publishReminder(
-    userId: string,
-    reminderType: string
-  ): Promise<string> {
+  async publishReminder(userId: string, reminderType: string): Promise<string> {
     return this.publishMessage({
       type: 'reminder',
       userId,
       data: {
         reminderType,
-        timestamp: new Date()
+        timestamp: new Date(),
       },
-      priority: 2
+      priority: 2,
     });
   }
 
   // 订阅消息处理
   async subscribe(
     type: HealthMessageType,
-    handler: (message: HealthMessage) => Promise<void>
+    handler: (message: IHealthMessage) => Promise<void>,
   ): Promise<void> {
     if (!this.handlers.has(type)) {
       this.handlers.set(type, new Set());
@@ -118,7 +126,7 @@ export class HealthMessageQueue extends EventEmitter {
   // 取消订阅
   async unsubscribe(
     type: HealthMessageType,
-    handler: (message: HealthMessage) => Promise<void>
+    handler: (message: IHealthMessage) => Promise<void>,
   ): Promise<void> {
     const handlers = this.handlers.get(type);
     if (handlers) {
@@ -127,14 +135,14 @@ export class HealthMessageQueue extends EventEmitter {
   }
 
   private async publishMessage(
-    messageData: Omit<HealthMessage, 'id' | 'status' | 'attempts' | 'createdAt'>
+    messageData: Omit<IHealthMessage, 'id' | 'status' | 'attempts' | 'createdAt'>,
   ): Promise<string> {
-    const message: HealthMessage = {
+    const message: IHealthMessage = {
       ...messageData,
       id: this.generateMessageId(),
       status: 'pending',
       attempts: 0,
-      createdAt: new Date()
+      createdAt: new Date(),
     };
 
     try {
@@ -148,7 +156,7 @@ export class HealthMessageQueue extends EventEmitter {
     }
   }
 
-  private async processMessage(message: HealthMessage): Promise<void> {
+  private async processMessage(message: IHealthMessage): Promise<void> {
     const handlers = this.handlers.get(message.type);
     if (!handlers || handlers.size === 0) return;
 
@@ -160,13 +168,11 @@ export class HealthMessageQueue extends EventEmitter {
       const timeout = setTimeout(() => {
         this.handleMessageTimeout(message);
       }, this.config.processingTimeout);
-      
+
       this.processingMessages.set(message.id, timeout);
 
       // 并行执行所有处理器
-      await Promise.all(
-        Array.from(handlers).map(handler => handler(message))
-      );
+      await Promise.all(Array.from(handlers).map(handler => handler(message)));
 
       // 完成处理
       clearTimeout(timeout);
@@ -174,19 +180,19 @@ export class HealthMessageQueue extends EventEmitter {
       message.status = 'completed';
       message.processedAt = new Date();
       await this.updateMessage(message);
-      
+
       this.emit('messageProcessed', message);
     } catch (error) {
       await this.handleProcessingError(message, error);
     }
   }
 
-  private async handleProcessingError(
-    message: HealthMessage,
-    error: Error
-  ): Promise<void> {
-    console.error(`消息处理错误 (${message.id}): ${error.message}`);
-    
+  private async handleProcessingError(message: IHealthMessage, error: Error): Promise<void> {
+    console.error(
+      'Error in message-queue.service.ts:',
+      `消息处理错误 (${message.id}): ${error.message}`,
+    );
+
     if (message.attempts < this.config.maxRetries) {
       await this.retryMessage(message);
     } else {
@@ -194,20 +200,20 @@ export class HealthMessageQueue extends EventEmitter {
     }
   }
 
-  private async retryMessage(message: HealthMessage): Promise<void> {
+  private async retryMessage(message: IHealthMessage): Promise<void> {
     message.attempts++;
     message.status = 'pending';
-    
+
     // 计算延迟时间
     const delay = this.config.retryDelay * Math.pow(2, message.attempts - 1);
-    
+
     setTimeout(async () => {
       await this.addToQueue(message);
       this.emit('messageRetry', message);
     }, delay);
   }
 
-  private async handleMessageFailure(message: HealthMessage): Promise<void> {
+  private async handleMessageFailure(message: IHealthMessage): Promise<void> {
     message.status = 'failed';
     await this.updateMessage(message);
     this.emit('messageFailed', message);
@@ -219,22 +225,17 @@ export class HealthMessageQueue extends EventEmitter {
   }
 
   // Redis操作
-  private async addToQueue(message: HealthMessage): Promise<void> {
+  private async addToQueue(message: IHealthMessage): Promise<void> {
     const score = this.calculatePriorityScore(message);
     await new Promise((resolve, reject) => {
-      this.redis.zadd(
-        `health:queue:${message.type}`,
-        score,
-        JSON.stringify(message),
-        (error) => {
-          if (error) reject(error);
-          resolve(null);
-        }
-      );
+      this.redis.zadd(`health:queue:${message.type}`, score, JSON.stringify(message), error => {
+        if (error) reject(error);
+        resolve(null);
+      });
     });
   }
 
-  private calculatePriorityScore(message: HealthMessage): number {
+  private calculatePriorityScore(message: IHealthMessage): number {
     // 优先级分数 = 时间戳 + 优先级权重
     const priorityWeight = (4 - message.priority) * 10000000;
     return Date.now() - priorityWeight;
@@ -242,32 +243,22 @@ export class HealthMessageQueue extends EventEmitter {
 
   private async getNextBatch(
     type: HealthMessageType,
-    batchSize: number
-  ): Promise<HealthMessage[]> {
+    batchSize: number,
+  ): Promise<IHealthMessage[]> {
     return new Promise((resolve, reject) => {
-      this.redis.zrange(
-        `health:queue:${type}`,
-        0,
-        batchSize - 1,
-        (error, data) => {
-          if (error) reject(error);
-          resolve(data ? data.map(item => JSON.parse(item)) : []);
-        }
-      );
+      this.redis.zrange(`health:queue:${type}`, 0, batchSize - 1, (error, data) => {
+        if (error) reject(error);
+        resolve(data ? data.map(item => JSON.parse(item)) : []);
+      });
     });
   }
 
-  private async updateMessage(message: HealthMessage): Promise<void> {
+  private async updateMessage(message: IHealthMessage): Promise<void> {
     await new Promise((resolve, reject) => {
-      this.redis.hset(
-        'health:messages',
-        message.id,
-        JSON.stringify(message),
-        (error) => {
-          if (error) reject(error);
-          resolve(null);
-        }
-      );
+      this.redis.hset('health:messages', message.id, JSON.stringify(message), error => {
+        if (error) reject(error);
+        resolve(null);
+      });
     });
   }
 
@@ -297,7 +288,7 @@ export class HealthMessageQueue extends EventEmitter {
       } catch (error) {
         this.emit('error', error);
       }
-      
+
       // 继续处理
       setTimeout(processBatch, 100);
     };
@@ -309,12 +300,12 @@ export class HealthMessageQueue extends EventEmitter {
     this.redis = new RedisClient({
       host: process.env.REDIS_HOST,
       port: parseInt(process.env.REDIS_PORT || '6379'),
-      password: process.env.REDIS_PASSWORD
+      password: process.env.REDIS_PASSWORD,
     });
 
-    this.redis.on('error', (error) => {
-      console.error('Redis连接错误:', error);
+    console.error('Error in message-queue.service.ts:', 'error', error => {
+      console.error('Error in message-queue.service.ts:', 'Redis连接错误:', error);
       this.emit('error', error);
     });
   }
-} 
+}

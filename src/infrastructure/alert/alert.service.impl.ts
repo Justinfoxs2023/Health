@@ -1,8 +1,8 @@
-import { AlertService } from '../../types/base';
-import { Logger } from '../../types/base';
+import { IAlertService } from '../../types/base';
+import { ILogger } from '../../types/base';
 
-export class AlertServiceImpl implements AlertService {
-  constructor(private logger: Logger) {}
+export class AlertServiceImpl implements IAlertService {
+  constructor(private logger: ILogger) {}
 
   async sendAlert(level: string, message: string, data?: any): Promise<void> {
     this.logger.info(`Alert [${level}]: ${message}`, data);
@@ -18,4 +18,4 @@ export class AlertServiceImpl implements AlertService {
     // 实现获取活动告警逻辑
     return [];
   }
-} 
+}

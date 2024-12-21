@@ -27,11 +27,7 @@ declare global {
 
     export interface Response extends ExpressResponse {
       status(code: number): this;
-      json(body: {
-        code: number;
-        data?: any;
-        message?: string;
-      }): this;
+      json(body: { code: number; data?: any; message?: string }): this;
     }
   }
-} 
+}

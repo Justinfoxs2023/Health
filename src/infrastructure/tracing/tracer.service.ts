@@ -1,6 +1,6 @@
+import { ConfigService } from '../config/config.service';
 import { Injectable } from '@nestjs/common';
 import { initTracer, JaegerTracer } from 'jaeger-client';
-import { ConfigService } from '../config/config.service';
 
 @Injectable()
 export class TracerService {
@@ -34,4 +34,4 @@ export class TracerService {
   injectTraceInfo(span: any, format: string, carrier: any) {
     this.tracer.inject(span, format, carrier);
   }
-} 
+}

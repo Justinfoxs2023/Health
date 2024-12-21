@@ -8,7 +8,7 @@ export class LoggerImpl implements Logger {
   }
 
   error(message: string, error?: any): void {
-    console.error(`[${this.context}] ${message}`, error);
+    console.error('Error in logger.impl.ts:', `[${this.context}] ${message}`, error);
   }
 
   warn(message: string, data?: any): void {
@@ -18,4 +18,4 @@ export class LoggerImpl implements Logger {
   info(message: string, data?: any): void {
     console.info(`[${this.context}] ${message}`, data);
   }
-} 
+}

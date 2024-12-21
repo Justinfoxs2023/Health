@@ -39,7 +39,7 @@ export class AuthService {
 
     const response = await this.api.post('/auth/refresh', {
       userId,
-      refreshToken
+      refreshToken,
     });
 
     await this.handleAuthResponse(response);
@@ -60,11 +60,11 @@ export class AuthService {
    */
   private async handleAuthResponse(response: any) {
     const { accessToken, refreshToken, user } = response;
-    
+
     await Promise.all([
       storage.set('token', accessToken),
       storage.set('refreshToken', refreshToken),
-      storage.set('userId', user.id)
+      storage.set('userId', user.id),
     ]);
   }
 
@@ -82,4 +82,4 @@ export class AuthService {
     const token = await this.getToken();
     return !!token;
   }
-} 
+}

@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 types.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export const TYPES = {
   Logger: Symbol.for('Logger'),
   Redis: Symbol.for('Redis'),
@@ -10,5 +17,5 @@ export const TYPES = {
   NameGenerator: Symbol.for('NameGenerator'),
   UserRepository: Symbol.for('UserRepository'),
   RoleRepository: Symbol.for('RoleRepository'),
-  HealthCheck: Symbol.for('HealthCheck')
-}; 
+  HealthCheck: Symbol.for('HealthCheck'),
+};

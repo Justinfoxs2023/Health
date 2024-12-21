@@ -1,10 +1,6 @@
+import { IHealthData, IVitalSigns, IBodyMetrics, IActivityData } from '../models/HealthData';
+
 import { Logger } from '@/utils/Logger';
-import { 
-  HealthData, 
-  VitalSigns, 
-  BodyMetrics, 
-  ActivityData 
-} from '../models/HealthData';
 import { ValidationError } from '@/utils/errors';
 
 export class DataValidationService {
@@ -17,7 +13,7 @@ export class DataValidationService {
   /**
    * 验证健康数据
    */
-  async validateHealthData(data: HealthData): Promise<void> {
+  async validateHealthData(data: IHealthData): Promise<void> {
     try {
       // 验证基础字段
       this.validateBaseFields(data);
@@ -26,7 +22,7 @@ export class DataValidationService {
       await Promise.all([
         this.validateVitalSigns(data.vitalSigns),
         this.validateBodyMetrics(data.bodyMetrics),
-        this.validateActivityData(data.activityData)
+        this.validateActivityData(data.activityData),
       ]);
 
       // 验证数据完整性
@@ -40,16 +36,16 @@ export class DataValidationService {
   /**
    * 验证生命体征数据
    */
-  async validateVitalSigns(data: VitalSigns): Promise<void> {
+  async validateVitalSigns(data: IVitalSigns): Promise<void> {
     const rules = {
       heartRate: { min: 30, max: 200 },
       bloodPressure: {
         systolic: { min: 70, max: 200 },
-        diastolic: { min: 40, max: 130 }
+        diastolic: { min: 40, max: 130 },
       },
       bodyTemperature: { min: 35, max: 42 },
       respiratoryRate: { min: 8, max: 30 },
-      bloodOxygen: { min: 80, max: 100 }
+      bloodOxygen: { min: 80, max: 100 },
     };
 
     if (data.heartRate < rules.heartRate.min || data.heartRate > rules.heartRate.max) {
@@ -58,10 +54,12 @@ export class DataValidationService {
 
     // 验证血压
     const { systolic, diastolic } = data.bloodPressure;
-    if (systolic < rules.bloodPressure.systolic.min || 
-        systolic > rules.bloodPressure.systolic.max ||
-        diastolic < rules.bloodPressure.diastolic.min || 
-        diastolic > rules.bloodPressure.diastolic.max) {
+    if (
+      systolic < rules.bloodPressure.systolic.min ||
+      systolic > rules.bloodPressure.systolic.max ||
+      diastolic < rules.bloodPressure.diastolic.min ||
+      diastolic > rules.bloodPressure.diastolic.max
+    ) {
       throw new ValidationError('INVALID_BLOOD_PRESSURE', '血压数据超出正常范围');
     }
 
@@ -71,7 +69,7 @@ export class DataValidationService {
   /**
    * 验证身体指标数据
    */
-  async validateBodyMetrics(data: BodyMetrics): Promise<void> {
+  async validateBodyMetrics(data: IBodyMetrics): Promise<void> {
     const rules = {
       weight: { min: 20, max: 300 },
       height: { min: 50, max: 250 },
@@ -79,17 +77,14 @@ export class DataValidationService {
       bodyFat: { min: 3, max: 60 },
       muscleMass: { min: 10, max: 100 },
       boneMass: { min: 1, max: 10 },
-      waterContent: { min: 30, max: 80 }
+      waterContent: { min: 30, max: 80 },
     };
 
     // 验证各项指标
     Object.entries(rules).forEach(([key, range]) => {
       const value = data[key];
       if (value < range.min || value > range.max) {
-        throw new ValidationError(
-          `INVALID_${key.toUpperCase()}`,
-          `${key} 数据超出正常范围`
-        );
+        throw new ValidationError(`INVALID_${key.toUpperCase()}`, `${key} 数据超出正常范围`);
       }
     });
   }
@@ -97,22 +92,19 @@ export class DataValidationService {
   /**
    * 验证活动数据
    */
-  async validateActivityData(data: ActivityData): Promise<void> {
+  async validateActivityData(data: IActivityData): Promise<void> {
     const rules = {
       steps: { min: 0, max: 100000 },
       distance: { min: 0, max: 100 },
       caloriesBurned: { min: 0, max: 10000 },
-      activeMinutes: { min: 0, max: 1440 }
+      activeMinutes: { min: 0, max: 1440 },
     };
 
     // 验证基本活动数据
     Object.entries(rules).forEach(([key, range]) => {
       const value = data[key];
       if (value < range.min || value > range.max) {
-        throw new ValidationError(
-          `INVALID_${key.toUpperCase()}`,
-          `${key} 数据超出正常范围`
-        );
+        throw new ValidationError(`INVALID_${key.toUpperCase()}`, `${key} 数据超出正常范围`);
       }
     });
 
@@ -122,7 +114,7 @@ export class DataValidationService {
     }
   }
 
-  private validateBaseFields(data: HealthData): void {
+  private validateBaseFields(data: IHealthData): void {
     // 验证必填字段
     if (!data.userId || !data.timestamp) {
       throw new ValidationError('MISSING_REQUIRED_FIELDS', '缺少必填字段');
@@ -137,21 +129,17 @@ export class DataValidationService {
     // 验证时间范围
     const now = new Date();
     const oneWeek = 7 * 24 * 60 * 60 * 1000;
-    if (timestamp.getTime() > now.getTime() || 
-        now.getTime() - timestamp.getTime() > oneWeek) {
+    if (timestamp.getTime() > now.getTime() || now.getTime() - timestamp.getTime() > oneWeek) {
       throw new ValidationError('TIMESTAMP_OUT_OF_RANGE', '时间戳超出有效范围');
     }
   }
 
-  private validateDataIntegrity(data: HealthData): void {
+  private validateDataIntegrity(data: IHealthData): void {
     // 验证数据一致性
     const requiredModules = ['vitalSigns', 'bodyMetrics', 'activityData'];
     for (const module of requiredModules) {
       if (!data[module]) {
-        throw new ValidationError(
-          'MISSING_MODULE_DATA',
-          `缺少${module}模块数据`
-        );
+        throw new ValidationError('MISSING_MODULE_DATA', `缺少${module}模块数据`);
       }
     }
 
@@ -165,21 +153,17 @@ export class DataValidationService {
     const requiredFields = ['deviceId', 'deviceType', 'manufacturer', 'model'];
     for (const field of requiredFields) {
       if (!deviceInfo[field]) {
-        throw new ValidationError(
-          'INVALID_DEVICE_INFO',
-          `设备信息缺少${field}字段`
-        );
+        throw new ValidationError('INVALID_DEVICE_INFO', `设备信息缺少${field}字段`);
       }
     }
 
     // 验证准确度
-    if (typeof deviceInfo.accuracy !== 'number' || 
-        deviceInfo.accuracy < 0 || 
-        deviceInfo.accuracy > 100) {
-      throw new ValidationError(
-        'INVALID_ACCURACY',
-        '设备准确度数据无效'
-      );
+    if (
+      typeof deviceInfo.accuracy !== 'number' ||
+      deviceInfo.accuracy < 0 ||
+      deviceInfo.accuracy > 100
+    ) {
+      throw new ValidationError('INVALID_ACCURACY', '设备准确度数据无效');
     }
   }
-} 
+}

@@ -1,8 +1,10 @@
 import React from 'react';
-import { View, TouchableOpacity, Image, Text, StyleSheet } from 'react-native';
-import { AuthorInfo } from '../AuthorInfo';
 
-interface Props {
+import { AuthorInfo } from '../AuthorInfo';
+import { View, TouchableOpacity, Image, Text, StyleSheet } from 'react-native';
+
+interface IProps {
+  /** article 的描述 */
   article: {
     id: string;
     title: string;
@@ -17,15 +19,14 @@ interface Props {
     readCount: number;
     createdAt: string;
   };
+  /** onPress 的描述 */
   onPress?: () => void;
 }
 
-export const ArticleCard: React.FC<Props> = ({ article, onPress }) => {
+export const ArticleCard: React.FC<IProps> = ({ article, onPress }) => {
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
-      {article.coverImage && (
-        <Image source={{ uri: article.coverImage }} style={styles.cover} />
-      )}
+      {article.coverImage && <Image source={{ uri: article.coverImage }} style={styles.cover} />}
       <View style={styles.content}>
         <Text style={styles.title} numberOfLines={2}>
           {article.title}
@@ -51,35 +52,35 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 4
+    shadowRadius: 4,
   },
   cover: {
     width: '100%',
     height: 160,
     borderTopLeftRadius: 8,
-    borderTopRightRadius: 8
+    borderTopRightRadius: 8,
   },
   content: {
-    padding: 12
+    padding: 12,
   },
   title: {
     fontSize: 16,
     fontWeight: '500',
     color: '#333',
-    marginBottom: 8
+    marginBottom: 8,
   },
   summary: {
     fontSize: 14,
     color: '#666',
-    marginBottom: 12
+    marginBottom: 12,
   },
   footer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   readCount: {
     fontSize: 12,
-    color: '#999'
-  }
-}); 
+    color: '#999',
+  },
+});

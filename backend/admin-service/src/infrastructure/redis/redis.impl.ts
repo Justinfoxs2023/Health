@@ -1,7 +1,7 @@
-import { injectable } from 'inversify';
 import Redis from 'ioredis';
-import { RedisClient } from './redis-client.interface';
 import { ConfigLoader } from '../../config/config.loader';
+import { RedisClient } from './redis-client.interface';
+import { injectable } from 'inversify';
 
 @injectable()
 export class RedisClientImpl implements RedisClient {
@@ -13,11 +13,11 @@ export class RedisClientImpl implements RedisClient {
       host: this.config.get('REDIS_HOST', 'localhost'),
       port: this.config.getNumber('REDIS_PORT', 6379),
       password: this.config.get('REDIS_PASSWORD'),
-      db: this.config.getNumber('REDIS_DB', 0)
+      db: this.config.getNumber('REDIS_DB', 0),
     });
 
-    this.client.on('error', (error) => {
-      console.error('Redis Client Error:', error);
+    console.error('Error in redis.impl.ts:', 'error', error => {
+      console.error('Error in redis.impl.ts:', 'Redis Client Error:', error);
     });
   }
 
@@ -57,4 +57,4 @@ export class RedisClientImpl implements RedisClient {
       callback(message);
     });
   }
-} 
+}

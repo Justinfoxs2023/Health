@@ -1,0 +1,57 @@
+{
+  "timestamp": "2024-12-16T07:14:13.131Z",
+  "metrics": [
+    {
+      "name": "code_audit",
+      "value": true,
+      "duration": 0.1057,
+      "memoryUsage": 3304,
+      "timestamp": "2024-12-16T07:13:04.366Z",
+      "tags": {
+        "type": "audit"
+      }
+    },
+    {
+      "name": "memory_leaks",
+      "value": 240,
+      "duration": 0.5799,
+      "memoryUsage": 3264,
+      "timestamp": "2024-12-16T07:13:04.368Z",
+      "tags": {
+        "type": "performance",
+        "target": "memory"
+      }
+    }
+  ],
+  "results": {
+    "typeCheck": {},
+    "dependencies": {},
+    "tests": {},
+    "performance": {},
+    "codeQuality": {}
+  },
+  "recommendations": [
+    "检查 typeCheck 模块的配置",
+    "检查 dependencies 模块的配置",
+    "检查 tests 模块的配置",
+    "检查 performance 模块的配置",
+    "检查 codeQuality 模块的配置"
+  ],
+  "performance": {
+    "database": [],
+    "api": [],
+    "memory": [
+      {
+        "name": "memory_leaks",
+        "value": 240,
+        "duration": 0.5799,
+        "memoryUsage": 3264,
+        "timestamp": "2024-12-16T07:13:04.368Z",
+        "tags": {
+          "type": "performance",
+          "target": "memory"
+        }
+      }
+    ]
+  }
+}

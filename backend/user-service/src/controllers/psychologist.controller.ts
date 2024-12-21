@@ -1,6 +1,6 @@
-import { Request, Response } from 'express';
-import { PsychologistService } from '../services/psychologist.service';
 import { Logger } from '../utils/logger';
+import { PsychologistService } from '../services/psychologist.service';
+import { Request, Response } from 'express';
 
 export class PsychologistController {
   private psychologistService: PsychologistService;
@@ -24,19 +24,19 @@ export class PsychologistController {
         assessmentType,
         responses,
         observations,
-        date: new Date()
+        date: new Date(),
       });
 
       return res.json({
         code: 200,
         data: assessment,
-        message: '心理评估完成'
+        message: '心理评估完成',
       });
     } catch (error) {
       this.logger.error('心理评估失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
@@ -56,19 +56,19 @@ export class PsychologistController {
         content,
         observations,
         plans,
-        date: new Date()
+        date: new Date(),
       });
 
       return res.status(201).json({
         code: 201,
         data: record,
-        message: '咨询记录创建成功'
+        message: '咨询记录创建成功',
       });
     } catch (error) {
       this.logger.error('创建咨询记录失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
@@ -88,19 +88,19 @@ export class PsychologistController {
         interventions,
         goals,
         duration,
-        startDate: new Date()
+        startDate: new Date(),
       });
 
       return res.status(201).json({
         code: 201,
         data: plan,
-        message: '干预计划创建成功'
+        message: '干预计划创建成功',
       });
     } catch (error) {
       this.logger.error('创建干预计划失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
@@ -118,20 +118,20 @@ export class PsychologistController {
         emotions,
         triggers,
         copingStrategies,
-        date: new Date()
+        date: new Date(),
       });
 
       return res.json({
         code: 200,
         data: record,
-        message: '情绪记录创建成功'
+        message: '情绪记录创建成功',
       });
     } catch (error) {
       this.logger.error('创建情绪记录失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
-} 
+}

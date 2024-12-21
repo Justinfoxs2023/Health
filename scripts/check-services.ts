@@ -1,11 +1,11 @@
-import { execSync } from 'child_process';
-import { Logger } from '../src/utils/logger';
 import mongoose from 'mongoose';
+import { Logger } from '../src/utils/logger';
 import { createClient } from 'redis';
+import { execSync } from 'child_process';
 
 const logger = new Logger('ServiceCheck');
 
-async function checkMongoDBConnection() {
+async function checkMongoDBConnection(): Promise<void> {
   try {
     // 检查 MongoDB 服务是否运行
     execSync('mongosh --eval "db.version()"', { stdio: 'ignore' });
@@ -14,7 +14,7 @@ async function checkMongoDBConnection() {
     // 测试数据库连接
     const { DB_USER, DB_PASS, DB_HOST, DB_PORT, DB_NAME } = process.env;
     const uri = `mongodb://${DB_USER}:${DB_PASS}@${DB_HOST}:${DB_PORT}/${DB_NAME}`;
-    
+
     await mongoose.connect(uri);
     logger.info('MongoDB 连接成功');
     await mongoose.disconnect();
@@ -24,7 +24,7 @@ async function checkMongoDBConnection() {
   }
 }
 
-async function checkRedisConnection() {
+async function checkRedisConnection(): Promise<void> {
   try {
     // 检查 Redis 服务是否运行
     execSync('redis-cli ping', { stdio: 'ignore' });
@@ -33,7 +33,7 @@ async function checkRedisConnection() {
     // 测试 Redis 连接
     const client = createClient({
       url: `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
-      password: process.env.REDIS_PASSWORD
+      password: process.env.REDIS_PASSWORD,
     });
 
     await client.connect();
@@ -45,13 +45,13 @@ async function checkRedisConnection() {
   }
 }
 
-async function main() {
+async function main(): Promise<void> {
   try {
     logger.info('开始检查服务...');
-    
+
     await checkMongoDBConnection();
     await checkRedisConnection();
-    
+
     logger.info('所有服务检查通过');
     process.exit(0);
   } catch (error) {
@@ -60,4 +60,4 @@ async function main() {
   }
 }
 
-main(); 
+main();

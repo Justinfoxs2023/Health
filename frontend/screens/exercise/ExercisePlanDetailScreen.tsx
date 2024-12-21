@@ -1,19 +1,30 @@
 import React from 'react';
-import { View, ScrollView, StyleSheet, Text, TouchableOpacity, Image } from 'react-native';
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { getExercisePlanDetail, startExercisePlan } from '../../api/exercise';
-import { LoadingSpinner, Icon, AlertDialog } from '../../components';
 
-interface ExercisePlanDetail {
+import { LoadingSpinner, Icon, AlertDialog } from '../../components';
+import { View, ScrollView, StyleSheet, Text, TouchableOpacity, Image } from 'react-native';
+import { getExercisePlanDetail, startExercisePlan } from '../../api/exercise';
+import { useQuery, useMutation } from '@tanstack/react-query';
+
+interface IExercisePlanDetail {
+  /** id 的描述 */
   id: string;
+  /** title 的描述 */
   title: string;
+  /** description 的描述 */
   description: string;
+  /** level 的描述 */
   level: 'beginner' | 'intermediate' | 'advanced';
+  /** duration 的描述 */
   duration: number;
+  /** calories 的描述 */
   calories: number;
+  /** category 的描述 */
   category: string;
+  /** imageUrl 的描述 */
   imageUrl: string;
+  /** tags 的描述 */
   tags: string[];
+  /** schedule 的描述 */
   schedule: {
     dayOfWeek: number;
     exercises: {
@@ -29,15 +40,16 @@ interface ExercisePlanDetail {
       tips: string[];
     }[];
   }[];
+  /** requirements 的描述 */
   requirements: string[];
+  /** benefits 的描述 */
   benefits: string[];
 }
 
 export const ExercisePlanDetailScreen = ({ route, navigation }) => {
   const { id } = route.params;
-  const { data: plan, isLoading } = useQuery<ExercisePlanDetail>(
-    ['exercisePlan', id],
-    () => getExercisePlanDetail(id)
+  const { data: plan, isLoading } = useQuery<IExercisePlanDetail>(['exercisePlan', id], () =>
+    getExercisePlanDetail(id),
   );
   const [showAlert, setShowAlert] = React.useState(false);
   const [alertMessage, setAlertMessage] = React.useState('');
@@ -49,7 +61,7 @@ export const ExercisePlanDetailScreen = ({ route, navigation }) => {
     onError: (error: any) => {
       setAlertMessage(error.message || '开始计划失败，请重试');
       setShowAlert(true);
-    }
+    },
   });
 
   const getDayName = (day: number) => {
@@ -75,7 +87,7 @@ export const ExercisePlanDetailScreen = ({ route, navigation }) => {
   return (
     <ScrollView style={styles.container}>
       <Image source={{ uri: plan?.imageUrl }} style={styles.coverImage} />
-      
+
       <View style={styles.header}>
         <Text style={styles.title}>{plan?.title}</Text>
         <View style={styles.tags}>
@@ -111,7 +123,7 @@ export const ExercisePlanDetailScreen = ({ route, navigation }) => {
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>训练计划</Text>
-        {plan?.schedule.map((day) => (
+        {plan?.schedule.map(day => (
           <View key={day.dayOfWeek} style={styles.daySchedule}>
             <Text style={styles.dayTitle}>{getDayName(day.dayOfWeek)}</Text>
             {day.exercises.map((exercise, index) => (
@@ -127,9 +139,7 @@ export const ExercisePlanDetailScreen = ({ route, navigation }) => {
                     {exercise.sets && ` · ${exercise.sets}组${exercise.reps}次`}
                   </Text>
                 </View>
-                {exercise.videoUrl && (
-                  <Icon name="play-circle" size={24} color="#2E7D32" />
-                )}
+                {exercise.videoUrl && <Icon name="play-circle" size={24} color="#2E7D32" />}
               </TouchableOpacity>
             ))}
           </View>
@@ -156,10 +166,7 @@ export const ExercisePlanDetailScreen = ({ route, navigation }) => {
         ))}
       </View>
 
-      <TouchableOpacity
-        style={styles.startButton}
-        onPress={() => startMutation.mutate(id)}
-      >
+      <TouchableOpacity style={styles.startButton} onPress={() => startMutation.mutate(id)}>
         <Text style={styles.startButtonText}>开始训练</Text>
       </TouchableOpacity>
 
@@ -178,27 +185,27 @@ export const ExercisePlanDetailScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   coverImage: {
     width: '100%',
     height: 200,
-    backgroundColor: '#f0f0f0'
+    backgroundColor: '#f0f0f0',
   },
   header: {
     padding: 20,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 10
+    marginBottom: 10,
   },
   tags: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginBottom: 15
+    marginBottom: 15,
   },
   levelTag: {
     backgroundColor: '#E8F5E9',
@@ -206,12 +213,12 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 12,
     marginRight: 8,
-    marginBottom: 8
+    marginBottom: 8,
   },
   levelText: {
     fontSize: 12,
     color: '#2E7D32',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   tag: {
     backgroundColor: '#f5f5f5',
@@ -219,97 +226,97 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 12,
     marginRight: 8,
-    marginBottom: 8
+    marginBottom: 8,
   },
   tagText: {
     fontSize: 12,
-    color: '#666'
+    color: '#666',
   },
   stats: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     paddingTop: 15,
     borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: '#f0f0f0'
+    borderTopColor: '#f0f0f0',
   },
   statItem: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   statText: {
     fontSize: 14,
     color: '#666',
-    marginLeft: 5
+    marginLeft: 5,
   },
   section: {
     marginTop: 10,
     backgroundColor: '#fff',
-    padding: 20
+    padding: 20,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 15
+    marginBottom: 15,
   },
   description: {
     fontSize: 14,
     color: '#666',
-    lineHeight: 22
+    lineHeight: 22,
   },
   daySchedule: {
-    marginBottom: 20
+    marginBottom: 20,
   },
   dayTitle: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 10
+    marginBottom: 10,
   },
   exerciseItem: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 12,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#f0f0f0'
+    borderBottomColor: '#f0f0f0',
   },
   exerciseInfo: {
-    flex: 1
+    flex: 1,
   },
   exerciseName: {
     fontSize: 14,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 4
+    marginBottom: 4,
   },
   exerciseDetail: {
     fontSize: 12,
-    color: '#666'
+    color: '#666',
   },
   listItem: {
     flexDirection: 'row',
-    marginBottom: 10
+    marginBottom: 10,
   },
   listIcon: {
     marginRight: 10,
-    marginTop: 2
+    marginTop: 2,
   },
   listText: {
     flex: 1,
     fontSize: 14,
     color: '#666',
-    lineHeight: 20
+    lineHeight: 20,
   },
   startButton: {
     margin: 20,
     backgroundColor: '#2E7D32',
     padding: 15,
     borderRadius: 8,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   startButtonText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: 'bold'
-  }
-}); 
+    fontWeight: 'bold',
+  },
+});

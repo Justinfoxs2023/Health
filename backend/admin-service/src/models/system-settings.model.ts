@@ -1,4 +1,12 @@
-export interface SystemSettings {
+/**
+ * @fileoverview TS 文件 system-settings.model.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
+export interface ISystemSettings {
+  /** security 的描述 */
   security: {
     passwordPolicy: {
       minLength: number;
@@ -13,6 +21,7 @@ export interface SystemSettings {
       refresh: number;
     };
   };
+  /** notifications 的描述 */
   notifications: {
     email: {
       enabled: boolean;
@@ -24,6 +33,7 @@ export interface SystemSettings {
       provider: string;
     };
   };
+  /** features 的描述 */
   features: {
     socialLogin: {
       google: boolean;
@@ -37,4 +47,4 @@ export interface SystemSettings {
       nutrition: boolean;
     };
   };
-} 
+}

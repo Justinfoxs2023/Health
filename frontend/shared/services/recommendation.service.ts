@@ -21,13 +21,13 @@ export class RecommendationService {
 
       // 从服务器获取新推荐
       const response = await this.api.get('/recommendations');
-      
+
       // 缓存推荐结果
       await this.cacheRecommendations(response.data);
-      
+
       return response.data;
     } catch (error) {
-      console.error('获取推荐失败:', error);
+      console.error('Error in recommendation.service.ts:', '获取推荐失败:', error);
       throw error;
     }
   }
@@ -35,11 +35,14 @@ export class RecommendationService {
   /**
    * 提供反馈
    */
-  async provideFeedback(recommendationId: string, feedback: {
-    rating: number;
-    comment?: string;
-    tags?: string[];
-  }) {
+  async provideFeedback(
+    recommendationId: string,
+    feedback: {
+      rating: number;
+      comment?: string;
+      tags?: string[];
+    },
+  ) {
     return this.api.post(`/recommendations/${recommendationId}/feedback`, feedback);
   }
 
@@ -88,9 +91,12 @@ export class RecommendationService {
    * 缓存推荐结果
    */
   private async cacheRecommendations(data: any) {
-    await storage.set('recommendations', JSON.stringify({
-      data,
-      timestamp: new Date()
-    }));
+    await storage.set(
+      'recommendations',
+      JSON.stringify({
+        data,
+        timestamp: new Date(),
+      }),
+    );
   }
-} 
+}

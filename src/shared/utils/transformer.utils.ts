@@ -1,9 +1,13 @@
+/**
+ * @fileoverview TS 文件 transformer.utils.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export class TransformerUtils {
   // 数据格式转换
-  static transformData<T, R>(
-    data: T | T[],
-    transformer: (item: T) => R
-  ): R | R[] {
+  static transformData<T, R>(data: T | T[], transformer: (item: T) => R): R | R[] {
     if (Array.isArray(data)) {
       return data.map(transformer);
     }
@@ -11,18 +15,12 @@ export class TransformerUtils {
   }
 
   // 数据过滤
-  static filterData<T>(
-    data: T[],
-    predicate: (item: T) => boolean
-  ): T[] {
+  static filterData<T>(data: T[], predicate: (item: T) => boolean): T[] {
     return data.filter(predicate);
   }
 
   // 数据分组
-  static groupBy<T>(
-    data: T[],
-    key: keyof T
-  ): Record<string, T[]> {
+  static groupBy<T>(data: T[], key: keyof T): Record<string, T[]> {
     return data.reduce((groups, item) => {
       const groupKey = String(item[key]);
       groups[groupKey] = groups[groupKey] || [];
@@ -35,7 +33,7 @@ export class TransformerUtils {
   static aggregate<T>(
     data: T[],
     key: keyof T,
-    aggregator: (values: any[]) => any
+    aggregator: (values: any[]) => any,
   ): Record<string, any> {
     const groups = this.groupBy(data, key);
     return Object.entries(groups).reduce((result, [groupKey, items]) => {
@@ -43,4 +41,4 @@ export class TransformerUtils {
       return result;
     }, {} as Record<string, any>);
   }
-} 
+}

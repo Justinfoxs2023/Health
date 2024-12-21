@@ -1,11 +1,11 @@
 import 'reflect-metadata';
 import express from 'express';
 import { Container } from 'inversify';
-import { TYPES } from './di/types';
-import { configureRoutes } from './routes';
-import { configureMiddleware } from './middleware';
 import { ErrorHandler } from './middleware/error-handler';
 import { HealthCheckService } from './services/health-check.service';
+import { TYPES } from './di/types';
+import { configureMiddleware } from './middleware';
+import { configureRoutes } from './routes';
 
 export class App {
   private app: express.Application;
@@ -46,4 +46,4 @@ export class App {
     const healthCheck = this.container.get<HealthCheckService>(TYPES.HealthCheck);
     await healthCheck.start();
   }
-} 
+}

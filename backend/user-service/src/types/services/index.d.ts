@@ -1,5 +1,5 @@
-import { Redis } from 'ioredis';
 import { Logger } from '../../utils/logger';
+import { Redis } from 'ioredis';
 
 // 导出所有服务类型
 export * from './user.service';
@@ -19,8 +19,10 @@ export * from './health-record.service';
 export * from './ai.service';
 
 // 基础服务接口
-export interface BaseService {
+export interface IBaseService {
+  /** logger 的描述 */
   logger: Logger;
+  /** redis 的描述 */
   redis: Redis;
 }
 
@@ -29,4 +31,4 @@ export * from '../utils/logger';
 export * from '../utils/redis';
 export * from '../utils/encryption';
 export * from '../utils/validators';
-export * from '../utils/errors'; 
+export * from '../utils/errors';

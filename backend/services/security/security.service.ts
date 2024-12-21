@@ -1,23 +1,28 @@
+import * as crypto from 'crypto';
+import * as jwt from 'jsonwebtoken';
 import { EventEmitter } from 'events';
 import { Logger } from '../../utils/logger';
 import { Redis } from '../../utils/redis';
-import * as jwt from 'jsonwebtoken';
-import * as crypto from 'crypto';
 
-interface SecurityConfig {
+interface ISecurityConfig {
+  /** jwtSecret 的描述 */
   jwtSecret: string;
+  /** tokenExpiration 的描述 */
   tokenExpiration: number;
+  /** rateLimitWindow 的描述 */
   rateLimitWindow: number;
+  /** rateLimitMax 的描述 */
   rateLimitMax: number;
+  /** encryptionKey 的描述 */
   encryptionKey: string;
 }
 
 export class SecurityService extends EventEmitter {
   private logger: Logger;
   private redis: Redis;
-  private config: SecurityConfig;
+  private config: ISecurityConfig;
 
-  constructor(config: SecurityConfig) {
+  constructor(config: ISecurityConfig) {
     super();
     this.logger = new Logger('SecurityService');
     this.redis = new Redis();
@@ -28,34 +33,34 @@ export class SecurityService extends EventEmitter {
   async encryptData(data: any): Promise<string> {
     const iv = crypto.randomBytes(16);
     const cipher = crypto.createCipheriv('aes-256-gcm', this.config.encryptionKey, iv);
-    
+
     let encrypted = cipher.update(JSON.stringify(data), 'utf8', 'hex');
     encrypted += cipher.final('hex');
-    
+
     const authTag = cipher.getAuthTag();
-    
+
     return JSON.stringify({
       iv: iv.toString('hex'),
       encryptedData: encrypted,
-      authTag: authTag.toString('hex')
+      authTag: authTag.toString('hex'),
     });
   }
 
   // 数据解密
   async decryptData(encryptedData: string): Promise<any> {
     const { iv, encryptedData: data, authTag } = JSON.parse(encryptedData);
-    
+
     const decipher = crypto.createDecipheriv(
       'aes-256-gcm',
       this.config.encryptionKey,
-      Buffer.from(iv, 'hex')
+      Buffer.from(iv, 'hex'),
     );
-    
+
     decipher.setAuthTag(Buffer.from(authTag, 'hex'));
-    
+
     let decrypted = decipher.update(data, 'hex', 'utf8');
     decrypted += decipher.final('utf8');
-    
+
     return JSON.parse(decrypted);
   }
 
@@ -71,7 +76,7 @@ export class SecurityService extends EventEmitter {
   // 生成JWT令牌
   generateToken(payload: any): string {
     return jwt.sign(payload, this.config.jwtSecret, {
-      expiresIn: this.config.tokenExpiration
+      expiresIn: this.config.tokenExpiration,
     });
   }
 
@@ -84,4 +89,4 @@ export class SecurityService extends EventEmitter {
       throw error;
     }
   }
-} 
+}

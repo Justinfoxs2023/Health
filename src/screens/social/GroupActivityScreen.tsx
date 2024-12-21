@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TSX 文件 GroupActivityScreen.tsx 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export const GroupActivityScreen: React.FC = () => {
   const [activities, setActivities] = useState<GroupActivity[]>([]);
   const { createActivity, joinActivity } = useCommunity();
@@ -10,11 +17,11 @@ export const GroupActivityScreen: React.FC = () => {
   return (
     <SafeAreaView style={styles.container}>
       {/* 活动创建按钮 */}
-      <TouchableOpacity 
+      <TouchableOpacity
         style={styles.createButton}
         onPress={() => navigation.navigate('CreateActivity')}
       >
-        <Text style={styles.buttonText}>发起活动</Text>
+        <Text style={stylesbuttonText}></Text>
       </TouchableOpacity>
 
       {/* 活动列表 */}
@@ -27,10 +34,8 @@ export const GroupActivityScreen: React.FC = () => {
             onShare={() => shareActivity(item)}
           />
         )}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={loadActivities} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadActivities} />}
       />
     </SafeAreaView>
   );
-}; 
+};

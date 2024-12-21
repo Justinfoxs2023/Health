@@ -1,13 +1,13 @@
-import { injectable, inject } from 'inversify';
+import { ILogger } from '../../types/logger';
+import { IRedisClient } from '../../infrastructure/redis';
 import { TYPES } from '../../di/types';
-import { Logger } from '../../types/logger';
-import { RedisClient } from '../../infrastructure/redis';
+import { injectable, inject } from 'inversify';
 
 @injectable()
 export abstract class BaseService {
   constructor(
-    @inject(TYPES.Logger) protected logger: Logger,
-    @inject(TYPES.Redis) protected redis: RedisClient
+    @inject(TYPES.Logger) protected logger: ILogger,
+    @inject(TYPES.Redis) protected redis: IRedisClient,
   ) {}
 
   protected async handleError(error: any, message: string): Promise<never> {
@@ -32,4 +32,4 @@ export abstract class BaseService {
       this.logger.error(`缓存写入失败: ${key}`, error);
     }
   }
-} 
+}

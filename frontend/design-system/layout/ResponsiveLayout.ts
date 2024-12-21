@@ -3,17 +3,17 @@ import { PlatformAdapter } from '../platform/PlatformAdapter';
 export class ResponsiveLayout {
   // 断点定义
   static readonly breakpoints = {
-    xs: 0,    // 手机竖屏
-    sm: 600,  // 手机横屏
-    md: 960,  // 平板竖屏
+    xs: 0, // 手机竖屏
+    sm: 600, // 手机横屏
+    md: 960, // 平板竖屏
     lg: 1280, // 平板横屏/小屏桌面
-    xl: 1920  // 大屏桌面
+    xl: 1920, // 大屏桌面
   };
 
   // 获取当前断点
   static getCurrentBreakpoint(): keyof typeof ResponsiveLayout.breakpoints {
     const width = PlatformAdapter.window.width;
-    
+
     if (width >= this.breakpoints.xl) return 'xl';
     if (width >= this.breakpoints.lg) return 'lg';
     if (width >= this.breakpoints.md) return 'md';
@@ -22,9 +22,11 @@ export class ResponsiveLayout {
   }
 
   // 响应式布局配置
-  static getLayoutConfig<T>(config: {
-    [K in keyof typeof ResponsiveLayout.breakpoints]?: T;
-  } & { default: T }): T {
+  static getLayoutConfig<T>(
+    config: {
+      [K in keyof typeof ResponsiveLayout.breakpoints]?: T;
+    } & { default: T },
+  ): T {
     const currentBreakpoint = this.getCurrentBreakpoint();
     return config[currentBreakpoint] || config.default;
   }
@@ -37,7 +39,7 @@ export class ResponsiveLayout {
       md: 12,
       lg: 12,
       xl: 12,
-      default: 4
+      default: 4,
     });
   }
 
@@ -49,7 +51,7 @@ export class ResponsiveLayout {
       md: 32,
       lg: 40,
       xl: 40,
-      default: 16
+      default: 16,
     });
   }
-} 
+}

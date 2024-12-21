@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, ScrollView, StyleSheet, Text, Image, TouchableOpacity, Linking } from 'react-native';
+
 import { Icon } from '../../components';
+import { View, ScrollView, StyleSheet, Text, Image, TouchableOpacity, Linking } from 'react-native';
 import { version } from '../../package.json';
 
 export const AboutScreen = ({ navigation }) => {
@@ -11,10 +12,7 @@ export const AboutScreen = ({ navigation }) => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
-        <Image
-          source={require('../../assets/images/logo.png')}
-          style={styles.logo}
-        />
+        <Image source={require('../../assets/images/logo.png')} style={styles.logo} />
         <Text style={styles.appName}>健康营养师</Text>
         <Text style={styles.version}>版本 {version}</Text>
       </View>
@@ -54,10 +52,7 @@ export const AboutScreen = ({ navigation }) => {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>关注我们</Text>
         <View style={styles.socialRow}>
-          <Image
-            source={require('../../assets/images/wechat-qr.png')}
-            style={styles.qrCode}
-          />
+          <Image source={require('../../assets/images/wechat-qr.png')} style={styles.qrCode} />
           <View style={styles.socialInfo}>
             <Text style={styles.socialTitle}>微信公众号</Text>
             <Text style={styles.socialDesc}>关注获取更多健康资讯</Text>
@@ -66,16 +61,10 @@ export const AboutScreen = ({ navigation }) => {
       </View>
 
       <View style={styles.links}>
-        <TouchableOpacity
-          style={styles.link}
-          onPress={() => navigation.navigate('Privacy')}
-        >
+        <TouchableOpacity style={styles.link} onPress={() => navigation.navigate('Privacy')}>
           <Text style={styles.linkText}>隐私政策</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.link}
-          onPress={() => navigation.navigate('Terms')}
-        >
+        <TouchableOpacity style={styles.link} onPress={() => navigation.navigate('Terms')}>
           <Text style={styles.linkText}>用户协议</Text>
         </TouchableOpacity>
       </View>
@@ -91,93 +80,93 @@ export const AboutScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   header: {
     alignItems: 'center',
     padding: 30,
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0'
+    borderBottomColor: '#f0f0f0',
   },
   logo: {
     width: 80,
     height: 80,
-    marginBottom: 15
+    marginBottom: 15,
   },
   appName: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 5
+    marginBottom: 5,
   },
   version: {
     fontSize: 14,
-    color: '#666'
+    color: '#666',
   },
   section: {
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0'
+    borderBottomColor: '#f0f0f0',
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 15
+    marginBottom: 15,
   },
   description: {
     fontSize: 16,
     color: '#666',
-    lineHeight: 24
+    lineHeight: 24,
   },
   contactItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 15
+    marginBottom: 15,
   },
   contactText: {
     fontSize: 16,
     color: '#666',
-    marginLeft: 10
+    marginLeft: 10,
   },
   socialRow: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   qrCode: {
     width: 100,
     height: 100,
-    marginRight: 15
+    marginRight: 15,
   },
   socialInfo: {
-    flex: 1
+    flex: 1,
   },
   socialTitle: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 5
+    marginBottom: 5,
   },
   socialDesc: {
     fontSize: 14,
-    color: '#666'
+    color: '#666',
   },
   links: {
     flexDirection: 'row',
     justifyContent: 'center',
-    padding: 20
+    padding: 20,
   },
   link: {
-    marginHorizontal: 15
+    marginHorizontal: 15,
   },
   linkText: {
     fontSize: 16,
-    color: '#2E7D32'
+    color: '#2E7D32',
   },
   copyright: {
     textAlign: 'center',
     fontSize: 12,
     color: '#999',
-    marginBottom: 20
-  }
-}); 
+    marginBottom: 20,
+  },
+});

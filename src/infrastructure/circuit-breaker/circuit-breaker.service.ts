@@ -1,49 +1,57 @@
-import { Injectable } from '@nestjs/common';
 import { ConfigService } from '../config/config.service';
-import { MetricsService } from '../monitoring/metrics.service';
+import { Injectable } from '@nestjs/common';
 import { Logger } from '../logger/logger.service';
+import { MetricsService } from '../monitoring/metrics.service';
 
 export enum CircuitState {
   CLOSED = 'CLOSED',
   OPEN = 'OPEN',
-  HALF_OPEN = 'HALF_OPEN'
+  HALF_OPEN = 'HALF_OPEN',
 }
 
-interface CircuitBreakerConfig {
+interface ICircuitBreakerConfig {
+  /** failureThreshold 的描述 */
   failureThreshold: number;
+  /** resetTimeout 的描述 */
   resetTimeout: number;
+  /** halfOpenRetries 的描述 */
   halfOpenRetries: number;
 }
 
-interface CircuitStats {
+interface ICircuitStats {
+  /** failures 的描述 */
   failures: number;
+  /** successes 的描述 */
   successes: number;
+  /** lastFailure 的描述 */
   lastFailure: Date;
+  /** lastSuccess 的描述 */
   lastSuccess: Date;
-  state: CircuitState;
+  /** state 的描述 */
+  state: import("D:/Health/src/infrastructure/circuit-breaker/circuit-breaker.service").CircuitState.CLOSED | import("D:/Health/src/infrastructure/circuit-breaker/circuit-breaker.service").CircuitState.OPEN | import("D:/Health/src/infrastructure/circuit-breaker/circuit-breaker.service").CircuitState.HALF_OPEN;
 }
 
 @Injectable()
 export class CircuitBreakerService {
-  private readonly stats: Map<string, CircuitStats> = new Map();
-  private readonly config: CircuitBreakerConfig;
+  private readonly stats: Map<string, ICircuitStats> = new Map();
+  private readonly config: ICircuitBreakerConfig;
   private readonly logger = new Logger(CircuitBreakerService.name);
 
   constructor(
     private readonly configService: ConfigService,
-    private readonly metrics: MetricsService
+    private readonly metrics: MetricsService,
   ) {
     this.config = {
       failureThreshold: parseInt(configService.get('CIRCUIT_BREAKER_FAILURE_THRESHOLD') || '5'),
       resetTimeout: parseInt(configService.get('CIRCUIT_BREAKER_RESET_TIMEOUT') || '60000'),
-      halfOpenRetries: parseInt(configService.get('CIRCUIT_BREAKER_HALF_OPEN_RETRIES') || '3')
+      halfOpenRetries: parseInt(configService.get('CIRCUIT_BREAKER_HALF_OPEN_RETRIES') || '3'),
     };
   }
 
   async execute<T>(
     serviceId: string,
     operation: () => Promise<T>,
-    fallback: () => Promise<T>
+    fallback: () => Promise<T>,
   ): Promise<T> {
     const stats = this.getStats(serviceId);
 
@@ -62,20 +70,20 @@ export class CircuitBreakerService {
     }
   }
 
-  private getStats(serviceId: string): CircuitStats {
+  private getStats(serviceId: string): ICircuitStats {
     if (!this.stats.has(serviceId)) {
       this.stats.set(serviceId, {
         failures: 0,
         successes: 0,
         lastFailure: new Date(0),
         lastSuccess: new Date(0),
-        state: CircuitState.CLOSED
+        state: CircuitState.CLOSED,
       });
     }
     return this.stats.get(serviceId)!;
   }
 
-  private isOpen(stats: CircuitStats): boolean {
+  private isOpen(stats: ICircuitStats): boolean {
     if (stats.state === CircuitState.OPEN) {
       const now = Date.now();
       const lastFailure = stats.lastFailure.getTime();
@@ -93,8 +101,7 @@ export class CircuitBreakerService {
     stats.successes++;
     stats.lastSuccess = new Date();
 
-    if (stats.state === CircuitState.HALF_OPEN && 
-        stats.successes >= this.config.halfOpenRetries) {
+    if (stats.state === CircuitState.HALF_OPEN && stats.successes >= this.config.halfOpenRetries) {
       stats.state = CircuitState.CLOSED;
       stats.failures = 0;
       stats.successes = 0;
@@ -124,4 +131,4 @@ export class CircuitBreakerService {
   reset(serviceId: string): void {
     this.stats.delete(serviceId);
   }
-} 
+}

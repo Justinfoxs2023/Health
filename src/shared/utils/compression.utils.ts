@@ -30,32 +30,32 @@ export class CompressionUtils {
   // 自动选择最佳压缩方法
   static async smartCompress(
     data: string | Buffer,
-    options?: { threshold?: number }
+    options?: { threshold?: number },
   ): Promise<{ compressed: Buffer; method: string }> {
     const threshold = options?.threshold || 1024; // 默认1KB阈值
-    
+
     if (Buffer.byteLength(data) < threshold) {
       return {
         compressed: Buffer.from(data),
-        method: 'none'
+        method: 'none',
       };
     }
 
     const [gzipped, deflated] = await Promise.all([
       this.gzipCompress(data),
-      this.deflateCompress(data)
+      this.deflateCompress(data),
     ]);
 
     if (gzipped.length <= deflated.length) {
       return {
         compressed: gzipped,
-        method: 'gzip'
+        method: 'gzip',
       };
     }
 
     return {
       compressed: deflated,
-      method: 'deflate'
+      method: 'deflate',
     };
   }
-} 
+}

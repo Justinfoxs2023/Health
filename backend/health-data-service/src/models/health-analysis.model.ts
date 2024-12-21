@@ -1,9 +1,13 @@
 import { Schema, model, Document } from 'mongoose';
 
 interface IHealthAnalysis extends Document {
+  /** userId 的描述 */
   userId: string;
+  /** period 的描述 */
   period: 'daily' | 'weekly' | 'monthly';
+  /** date 的描述 */
   date: Date;
+  /** metrics 的描述 */
   metrics: {
     vitalSigns: {
       heartRate: {
@@ -67,6 +71,7 @@ interface IHealthAnalysis extends Document {
       hydration: number;
     };
   };
+  /** analysis 的描述 */
   analysis: {
     healthScore: number; // 0-100
     risks: Array<{
@@ -80,6 +85,7 @@ interface IHealthAnalysis extends Document {
       priority: 'low' | 'medium' | 'high';
     }>;
   };
+  /** aiInsights 的描述 */
   aiInsights: {
     predictions: Array<{
       metric: string;
@@ -92,108 +98,123 @@ interface IHealthAnalysis extends Document {
       relevance: number;
     }>;
   };
+  /** createdAt 的描述 */
   createdAt: Date;
+  /** updatedAt 的描述 */
   updatedAt: Date;
 }
 
-const HealthAnalysisSchema = new Schema({
-  userId: { type: String, required: true, index: true },
-  period: { type: String, required: true, enum: ['daily', 'weekly', 'monthly'] },
-  date: { type: Date, required: true },
-  metrics: {
-    vitalSigns: {
-      heartRate: {
-        avg: Number,
-        max: Number,
-        min: Number,
-        trend: { type: String, enum: ['up', 'down', 'stable'] }
-      },
-      bloodPressure: {
-        systolic: {
+const HealthAnalysisSchema = new Schema(
+  {
+    userId: { type: String, required: true, index: true },
+    period: { type: String, required: true, enum: ['daily', 'weekly', 'monthly'] },
+    date: { type: Date, required: true },
+    metrics: {
+      vitalSigns: {
+        heartRate: {
           avg: Number,
-          trend: { type: String, enum: ['up', 'down', 'stable'] }
+          max: Number,
+          min: Number,
+          trend: { type: String, enum: ['up', 'down', 'stable'] },
         },
-        diastolic: {
+        bloodPressure: {
+          systolic: {
+            avg: Number,
+            trend: { type: String, enum: ['up', 'down', 'stable'] },
+          },
+          diastolic: {
+            avg: Number,
+            trend: { type: String, enum: ['up', 'down', 'stable'] },
+          },
+        },
+        bloodOxygen: {
           avg: Number,
-          trend: { type: String, enum: ['up', 'down', 'stable'] }
-        }
+          min: Number,
+          trend: { type: String, enum: ['up', 'down', 'stable'] },
+        },
       },
-      bloodOxygen: {
-        avg: Number,
-        min: Number,
-        trend: { type: String, enum: ['up', 'down', 'stable'] }
-      }
-    },
-    activity: {
-      steps: {
-        total: Number,
-        achievement: Number,
-        trend: { type: String, enum: ['up', 'down', 'stable'] }
-      },
-      exercise: {
-        duration: Number,
-        calories: Number,
-        types: [{
-          name: String,
+      activity: {
+        steps: {
+          total: Number,
+          achievement: Number,
+          trend: { type: String, enum: ['up', 'down', 'stable'] },
+        },
+        exercise: {
           duration: Number,
-          frequency: Number
-        }]
-      }
-    },
-    sleep: {
-      avgDuration: Number,
-      quality: Number,
-      pattern: {
-        bedtime: String,
-        wakeTime: String,
-        deepSleepPercentage: Number
-      }
-    },
-    nutrition: {
-      calories: {
-        intake: Number,
-        burned: Number,
-        balance: Number
+          calories: Number,
+          types: [
+            {
+              name: String,
+              duration: Number,
+              frequency: Number,
+            },
+          ],
+        },
       },
-      macros: {
-        protein: Number,
-        carbs: Number,
-        fat: Number
+      sleep: {
+        avgDuration: Number,
+        quality: Number,
+        pattern: {
+          bedtime: String,
+          wakeTime: String,
+          deepSleepPercentage: Number,
+        },
       },
-      hydration: Number
-    }
+      nutrition: {
+        calories: {
+          intake: Number,
+          burned: Number,
+          balance: Number,
+        },
+        macros: {
+          protein: Number,
+          carbs: Number,
+          fat: Number,
+        },
+        hydration: Number,
+      },
+    },
+    analysis: {
+      healthScore: Number,
+      risks: [
+        {
+          type: String,
+          level: { type: String, enum: ['low', 'medium', 'high'] },
+          description: String,
+        },
+      ],
+      improvements: [
+        {
+          area: String,
+          suggestion: String,
+          priority: { type: String, enum: ['low', 'medium', 'high'] },
+        },
+      ],
+    },
+    aiInsights: {
+      predictions: [
+        {
+          metric: String,
+          value: Number,
+          confidence: Number,
+        },
+      ],
+      recommendations: [
+        {
+          category: String,
+          content: String,
+          relevance: Number,
+        },
+      ],
+    },
   },
-  analysis: {
-    healthScore: Number,
-    risks: [{
-      type: String,
-      level: { type: String, enum: ['low', 'medium', 'high'] },
-      description: String
-    }],
-    improvements: [{
-      area: String,
-      suggestion: String,
-      priority: { type: String, enum: ['low', 'medium', 'high'] }
-    }]
+  {
+    timestamps: true,
   },
-  aiInsights: {
-    predictions: [{
-      metric: String,
-      value: Number,
-      confidence: Number
-    }],
-    recommendations: [{
-      category: String,
-      content: String,
-      relevance: Number
-    }]
-  }
-}, {
-  timestamps: true
-});
+);
 
 // 索引
 HealthAnalysisSchema.index({ userId: 1, period: 1, date: -1 });
 HealthAnalysisSchema.index({ 'analysis.healthScore': -1 });
 
-export const HealthAnalysis = model<IHealthAnalysis>('HealthAnalysis', HealthAnalysisSchema); 
+export const HealthAnalysis = model<IHealthAnalysis>('HealthAnalysis', HealthAnalysisSchema);

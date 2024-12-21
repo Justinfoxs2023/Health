@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { workoutLogController } from '../controllers/workout-log.controller';
 import { auth } from '../middleware/auth';
+import { workoutLogController } from '../controllers/workout-log.controller';
 
 const router = Router();
 
@@ -13,4 +13,4 @@ router.get('/', auth.required, workoutLogController.getWorkoutLogs);
 // 获取运动统计
 router.get('/stats', auth.required, workoutLogController.getWorkoutStats);
 
-export default router; 
+export default router;

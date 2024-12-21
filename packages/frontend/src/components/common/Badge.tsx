@@ -1,15 +1,19 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Text } from './Text';
-import { Icon } from './Icon';
 
-interface Props {
+import { Icon } from './Icon';
+import { Text } from './Text';
+import { View, StyleSheet } from 'react-native';
+
+interface IProps {
+  /** color 的描述 */
   color: string;
+  /** text 的描述 */
   text: string;
+  /** icon 的描述 */
   icon?: string;
 }
 
-export const Badge: React.FC<Props> = ({ color, text, icon }) => {
+export const Badge: React.FC<IProps> = ({ color, text, icon }) => {
   return (
     <View style={[styles.container, { backgroundColor: color }]}>
       {icon && <Icon name={icon} size={12} color="#fff" />}
@@ -25,11 +29,11 @@ const styles = StyleSheet.create({
     gap: 4,
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 12
+    borderRadius: 12,
   },
   text: {
     fontSize: 12,
     color: '#fff',
-    fontWeight: '500'
-  }
-}); 
+    fontWeight: '500',
+  },
+});

@@ -1,14 +1,14 @@
-import { Request, Response } from 'express';
-import { injectable, inject } from 'inversify';
-import { TYPES } from '../di/types';
-import { Logger } from '../types/logger';
+import { ILogger } from '../types/logger';
 import { NameGeneratorService } from '../services/name-generator.service';
+import { Request, Response } from 'express';
+import { TYPES } from '../di/types';
+import { injectable, inject } from 'inversify';
 
 @injectable()
 export class CharacterController {
   constructor(
-    @inject(TYPES.Logger) private logger: Logger,
-    @inject(TYPES.NameGenerator) private nameGenerator: NameGeneratorService
+    @inject(TYPES.Logger) private logger: ILogger,
+    @inject(TYPES.NameGenerator) private nameGenerator: NameGeneratorService,
   ) {}
 
   // 生成随机名字
@@ -17,13 +17,13 @@ export class CharacterController {
       const name = await this.nameGenerator.generateRandomName();
       return res.json({
         code: 200,
-        data: { name }
+        data: { name },
       });
     } catch (error) {
       this.logger.error('生成名字失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
@@ -38,7 +38,7 @@ export class CharacterController {
       if (!name || name.length < 2 || name.length > 12) {
         return res.status(400).json({
           code: 400,
-          message: '名字长度必须在2-12个字符之间'
+          message: '名字长度必须在2-12个字符之间',
         });
       }
 
@@ -46,13 +46,13 @@ export class CharacterController {
 
       return res.json({
         code: 200,
-        message: '保存成功'
+        message: '保存成功',
       });
     } catch (error) {
       this.logger.error('保存名字失败', error);
       return res.status(500).json({
         code: 500,
-        message: error.message || '服务器错误'
+        message: error.message || '服务器错误',
       });
     }
   }
@@ -62,17 +62,17 @@ export class CharacterController {
     try {
       const { name } = req.query;
       const available = await this.nameGenerator.checkNameAvailability(name as string);
-      
+
       return res.json({
         code: 200,
-        data: { available }
+        data: { available },
       });
     } catch (error) {
       this.logger.error('检查名字失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
-} 
+}

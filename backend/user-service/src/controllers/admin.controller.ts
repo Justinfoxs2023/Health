@@ -1,6 +1,6 @@
-import { Request, Response } from 'express';
 import { AdminService } from '../services/admin.service';
 import { Logger } from '../utils/logger';
+import { Request, Response } from 'express';
 
 export class AdminController {
   private adminService: AdminService;
@@ -33,20 +33,20 @@ export class AdminController {
         default:
           return res.status(400).json({
             code: 400,
-            message: '不支持的操作'
+            message: '不支持的操作',
           });
       }
 
       return res.json({
         code: 200,
         data: result,
-        message: '操作成功'
+        message: '操作成功',
       });
     } catch (error) {
       this.logger.error('用户管理操作失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
@@ -62,18 +62,18 @@ export class AdminController {
         startDate: startDate as string,
         endDate: endDate as string,
         type: type as string,
-        level: level as string
+        level: level as string,
       });
 
       return res.json({
         code: 200,
-        data: logs
+        data: logs,
       });
     } catch (error) {
       this.logger.error('获取系统日志失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
@@ -100,21 +100,21 @@ export class AdminController {
         default:
           return res.status(400).json({
             code: 400,
-            message: '不支持的操作'
+            message: '不支持的操作',
           });
       }
 
       return res.json({
         code: 200,
         data: result,
-        message: '操作成功'
+        message: '操作成功',
       });
     } catch (error) {
       this.logger.error('内容管理操作失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
-} 
+}

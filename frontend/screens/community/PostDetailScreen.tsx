@@ -1,12 +1,22 @@
 import React from 'react';
-import { View, ScrollView, StyleSheet, Text, TouchableOpacity, Image, TextInput } from 'react-native';
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { getPostDetail, likePost, createComment } from '../../api/community';
+
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  Image,
+  TextInput,
+} from 'react-native';
 import { LoadingSpinner, Icon, VideoPlayer, AlertDialog } from '../../components';
 import { format } from 'date-fns';
+import { getPostDetail, likePost, createComment } from '../../api/community';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { zhCN } from 'date-fns/locale';
 
-interface Comment {
+interfac
+e Comment {
   id: string;
   userId: string;
   userName: string;
@@ -17,23 +27,35 @@ interface Comment {
   liked: boolean;
 }
 
-interface PostDetail {
-  id: string;
-  userId: string;
-  userName: string;
-  userAvatar: string;
-  content: string;
-  media: {
+interface IPostDetail {
+  /** id 的描述 */
+    id: string;
+  /** userId 的描述 */
+    userId: string;
+  /** userName 的描述 */
+    userName: string;
+  /** userAvatar 的描述 */
+    userAvatar: string;
+  /** content 的描述 */
+    content: string;
+  /** media 的描述 */
+    media: {
     type: 'image' | 'video';
     uri: string;
     thumbnailUri?: string;
   }[];
-  likes: number;
-  comments: Comment[];
-  tags: string[];
-  createdAt: string;
-  type: 'experience' | 'question' | 'challenge';
-  liked: boolean;
+  /** likes 的描述 */
+    likes: number;
+  /** comments 的描述 */
+    comments: Comment[];
+  /** tags 的描述 */
+    tags: string[];
+  /** createdAt 的描述 */
+    createdAt: string;
+  /** type 的描述 */
+    type: 'experience' | 'question' | 'challenge';
+  /** liked 的描述 */
+    liked: boolean;
 }
 
 export const PostDetailScreen = ({ route, navigation }) => {
@@ -42,13 +64,14 @@ export const PostDetailScreen = ({ route, navigation }) => {
   const [showAlert, setShowAlert] = React.useState(false);
   const [alertMessage, setAlertMessage] = React.useState('');
 
-  const { data: post, isLoading, refetch } = useQuery<PostDetail>(
-    ['postDetail', id],
-    () => getPostDetail(id)
-  );
+  const {
+    data: post,
+    isLoading,
+    refetch,
+  } = useQuery<IPostDetail>(['postDetail', id], () => getPostDetail(id));
 
   const likeMutation = useMutation(likePost, {
-    onSuccess: () => refetch()
+    onSuccess: () => refetch(),
   });
 
   const commentMutation = useMutation(createComment, {
@@ -59,7 +82,7 @@ export const PostDetailScreen = ({ route, navigation }) => {
     onError: (error: any) => {
       setAlertMessage(error.message || '评论失败，请重试');
       setShowAlert(true);
-    }
+    },
   });
 
   const handleLike = () => {
@@ -111,7 +134,7 @@ export const PostDetailScreen = ({ route, navigation }) => {
 
         {post?.media && post.media.length > 0 && (
           <View style={styles.mediaContainer}>
-            {post.media.map((item, index) => (
+            {post.media.map((item, index) =>
               item.type === 'video' ? (
                 <VideoPlayer
                   key={index}
@@ -126,8 +149,8 @@ export const PostDetailScreen = ({ route, navigation }) => {
                   style={styles.image}
                   resizeMode="cover"
                 />
-              )
-            ))}
+              ),
+            )}
           </View>
         )}
 
@@ -152,7 +175,7 @@ export const PostDetailScreen = ({ route, navigation }) => {
 
         <View style={styles.commentsSection}>
           <Text style={styles.commentsTitle}>评论 ({post?.comments.length || 0})</Text>
-          {post?.comments.map((comment) => (
+          {post?.comments.map(comment => (
             <View key={comment.id} style={styles.commentItem}>
               <Image source={{ uri: comment.userAvatar }} style={styles.commentAvatar} />
               <View style={styles.commentContent}>
@@ -209,7 +232,7 @@ export const PostDetailScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   header: {
     flexDirection: 'row',
@@ -217,135 +240,135 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 15,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#f0f0f0'
+    borderBottomColor: '#f0f0f0',
   },
   userInfo: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   avatar: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    marginRight: 10
+    marginRight: 10,
   },
   userName: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333'
+    color: '#333',
   },
   postTime: {
     fontSize: 12,
     color: '#999',
-    marginTop: 2
+    marginTop: 2,
   },
   tag: {
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 12
+    borderRadius: 12,
   },
   experienceTag: {
-    backgroundColor: '#E8F5E9'
+    backgroundColor: '#E8F5E9',
   },
   questionTag: {
-    backgroundColor: '#E3F2FD'
+    backgroundColor: '#E3F2FD',
   },
   challengeTag: {
-    backgroundColor: '#FFF3E0'
+    backgroundColor: '#FFF3E0',
   },
   tagText: {
     fontSize: 12,
-    color: '#2E7D32'
+    color: '#2E7D32',
   },
   content: {
     fontSize: 16,
     color: '#333',
     lineHeight: 24,
-    padding: 15
+    padding: 15,
   },
   mediaContainer: {
-    padding: 15
+    padding: 15,
   },
   image: {
     width: '100%',
     height: 200,
     borderRadius: 8,
-    marginBottom: 10
+    marginBottom: 10,
   },
   video: {
     width: '100%',
     aspectRatio: 16 / 9,
     borderRadius: 8,
-    marginBottom: 10
+    marginBottom: 10,
   },
   actions: {
     flexDirection: 'row',
     padding: 15,
     borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: '#f0f0f0'
+    borderTopColor: '#f0f0f0',
   },
   actionButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginRight: 20
+    marginRight: 20,
   },
   actionText: {
     fontSize: 14,
     color: '#666',
-    marginLeft: 4
+    marginLeft: 4,
   },
   commentsSection: {
     padding: 15,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   commentsTitle: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 15
+    marginBottom: 15,
   },
   commentItem: {
     flexDirection: 'row',
-    marginBottom: 15
+    marginBottom: 15,
   },
   commentAvatar: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    marginRight: 10
+    marginRight: 10,
   },
   commentContent: {
-    flex: 1
+    flex: 1,
   },
   commentUserName: {
     fontSize: 14,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 4
+    marginBottom: 4,
   },
   commentText: {
     fontSize: 14,
     color: '#333',
     lineHeight: 20,
-    marginBottom: 4
+    marginBottom: 4,
   },
   commentFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   commentTime: {
     fontSize: 12,
-    color: '#999'
+    color: '#999',
   },
   commentLike: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   commentLikeCount: {
     fontSize: 12,
     color: '#999',
-    marginLeft: 4
+    marginLeft: 4,
   },
   commentInput: {
     flexDirection: 'row',
@@ -353,7 +376,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: '#f0f0f0',
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   input: {
     flex: 1,
@@ -363,20 +386,20 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     marginRight: 10,
     fontSize: 14,
-    maxHeight: 100
+    maxHeight: 100,
   },
   sendButton: {
     backgroundColor: '#2E7D32',
     paddingHorizontal: 15,
     paddingVertical: 8,
-    borderRadius: 20
+    borderRadius: 20,
   },
   sendButtonDisabled: {
-    backgroundColor: '#ccc'
+    backgroundColor: '#ccc',
   },
   sendButtonText: {
     color: '#fff',
     fontSize: 14,
-    fontWeight: 'bold'
-  }
-}); 
+    fontWeight: 'bold',
+  },
+});

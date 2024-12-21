@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 
 export const LoadingOverlay: React.FC = () => {
@@ -14,6 +15,6 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(255, 255, 255, 0.8)',
     justifyContent: 'center',
-    alignItems: 'center'
-  }
-}); 
+    alignItems: 'center',
+  },
+});

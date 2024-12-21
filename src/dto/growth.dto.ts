@@ -29,4 +29,4 @@ export class GrowthMetricsResponseDto {
     timestamp: Date;
     metadata?: Record<string, any>;
   }[];
-} 
+}

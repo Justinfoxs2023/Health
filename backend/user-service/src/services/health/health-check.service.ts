@@ -1,21 +1,21 @@
-import { injectable, inject } from 'inversify';
-import { TYPES } from '../../di/types';
-import { Logger } from '../../types/logger';
-import { RedisClient } from '../../infrastructure/redis/types';
 import { HealthStatus, ServiceStatus } from '../../types/health.types';
+import { ILogger } from '../../types/logger';
+import { IRedisClient } from '../../infrastructure/redis/types';
+import { TYPES } from '../../di/types';
+import { injectable, inject } from 'inversify';
 
 @injectable()
 export class HealthCheckService {
   constructor(
-    @inject(TYPES.Redis) private redis: RedisClient,
-    @inject(TYPES.Logger) private logger: Logger
+    @inject(TYPES.Redis) private redis: IRedisClient,
+    @inject(TYPES.Logger) private logger: ILogger,
   ) {}
 
   async checkHealth(): Promise<HealthStatus> {
     return {
       redis: await this.checkRedis(),
       api: await this.checkAPI(),
-      timestamp: new Date()
+      timestamp: new Date(),
     };
   }
 
@@ -25,13 +25,13 @@ export class HealthCheckService {
       await this.redis.ping();
       return {
         status: 'healthy',
-        latency: Date.now() - start
+        latency: Date.now() - start,
       };
     } catch (error) {
       this.logger.error('Redis health check failed:', error);
       return {
         status: 'unhealthy',
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -43,14 +43,14 @@ export class HealthCheckService {
       // 例如检查数据库连接、外部服务等
       return {
         status: 'healthy',
-        latency: Date.now() - start
+        latency: Date.now() - start,
       };
     } catch (error) {
       this.logger.error('API health check failed:', error);
       return {
         status: 'unhealthy',
-        error: error.message
+        error: error.message,
       };
     }
   }
-} 
+}

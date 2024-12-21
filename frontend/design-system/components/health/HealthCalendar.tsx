@@ -1,27 +1,37 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { DesignTokens } from '../../tokens';
 
-interface HealthEvent {
+import { DesignTokens } from '../../tokens';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+
+interface IHealthEvent {
+  /** id 的描述 */
   id: string;
+  /** date 的描述 */
   date: Date;
+  /** type 的描述 */
   type: 'appointment' | 'medication' | 'exercise' | 'measurement';
+  /** title 的描述 */
   title: string;
+  /** time 的描述 */
   time?: string;
 }
 
-interface HealthCalendarProps {
-  events: HealthEvent[];
+interface IHealthCalendarProps {
+  /** events 的描述 */
+  events: IHealthEvent[];
+  /** selectedDate 的描述 */
   selectedDate?: Date;
+  /** onDateSelect 的描述 */
   onDateSelect?: (date: Date) => void;
-  onEventPress?: (event: HealthEvent) => void;
+  /** onEventPress 的描述 */
+  onEventPress?: (event: IHealthEvent) => void;
 }
 
-export const HealthCalendar: React.FC<HealthCalendarProps> = ({
+export const HealthCalendar: React.FC<IHealthCalendarProps> = ({
   events,
   selectedDate = new Date(),
   onDateSelect,
-  onEventPress
+  onEventPress,
 }) => {
   const [currentMonth, setCurrentMonth] = React.useState(selectedDate);
 
@@ -30,7 +40,7 @@ export const HealthCalendar: React.FC<HealthCalendarProps> = ({
     const month = date.getMonth();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const firstDayOfMonth = new Date(year, month, 1).getDay();
-    
+
     return { daysInMonth, firstDayOfMonth };
   };
 
@@ -46,29 +56,27 @@ export const HealthCalendar: React.FC<HealthCalendarProps> = ({
     // Add days of the month
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
-      const dayEvents = events.filter(event => 
-        event.date.toDateString() === date.toDateString()
-      );
+      const dayEvents = events.filter(event => event.date.toDateString() === date.toDateString());
 
       days.push(
         <TouchableOpacity
           key={day}
           style={[
             styles.dayCell,
-            date.toDateString() === selectedDate.toDateString() && styles.selectedDay
+            date.toDateString() === selectedDate.toDateString() && styles.selectedDay,
           ]}
           onPress={() => onDateSelect?.(date)}
         >
-          <Text style={[
-            styles.dayText,
-            date.toDateString() === selectedDate.toDateString() && styles.selectedDayText
-          ]}>
+          <Text
+            style={[
+              styles.dayText,
+              date.toDateString() === selectedDate.toDateString() && styles.selectedDayText,
+            ]}
+          >
             {day}
           </Text>
-          {dayEvents.length > 0 && (
-            <View style={styles.eventIndicator} />
-          )}
-        </TouchableOpacity>
+          {dayEvents.length > 0 && <View style={styles.eventIndicator} />}
+        </TouchableOpacity>,
       );
     }
 
@@ -79,10 +87,9 @@ export const HealthCalendar: React.FC<HealthCalendarProps> = ({
     <View style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity
-          onPress={() => setCurrentMonth(new Date(
-            currentMonth.getFullYear(),
-            currentMonth.getMonth() - 1
-          ))}
+          onPress={() =>
+            setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1))
+          }
         >
           <Text>上个月</Text>
         </TouchableOpacity>
@@ -90,18 +97,15 @@ export const HealthCalendar: React.FC<HealthCalendarProps> = ({
           {currentMonth.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long' })}
         </Text>
         <TouchableOpacity
-          onPress={() => setCurrentMonth(new Date(
-            currentMonth.getFullYear(),
-            currentMonth.getMonth() + 1
-          ))}
+          onPress={() =>
+            setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1))
+          }
         >
           <Text>下个月</Text>
         </TouchableOpacity>
       </View>
 
-      <View style={styles.calendar}>
-        {renderCalendarDays()}
-      </View>
+      <View style={styles.calendar}>{renderCalendarDays()}</View>
     </View>
   );
 };
@@ -111,46 +115,46 @@ const styles = StyleSheet.create({
     backgroundColor: DesignTokens.colors.background.paper,
     borderRadius: DesignTokens.radius.lg,
     padding: DesignTokens.spacing.lg,
-    ...DesignTokens.shadows.md
+    ...DesignTokens.shadows.md,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: DesignTokens.spacing.lg
+    marginBottom: DesignTokens.spacing.lg,
   },
   monthText: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: String(DesignTokens.typography.weights.semibold),
-    color: DesignTokens.colors.text.primary
+    color: DesignTokens.colors.text.primary,
   },
   calendar: {
     flexDirection: 'row',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
   },
   dayCell: {
     width: '14.28%',
     aspectRatio: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: DesignTokens.spacing.xs
+    padding: DesignTokens.spacing.xs,
   },
   selectedDay: {
     backgroundColor: DesignTokens.colors.brand.primary,
-    borderRadius: DesignTokens.radius.full
+    borderRadius: DesignTokens.radius.full,
   },
   dayText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.text.primary
+    color: DesignTokens.colors.text.primary,
   },
   selectedDayText: {
-    color: DesignTokens.colors.neutral.white
+    color: DesignTokens.colors.neutral.white,
   },
   eventIndicator: {
     width: 4,
     height: 4,
     borderRadius: 2,
     backgroundColor: DesignTokens.colors.brand.primary,
-    marginTop: DesignTokens.spacing.xs
-  }
-}); 
+    marginTop: DesignTokens.spacing.xs,
+  },
+});

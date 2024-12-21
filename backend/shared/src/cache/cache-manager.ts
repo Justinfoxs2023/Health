@@ -1,13 +1,13 @@
-import { injectable, inject } from 'inversify';
-import { TYPES } from '../di/types';
 import { Logger } from '../types/logger';
 import { RedisClient } from '../infrastructure/redis';
+import { TYPES } from '../di/types';
+import { injectable, inject } from 'inversify';
 
 @injectable()
 export class CacheManager {
   constructor(
     @inject(TYPES.Logger) private readonly logger: Logger,
-    @inject(TYPES.Redis) private readonly redis: RedisClient
+    @inject(TYPES.Redis) private readonly redis: RedisClient,
   ) {}
 
   async get<T>(key: string): Promise<T | null> {
@@ -38,4 +38,4 @@ export class CacheManager {
       this.logger.error(`缓存清理失败: ${pattern}`, error);
     }
   }
-} 
+}

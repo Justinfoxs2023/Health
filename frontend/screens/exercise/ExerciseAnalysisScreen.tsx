@@ -1,30 +1,35 @@
 import React from 'react';
-import { View, ScrollView, StyleSheet, Text, TouchableOpacity } from 'react-native';
-import { useQuery } from '@tanstack/react-query';
-import { getExerciseStats } from '../../api/exercise';
+
 import { LoadingSpinner, Icon, LineChart, BarChart, ProgressRing } from '../../components';
+import { View, ScrollView, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { format, startOfWeek, eachDayOfInterval, addDays } from 'date-fns';
+import { getExerciseStats } from '../../api/exercise';
+import { useQuery } from '@tanstack/react-query';
 import { zhCN } from 'date-fns/locale';
 
-interface ExerciseStats {
+interface IExerciseStats {
+  /** weeklyStats 的描述 */
   weeklyStats: {
     date: string;
     duration: number;
     calories: number;
     completedExercises: number;
   }[];
+  /** monthlyStats 的描述 */
   monthlyStats: {
     month: string;
     totalDuration: number;
     totalCalories: number;
     completedDays: number;
   }[];
+  /** exerciseTypeStats 的描述 */
   exerciseTypeStats: {
     type: string;
     duration: number;
     calories: number;
     count: number;
   }[];
+  /** achievements 的描述 */
   achievements: {
     id: string;
     title: string;
@@ -37,25 +42,25 @@ interface ExerciseStats {
 }
 
 export const ExerciseAnalysisScreen = () => {
-  const { data: stats, isLoading } = useQuery<ExerciseStats>('exerciseStats', getExerciseStats);
+  const { data: stats, isLoading } = useQuery<IExerciseStats>('exerciseStats', getExerciseStats);
   const [selectedMetric, setSelectedMetric] = React.useState<'duration' | 'calories'>('duration');
 
   const getWeeklyData = () => {
     const startDate = startOfWeek(new Date(), { locale: zhCN });
     const weekDays = eachDayOfInterval({
       start: startDate,
-      end: addDays(startDate, 6)
+      end: addDays(startDate, 6),
     });
 
     return weekDays.map(day => {
       const dayStats = stats?.weeklyStats.find(
-        stat => new Date(stat.date).toDateString() === day.toDateString()
+        stat => new Date(stat.date).toDateString() === day.toDateString(),
       ) || { duration: 0, calories: 0 };
 
       return {
         date: format(day, 'EEE', { locale: zhCN }),
         duration: Math.round(dayStats.duration / 60), // 转换为小时
-        calories: dayStats.calories
+        calories: dayStats.calories,
       };
     });
   };
@@ -87,9 +92,7 @@ export const ExerciseAnalysisScreen = () => {
           <View style={styles.statCard}>
             <Icon name="clock" size={24} color="#2E7D32" />
             <Text style={styles.statValue}>
-              {Math.round(
-                stats?.weeklyStats.reduce((sum, day) => sum + day.duration, 0) || 0
-              )}分钟
+              {Math.round(stats?.weeklyStats.reduce((sum, day) => sum + day.duration, 0) || 0)}分钟
             </Text>
             <Text style={styles.statLabel}>总时长</Text>
           </View>
@@ -109,22 +112,36 @@ export const ExerciseAnalysisScreen = () => {
           <Text style={styles.sectionTitle}>运动趋势</Text>
           <View style={styles.metricToggle}>
             <TouchableOpacity
-              style={[styles.metricButton, selectedMetric === 'duration' && styles.activeMetricButton]}
+              style={[
+                styles.metricButton,
+                selectedMetric === 'duration' && styles.activeMetricButton,
+              ]}
               onPress={() => setSelectedMetric('duration')}
             >
-              <Text style={[
-                styles.metricButtonText,
-                selectedMetric === 'duration' && styles.activeMetricButtonText
-              ]}>时长</Text>
+              <Text
+                style={[
+                  styles.metricButtonText,
+                  selectedMetric === 'duration' && styles.activeMetricButtonText,
+                ]}
+              >
+                时长
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.metricButton, selectedMetric === 'calories' && styles.activeMetricButton]}
+              style={[
+                styles.metricButton,
+                selectedMetric === 'calories' && styles.activeMetricButton,
+              ]}
               onPress={() => setSelectedMetric('calories')}
             >
-              <Text style={[
-                styles.metricButtonText,
-                selectedMetric === 'calories' && styles.activeMetricButtonText
-              ]}>卡路里</Text>
+              <Text
+                style={[
+                  styles.metricButtonText,
+                  selectedMetric === 'calories' && styles.activeMetricButtonText,
+                ]}
+              >
+                卡路里
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -144,7 +161,7 @@ export const ExerciseAnalysisScreen = () => {
           data={stats?.exerciseTypeStats.map(type => ({
             label: type.type,
             value: type.duration,
-            calories: type.calories
+            calories: type.calories,
           }))}
           height={200}
           barColor="#2E7D32"
@@ -154,26 +171,25 @@ export const ExerciseAnalysisScreen = () => {
       {/* 成就系统 */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>运动成就</Text>
-        {stats?.achievements.map((achievement) => (
+        {stats?.achievements.map(achievement => (
           <View key={achievement.id} style={styles.achievementCard}>
             <View style={styles.achievementHeader}>
               <Text style={styles.achievementTitle}>{achievement.title}</Text>
-              {achievement.achieved && (
-                <Icon name="award" size={20} color="#FFA000" />
-              )}
+              {achievement.achieved && <Icon name="award" size={20} color="#FFA000" />}
             </View>
             <Text style={styles.achievementDesc}>{achievement.description}</Text>
             <View style={styles.progressBar}>
               <View
                 style={[
                   styles.progressFill,
-                  { width: `${(achievement.progress / achievement.target) * 100}%` }
+                  { width: `${(achievement.progress / achievement.target) * 100}%` },
                 ]}
               />
             </View>
             <Text style={styles.progressText}>
               {achievement.progress}/{achievement.target}
-              {achievement.achieved && ` · ${format(new Date(achievement.achievedAt || ''), 'yyyy/MM/dd')}`}
+              {achievement.achieved &&
+                ` · ${format(new Date(achievement.achievedAt || ''), 'yyyy/MM/dd')}`}
             </Text>
           </View>
         ))}
@@ -185,52 +201,52 @@ export const ExerciseAnalysisScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   section: {
     marginTop: 10,
     backgroundColor: '#fff',
-    padding: 20
+    padding: 20,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 15
+    marginBottom: 15,
   },
   overviewStats: {
     flexDirection: 'row',
-    justifyContent: 'space-around'
+    justifyContent: 'space-around',
   },
   statCard: {
-    alignItems: 'center'
+    alignItems: 'center',
   },
   statValue: {
     fontSize: 20,
     fontWeight: 'bold',
     color: '#333',
-    marginVertical: 8
+    marginVertical: 8,
   },
   statLabel: {
     fontSize: 12,
-    color: '#666'
+    color: '#666',
   },
   chartHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 15
+    marginBottom: 15,
   },
   metricToggle: {
     flexDirection: 'row',
     backgroundColor: '#f5f5f5',
     borderRadius: 8,
-    padding: 4
+    padding: 4,
   },
   metricButton: {
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 6
+    borderRadius: 6,
   },
   activeMetricButton: {
     backgroundColor: '#fff',
@@ -238,51 +254,51 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
-    elevation: 2
+    elevation: 2,
   },
   metricButtonText: {
     fontSize: 14,
-    color: '#666'
+    color: '#666',
   },
   activeMetricButtonText: {
     color: '#2E7D32',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   achievementCard: {
     backgroundColor: '#f5f5f5',
     borderRadius: 8,
     padding: 15,
-    marginBottom: 10
+    marginBottom: 10,
   },
   achievementHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 5
+    marginBottom: 5,
   },
   achievementTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333'
+    color: '#333',
   },
   achievementDesc: {
     fontSize: 14,
     color: '#666',
-    marginBottom: 10
+    marginBottom: 10,
   },
   progressBar: {
     height: 4,
     backgroundColor: '#E0E0E0',
     borderRadius: 2,
-    marginBottom: 5
+    marginBottom: 5,
   },
   progressFill: {
     height: '100%',
     backgroundColor: '#2E7D32',
-    borderRadius: 2
+    borderRadius: 2,
   },
   progressText: {
     fontSize: 12,
-    color: '#666'
-  }
-}); 
+    color: '#666',
+  },
+});

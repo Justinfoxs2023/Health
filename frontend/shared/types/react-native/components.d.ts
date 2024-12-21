@@ -67,4 +67,4 @@ declare module 'react-native' {
   export const KeyboardAvoidingView: React.ComponentType<KeyboardAvoidingViewProps>;
   export const SafeAreaView: React.ComponentType<SafeAreaViewProps>;
   export const ActivityIndicator: React.ComponentType<ActivityIndicatorProps>;
-} 
+}

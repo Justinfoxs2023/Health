@@ -1,8 +1,10 @@
 import React from 'react';
-import { View, Image, Text, StyleSheet } from 'react-native';
-import { Icon } from './Icon';
 
-interface Props {
+import { Icon } from './Icon';
+import { View, Image, Text, StyleSheet } from 'react-native';
+
+interface IProps {
+  /** user 的描述 */
   user: {
     id: string;
     avatar: string;
@@ -10,13 +12,11 @@ interface Props {
     title?: string;
     verified?: boolean;
   };
+  /** size 的描述 */
   size?: 'small' | 'medium' | 'large';
 }
 
-export const UserInfo: React.FC<Props> = ({
-  user,
-  size = 'medium'
-}) => {
+export const UserInfo: React.FC<IProps> = ({ user, size = 'medium' }) => {
   const getAvatarSize = () => {
     switch (size) {
       case 'small':
@@ -47,17 +47,13 @@ export const UserInfo: React.FC<Props> = ({
       />
       <View style={styles.info}>
         <View style={styles.nameRow}>
-          <Text style={[styles.name, { fontSize: getFontSize() }]}>
-            {user.name}
-          </Text>
+          <Text style={[styles.name, { fontSize: getFontSize() }]}>{user.name}</Text>
           {user.verified && (
             <Icon name="verified" size={16} color="#2E7D32" style={styles.verifiedIcon} />
           )}
         </View>
         {user.title && (
-          <Text style={[styles.title, { fontSize: getFontSize() - 2 }]}>
-            {user.title}
-          </Text>
+          <Text style={[styles.title, { fontSize: getFontSize() - 2 }]}>{user.title}</Text>
         )}
       </View>
     </View>
@@ -67,28 +63,28 @@ export const UserInfo: React.FC<Props> = ({
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   avatar: {
     borderRadius: 20,
-    marginRight: 8
+    marginRight: 8,
   },
   info: {
-    flex: 1
+    flex: 1,
   },
   nameRow: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   name: {
     fontWeight: '500',
-    color: '#333'
+    color: '#333',
   },
   verifiedIcon: {
-    marginLeft: 4
+    marginLeft: 4,
   },
   title: {
     color: '#666',
-    marginTop: 2
-  }
-}); 
+    marginTop: 2,
+  },
+});

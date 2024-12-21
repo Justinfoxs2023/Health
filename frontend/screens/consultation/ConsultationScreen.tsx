@@ -1,13 +1,9 @@
 import React from 'react';
+
+import { ConsultationCard, LoadingSpinner, EmptyState, TabFilter } from '../../components';
 import { View, FlatList, StyleSheet, TouchableOpacity, Text } from 'react-native';
-import { useQuery } from 'react-query';
 import { getConsultationHistory } from '../../api/consultation';
-import {
-  ConsultationCard,
-  LoadingSpinner,
-  EmptyState,
-  TabFilter
-} from '../../components';
+import { useQuery } from 'react-query';
 
 export const ConsultationScreen = ({ navigation }) => {
   const [status, setStatus] = React.useState('全部');
@@ -18,8 +14,8 @@ export const ConsultationScreen = ({ navigation }) => {
     ['consultations', status, page],
     () => getConsultationHistory({ status, page, limit }),
     {
-      keepPreviousData: true
-    }
+      keepPreviousData: true,
+    },
   );
 
   const handleLoadMore = () => {
@@ -42,7 +38,7 @@ export const ConsultationScreen = ({ navigation }) => {
       <TabFilter
         tabs={['全部', '待回复', '已回复', '已完成']}
         activeTab={status}
-        onChangeTab={(tab) => {
+        onChangeTab={tab => {
           setStatus(tab);
           setPage(1);
         }}
@@ -66,11 +62,7 @@ export const ConsultationScreen = ({ navigation }) => {
         onEndReachedThreshold={0.3}
         refreshing={isLoading}
         onRefresh={refetch}
-        ListFooterComponent={
-          isFetchingMore ? (
-            <LoadingSpinner style={styles.loadingMore} />
-          ) : null
-        }
+        ListFooterComponent={isFetchingMore ? <LoadingSpinner style={styles.loadingMore} /> : null}
       />
 
       <TouchableOpacity
@@ -86,21 +78,21 @@ export const ConsultationScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   filter: {
     backgroundColor: '#fff',
-    paddingVertical: 10
+    paddingVertical: 10,
   },
   list: {
     padding: 15,
-    flexGrow: 1
+    flexGrow: 1,
   },
   separator: {
-    height: 15
+    height: 15,
   },
   loadingMore: {
-    paddingVertical: 15
+    paddingVertical: 15,
   },
   newButton: {
     position: 'absolute',
@@ -114,11 +106,11 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
-    shadowRadius: 4
+    shadowRadius: 4,
   },
   newButtonText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: 'bold'
-  }
-}); 
+    fontWeight: 'bold',
+  },
+});

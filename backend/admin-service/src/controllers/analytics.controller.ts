@@ -1,8 +1,8 @@
-import { Request, Response } from 'express';
-import { BaseController } from './base.controller';
-import { AnalyticsService } from '../services/analytics.service';
-import { Logger } from '../utils/logger';
 import { AnalyticsError } from '../utils/errors';
+import { AnalyticsService } from '../services/analytics.service';
+import { BaseController } from './base.controller';
+import { Logger } from '../utils/logger';
+import { Request, Response } from 'express';
 
 export class AnalyticsController extends BaseController {
   private analyticsService: AnalyticsService;
@@ -17,11 +17,11 @@ export class AnalyticsController extends BaseController {
   public async getMetrics(req: Request, res: Response) {
     try {
       const { startDate, endDate, metrics = [] } = req.query;
-      
+
       const data = await this.analyticsService.getMetrics({
         startDate: startDate as string,
         endDate: endDate as string,
-        metrics: metrics as string[]
+        metrics: metrics as string[],
       });
 
       return this.success(res, data);
@@ -34,11 +34,11 @@ export class AnalyticsController extends BaseController {
   public async generateReport(req: Request, res: Response) {
     try {
       const { reportType, timeRange, filters } = req.body;
-      
+
       const report = await this.analyticsService.generateReport({
         type: reportType,
         timeRange,
-        filters
+        filters,
       });
 
       return this.success(res, report);
@@ -51,10 +51,10 @@ export class AnalyticsController extends BaseController {
   public async getHealthTrends(req: Request, res: Response) {
     try {
       const { userId, timeRange = 'week' } = req.query;
-      
+
       const trends = await this.analyticsService.getHealthTrends(
         userId as string,
-        timeRange as string
+        timeRange as string,
       );
 
       return this.success(res, trends);
@@ -63,4 +63,4 @@ export class AnalyticsController extends BaseController {
       return this.error(res, error);
     }
   }
-} 
+}

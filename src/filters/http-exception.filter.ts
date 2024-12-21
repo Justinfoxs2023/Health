@@ -1,9 +1,9 @@
-import { ExceptionFilter, Catch, ArgumentsHost, HttpException } from '@nestjs/common';
-import { Response } from 'express';
-import { LoggerService } from '../services/common/logger.service';
 import { ErrorResponse } from '../interfaces/error-response.interface';
+import { ExceptionFilter, Catch, ArgumentsHost, HttpException } from '@nestjs/common';
+import { LoggerService } from '../services/common/logger.service';
+import { Response } from 'express';
 
-@Catch(HttpException)
+@Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
   constructor(private readonly logger: LoggerService) {}
 
@@ -22,25 +22,20 @@ export class HttpExceptionFilter implements ExceptionFilter {
       path: request.url,
     };
 
-    this.logger.error(
-      `HTTP Exception: ${errorResponse.message}`,
-      {
-        statusCode: status,
-        path: request.url,
-        details: errorResponse.details,
-      }
-    );
+    this.logger.error(`HTTP Exception: ${errorResponse.message}`, {
+      statusCode: status,
+      path: request.url,
+      details: errorResponse.details,
+    });
 
-    response
-      .status(status)
-      .json(errorResponse);
+    response.status(status).json(errorResponse);
   }
 
   private getErrorCode(status: number, response: any): string {
     if (response.code) {
       return response.code;
     }
-    
+
     const statusCodes = {
       400: 'BAD_REQUEST',
       401: 'UNAUTHORIZED',
@@ -59,4 +54,4 @@ export class HttpExceptionFilter implements ExceptionFilter {
     }
     return response.message || 'An unexpected error occurred';
   }
-} 
+}

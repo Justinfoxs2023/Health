@@ -1,0 +1,72 @@
+{
+  "timestamp": "2024-12-16T07:19:31.554Z",
+  "metrics": [
+    {
+      "name": "code_audit",
+      "value": true,
+      "duration": 0.1018,
+      "memoryUsage": 3304,
+      "timestamp": "2024-12-16T07:18:04.201Z",
+      "tags": {
+        "type": "audit"
+      }
+    },
+    {
+      "name": "memory_leaks",
+      "value": 240,
+      "duration": 0.3339,
+      "memoryUsage": 3264,
+      "timestamp": "2024-12-16T07:18:04.203Z",
+      "tags": {
+        "type": "performance",
+        "target": "memory"
+      }
+    }
+  ],
+  "results": {
+    "typeCheck": {
+      "errors": [],
+      "warnings": [],
+      "summary": {
+        "totalErrors": 0,
+        "totalWarnings": 0,
+        "files": {}
+      }
+    },
+    "dependencies": {
+      "outdated": [],
+      "vulnerabilities": [],
+      "summary": {
+        "totalOutdated": 0,
+        "totalVulnerabilities": 0
+      }
+    },
+    "tests": {},
+    "performance": {},
+    "codeQuality": {}
+  },
+  "recommendations": [
+    "检查 typeCheck 模块的配置",
+    "检查 dependencies 模块的配置",
+    "检查 tests 模块的配置",
+    "检查 performance 模块的配置",
+    "检查 codeQuality 模块的配置"
+  ],
+  "performance": {
+    "database": [],
+    "api": [],
+    "memory": [
+      {
+        "name": "memory_leaks",
+        "value": 240,
+        "duration": 0.3339,
+        "memoryUsage": 3264,
+        "timestamp": "2024-12-16T07:18:04.203Z",
+        "tags": {
+          "type": "performance",
+          "target": "memory"
+        }
+      }
+    ]
+  }
+}

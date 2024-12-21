@@ -1,0 +1,201 @@
+# 开发者平台配置
+
+# API密钥配置
+apiKey:
+  # 密钥有效期（天）
+  expireDays: 365
+  # 默认请求限制（每天）
+  defaultRateLimit: 10000
+  # 权限级别
+  permissionLevels:
+    - read
+    - write
+    - admin
+
+# SDK配置
+sdk:
+  # 支持的语言
+  languages:
+    - typescript
+    - javascript
+    - python
+    - java
+    - go
+  # 版本控制
+  versioning:
+    strategy: semver
+    latest: 1.0.0
+  # 存储配置
+  storage:
+    path: /storage/sdk
+    maxSize: 50MB
+
+# 文档配置
+documentation:
+  # 文档格式
+  format: markdown
+  # 自动生成配置
+  autoGenerate:
+    enabled: true
+    excludePaths:
+      - /internal
+      - /private
+  # 版本控制
+  versioning:
+    enabled: true
+    strategy: date
+  # 搜索配置
+  search:
+    enabled: true
+    algorithm: elasticsearch
+
+# 开发者账号配置
+account:
+  # 注册配置
+  registration:
+    requireApproval: true
+    verifyEmail: true
+    verifyPhone: false
+  # 认证方式
+  authentication:
+    methods:
+      - password
+      - oauth2
+      - apiKey
+  # 权限配置
+  authorization:
+    roles:
+      - developer
+      - admin
+      - support
+
+# 支持系统配置
+support:
+  # 工单配置
+  ticket:
+    categories:
+      - technical
+      - billing
+      - account
+      - other
+    priorities:
+      - low
+      - medium
+      - high
+      - urgent
+  # 响应时间
+  responseTime:
+    urgent: 2h
+    high: 4h
+    medium: 24h
+    low: 48h
+
+# 示例代码配置
+codeExamples:
+  # 支持的语言
+  languages:
+    - typescript
+    - javascript
+    - python
+    - java
+    - go
+  # 分类
+  categories:
+    - authentication
+    - data-access
+    - integration
+    - best-practices
+  # 版本控制
+  versioning:
+    enabled: true
+    strategy: tag
+
+# 监控配置
+monitoring:
+  # 指标收集
+  metrics:
+    enabled: true
+    interval: 60
+    retention: 30
+  # 告警配置
+  alerts:
+    enabled: true
+    channels:
+      - email
+      - slack
+    thresholds:
+      errorRate: 0.01
+      responseTime: 1000
+      usageLimit: 0.9
+
+# 缓存配置
+cache:
+  # 缓存策略
+  strategy: redis
+  # TTL配置（秒）
+  ttl:
+    apiDocs: 3600
+    sdkVersions: 86400
+    examples: 3600
+  # 清理策略
+  cleanup:
+    interval: 86400
+    threshold: 0.8
+
+# 数据库配置
+database:
+  # 集合配置
+  collections:
+    - api_keys
+    - developer_accounts
+    - support_tickets
+    - api_docs
+    - sdk_versions
+    - code_examples
+    - api_usage
+  # 索引配置
+  indexes:
+    api_keys:
+      - key
+      - userId
+    developer_accounts:
+      - email
+      - status
+    api_usage:
+      - apiKeyId
+      - timestamp
+
+# 安全配置
+security:
+  # 密码策略
+  password:
+    minLength: 8
+    requireSpecialChar: true
+    requireNumber: true
+    requireUppercase: true
+  # API密钥策略
+  apiKey:
+    length: 32
+    algorithm: sha256
+  # 访问控制
+  accessControl:
+    maxFailedAttempts: 5
+    lockoutDuration: 900
+    ipWhitelist: []
+
+# 通知配置
+notification:
+  # 通知渠道
+  channels:
+    email:
+      enabled: true
+      provider: smtp
+    slack:
+      enabled: true
+      webhook: ""
+  # 通知事件
+  events:
+    apiKeyCreated: true
+    apiKeyExpiring: true
+    quotaExceeded: true
+    accountLocked: true

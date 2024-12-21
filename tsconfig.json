@@ -1,23 +1,46 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@health/shared/*": ["packages/shared/src/*"],
-      "@health/backend/*": ["packages/backend/src/*"],
-      "@health/frontend/*": ["packages/frontend/src/*"],
-      "@health/mobile/*": ["packages/mobile/src/*"],
-      "@health/admin/*": ["packages/admin/src/*"]
-    },
     "target": "es2020",
     "module": "commonjs",
+    "lib": ["es2020", "dom"],
+    "jsx": "react-jsx",
+    "declaration": true,
     "strict": true,
+    "noImplicitAny": false,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": false,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "declaration": true,
-    "resolveJsonModule": true,
     "moduleResolution": "node",
-    "jsx": "react-jsx"
+    "resolveJsonModule": true,
+    "rootDir": ".",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@utils/*": ["src/utils/*"],
+      "@health/*": ["packages/*/src"],
+      "*": ["*", "scripts/*"]
+    },
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "isolatedModules": false,
+    "noUnusedParameters": false,
+    "noUnusedLocals": false
   },
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "src/**/*",
+    "scripts/**/*",
+    "test/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    "coverage"
+  ]
 }

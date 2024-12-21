@@ -50,4 +50,4 @@ export class RedisClient {
   }
 }
 
-export const Redis = RedisClient; 
+export const Redis = RedisClient;

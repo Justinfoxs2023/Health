@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 additional-members.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 declare module 'react-native' {
   // 导航相关
   export interface NavigationEvent {
@@ -64,35 +71,29 @@ declare module 'react-native' {
       useNativeDriver?: boolean;
     }
 
-    export function decay(
-      value: AnimatedValue,
-      config: DecayAnimationConfig
-    ): CompositeAnimation;
+    export function decay(value: AnimatedValue, config: DecayAnimationConfig): CompositeAnimation;
 
     export function add(
       a: Animated.Value | Animated.AnimatedInterpolation,
-      b: Animated.Value | Animated.AnimatedInterpolation
+      b: Animated.Value | Animated.AnimatedInterpolation,
     ): Animated.AnimatedInterpolation;
 
     export function multiply(
       a: Animated.Value | Animated.AnimatedInterpolation,
-      b: Animated.Value | Animated.AnimatedInterpolation
+      b: Animated.Value | Animated.AnimatedInterpolation,
     ): Animated.AnimatedInterpolation;
 
     export function divide(
       a: Animated.Value | Animated.AnimatedInterpolation,
-      b: Animated.Value | Animated.AnimatedInterpolation
+      b: Animated.Value | Animated.AnimatedInterpolation,
     ): Animated.AnimatedInterpolation;
 
-    export function modulo(
-      a: Animated.Value,
-      modulus: number
-    ): Animated.AnimatedInterpolation;
+    export function modulo(a: Animated.Value, modulus: number): Animated.AnimatedInterpolation;
 
     export function diffClamp(
       a: Animated.Value,
       min: number,
-      max: number
+      max: number,
     ): Animated.AnimatedInterpolation;
   }
 
@@ -138,7 +139,7 @@ declare module 'react-native' {
       filename: string,
       basePath: number,
       error: (error: any) => void,
-      options?: { allowBackground?: boolean }
+      options?: { allowBackground?: boolean },
     );
 
     play: (onComplete?: (success: boolean) => void) => void;
@@ -153,4 +154,4 @@ declare module 'react-native' {
     getCurrentTime: (callback: (seconds: number) => void) => void;
     setCurrentTime: (value: number) => void;
   }
-} 
+}

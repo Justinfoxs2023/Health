@@ -1,13 +1,16 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, Dimensions } from 'react-native';
-import HTML from 'react-native-render-html';
 
-interface Props {
+import HTML from 'react-native-render-html';
+import { View, Text, Image, StyleSheet, Dimensions } from 'react-native';
+
+interface IProps {
+  /** content 的描述 */
   content: string;
+  /** baseStyle 的描述 */
   baseStyle?: object;
 }
 
-export const RichTextRenderer: React.FC<Props> = ({ content, baseStyle = {} }) => {
+export const RichTextRenderer: React.FC<IProps> = ({ content, baseStyle = {} }) => {
   const windowWidth = Dimensions.get('window').width;
 
   const renderers = {
@@ -19,17 +22,17 @@ export const RichTextRenderer: React.FC<Props> = ({ content, baseStyle = {} }) =
           resizeMode="contain"
         />
       );
-    }
+    },
   };
 
   const tagsStyles = {
     p: {
       ...styles.paragraph,
-      ...baseStyle
+      ...baseStyle,
     },
     img: {
-      marginVertical: 10
-    }
+      marginVertical: 10,
+    },
   };
 
   return (
@@ -47,10 +50,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
     color: '#333',
-    marginBottom: 10
+    marginBottom: 10,
   },
   image: {
     height: 200,
-    backgroundColor: '#f5f5f5'
-  }
-}); 
+    backgroundColor: '#f5f5f5',
+  },
+});

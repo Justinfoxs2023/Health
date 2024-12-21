@@ -1,0 +1,21 @@
+repos:
+  - repo: local
+    hooks:
+      - id: type-check
+        name: TypeScript Type Check
+        entry: npm run type-check
+        language: node
+        files: \.(ts|tsx)$
+        pass_filenames: false
+      - id: eslint
+        name: ESLint
+        entry: npm run lint
+        language: node
+        files: \.(js|ts|tsx)$
+        pass_filenames: false
+      - id: prettier
+        name: Prettier
+        entry: npm run format
+        language: node
+        files: \.(js|ts|tsx|json|css|md)$
+        pass_filenames: false 

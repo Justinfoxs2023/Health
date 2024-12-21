@@ -1,6 +1,6 @@
-import { PlatformAdapter } from '../platform/PlatformAdapter';
-import { GestureSystem } from './gestures/GestureSystem';
 import { FeedbackSystem } from './feedback/FeedbackSystem';
+import { GestureSystem } from './gestures/GestureSystem';
+import { PlatformAdapter } from '../platform/PlatformAdapter';
 
 export class InteractionAdapter {
   // 平台特定的交互配置
@@ -10,26 +10,26 @@ export class InteractionAdapter {
         mobile: 44,
         tablet: 40,
         desktop: 32,
-        default: 44
+        default: 44,
       }),
       feedbackDelay: PlatformAdapter.select({
         ios: 50,
         android: 30,
-        default: 0
-      })
+        default: 0,
+      }),
     },
     animation: {
       duration: PlatformAdapter.select({
         ios: 300,
         android: 250,
-        default: 200
+        default: 200,
       }),
       timing: PlatformAdapter.select({
         ios: 'ease-out',
         android: 'ease-in-out',
-        default: 'linear'
-      })
-    }
+        default: 'linear',
+      }),
+    },
   };
 
   // 创建平台特定的手势处理器
@@ -43,8 +43,8 @@ export class InteractionAdapter {
         onSwipe: config.onSwipe,
         onLongPress: config.onLongPress,
         threshold: {
-          longPress: this.config.touch.feedbackDelay
-        }
+          longPress: this.config.touch.feedbackDelay,
+        },
       });
     } else {
       // 桌面端事件处理
@@ -53,9 +53,9 @@ export class InteractionAdapter {
         onContextMenu: config.onLongPress,
         onMouseDown: () => {
           FeedbackSystem.feedback({
-            haptic: 'light'
+            haptic: 'light',
           });
-        }
+        },
       };
     }
   }
@@ -70,12 +70,12 @@ export class InteractionAdapter {
       ios: {
         onScroll: config.onScroll,
         onEndReached: config.onEndReached,
-        refreshControl: config.onRefresh
+        refreshControl: config.onRefresh,
       },
       android: {
         onScroll: config.onScroll,
         onEndReached: config.onEndReached,
-        onRefresh: config.onRefresh
+        onRefresh: config.onRefresh,
       },
       web: {
         onScroll: (event: any) => {
@@ -84,9 +84,9 @@ export class InteractionAdapter {
             config.onEndReached?.();
           }
           config.onScroll?.(event);
-        }
+        },
       },
-      default: {}
+      default: {},
     });
   }
-} 
+}

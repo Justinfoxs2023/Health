@@ -27,8 +27,11 @@ declare global {
   }
 }
 
-export interface TypedRequest<T = any> extends Request {
+export interface ITypedRequest<T = any> extends Request {
+  /** body 的描述 */
   body: T;
+  /** query 的描述 */
   query: any;
+  /** params 的描述 */
   params: any;
-} 
+}

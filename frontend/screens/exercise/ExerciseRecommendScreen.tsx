@@ -1,19 +1,30 @@
 import React from 'react';
-import { View, ScrollView, StyleSheet, Text, TouchableOpacity, Image } from 'react-native';
-import { useQuery } from '@tanstack/react-query';
-import { getExerciseRecommendations } from '../../api/exercise';
-import { LoadingSpinner, Icon } from '../../components';
 
-interface ExercisePlan {
+import { LoadingSpinner, Icon } from '../../components';
+import { View, ScrollView, StyleSheet, Text, TouchableOpacity, Image } from 'react-native';
+import { getExerciseRecommendations } from '../../api/exercise';
+import { useQuery } from '@tanstack/react-query';
+
+interface IExercisePlan {
+  /** id 的描述 */
   id: string;
+  /** title 的描述 */
   title: string;
+  /** description 的描述 */
   description: string;
+  /** level 的描述 */
   level: 'beginner' | 'intermediate' | 'advanced';
+  /** duration 的描述 */
   duration: number;
+  /** calories 的描述 */
   calories: number;
+  /** category 的描述 */
   category: string;
+  /** imageUrl 的描述 */
   imageUrl: string;
+  /** tags 的描述 */
   tags: string[];
+  /** exercises 的描述 */
   exercises: {
     id: string;
     name: string;
@@ -24,9 +35,9 @@ interface ExercisePlan {
 }
 
 export const ExerciseRecommendScreen = ({ navigation }) => {
-  const { data: recommendations, isLoading } = useQuery<ExercisePlan[]>(
+  const { data: recommendations, isLoading } = useQuery<IExercisePlan[]>(
     'exerciseRecommendations',
-    getExerciseRecommendations
+    getExerciseRecommendations,
   );
 
   const getLevelText = (level: string) => {
@@ -42,7 +53,7 @@ export const ExerciseRecommendScreen = ({ navigation }) => {
     }
   };
 
-  const renderPlanCard = (plan: ExercisePlan) => (
+  const renderPlanCard = (plan: IExercisePlan) => (
     <TouchableOpacity
       key={plan.id}
       style={styles.planCard}
@@ -56,7 +67,7 @@ export const ExerciseRecommendScreen = ({ navigation }) => {
             <Text style={styles.levelText}>{getLevelText(plan.level)}</Text>
           </View>
         </View>
-        
+
         <Text style={styles.planDescription} numberOfLines={2}>
           {plan.description}
         </Text>
@@ -93,9 +104,7 @@ export const ExerciseRecommendScreen = ({ navigation }) => {
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>推荐计划</Text>
-        <Text style={styles.headerDesc}>
-          根据您的运动水平和目标，为您精选以下运动计划
-        </Text>
+        <Text style={styles.headerDesc}>根据您的运动水平和目标，为您精选以下运动计划</Text>
       </View>
 
       <View style={styles.filterSection}>
@@ -118,9 +127,7 @@ export const ExerciseRecommendScreen = ({ navigation }) => {
         </ScrollView>
       </View>
 
-      <View style={styles.planList}>
-        {recommendations?.map(renderPlanCard)}
-      </View>
+      <View style={styles.planList}>{recommendations?.map(renderPlanCard)}</View>
     </ScrollView>
   );
 };
@@ -128,112 +135,112 @@ export const ExerciseRecommendScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   header: {
     padding: 20,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   headerTitle: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 8
+    marginBottom: 8,
   },
   headerDesc: {
     fontSize: 14,
     color: '#666',
-    lineHeight: 20
+    lineHeight: 20,
   },
   filterSection: {
     backgroundColor: '#fff',
     paddingVertical: 10,
     paddingHorizontal: 15,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#f0f0f0'
+    borderBottomColor: '#f0f0f0',
   },
   filterButton: {
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
     marginRight: 10,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   activeFilter: {
-    backgroundColor: '#E8F5E9'
+    backgroundColor: '#E8F5E9',
   },
   filterText: {
     fontSize: 14,
-    color: '#666'
+    color: '#666',
   },
   activeFilterText: {
     color: '#2E7D32',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   planList: {
-    padding: 15
+    padding: 15,
   },
   planCard: {
     backgroundColor: '#fff',
     borderRadius: 12,
     marginBottom: 15,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   planImage: {
     width: '100%',
     height: 160,
-    backgroundColor: '#f0f0f0'
+    backgroundColor: '#f0f0f0',
   },
   planContent: {
-    padding: 15
+    padding: 15,
   },
   planHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8
+    marginBottom: 8,
   },
   planTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
     flex: 1,
-    marginRight: 10
+    marginRight: 10,
   },
   levelBadge: {
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
-    backgroundColor: '#E8F5E9'
+    backgroundColor: '#E8F5E9',
   },
   levelText: {
     fontSize: 12,
     color: '#2E7D32',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   planDescription: {
     fontSize: 14,
     color: '#666',
     lineHeight: 20,
-    marginBottom: 12
+    marginBottom: 12,
   },
   planStats: {
     flexDirection: 'row',
-    marginBottom: 12
+    marginBottom: 12,
   },
   statItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginRight: 16
+    marginRight: 16,
   },
   statText: {
     fontSize: 12,
     color: '#666',
-    marginLeft: 4
+    marginLeft: 4,
   },
   tagContainer: {
     flexDirection: 'row',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
   },
   tag: {
     backgroundColor: '#f5f5f5',
@@ -241,10 +248,10 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 4,
     marginRight: 8,
-    marginBottom: 8
+    marginBottom: 8,
   },
   tagText: {
     fontSize: 12,
-    color: '#666'
-  }
-}); 
+    color: '#666',
+  },
+});

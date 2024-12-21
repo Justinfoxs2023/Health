@@ -1,14 +1,14 @@
-import { injectable, inject } from 'inversify';
+import { HealthCheckService } from '../services/health/health-check.service';
+import { ILogger } from '../types/logger';
 import { Request, Response } from 'express';
 import { TYPES } from '../di/types';
-import { Logger } from '../types/logger';
-import { HealthCheckService } from '../services/health/health-check.service';
+import { injectable, inject } from 'inversify';
 
 @injectable()
 export class HealthController {
   constructor(
-    @inject(TYPES.Logger) private logger: Logger,
-    @inject(TYPES.HealthCheck) private healthCheck: HealthCheckService
+    @inject(TYPES.Logger) private logger: ILogger,
+    @inject(TYPES.HealthCheck) private healthCheck: HealthCheckService,
   ) {}
 
   async check(req: Request, res: Response) {
@@ -22,17 +22,17 @@ export class HealthController {
         status: isHealthy ? 'pass' : 'fail',
         checks: {
           redis: health.redis,
-          api: health.api
+          api: health.api,
         },
-        timestamp: health.timestamp
+        timestamp: health.timestamp,
       });
     } catch (error) {
       this.logger.error('Health check failed:', error);
       return res.status(500).json({
         status: 'fail',
         error: 'Health check failed',
-        timestamp: new Date()
+        timestamp: new Date(),
       });
     }
   }
-} 
+}

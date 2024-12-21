@@ -1,7 +1,7 @@
-import { Request, Response } from 'express';
+import { AppError } from '../utils/errors';
 import { BaseController } from './base.controller';
 import { Logger } from '../utils/logger';
-import { AppError } from '../utils/errors';
+import { Request, Response } from 'express';
 
 export abstract class BaseProfessionalController extends BaseController {
   protected logger: Logger;
@@ -24,7 +24,7 @@ export abstract class BaseProfessionalController extends BaseController {
     return {
       userId,
       page: Number(page),
-      limit: Number(limit)
+      limit: Number(limit),
     };
   }
 
@@ -32,4 +32,4 @@ export abstract class BaseProfessionalController extends BaseController {
     this.logger.error(message, error);
     return this.error(res, error);
   }
-} 
+}

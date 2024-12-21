@@ -1,8 +1,8 @@
-import { Logger } from '../utils/logger';
 import { BaseService } from './base.service';
 import { HealthData, IHealthData } from '../models/health-data.model';
-import { HealthDataValidation } from '../validators/health-data.validator';
 import { HealthDataError } from '../utils/errors';
+import { HealthDataValidation } from '../validators/health-data.validator';
+import { Logger } from '../utils/logger';
 
 export class HealthDataService extends BaseService {
   constructor() {
@@ -13,12 +13,12 @@ export class HealthDataService extends BaseService {
     try {
       // 验证数据
       const validatedData = await HealthDataValidation.validate(data);
-      
+
       // 创建健康数据记录
       const healthData = new HealthData({
         userId,
         ...validatedData,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
 
       // 保存数据
@@ -34,12 +34,15 @@ export class HealthDataService extends BaseService {
     }
   }
 
-  async getHealthData(userId: string, options: {
-    startDate?: Date;
-    endDate?: Date;
-    type?: string;
-    metrics?: string[];
-  }) {
+  async getHealthData(
+    userId: string,
+    options: {
+      startDate?: Date;
+      endDate?: Date;
+      type?: string;
+      metrics?: string[];
+    },
+  ) {
     try {
       const query: any = { userId };
 
@@ -57,39 +60,42 @@ export class HealthDataService extends BaseService {
         query.type = options.type;
       }
 
-      const projection = options.metrics ? 
-        options.metrics.reduce((acc, metric) => ({...acc, [metric]: 1}), {}) : 
-        {};
+      const projection = options.metrics
+        ? options.metrics.reduce((acc, metric) => ({ ...acc, [metric]: 1 }), {})
+        : {};
 
-      return await HealthData.find(query, projection)
-        .sort({ timestamp: -1 })
-        .exec();
+      return await HealthData.find(query, projection).sort({ timestamp: -1 }).exec();
     } catch (error) {
       this.logger.error('获取健康数据失败', error);
       throw new HealthDataError('获取健康数据失败');
     }
   }
 
-  async analyzeHealthTrends(userId: string, options: {
-    metric: string;
-    period: 'day' | 'week' | 'month';
-    startDate?: Date;
-    endDate?: Date;
-  }) {
+  async analyzeHealthTrends(
+    userId: string,
+    options: {
+      metric: string;
+      period: 'day' | 'week' | 'month';
+      startDate?: Date;
+      endDate?: Date;
+    },
+  ) {
     try {
       const pipeline = [
         { $match: { userId } },
         { $sort: { timestamp: -1 } },
-        { $group: {
-          _id: {
-            $dateToString: {
-              format: this.getDateFormat(options.period),
-              date: '$timestamp'
-            }
+        {
+          $group: {
+            _id: {
+              $dateToString: {
+                format: this.getDateFormat(options.period),
+                date: '$timestamp',
+              },
+            },
+            value: { $avg: `$metrics.${options.metric}` },
           },
-          value: { $avg: `$metrics.${options.metric}` }
-        }},
-        { $sort: { _id: 1 } }
+        },
+        { $sort: { _id: 1 } },
       ];
 
       return await HealthData.aggregate(pipeline);
@@ -114,19 +120,13 @@ export class HealthDataService extends BaseService {
 
   private async updateHealthDataCache(userId: string) {
     try {
-      const latestData = await HealthData.findOne({ userId })
-        .sort({ timestamp: -1 })
-        .exec();
+      const latestData = await HealthData.findOne({ userId }).sort({ timestamp: -1 }).exec();
 
       if (latestData) {
-        await this.redis.setex(
-          `health_data:${userId}:latest`,
-          3600,
-          JSON.stringify(latestData)
-        );
+        await this.redis.setex(`health_data:${userId}:latest`, 3600, JSON.stringify(latestData));
       }
     } catch (error) {
       this.logger.error('更新健康数据缓存失败', error);
     }
   }
-} 
+}

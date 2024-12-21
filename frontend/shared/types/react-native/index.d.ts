@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { ViewStyle, TextStyle, ImageStyle } from 'react-native';
 
 declare module 'react-native' {
@@ -32,7 +33,10 @@ declare module 'react-native' {
     export function decay(value: Value, config: AnimationConfig): CompositeAnimation;
     export function sequence(animations: CompositeAnimation[]): CompositeAnimation;
     export function parallel(animations: CompositeAnimation[]): CompositeAnimation;
-    export function loop(animation: CompositeAnimation, config?: { iterations?: number }): CompositeAnimation;
+    export function loop(
+      animation: CompositeAnimation,
+      config?: { iterations?: number },
+    ): CompositeAnimation;
   }
 
   // 平台相关类型
@@ -56,9 +60,9 @@ declare module 'react-native' {
   export interface Keyboard {
     addListener(
       eventName: string,
-      callback: (event: KeyboardEvent) => void
+      callback: (event: KeyboardEvent) => void,
     ): { remove: () => void };
     removeListener(eventName: string, callback: Function): void;
     dismiss(): void;
   }
-} 
+}

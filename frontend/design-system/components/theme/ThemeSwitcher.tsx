@@ -1,13 +1,15 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity, Animated } from 'react-native';
+
 import { ColorTokens } from '../../styles/colors/colorTokens';
 import { ThemeManager, ThemeType } from '../../styles/colors/themeManager';
+import { View, StyleSheet, TouchableOpacity, Animated } from 'react-native';
 
-interface ThemeSwitcherProps {
+interface IThemeSwitcherProps {
+  /** onThemeChange 的描述 */
   onThemeChange?: (theme: ThemeType) => void;
 }
 
-export const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({ onThemeChange }) => {
+export const ThemeSwitcher: React.FC<IThemeSwitcherProps> = ({ onThemeChange }) => {
   const [selectedTheme, setSelectedTheme] = React.useState<ThemeType>('vibrant');
   const animatedValue = React.useRef(new Animated.Value(0)).current;
 
@@ -20,7 +22,7 @@ export const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({ onThemeChange }) =
 
     Animated.spring(animatedValue, {
       toValue: themes.indexOf(theme),
-      useNativeDriver: true
+      useNativeDriver: true,
     }).start();
   };
 
@@ -30,30 +32,30 @@ export const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({ onThemeChange }) =
         style={[
           styles.selector,
           {
-            transform: [{
-              translateX: animatedValue.interpolate({
-                inputRange: [0, 1, 2],
-                outputRange: [0, 80, 160]
-              })
-            }]
-          }
+            transform: [
+              {
+                translateX: animatedValue.interpolate({
+                  inputRange: [0, 1, 2],
+                  outputRange: [0, 80, 160],
+                }),
+              },
+            ],
+          },
         ]}
       />
-      {themes.map((theme) => (
+      {themes.map(theme => (
         <TouchableOpacity
           key={theme}
           style={styles.themeButton}
           onPress={() => handleThemeChange(theme)}
         >
           <View style={styles.colorPreview}>
-            <View style={[
-              styles.colorSwatch,
-              { backgroundColor: ColorTokens[theme].primary.main }
-            ]} />
-            <View style={[
-              styles.colorSwatch,
-              { backgroundColor: ColorTokens[theme].secondary.main }
-            ]} />
+            <View
+              style={[styles.colorSwatch, { backgroundColor: ColorTokens[theme].primary.main }]}
+            />
+            <View
+              style={[styles.colorSwatch, { backgroundColor: ColorTokens[theme].secondary.main }]}
+            />
           </View>
         </TouchableOpacity>
       ))}
@@ -68,7 +70,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 4,
     position: 'relative',
-    height: 40
+    height: 40,
   },
   selector: {
     position: 'absolute',
@@ -82,27 +84,27 @@ const styles = StyleSheet.create({
         shadowColor: ColorTokens.neutral.black,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
-        shadowRadius: 4
+        shadowRadius: 4,
       },
       android: {
-        elevation: 4
-      }
-    })
+        elevation: 4,
+      },
+    }),
   },
   themeButton: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     height: 32,
-    zIndex: 1
+    zIndex: 1,
   },
   colorPreview: {
     flexDirection: 'row',
-    gap: 4
+    gap: 4,
   },
   colorSwatch: {
     width: 12,
     height: 12,
-    borderRadius: 6
-  }
-}); 
+    borderRadius: 6,
+  },
+});

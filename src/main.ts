@@ -6,13 +6,13 @@ import { connectRedis } from './config/redis.config';
 
 const logger = new Logger('Main');
 
-async function bootstrap() {
+async function bootstrap(): Promise<void> {
   try {
     logger.info('Starting development server...');
 
     // 连接数据库
     await connectDatabase();
-    
+
     // 连接Redis
     const redisClient = await connectRedis();
 
@@ -28,7 +28,6 @@ async function bootstrap() {
     app.listen(port, () => {
       logger.info(`Development server running on port ${port}`);
     });
-
   } catch (error) {
     logger.error('Failed to start development server', error);
     process.exit(1);

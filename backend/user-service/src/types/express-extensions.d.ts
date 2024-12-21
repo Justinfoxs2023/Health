@@ -20,16 +20,18 @@ declare global {
   }
 }
 
-export interface TypedRequest<T = any> extends Request {
+export interface ITypedRequest<T = any> extends Request {
+  /** body 的描述 */
   body: T;
 }
 
-export interface TypedResponse<T = any> extends Response {
-  json: (body: T) => TypedResponse<T>;
+export interface ITypedResponse<T = any> extends Response {
+  /** json 的描述 */
+  json: (body: T) => ITypedResponse<T>;
 }
 
-export type AsyncRequestHandler<T = any, U = any> = (
-  req: TypedRequest<T>,
-  res: TypedResponse<U>,
-  next: NextFunction
-) => Promise<void>; 
+export type AsyncRequestHandlerType<T = any, U = any> = (
+  req: ITypedRequest<T>,
+  res: ITypedResponse<U>,
+  next: NextFunction,
+) => Promise<void>;

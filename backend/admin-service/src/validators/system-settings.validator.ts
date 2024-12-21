@@ -1,7 +1,7 @@
-import { SystemSettings } from '../types/system-settings';
+import { ISystemSettings } from '../types/system-settings';
 
 export class SystemSettingsValidator {
-  static validateSettings(settings: Partial<SystemSettings>): void {
+  static validateSettings(settings: Partial<ISystemSettings>): void {
     if (settings.security) {
       this.validateSecuritySettings(settings.security);
     }
@@ -13,7 +13,7 @@ export class SystemSettingsValidator {
     }
   }
 
-  private static validateSecuritySettings(security: Partial<SystemSettings['security']>): void {
+  private static validateSecuritySettings(security: Partial<ISystemSettings['security']>): void {
     const { passwordPolicy, sessionTimeout, tokenExpiry } = security;
 
     if (passwordPolicy) {
@@ -39,7 +39,9 @@ export class SystemSettingsValidator {
     }
   }
 
-  private static validateNotificationSettings(notifications: Partial<SystemSettings['notifications']>): void {
+  private static validateNotificationSettings(
+    notifications: Partial<ISystemSettings['notifications']>,
+  ): void {
     const { email, push } = notifications;
 
     if (email?.enabled && !email.from) {
@@ -51,7 +53,7 @@ export class SystemSettingsValidator {
     }
   }
 
-  private static validateFeatureSettings(features: Partial<SystemSettings['features']>): void {
+  private static validateFeatureSettings(features: Partial<ISystemSettings['features']>): void {
     // 实现功能设置验证逻辑
   }
-} 
+}

@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 react-native-extensions.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 declare module 'react-native' {
   export interface ViewStyle {
     [key: string]: any;
@@ -29,4 +36,4 @@ declare module 'react-native' {
   export const Dimensions: any;
   export const Keyboard: any;
   export const Alert: any;
-} 
+}

@@ -1,24 +1,28 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+
 import { CustomIcon } from '../../icons';
 import { DesignTokens } from '../../tokens';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 
-interface HealthGoal {
+interface IHealthGoal {
+  /** type 的描述 */
   type: 'steps' | 'calories' | 'sleep' | 'water' | 'exercise';
+  /** target 的描述 */
   target: number;
+  /** unit 的描述 */
   unit: string;
+  /** frequency 的描述 */
   frequency: 'daily' | 'weekly' | 'monthly';
 }
 
-interface HealthGoalSetterProps {
-  goal: HealthGoal;
-  onGoalChange: (goal: HealthGoal) => void;
+interface IHealthGoalSetterProps {
+  /** goal 的描述 */
+  goal: IHealthGoal;
+  /** onGoalChange 的描述 */
+  onGoalChange: (goal: IHealthGoal) => void;
 }
 
-export const HealthGoalSetter: React.FC<HealthGoalSetterProps> = ({
-  goal,
-  onGoalChange
-}) => {
+export const HealthGoalSetter: React.FC<IHealthGoalSetterProps> = ({ goal, onGoalChange }) => {
   const [isEditing, setIsEditing] = React.useState(false);
   const [tempValue, setTempValue] = React.useState(goal.target.toString());
 
@@ -42,7 +46,7 @@ export const HealthGoalSetter: React.FC<HealthGoalSetterProps> = ({
     if (!isNaN(newTarget)) {
       onGoalChange({
         ...goal,
-        target: newTarget
+        target: newTarget,
       });
     }
     setIsEditing(false);
@@ -51,11 +55,7 @@ export const HealthGoalSetter: React.FC<HealthGoalSetterProps> = ({
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <CustomIcon 
-          name={getGoalIcon()} 
-          size={24} 
-          color={DesignTokens.colors.brand.primary} 
-        />
+        <CustomIcon name={getGoalIcon()} size={24} color={DesignTokens.colors.brand.primary} />
         <Text style={styles.title}>
           {goal.type.charAt(0).toUpperCase() + goal.type.slice(1)} 目标
         </Text>
@@ -72,25 +72,15 @@ export const HealthGoalSetter: React.FC<HealthGoalSetterProps> = ({
               autoFocus
             />
             <Text style={styles.unit}>{goal.unit}</Text>
-            <TouchableOpacity 
-              style={styles.saveButton}
-              onPress={handleSave}
-            >
+            <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
               <Text style={styles.saveButtonText}>保存</Text>
             </TouchableOpacity>
           </View>
         ) : (
-          <TouchableOpacity 
-            style={styles.valueContainer}
-            onPress={() => setIsEditing(true)}
-          >
+          <TouchableOpacity style={styles.valueContainer} onPress={() => setIsEditing(true)}>
             <Text style={styles.value}>{goal.target}</Text>
             <Text style={styles.unit}>{goal.unit}</Text>
-            <CustomIcon 
-              name="edit" 
-              size={20} 
-              color={DesignTokens.colors.text.secondary} 
-            />
+            <CustomIcon name="edit" size={20} color={DesignTokens.colors.text.secondary} />
           </TouchableOpacity>
         )}
       </View>
@@ -98,19 +88,21 @@ export const HealthGoalSetter: React.FC<HealthGoalSetterProps> = ({
       <View style={styles.frequencyContainer}>
         <Text style={styles.frequencyLabel}>频率</Text>
         <View style={styles.frequencyButtons}>
-          {['daily', 'weekly', 'monthly'].map((freq) => (
+          {['daily', 'weekly', 'monthly'].map(freq => (
             <TouchableOpacity
               key={freq}
               style={[
                 styles.frequencyButton,
-                goal.frequency === freq && styles.activeFrequencyButton
+                goal.frequency === freq && styles.activeFrequencyButton,
               ]}
-              onPress={() => onGoalChange({ ...goal, frequency: freq as HealthGoal['frequency'] })}
+              onPress={() => onGoalChange({ ...goal, frequency: freq as IHealthGoal['frequency'] })}
             >
-              <Text style={[
-                styles.frequencyButtonText,
-                goal.frequency === freq && styles.activeFrequencyButtonText
-              ]}>
+              <Text
+                style={[
+                  styles.frequencyButtonText,
+                  goal.frequency === freq && styles.activeFrequencyButtonText,
+                ]}
+              >
                 {freq === 'daily' ? '每日' : freq === 'weekly' ? '每周' : '每月'}
               </Text>
             </TouchableOpacity>
@@ -126,29 +118,29 @@ const styles = StyleSheet.create({
     backgroundColor: DesignTokens.colors.background.paper,
     borderRadius: DesignTokens.radius.lg,
     padding: DesignTokens.spacing.lg,
-    ...DesignTokens.shadows.md
+    ...DesignTokens.shadows.md,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: DesignTokens.spacing.md
+    marginBottom: DesignTokens.spacing.md,
   },
   title: {
     marginLeft: DesignTokens.spacing.sm,
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: String(DesignTokens.typography.weights.semibold),
-    color: DesignTokens.colors.text.primary
+    color: DesignTokens.colors.text.primary,
   },
   content: {
-    marginBottom: DesignTokens.spacing.lg
+    marginBottom: DesignTokens.spacing.lg,
   },
   valueContainer: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   editContainer: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   input: {
     flex: 1,
@@ -157,40 +149,40 @@ const styles = StyleSheet.create({
     padding: DesignTokens.spacing.sm,
     borderWidth: 1,
     borderColor: DesignTokens.colors.border,
-    borderRadius: DesignTokens.radius.md
+    borderRadius: DesignTokens.radius.md,
   },
   value: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: String(DesignTokens.typography.weights.bold),
-    color: DesignTokens.colors.text.primary
+    color: DesignTokens.colors.text.primary,
   },
   unit: {
     marginLeft: DesignTokens.spacing.sm,
     fontSize: DesignTokens.typography.sizes.md,
-    color: DesignTokens.colors.text.secondary
+    color: DesignTokens.colors.text.secondary,
   },
   saveButton: {
     marginLeft: DesignTokens.spacing.md,
     backgroundColor: DesignTokens.colors.brand.primary,
     paddingHorizontal: DesignTokens.spacing.md,
     paddingVertical: DesignTokens.spacing.sm,
-    borderRadius: DesignTokens.radius.md
+    borderRadius: DesignTokens.radius.md,
   },
   saveButtonText: {
     color: DesignTokens.colors.neutral.white,
-    fontWeight: String(DesignTokens.typography.weights.medium)
+    fontWeight: String(DesignTokens.typography.weights.medium),
   },
   frequencyContainer: {
-    marginTop: DesignTokens.spacing.md
+    marginTop: DesignTokens.spacing.md,
   },
   frequencyLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.text.secondary,
-    marginBottom: DesignTokens.spacing.sm
+    marginBottom: DesignTokens.spacing.sm,
   },
   frequencyButtons: {
     flexDirection: 'row',
-    gap: DesignTokens.spacing.sm
+    gap: DesignTokens.spacing.sm,
   },
   frequencyButton: {
     flex: 1,
@@ -198,17 +190,17 @@ const styles = StyleSheet.create({
     borderRadius: DesignTokens.radius.md,
     borderWidth: 1,
     borderColor: DesignTokens.colors.border,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   activeFrequencyButton: {
     backgroundColor: DesignTokens.colors.brand.primary,
-    borderColor: DesignTokens.colors.brand.primary
+    borderColor: DesignTokens.colors.brand.primary,
   },
   frequencyButtonText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.text.primary
+    color: DesignTokens.colors.text.primary,
   },
   activeFrequencyButtonText: {
-    color: DesignTokens.colors.neutral.white
-  }
-}); 
+    color: DesignTokens.colors.neutral.white,
+  },
+});

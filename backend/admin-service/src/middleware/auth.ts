@@ -1,21 +1,18 @@
+import { ILogger } from '../types/logger';
 import { Request, Response, NextFunction } from 'express';
 import { container } from '../di/container';
-import { Logger } from '../types/logger';
 
-const logger = container.get<Logger>(TYPES.Logger);
+const logger = container.get<ILogger>(TYPES.Logger);
 
-export interface AuthenticatedRequest extends Request {
+export interface IAuthenticatedRequest extends Request {
+  /** user 的描述 */
   user?: {
     id: string;
     roles: string[];
   };
 }
 
-export const authMiddleware = (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
+export const authMiddleware = (req: IAuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) {
@@ -32,13 +29,9 @@ export const authMiddleware = (
   }
 };
 
-export const adminMiddleware = (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
+export const adminMiddleware = (req: IAuthenticatedRequest, res: Response, next: NextFunction) => {
   if (!req.user?.roles.includes('admin')) {
     return res.status(403).json({ message: '需要管理员权限' });
   }
   next();
-}; 
+};

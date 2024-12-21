@@ -1,26 +1,29 @@
-import { Pool, PoolConfig, QueryResult } from 'pg';
-import { Logger } from '../utils/logger';
 import { EventEmitter } from 'events';
+import { Logger } from '../utils/logger';
+import { Pool, PoolConfig, QueryResult } from 'pg';
 
-interface DatabaseConfig extends PoolConfig {
+interface IDatabaseConfig extends PoolConfig {
+  /** maxConnections 的描述 */
   maxConnections?: number;
+  /** idleTimeout 的描述 */
   idleTimeout?: number;
+  /** connectionTimeout 的描述 */
   connectionTimeout?: number;
 }
 
 export class DatabaseService extends EventEmitter {
   private pool: Pool;
   private logger: Logger;
-  private isConnected: boolean = false;
+  private isConnected = false;
 
-  constructor(config: DatabaseConfig) {
+  constructor(config: IDatabaseConfig) {
     super();
     this.logger = new Logger('DatabaseService');
     this.pool = new Pool({
       max: config.maxConnections || 20,
       idleTimeoutMillis: config.idleTimeout || 30000,
       connectionTimeoutMillis: config.connectionTimeout || 2000,
-      ...config
+      ...config,
     });
 
     this.initializePool();
@@ -34,7 +37,7 @@ export class DatabaseService extends EventEmitter {
       this.logger.info('数据库连接成功');
     });
 
-    this.pool.on('error', (error) => {
+    this.pool.on('error', error => {
       this.logger.error('数据库错误:', error);
       this.emit('error', error);
     });
@@ -58,7 +61,7 @@ export class DatabaseService extends EventEmitter {
   // 事务处理
   async transaction<T>(callback: (client: any) => Promise<T>): Promise<T> {
     const client = await this.pool.connect();
-    
+
     try {
       await client.query('BEGIN');
       const result = await callback(client);
@@ -74,9 +77,9 @@ export class DatabaseService extends EventEmitter {
 
   // 批量插入
   async batchInsert(table: string, columns: string[], values: any[][]): Promise<QueryResult> {
-    const placeholders = values.map((_, i) => 
-      `(${columns.map((_, j) => `$${i * columns.length + j + 1}`).join(',')})`
-    ).join(',');
+    const placeholders = values
+      .map((_, i) => `(${columns.map((_, j) => `$${i * columns.length + j + 1}`).join(',')})`)
+      .join(',');
 
     const sql = `
       INSERT INTO ${table} (${columns.join(',')})
@@ -103,4 +106,4 @@ export class DatabaseService extends EventEmitter {
     this.emit('disconnected');
     this.logger.info('数据库连接已关闭');
   }
-} 
+}

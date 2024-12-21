@@ -1,11 +1,14 @@
-import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
 import { RedisService } from '../redis/redis.service';
+import { Repository } from 'typeorm';
 
-interface TransactionParticipant {
+interface ITransactionParticipant {
+  /** serviceId 的描述 */
   serviceId: string;
+  /** action 的描述 */
   action: string;
+  /** compensate 的描述 */
   compensate: string;
 }
 
@@ -14,17 +17,17 @@ export class TransactionCoordinatorService {
   private readonly lockTimeout = 30000; // 30 seconds
 
   constructor(
-    @InjectRepository(Transaction)
+    @InjectRepository()
     private readonly transactionRepo: Repository<Transaction>,
-    private readonly redis: RedisService
+    private readonly redis: RedisService,
   ) {}
 
-  async begin(participants: TransactionParticipant[]): Promise<string> {
+  async begin(participants: ITransactionParticipant[]): Promise<string> {
     // 创建全局事务
     const transaction = await this.transactionRepo.save({
       status: 'PENDING',
       participants,
-      startTime: new Date()
+      startTime: new Date(),
     });
 
     // 获取分布式锁
@@ -52,7 +55,7 @@ export class TransactionCoordinatorService {
       // 更新事务状态
       await this.transactionRepo.update(transactionId, {
         status: 'COMMITTED',
-        endTime: new Date()
+        endTime: new Date(),
       });
 
       // 释放锁
@@ -66,17 +69,11 @@ export class TransactionCoordinatorService {
 
   private async acquireLocks(
     transactionId: string,
-    participants: TransactionParticipant[]
+    participants: ITransactionParticipant[],
   ): Promise<boolean> {
     for (const participant of participants) {
       const lockKey = `transaction:${transactionId}:${participant.serviceId}`;
-      const acquired = await this.redis.set(
-        lockKey,
-        'locked',
-        'NX',
-        'PX',
-        this.lockTimeout
-      );
+      const acquired = await this.redis.set(lockKey, 'locked', 'NX', 'PX', this.lockTimeout);
       if (!acquired) {
         return false;
       }
@@ -86,11 +83,11 @@ export class TransactionCoordinatorService {
 
   private async releaseLocks(
     transactionId: string,
-    participants: TransactionParticipant[]
+    participants: ITransactionParticipant[],
   ): Promise<void> {
     for (const participant of participants) {
       const lockKey = `transaction:${transactionId}:${participant.serviceId}`;
       await this.redis.del(lockKey);
     }
   }
-} 
+}

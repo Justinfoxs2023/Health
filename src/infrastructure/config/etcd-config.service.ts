@@ -1,6 +1,6 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
-import { Etcd3 } from 'etcd3';
 import { ConfigService } from './config.service';
+import { Etcd3 } from 'etcd3';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 
 @Injectable()
 export class EtcdConfigService implements OnModuleInit {
@@ -16,8 +16,8 @@ export class EtcdConfigService implements OnModuleInit {
       hosts: this.configService.get('ETCD_HOSTS').split(','),
       auth: {
         username: this.configService.get('ETCD_USERNAME'),
-        password: this.configService.get('ETCD_PASSWORD')
-      }
+        password: this.configService.get('ETCD_PASSWORD'),
+      },
     });
   }
 
@@ -35,10 +35,9 @@ export class EtcdConfigService implements OnModuleInit {
       .prefix(`${this.namespace}/${key}`)
       .create()
       .then(watcher => {
-        watcher
-          .on('put', response => {
-            callback(response.value.toString());
-          });
+        watcher.on('put', response => {
+          callback(response.value.toString());
+        });
       });
   }
-} 
+}

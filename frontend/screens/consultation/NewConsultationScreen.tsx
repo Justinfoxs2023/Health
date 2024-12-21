@@ -1,13 +1,9 @@
 import React from 'react';
+
+import { FormInput, ImageUploader, NutritionistSelector, LoadingOverlay } from '../../components';
 import { View, ScrollView, StyleSheet, TouchableOpacity, Text } from 'react-native';
-import { useMutation } from 'react-query';
 import { createConsultation } from '../../api/consultation';
-import {
-  FormInput,
-  ImageUploader,
-  NutritionistSelector,
-  LoadingOverlay
-} from '../../components';
+import { useMutation } from 'react-query';
 
 export const NewConsultationScreen = ({ navigation }) => {
   const [form, setForm] = React.useState({
@@ -17,16 +13,16 @@ export const NewConsultationScreen = ({ navigation }) => {
       currentStatus: {
         diet: '',
         exercise: '',
-        health: ''
-      }
+        health: '',
+      },
     },
-    images: []
+    images: [],
   });
 
   const mutation = useMutation(createConsultation, {
     onSuccess: () => {
       navigation.goBack();
-    }
+    },
   });
 
   const handleSubmit = () => {
@@ -43,7 +39,7 @@ export const NewConsultationScreen = ({ navigation }) => {
       <View style={styles.form}>
         <NutritionistSelector
           value={form.nutritionistId}
-          onChange={(nutritionistId) => setForm(prev => ({ ...prev, nutritionistId }))}
+          onChange={nutritionistId => setForm(prev => ({ ...prev, nutritionistId }))}
           style={styles.field}
         />
 
@@ -52,7 +48,7 @@ export const NewConsultationScreen = ({ navigation }) => {
           type="select"
           options={['饮食建议', '运动指导', '健康评估', '其他']}
           value={form.type}
-          onChangeText={(type) => setForm(prev => ({ ...prev, type }))}
+          onChangeText={type => setForm(prev => ({ ...prev, type }))}
           style={styles.field}
         />
 
@@ -62,16 +58,16 @@ export const NewConsultationScreen = ({ navigation }) => {
           multiline
           numberOfLines={4}
           value={form.content.currentStatus.diet}
-          onChangeText={(diet) => 
+          onChangeText={diet =>
             setForm(prev => ({
               ...prev,
               content: {
                 ...prev.content,
                 currentStatus: {
                   ...prev.content.currentStatus,
-                  diet
-                }
-              }
+                  diet,
+                },
+              },
             }))
           }
           style={styles.field}
@@ -83,16 +79,16 @@ export const NewConsultationScreen = ({ navigation }) => {
           multiline
           numberOfLines={4}
           value={form.content.currentStatus.exercise}
-          onChangeText={(exercise) =>
+          onChangeText={exercise =>
             setForm(prev => ({
               ...prev,
               content: {
                 ...prev.content,
                 currentStatus: {
                   ...prev.content.currentStatus,
-                  exercise
-                }
-              }
+                  exercise,
+                },
+              },
             }))
           }
           style={styles.field}
@@ -104,16 +100,16 @@ export const NewConsultationScreen = ({ navigation }) => {
           multiline
           numberOfLines={4}
           value={form.content.currentStatus.health}
-          onChangeText={(health) =>
+          onChangeText={health =>
             setForm(prev => ({
               ...prev,
               content: {
                 ...prev.content,
                 currentStatus: {
                   ...prev.content.currentStatus,
-                  health
-                }
-              }
+                  health,
+                },
+              },
             }))
           }
           style={styles.field}
@@ -121,7 +117,7 @@ export const NewConsultationScreen = ({ navigation }) => {
 
         <ImageUploader
           images={form.images}
-          onImagesChange={(images) => setForm(prev => ({ ...prev, images }))}
+          onImagesChange={images => setForm(prev => ({ ...prev, images }))}
           maxImages={3}
           title="添加相关图片(选填,最多3张)"
           style={styles.field}
@@ -131,7 +127,7 @@ export const NewConsultationScreen = ({ navigation }) => {
           style={[
             styles.submitButton,
             (!form.nutritionistId || !form.type || !form.content.currentStatus.diet) &&
-              styles.submitButtonDisabled
+              styles.submitButtonDisabled,
           ]}
           onPress={handleSubmit}
           disabled={!form.nutritionistId || !form.type || !form.content.currentStatus.diet}
@@ -148,27 +144,27 @@ export const NewConsultationScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   form: {
-    padding: 15
+    padding: 15,
   },
   field: {
-    marginBottom: 15
+    marginBottom: 15,
   },
   submitButton: {
     backgroundColor: '#2E7D32',
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',
-    marginTop: 20
+    marginTop: 20,
   },
   submitButtonDisabled: {
-    backgroundColor: '#ccc'
+    backgroundColor: '#ccc',
   },
   submitButtonText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: 'bold'
-  }
-}); 
+    fontWeight: 'bold',
+  },
+});

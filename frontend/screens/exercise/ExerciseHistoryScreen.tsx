@@ -1,14 +1,18 @@
 import React from 'react';
-import { View, FlatList, StyleSheet, Text, TouchableOpacity } from 'react-native';
-import { useQuery } from '@tanstack/react-query';
-import { getExerciseHistory } from '../../api/exercise';
+
 import { LoadingSpinner, Icon, EmptyState } from '../../components';
+import { View, FlatList, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { format } from 'date-fns';
+import { getExerciseHistory } from '../../api/exercise';
+import { useQuery } from '@tanstack/react-query';
 import { zhCN } from 'date-fns/locale';
 
-interface ExerciseRecord {
+interface IExerciseRecord {
+  /** id 的描述 */
   id: string;
+  /** date 的描述 */
   date: string;
+  /** exercises 的描述 */
   exercises: {
     id: string;
     name: string;
@@ -18,16 +22,22 @@ interface ExerciseRecord {
     sets?: number;
     reps?: number;
   }[];
+  /** totalDuration 的描述 */
   totalDuration: number;
+  /** totalCalories 的描述 */
   totalCalories: number;
+  /** completed 的描述 */
   completed: boolean;
 }
 
 export const ExerciseHistoryScreen = ({ navigation }) => {
   const [timeRange, setTimeRange] = React.useState<'week' | 'month' | 'all'>('week');
-  const { data: history, isLoading } = useQuery<ExerciseRecord[]>('exerciseHistory', getExerciseHistory);
+  const { data: history, isLoading } = useQuery<IExerciseRecord[]>(
+    'exerciseHistory',
+    getExerciseHistory,
+  );
 
-  const filterRecords = (records: ExerciseRecord[] = []) => {
+  const filterRecords = (records: IExerciseRecord[] = []) => {
     const now = new Date();
     const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
     const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
@@ -45,7 +55,7 @@ export const ExerciseHistoryScreen = ({ navigation }) => {
     });
   };
 
-  const renderExerciseRecord = ({ item }: { item: ExerciseRecord }) => (
+  const renderExerciseRecord = ({ item }: { item: IExerciseRecord }) => (
     <TouchableOpacity
       style={styles.recordCard}
       onPress={() => navigation.navigate('ExerciseDetail', { date: item.date })}
@@ -115,7 +125,9 @@ export const ExerciseHistoryScreen = ({ navigation }) => {
             style={[styles.timeButton, timeRange === 'week' && styles.activeTimeButton]}
             onPress={() => setTimeRange('week')}
           >
-            <Text style={[styles.timeButtonText, timeRange === 'week' && styles.activeTimeButtonText]}>
+            <Text
+              style={[styles.timeButtonText, timeRange === 'week' && styles.activeTimeButtonText]}
+            >
               本周
             </Text>
           </TouchableOpacity>
@@ -123,7 +135,9 @@ export const ExerciseHistoryScreen = ({ navigation }) => {
             style={[styles.timeButton, timeRange === 'month' && styles.activeTimeButton]}
             onPress={() => setTimeRange('month')}
           >
-            <Text style={[styles.timeButtonText, timeRange === 'month' && styles.activeTimeButtonText]}>
+            <Text
+              style={[styles.timeButtonText, timeRange === 'month' && styles.activeTimeButtonText]}
+            >
               本月
             </Text>
           </TouchableOpacity>
@@ -131,7 +145,9 @@ export const ExerciseHistoryScreen = ({ navigation }) => {
             style={[styles.timeButton, timeRange === 'all' && styles.activeTimeButton]}
             onPress={() => setTimeRange('all')}
           >
-            <Text style={[styles.timeButtonText, timeRange === 'all' && styles.activeTimeButtonText]}>
+            <Text
+              style={[styles.timeButtonText, timeRange === 'all' && styles.activeTimeButtonText]}
+            >
               全部
             </Text>
           </TouchableOpacity>
@@ -159,30 +175,30 @@ export const ExerciseHistoryScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   header: {
     padding: 15,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 15
+    marginBottom: 15,
   },
   timeRangeButtons: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     backgroundColor: '#f5f5f5',
     borderRadius: 8,
-    padding: 4
+    padding: 4,
   },
   timeButton: {
     flex: 1,
     paddingVertical: 8,
     alignItems: 'center',
-    borderRadius: 6
+    borderRadius: 6,
   },
   activeTimeButton: {
     backgroundColor: '#fff',
@@ -190,34 +206,34 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
-    elevation: 2
+    elevation: 2,
   },
   timeButtonText: {
     fontSize: 14,
-    color: '#666'
+    color: '#666',
   },
   activeTimeButtonText: {
     color: '#2E7D32',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   list: {
-    padding: 15
+    padding: 15,
   },
   recordCard: {
     backgroundColor: '#fff',
     borderRadius: 12,
-    padding: 15
+    padding: 15,
   },
   recordHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 15
+    marginBottom: 15,
   },
   date: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333'
+    color: '#333',
   },
   completedBadge: {
     flexDirection: 'row',
@@ -225,12 +241,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#E8F5E9',
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 12
+    borderRadius: 12,
   },
   completedText: {
     fontSize: 12,
     color: '#4CAF50',
-    marginLeft: 4
+    marginLeft: 4,
   },
   incompleteBadge: {
     flexDirection: 'row',
@@ -238,12 +254,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFEBEE',
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 12
+    borderRadius: 12,
   },
   incompleteText: {
     fontSize: 12,
     color: '#F44336',
-    marginLeft: 4
+    marginLeft: 4,
   },
   statsRow: {
     flexDirection: 'row',
@@ -252,42 +268,42 @@ const styles = StyleSheet.create({
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: '#f0f0f0',
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#f0f0f0'
+    borderBottomColor: '#f0f0f0',
   },
   statItem: {
-    alignItems: 'center'
+    alignItems: 'center',
   },
   statValue: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#333',
-    marginVertical: 4
+    marginVertical: 4,
   },
   statLabel: {
     fontSize: 12,
-    color: '#666'
+    color: '#666',
   },
   exerciseList: {
-    marginTop: 15
+    marginTop: 15,
   },
   exerciseItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 8
+    paddingVertical: 8,
   },
   exerciseInfo: {
-    flex: 1
+    flex: 1,
   },
   exerciseName: {
     fontSize: 14,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 2
+    marginBottom: 2,
   },
   exerciseDetail: {
     fontSize: 12,
-    color: '#666'
+    color: '#666',
   },
   exerciseType: {
     fontSize: 12,
@@ -296,9 +312,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 10,
-    marginLeft: 10
+    marginLeft: 10,
   },
   separator: {
-    height: 10
-  }
-}); 
+    height: 10,
+  },
+});

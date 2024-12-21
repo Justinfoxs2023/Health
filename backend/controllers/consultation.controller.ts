@@ -1,6 +1,6 @@
-import { Response } from 'express';
-import { IAuthRequest } from '../types/models';
 import { Consultation } from '../models/consultation.model';
+import { IAuthRequest } from '../types/models';
+import { Response } from 'express';
 import { User } from '../models/user.model';
 import { uploadImage } from '../utils/upload';
 
@@ -19,7 +19,7 @@ export class ConsultationController {
       if (!nutritionist) {
         return res.status(404).json({
           success: false,
-          message: '营养师不存在'
+          message: '营养师不存在',
         });
       }
 
@@ -31,7 +31,7 @@ export class ConsultationController {
           attachments.push({
             type: file.mimetype,
             url,
-            description: file.originalname
+            description: file.originalname,
           });
         }
       }
@@ -42,19 +42,19 @@ export class ConsultationController {
         nutritionistId,
         type,
         content,
-        attachments
+        attachments,
       });
 
       await consultation.save();
 
       res.status(201).json({
         success: true,
-        data: consultation
+        data: consultation,
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: error instanceof Error ? error.message : '未知错误'
+        message: error instanceof Error ? error.message : '未知错误',
       });
     }
   }
@@ -82,14 +82,14 @@ export class ConsultationController {
           pagination: {
             total,
             page: Number(page),
-            limit: Number(limit)
-          }
-        }
+            limit: Number(limit),
+          },
+        },
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: error instanceof Error ? error.message : '未知错误'
+        message: error instanceof Error ? error.message : '未知错误',
       });
     }
   }
@@ -107,7 +107,7 @@ export class ConsultationController {
       if (!consultation) {
         return res.status(404).json({
           success: false,
-          message: '咨询记录不存在'
+          message: '咨询记录不存在',
         });
       }
 
@@ -118,7 +118,7 @@ export class ConsultationController {
           consultation.attachments.push({
             type: file.mimetype,
             url,
-            description: file.originalname
+            description: file.originalname,
           });
         }
       }
@@ -138,15 +138,15 @@ export class ConsultationController {
 
       res.json({
         success: true,
-        data: consultation
+        data: consultation,
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: error instanceof Error ? error.message : '未知错误'
+        message: error instanceof Error ? error.message : '未知错误',
       });
     }
   }
 }
 
-export const consultationController = new ConsultationController(); 
+export const consultationController = new ConsultationController();

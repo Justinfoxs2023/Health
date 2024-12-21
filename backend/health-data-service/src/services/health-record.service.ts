@@ -1,8 +1,8 @@
 import { AIService } from '../services/ai.service';
 import { EncryptionService } from '../utils/encryption';
+import { HealthRecord, IHealthRecord } from '../models/health-record.model';
 import { Logger } from '../utils/logger';
 import { Redis } from '../utils/redis';
-import { HealthRecord, IHealthRecord } from '../models/health-record.model';
 
 export class HealthRecordService {
   private aiService: AIService;
@@ -66,8 +66,8 @@ export class HealthRecordService {
     const levels = {
       low: 1,
       medium: 2,
-      high: 3
+      high: 3,
     };
     return levels[level] || 0;
   }
-} 
+}

@@ -1,28 +1,43 @@
+/**
+ * @fileoverview TS 文件 types.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // 智能分析配置
-export interface AnalyticsConfig {
-  // 基础配置
-  enabled: boolean;
-  sampleRate: number;  // 采样率
-  interval: number;    // 分析间隔(ms)
-  
-  // 数据源配置
-  dataSources: {
-    performance: boolean;  // 性能数据
-    behavior: boolean;     // 行为数据
-    health: boolean;       // 健康数据
-    environment: boolean;  // 环境数据
+export interface IAnalyticsConfig {
+   
+  /** enabled 的描述 */
+    enabled: false | true;
+  /** sampleRate 的描述 */
+    sampleRate: number;  
+  /** interval 的描述 */
+    interval: number;  /** ms 的描述 */
+    /** ms 的描述 */
+    ms
+
+   
+  /** dataSources 的描述 */
+    dataSources: {
+    performance: boolean;  
+    behavior: boolean;  
+    health: boolean;  
+    environment: boolean;  
   };
 
   // AI模型配置
-  ai: {
+  /** ai 的描述 */
+    ai: {
     enabled: boolean;
     modelType: 'basic' | 'advanced' | 'expert';
-    confidenceThreshold: number;  // 置信度阈值
-    updateInterval: number;       // 模型更新间隔
+    confidenceThreshold: number; // 置信度阈值
+    updateInterval: number; // 模型更新间隔
   };
 
   // 预警配置
-  alerts: {
+  /** alerts 的描述 */
+    alerts: {
     enabled: boolean;
     levels: {
       warning: number;
@@ -33,14 +48,18 @@ export interface AnalyticsConfig {
 }
 
 // 用户画像
-export interface UserProfile {
-  // 基础信息
-  id: string;
-  createdAt: Date;
-  lastActive: Date;
+export interface IUserProfile {
+   
+  /** id 的描述 */
+    id: string;
+  /** createdAt 的描述 */
+    createdAt: Date;
+  /** lastActive 的描述 */
+    lastActive: Date;
 
-  // 健康特征
-  healthMetrics: {
+   
+  /** healthMetrics 的描述 */
+    healthMetrics: {
     basicStats: {
       height: number;
       weight: number;
@@ -52,29 +71,32 @@ export interface UserProfile {
       heartRate: number;
       temperature: number;
     };
-    conditions: string[];  // 健康状况
+    conditions: string[]; // 健康状况
     medications: string[]; // 用药情况
   };
 
   // 行为特征
-  behaviorPatterns: {
-    activityLevel: number;     // 活动水平
-    sleepQuality: number;      // 睡眠质量
-    dietaryHabits: string[];   // 饮食习惯
+  /** behaviorPatterns 的描述 */
+    behaviorPatterns: {
+    activityLevel: number; // 活动水平
+    sleepQuality: number; // 睡眠质量
+    dietaryHabits: string[]; // 饮食习惯
     exerciseRoutine: string[]; // 运动习惯
-    stressLevel: number;       // 压力水平
+    stressLevel: number; // 压力水平
   };
 
   // 使用习惯
-  usagePatterns: {
-    preferredFeatures: string[];    // 常用功能
-    interactionTimes: number[];     // 使用时段
-    sessionDuration: number;        // 平均会话时长
-    responseToSuggestions: number;  // 建议采纳率
+  /** usagePatterns 的描述 */
+    usagePatterns: {
+    preferredFeatures: string[]; // 常用功能
+    interactionTimes: number[]; // 使用时段
+    sessionDuration: number; // 平均会话时长
+    responseToSuggestions: number; // 建议采纳率
   };
 
   // 个性化偏好
-  preferences: {
+  /** preferences 的描述 */
+    preferences: {
     notifications: {
       enabled: boolean;
       types: string[];
@@ -93,17 +115,20 @@ export interface UserProfile {
 }
 
 // 分析结果
-export interface AnalyticsResult {
-  timestamp: Date;
-  userId: string;
+export interface IAnalyticsResult {
+  /** timestamp 的描述 */
+    timestamp: Date;
+  /** userId 的描述 */
+    userId: string;
 
-  // 健康风险评估
-  healthRisks: Array<{
+   
+  /** healthRisks 的描述 */
+    healthRisks: Array{
     type: string;
-    level: 'low' | 'medium' | 'high';
+    level: low  medium  high;
     probability: number;
-    factors: string[];
-    recommendations: string[];
+    factors: string;
+    recommendations: string;
   }>;
 
   // 行为分析
@@ -155,17 +180,25 @@ export interface AnalyticsResult {
 }
 
 // AI模型性能指标
-export interface ModelMetrics {
-  accuracy: number;
-  precision: number;
-  recall: number;
-  f1Score: number;
-  confusionMatrix: number[][];
-  latency: number;
-  predictionConfidence: number;
-  dataQuality: {
+export interface IModelMetrics {
+  /** accuracy 的描述 */
+    accuracy: number;
+  /** precision 的描述 */
+    precision: number;
+  /** recall 的描述 */
+    recall: number;
+  /** f1Score 的描述 */
+    f1Score: number;
+  /** confusionMatrix 的描述 */
+    confusionMatrix: number;
+  /** latency 的描述 */
+    latency: number;
+  /** predictionConfidence 的描述 */
+    predictionConfidence: number;
+  /** dataQuality 的描述 */
+    dataQuality: {
     completeness: number;
     consistency: number;
     accuracy: number;
   };
-} 
+}

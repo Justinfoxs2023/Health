@@ -14,9 +14,13 @@ router.get('/', auth.required, appointmentController.getAppointments);
 router.put('/:id/status', auth.required, appointmentController.updateAppointmentStatus);
 
 // 添加咨询记录(营养师)
-router.put('/:id/consultation', auth.nutritionistRequired, appointmentController.addConsultationRecord);
+router.put(
+  '/:id/consultation',
+  auth.nutritionistRequired,
+  appointmentController.addConsultationRecord,
+);
 
 // 评价预约(用户)
 router.put('/:id/rate', auth.required, appointmentController.rateAppointment);
 
-export default router; 
+export default router;

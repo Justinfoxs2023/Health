@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import type { Observable } from 'rxjs';
 import { Client } from '@nestjs/microservices';
 import { ClientGrpc, GrpcOptions } from '@nestjs/microservices';
-import type { Observable } from 'rxjs';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class GrpcService {
@@ -19,7 +19,7 @@ export class GrpcService {
       call.subscribe({
         next: (data: T) => resolve(data),
         error: (error: Error) => reject(error),
-        complete: () => {}
+        complete: () => {},
       });
     });
   }

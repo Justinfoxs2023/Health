@@ -1,14 +1,18 @@
 import React from 'react';
-import { View, ScrollView, StyleSheet, Text, TouchableOpacity } from 'react-native';
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { getExerciseProgress, completeExercise } from '../../api/exercise';
+
 import { LoadingSpinner, Icon, Timer, AlertDialog } from '../../components';
+import { View, ScrollView, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { format } from 'date-fns';
+import { getExerciseProgress, completeExercise } from '../../api/exercise';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { zhCN } from 'date-fns/locale';
 
-interface ExerciseProgress {
+interface IExerciseProgress {
+  /** planId 的描述 */
   planId: string;
+  /** currentDay 的描述 */
   currentDay: number;
+  /** exercises 的描述 */
   exercises: {
     id: string;
     name: string;
@@ -21,10 +25,15 @@ interface ExerciseProgress {
     startTime?: string;
     endTime?: string;
   }[];
+  /** totalDuration 的描述 */
   totalDuration: number;
+  /** completedDuration 的描述 */
   completedDuration: number;
+  /** totalCalories 的描述 */
   totalCalories: number;
+  /** burnedCalories 的描述 */
   burnedCalories: number;
+  /** status 的描述 */
   status: 'not_started' | 'in_progress' | 'completed' | 'paused';
 }
 
@@ -34,10 +43,11 @@ export const ExerciseProgressScreen = ({ route, navigation }) => {
   const [showAlert, setShowAlert] = React.useState(false);
   const [alertMessage, setAlertMessage] = React.useState('');
 
-  const { data: progress, isLoading, refetch } = useQuery<ExerciseProgress>(
-    ['exerciseProgress', planId],
-    () => getExerciseProgress(planId)
-  );
+  const {
+    data: progress,
+    isLoading,
+    refetch,
+  } = useQuery<IExerciseProgress>(['exerciseProgress', planId], () => getExerciseProgress(planId));
 
   const completeMutation = useMutation(completeExercise, {
     onSuccess: () => {
@@ -50,7 +60,7 @@ export const ExerciseProgressScreen = ({ route, navigation }) => {
     onError: (error: any) => {
       setAlertMessage(error.message || '操作失败，请重试');
       setShowAlert(true);
-    }
+    },
   });
 
   const handleStartExercise = (exerciseId: string) => {
@@ -137,7 +147,9 @@ export const ExerciseProgressScreen = ({ route, navigation }) => {
               {exercise.sets && (
                 <View style={styles.detailItem}>
                   <Icon name="repeat" size={16} color="#666" />
-                  <Text style={styles.detailText}>{exercise.sets}组{exercise.reps}次</Text>
+                  <Text style={styles.detailText}>
+                    {exercise.sets}组{exercise.reps}次
+                  </Text>
                 </View>
               )}
             </View>
@@ -155,13 +167,15 @@ export const ExerciseProgressScreen = ({ route, navigation }) => {
                   <Text style={styles.completeButtonText}>完成运动</Text>
                 </TouchableOpacity>
               </View>
-            ) : !exercise.completed && (
-              <TouchableOpacity
-                style={styles.startButton}
-                onPress={() => handleStartExercise(exercise.id)}
-              >
-                <Text style={styles.startButtonText}>开始运动</Text>
-              </TouchableOpacity>
+            ) : (
+              !exercise.completed && (
+                <TouchableOpacity
+                  style={styles.startButton}
+                  onPress={() => handleStartExercise(exercise.id)}
+                >
+                  <Text style={styles.startButtonText}>开始运动</Text>
+                </TouchableOpacity>
+              )
             )}
           </View>
         ))}
@@ -182,21 +196,21 @@ export const ExerciseProgressScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   header: {
     padding: 20,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 15
+    marginBottom: 15,
   },
   progressStats: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   progressCircle: {
     width: 100,
@@ -205,59 +219,59 @@ const styles = StyleSheet.create({
     backgroundColor: '#E8F5E9',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 20
+    marginRight: 20,
   },
   progressPercentage: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#2E7D32'
+    color: '#2E7D32',
   },
   progressLabel: {
     fontSize: 12,
     color: '#2E7D32',
-    marginTop: 4
+    marginTop: 4,
   },
   statsColumn: {
-    flex: 1
+    flex: 1,
   },
   statItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10
+    marginBottom: 10,
   },
   statValue: {
     fontSize: 16,
     color: '#333',
-    marginLeft: 8
+    marginLeft: 8,
   },
   statLabel: {
     fontSize: 12,
     color: '#666',
-    marginLeft: 8
+    marginLeft: 8,
   },
   exerciseList: {
-    padding: 15
+    padding: 15,
   },
   exerciseItem: {
     backgroundColor: '#fff',
     borderRadius: 12,
     padding: 15,
-    marginBottom: 10
+    marginBottom: 10,
   },
   exerciseHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10
+    marginBottom: 10,
   },
   exerciseInfo: {
-    flex: 1
+    flex: 1,
   },
   exerciseName: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 4
+    marginBottom: 4,
   },
   exerciseType: {
     fontSize: 12,
@@ -266,7 +280,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 10,
-    alignSelf: 'flex-start'
+    alignSelf: 'flex-start',
   },
   completedBadge: {
     flexDirection: 'row',
@@ -274,12 +288,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#E8F5E9',
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 12
+    borderRadius: 12,
   },
   completedText: {
     fontSize: 12,
     color: '#4CAF50',
-    marginLeft: 4
+    marginLeft: 4,
   },
   inProgressBadge: {
     flexDirection: 'row',
@@ -287,51 +301,51 @@ const styles = StyleSheet.create({
     backgroundColor: '#E3F2FD',
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 12
+    borderRadius: 12,
   },
   inProgressText: {
     fontSize: 12,
     color: '#1976D2',
-    marginLeft: 4
+    marginLeft: 4,
   },
   exerciseDetails: {
     flexDirection: 'row',
-    marginBottom: 15
+    marginBottom: 15,
   },
   detailItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginRight: 15
+    marginRight: 15,
   },
   detailText: {
     fontSize: 14,
     color: '#666',
-    marginLeft: 4
+    marginLeft: 4,
   },
   exerciseControls: {
-    alignItems: 'center'
+    alignItems: 'center',
   },
   startButton: {
     backgroundColor: '#2E7D32',
     padding: 12,
     borderRadius: 8,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   startButtonText: {
     color: '#fff',
     fontSize: 14,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   completeButton: {
     backgroundColor: '#1976D2',
     padding: 12,
     borderRadius: 8,
     alignItems: 'center',
-    marginTop: 10
+    marginTop: 10,
   },
   completeButtonText: {
     color: '#fff',
     fontSize: 14,
-    fontWeight: 'bold'
-  }
-}); 
+    fontWeight: 'bold',
+  },
+});

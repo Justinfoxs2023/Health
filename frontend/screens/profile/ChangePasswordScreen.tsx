@@ -1,14 +1,15 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
-import { useMutation } from 'react-query';
-import { changePassword } from '../../api/user';
+
 import { FormInput, LoadingOverlay, AlertDialog } from '../../components';
+import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { changePassword } from '../../api/user';
+import { useMutation } from 'react-query';
 
 export const ChangePasswordScreen = ({ navigation }) => {
   const [form, setForm] = React.useState({
     oldPassword: '',
     newPassword: '',
-    confirmPassword: ''
+    confirmPassword: '',
   });
   const [showAlert, setShowAlert] = React.useState(false);
   const [alertMessage, setAlertMessage] = React.useState('');
@@ -21,7 +22,7 @@ export const ChangePasswordScreen = ({ navigation }) => {
     onError: (error: any) => {
       setAlertMessage(error.message || '密码修改失败');
       setShowAlert(true);
-    }
+    },
   });
 
   const handleSubmit = () => {
@@ -54,7 +55,7 @@ export const ChangePasswordScreen = ({ navigation }) => {
 
     mutation.mutate({
       oldPassword: form.oldPassword,
-      newPassword: form.newPassword
+      newPassword: form.newPassword,
     });
   };
 
@@ -73,7 +74,7 @@ export const ChangePasswordScreen = ({ navigation }) => {
           placeholder="请输入当前密码"
           secureTextEntry
           value={form.oldPassword}
-          onChangeText={(oldPassword) => setForm(prev => ({ ...prev, oldPassword }))}
+          onChangeText={oldPassword => setForm(prev => ({ ...prev, oldPassword }))}
           style={styles.field}
         />
 
@@ -82,7 +83,7 @@ export const ChangePasswordScreen = ({ navigation }) => {
           placeholder="请输入新密码(不少于8位)"
           secureTextEntry
           value={form.newPassword}
-          onChangeText={(newPassword) => setForm(prev => ({ ...prev, newPassword }))}
+          onChangeText={newPassword => setForm(prev => ({ ...prev, newPassword }))}
           style={styles.field}
           helperText="密码必须包含大小写字母和数字"
         />
@@ -92,15 +93,15 @@ export const ChangePasswordScreen = ({ navigation }) => {
           placeholder="请再次输入新密码"
           secureTextEntry
           value={form.confirmPassword}
-          onChangeText={(confirmPassword) => setForm(prev => ({ ...prev, confirmPassword }))}
+          onChangeText={confirmPassword => setForm(prev => ({ ...prev, confirmPassword }))}
           style={styles.field}
         />
 
         <TouchableOpacity
           style={[
             styles.submitButton,
-            (!form.oldPassword || !form.newPassword || !form.confirmPassword) && 
-            styles.submitButtonDisabled
+            (!form.oldPassword || !form.newPassword || !form.confirmPassword) &&
+              styles.submitButtonDisabled,
           ]}
           onPress={handleSubmit}
           disabled={!form.oldPassword || !form.newPassword || !form.confirmPassword}
@@ -124,30 +125,30 @@ export const ChangePasswordScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   form: {
-    padding: 15
+    padding: 15,
   },
   field: {
     marginBottom: 15,
     backgroundColor: '#fff',
     borderRadius: 8,
-    padding: 15
+    padding: 15,
   },
   submitButton: {
     backgroundColor: '#2E7D32',
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',
-    marginTop: 20
+    marginTop: 20,
   },
   submitButtonDisabled: {
-    backgroundColor: '#ccc'
+    backgroundColor: '#ccc',
   },
   submitButtonText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: 'bold'
-  }
-}); 
+    fontWeight: 'bold',
+  },
+});

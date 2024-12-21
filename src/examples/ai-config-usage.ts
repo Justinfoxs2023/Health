@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 ai-config-usage.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // 检查AI功能是否可用
 const canUse = await aiConfigService.canUseFeature(AIFeatureType.FOOD_RECOGNITION);
 if (!canUse) {
@@ -9,14 +16,14 @@ const startTime = Date.now();
 try {
   const result = await foodRecognitionService.recognize(image);
   const latency = Date.now() - startTime;
-  
+
   await aiConfigService.recordUsage(
     AIFeatureType.FOOD_RECOGNITION,
     latency,
     true,
-    0.1 // 成本
+    0.1, // 成本
   );
-  
+
   return result;
 } catch (error) {
   const latency = Date.now() - startTime;
@@ -24,7 +31,7 @@ try {
     AIFeatureType.FOOD_RECOGNITION,
     latency,
     false,
-    0 // 失败不计费
+    0, // 失败不计费
   );
   throw error;
-} 
+}

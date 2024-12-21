@@ -43,15 +43,15 @@ export class KeyboardManager {
     return PlatformAdapter.select({
       ios: {
         behavior: 'padding',
-        enabled: true
+        enabled: true,
       },
       android: {
         behavior: 'height',
-        enabled: true
+        enabled: true,
       },
       default: {
-        enabled: false
-      }
+        enabled: false,
+      },
     });
   }
-} 
+}

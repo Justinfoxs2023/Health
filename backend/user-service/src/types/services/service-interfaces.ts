@@ -1,5 +1,14 @@
+/**
+ * @fileoverview TS 文件 service-interfaces.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export interface IBaseService {
+  /** logger 的描述 */
   logger: Logger;
+  /** redis 的描述 */
   redis: Redis;
 }
 
@@ -28,4 +37,4 @@ export interface ISecurityService extends IBaseService {
   validateRequest(req: Request): Promise<boolean>;
   encryptData(data: any): Promise<string>;
   decryptData(encryptedData: string): Promise<any>;
-} 
+}

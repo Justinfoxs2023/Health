@@ -1,10 +1,12 @@
+import { ConstitutionService } from './constitution.service';
 import { EventEmitter } from 'events';
 import { Logger } from '../../utils/logger';
 import { Redis } from '../../utils/redis';
-import { ConstitutionService } from './constitution.service';
 
-interface PreservationConfig {
+interface IPreservationConfig {
+  /** planUpdateInterval 的描述 */
   planUpdateInterval: number;
+  /** seasonalPlanEnabled 的描述 */
   seasonalPlanEnabled: boolean;
 }
 
@@ -12,9 +14,9 @@ export class PreservationService extends EventEmitter {
   private logger: Logger;
   private redis: Redis;
   private constitutionService: ConstitutionService;
-  private config: PreservationConfig;
+  private config: IPreservationConfig;
 
-  constructor(config: PreservationConfig) {
+  constructor(config: IPreservationConfig) {
     super();
     this.logger = new Logger('PreservationService');
     this.redis = new Redis();
@@ -26,16 +28,16 @@ export class PreservationService extends EventEmitter {
     try {
       // 获取用户体质信息
       const constitution = await this.constitutionService.getUserConstitution(userId);
-      
+
       // 获取季节信息
       const season = this.getCurrentSeason();
-      
+
       // 生成个性化方案
       const plan = await this.createPersonalizedPlan(constitution, season);
-      
+
       // 保存方案
       await this.savePlan(userId, plan);
-      
+
       return plan;
     } catch (error) {
       this.logger.error('生成养生方案失败:', error);
@@ -48,7 +50,7 @@ export class PreservationService extends EventEmitter {
     const plan = {
       diet: await this.generateDietPlan(constitution, season),
       exercise: await this.generateExercisePlan(constitution, season),
-      lifestyle: await this.generateLifestylePlan(constitution, season)
+      lifestyle: await this.generateLifestylePlan(constitution, season),
     };
 
     return this.optimizePlan(plan, constitution);
@@ -71,4 +73,4 @@ export class PreservationService extends EventEmitter {
     const basePlan = this.getSeasonalLifestyle(season);
     return this.adjustLifestyleForConstitution(basePlan, constitution);
   }
-} 
+}

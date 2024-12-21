@@ -1,9 +1,9 @@
-import { execSync } from 'child_process';
 import { Logger } from '../src/utils/logger';
+import { execSync } from 'child_process';
 
 const logger = new Logger('DevCheck');
 
-async function checkDevEnvironment() {
+async function checkDevEnvironment(): Promise<boolean> {
   try {
     logger.info('检查开发环境...');
 
@@ -27,7 +27,7 @@ async function checkDevEnvironment() {
   }
 }
 
-function checkDatabaseConnection() {
+function checkDatabaseConnection(): void {
   try {
     execSync('mongod --version', { stdio: 'ignore' });
     logger.info('MongoDB 服务正常');
@@ -36,7 +36,7 @@ function checkDatabaseConnection() {
   }
 }
 
-function checkRedisConnection() {
+function checkRedisConnection(): void {
   try {
     execSync('redis-cli ping', { stdio: 'ignore' });
     logger.info('Redis 服务正常');
@@ -45,12 +45,12 @@ function checkRedisConnection() {
   }
 }
 
-function checkStoragePermissions() {
+function checkStoragePermissions(): void {
   // 检查存储目录权限
 }
 
-function checkLogDirectory() {
+function checkLogDirectory(): void {
   // 检查日志目录
 }
 
-export { checkDevEnvironment }; 
+export { checkDevEnvironment };

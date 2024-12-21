@@ -1,33 +1,34 @@
 import React from 'react';
-import { View, ScrollView, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { useQuery, useMutation } from 'react-query';
-import { getNutritionistDetails, createAppointment } from '../../api/nutritionist';
-import { 
-  LoadingSpinner, 
-  NutritionistInfo, 
-  DatePicker, 
+
+import {
+  LoadingSpinner,
+  NutritionistInfo,
+  DatePicker,
   TimePicker,
   ConsultTypeSelector,
   TopicInput,
-  PriceDisplay 
+  PriceDisplay,
 } from '../../components';
+import { View, ScrollView, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { getNutritionistDetails, createAppointment } from '../../api/nutritionist';
+import { useQuery, useMutation } from 'react-query';
 
-export const AppointmentScreen = ({ route, navigation }) => {
+export c
+onst AppointmentScreen = ({ route, navigation }) => {
   const { nutritionistId } = route.params;
   const [date, setDate] = React.useState(null);
   const [time, setTime] = React.useState(null);
   const [type, setType] = React.useState('线上咨询');
   const [topic, setTopic] = React.useState('');
 
-  const { data: nutritionist, isLoading } = useQuery(
-    ['nutritionistDetails', nutritionistId],
-    () => getNutritionistDetails(nutritionistId)
+  const { data: nutritionist, isLoading } = useQuery(['nutritionistDetails', nutritionistId], () =>
+    getNutritionistDetails(nutritionistId),
   );
 
   const mutation = useMutation(createAppointment, {
     onSuccess: () => {
       navigation.navigate('AppointmentSuccess');
-    }
+    },
   });
 
   const handleSubmit = () => {
@@ -46,7 +47,7 @@ export const AppointmentScreen = ({ route, navigation }) => {
       type,
       topic,
       duration: 60, // 默认1小时
-      price: type === '线上咨询' ? nutritionist.data.onlinePrice : nutritionist.data.offlinePrice
+      price: type === '线上咨询' ? nutritionist.data.onlinePrice : nutritionist.data.offlinePrice,
     });
   };
 
@@ -56,7 +57,7 @@ export const AppointmentScreen = ({ route, navigation }) => {
     <View style={styles.container}>
       <ScrollView style={styles.scrollView}>
         <NutritionistInfo nutritionist={nutritionist.data} />
-        
+
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>选择咨询方式</Text>
           <ConsultTypeSelector
@@ -94,16 +95,15 @@ export const AppointmentScreen = ({ route, navigation }) => {
         </View>
 
         <PriceDisplay
-          price={type === '线上咨询' ? nutritionist.data.onlinePrice : nutritionist.data.offlinePrice}
+          price={
+            type === '线上咨询' ? nutritionist.data.onlinePrice : nutritionist.data.offlinePrice
+          }
           duration={60}
         />
       </ScrollView>
 
       <TouchableOpacity
-        style={[
-          styles.submitButton,
-          (!date || !time || !topic) && styles.submitButtonDisabled
-        ]}
+        style={[styles.submitButton, (!date || !time || !topic) && styles.submitButtonDisabled]}
         onPress={handleSubmit}
         disabled={!date || !time || !topic}
       >
@@ -118,33 +118,33 @@ export const AppointmentScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   scrollView: {
     flex: 1,
-    padding: 15
+    padding: 15,
   },
   section: {
-    marginBottom: 20
+    marginBottom: 20,
   },
   sectionTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 10
+    marginBottom: 10,
   },
   submitButton: {
     backgroundColor: '#2E7D32',
     padding: 15,
     margin: 15,
     borderRadius: 8,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   submitButtonDisabled: {
-    backgroundColor: '#ccc'
+    backgroundColor: '#ccc',
   },
   submitButtonText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: 'bold'
-  }
-}); 
+    fontWeight: 'bold',
+  },
+});

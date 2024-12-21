@@ -1,0 +1,221 @@
+/**
+ * @fileoverview TS 文件 tool-features.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
+// 工具功能类型
+export enum ToolType {
+  // 1. 食物营养工具
+  FOOD_SEARCH = 'food_search', // 食物搜索
+  FOOD_SCANNER = 'food_scanner', // 食物扫描
+  NUTRITION_CALC = 'nutrition_calc', // 营养计算器
+  MEAL_PLANNER = 'meal_planner', // 膳食规划
+  RECIPE_MAKER = 'recipe_maker', // 食谱制作
+  DIET_ANALYSIS = 'diet_analysis', // 饮食分析
+  FOOD_DIARY = 'food_diary', // 饮食日记
+  RESTAURANT_GUIDE = 'restaurant_guide', // 外出就餐指南
+  SEASONAL_FOOD = 'seasonal_food', // 时令食材
+  DIET_RECOMMEND = 'diet_recommend', // 个性化饮食推荐
+
+  // 2. 健康监测工具
+  VITAL_MONITOR = 'vital_monitor', // 生命体征监测
+  WEIGHT_TRACKER = 'weight_tracker', // 体重记录
+  SLEEP_MONITOR = 'sleep_monitor', // 睡眠监测
+  MOOD_TRACKER = 'mood_tracker', // 情绪记录
+  PERIOD_TRACKER = 'period_tracker', // 生理期跟踪
+  BLOOD_PRESSURE = 'blood_pressure', // 血压记录
+  GLUCOSE_MONITOR = 'glucose_monitor', // 血糖监测
+  SYMPTOM_CHECKER = 'symptom_checker', // 症状自查
+  MEDICINE_REMIND = 'medicine_remind', // 用药提醒
+  HEALTH_REPORT = 'health_report', // 健康报告
+
+  // 3. 运动健身工具
+  EXERCISE_PLAN = 'exercise_plan', // 运动计划
+  WORKOUT_TRACKER = 'workout_tracker', // 运动记录
+  STEP_COUNTER = 'step_counter', // 步数统计
+  POSTURE_CHECK = 'posture_check', // 姿态检测
+  TRAINING_VIDEO = 'training_video', // 训练视频
+  SPORTS_TIMER = 'sports_timer', // 运动计时器
+  MUSCLE_MAP = 'muscle_map', // 肌肉地图
+  CALORIE_COUNTER = 'calorie_counter', // 卡路里计算
+  RECOVERY_GUIDE = 'recovery_guide', // 恢复指导
+  FITNESS_TEST = 'fitness_test', // 体能测试
+
+  // 4. 中医养生工具
+  TCM_DIAGNOSIS = 'tcm_diagnosis', // 中医诊断
+  MERIDIAN_GUIDE = 'meridian_guide', // 经络指导
+  ACUPOINT_MAP = 'acupoint_map', // 穴位地图
+  MASSAGE_GUIDE = 'massage_guide', // 按摩指导
+  HERBAL_LIBRARY = 'herbal_library', // 中药材库
+  HEALTH_PRESERVE = 'health_preserve', // 养生保健
+  SEASON_HEALTH = 'season_health', // 四季养生
+  MEDITATION_GUIDE = 'meditation_guide', // 冥想指导
+  TCM_RECIPE = 'tcm_recipe', // 养生食谱
+  QIGONG_EXERCISE = 'qigong_exercise', // 气功导引
+
+  // 5. 社区互动工具
+  POST_CREATOR = 'post_creator', // 动态发布
+  CHALLENGE_JOINER = 'challenge_joiner', // 挑战参与
+  GROUP_CHAT = 'group_chat', // 群组聊天
+  EXPERT_QA = 'expert_qa', // 专家问答
+  EXPERIENCE_SHARE = 'experience_share', // 经验分享
+  HEALTH_TOPIC = 'health_topic', // 健康话题
+  SUCCESS_STORY = 'success_story', // 成功案例
+  SUPPORT_GROUP = 'support_group', // 互助小组
+  LIVE_STREAM = 'live_stream', // 直播课程
+  COMMUNITY_EVENT = 'community_event', // 社区活动
+
+  // 6. 会员专属工具
+  AI_COACH = 'ai_coach', // AI健康教练
+  EXPERT_CONSULT = 'expert_consult', // 专家咨询
+  VIP_CONTENT = 'vip_content', // 会员内容
+  PREMIUM_TOOLS = 'premium_tools', // 高级工具
+  PERSONAL_TRAINER = 'personal_trainer', // 私人教练
+  DIET_CONSULTANT = 'diet_consultant', // 营养咨询
+  TCM_CONSULTANT = 'tcm_consultant', // 中医咨询
+  HEALTH_COURSE = 'health_course', // 健康课程
+  DATA_ANALYSIS = 'data_analysis', // 数据分析
+  PREMIUM_PLAN = 'premium_plan', // 专属方案
+}
+
+// 工具分类
+export enum ToolCategory {
+  FOOD = 'food', // 食物营养
+  HEALTH = 'health', // 健康监测
+  FITNESS = 'fitness', // 运动健身
+  TCM = 'tcm', // 中医养生
+  COMMUNITY = 'community', // 社区互动
+  VIP = 'vip', // 会员专属
+}
+
+// 工具功能配置接口
+export interface IToolFeature {
+  /** type 的描述 */
+  type: import("D:/Health/src/types/tool-features").ToolType.FOOD_SEARCH | import("D:/Health/src/types/tool-features").ToolType.FOOD_SCANNER | import("D:/Health/src/types/tool-features").ToolType.NUTRITION_CALC | import("D:/Health/src/types/tool-features").ToolType.MEAL_PLANNER | import("D:/Health/src/types/tool-features").ToolType.RECIPE_MAKER | import("D:/Health/src/types/tool-features").ToolType.DIET_ANALYSIS | import("D:/Health/src/types/tool-features").ToolType.FOOD_DIARY | import("D:/Health/src/types/tool-features").ToolType.RESTAURANT_GUIDE | import("D:/Health/src/types/tool-features").ToolType.SEASONAL_FOOD | import("D:/Health/src/types/tool-features").ToolType.DIET_RECOMMEND | import("D:/Health/src/types/tool-features").ToolType.VITAL_MONITOR | import("D:/Health/src/types/tool-features").ToolType.WEIGHT_TRACKER | import("D:/Health/src/types/tool-features").ToolType.SLEEP_MONITOR | import("D:/Health/src/types/tool-features").ToolType.MOOD_TRACKER | import("D:/Health/src/types/tool-features").ToolType.PERIOD_TRACKER | import("D:/Health/src/types/tool-features").ToolType.BLOOD_PRESSURE | import("D:/Health/src/types/tool-features").ToolType.GLUCOSE_MONITOR | import("D:/Health/src/types/tool-features").ToolType.SYMPTOM_CHECKER | import("D:/Health/src/types/tool-features").ToolType.MEDICINE_REMIND | import("D:/Health/src/types/tool-features").ToolType.HEALTH_REPORT | import("D:/Health/src/types/tool-features").ToolType.EXERCISE_PLAN | import("D:/Health/src/types/tool-features").ToolType.WORKOUT_TRACKER | import("D:/Health/src/types/tool-features").ToolType.STEP_COUNTER | import("D:/Health/src/types/tool-features").ToolType.POSTURE_CHECK | import("D:/Health/src/types/tool-features").ToolType.TRAINING_VIDEO | import("D:/Health/src/types/tool-features").ToolType.SPORTS_TIMER | import("D:/Health/src/types/tool-features").ToolType.MUSCLE_MAP | import("D:/Health/src/types/tool-features").ToolType.CALORIE_COUNTER | import("D:/Health/src/types/tool-features").ToolType.RECOVERY_GUIDE | import("D:/Health/src/types/tool-features").ToolType.FITNESS_TEST | import("D:/Health/src/types/tool-features").ToolType.TCM_DIAGNOSIS | import("D:/Health/src/types/tool-features").ToolType.MERIDIAN_GUIDE | import("D:/Health/src/types/tool-features").ToolType.ACUPOINT_MAP | import("D:/Health/src/types/tool-features").ToolType.MASSAGE_GUIDE | import("D:/Health/src/types/tool-features").ToolType.HERBAL_LIBRARY | import("D:/Health/src/types/tool-features").ToolType.HEALTH_PRESERVE | import("D:/Health/src/types/tool-features").ToolType.SEASON_HEALTH | import("D:/Health/src/types/tool-features").ToolType.MEDITATION_GUIDE | import("D:/Health/src/types/tool-features").ToolType.TCM_RECIPE | import("D:/Health/src/types/tool-features").ToolType.QIGONG_EXERCISE | import("D:/Health/src/types/tool-features").ToolType.POST_CREATOR | import("D:/Health/src/types/tool-features").ToolType.CHALLENGE_JOINER | import("D:/Health/src/types/tool-features").ToolType.GROUP_CHAT | import("D:/Health/src/types/tool-features").ToolType.EXPERT_QA | import("D:/Health/src/types/tool-features").ToolType.EXPERIENCE_SHARE | import("D:/Health/src/types/tool-features").ToolType.HEALTH_TOPIC | import("D:/Health/src/types/tool-features").ToolType.SUCCESS_STORY | import("D:/Health/src/types/tool-features").ToolType.SUPPORT_GROUP | import("D:/Health/src/types/tool-features").ToolType.LIVE_STREAM | import("D:/Health/src/types/tool-features").ToolType.COMMUNITY_EVENT | import("D:/Health/src/types/tool-features").ToolType.AI_COACH | import("D:/Health/src/types/tool-features").ToolType.EXPERT_CONSULT | import("D:/Health/src/types/tool-features").ToolType.VIP_CONTENT | import("D:/Health/src/types/tool-features").ToolType.PREMIUM_TOOLS | import("D:/Health/src/types/tool-features").ToolType.PERSONAL_TRAINER | import("D:/Health/src/types/tool-features").ToolType.DIET_CONSULTANT | import("D:/Health/src/types/tool-features").ToolType.TCM_CONSULTANT | import("D:/Health/src/types/tool-features").ToolType.HEALTH_COURSE | import("D:/Health/src/types/tool-features").ToolType.DATA_ANALYSIS | import("D:/Health/src/types/tool-features").ToolType.PREMIUM_PLAN;
+  /** name 的描述 */
+  name: string;
+  /** description 的描述 */
+  description: string;
+  /** icon 的描述 */
+  icon: string;
+  /** enabled 的描述 */
+  enabled: false | true;
+  /** category 的描述 */
+  category: import("D:/Health/src/types/tool-features").ToolCategory.FOOD | import("D:/Health/src/types/tool-features").ToolCategory.HEALTH | import("D:/Health/src/types/tool-features").ToolCategory.FITNESS | import("D:/Health/src/types/tool-features").ToolCategory.TCM | import("D:/Health/src/types/tool-features").ToolCategory.COMMUNITY | import("D:/Health/src/types/tool-features").ToolCategory.VIP;
+  /** requiresVip 的描述 */
+  requiresVip: false | true;
+  /** version 的描述 */
+  version: string;
+  /** permissions 的描述 */
+  permissions: string;
+  /** features 的描述 */
+  features: string;
+  /** supportedDevices 的描述 */
+  supportedDevices: string;
+  /** config 的描述 */
+  config: {
+    apiEndpoint: string;
+    updateFrequency: number;
+    maxUsagePerDay: number;
+    cacheEnabled: boolean;
+    offlineEnabled: boolean;
+    dataRetentionDays: number;
+    notificationEnabled: boolean;
+    syncEnabled: boolean;
+    aiAssistEnabled: boolean;
+    shareEnabled: boolean;
+  };
+  /** integration 的描述 */
+  integration: {
+    healthKit?: boolean;
+    googleFit?: boolean;
+    wearables?: string[];
+    thirdPartyApps?: string[];
+  };
+}
+
+// 工具使用统计接口
+export interface IToolUsageStats {
+  /** toolType 的描述 */
+  toolType: import("D:/Health/src/types/tool-features").ToolType.FOOD_SEARCH | import("D:/Health/src/types/tool-features").ToolType.FOOD_SCANNER | import("D:/Health/src/types/tool-features").ToolType.NUTRITION_CALC | import("D:/Health/src/types/tool-features").ToolType.MEAL_PLANNER | import("D:/Health/src/types/tool-features").ToolType.RECIPE_MAKER | import("D:/Health/src/types/tool-features").ToolType.DIET_ANALYSIS | import("D:/Health/src/types/tool-features").ToolType.FOOD_DIARY | import("D:/Health/src/types/tool-features").ToolType.RESTAURANT_GUIDE | import("D:/Health/src/types/tool-features").ToolType.SEASONAL_FOOD | import("D:/Health/src/types/tool-features").ToolType.DIET_RECOMMEND | import("D:/Health/src/types/tool-features").ToolType.VITAL_MONITOR | import("D:/Health/src/types/tool-features").ToolType.WEIGHT_TRACKER | import("D:/Health/src/types/tool-features").ToolType.SLEEP_MONITOR | import("D:/Health/src/types/tool-features").ToolType.MOOD_TRACKER | import("D:/Health/src/types/tool-features").ToolType.PERIOD_TRACKER | import("D:/Health/src/types/tool-features").ToolType.BLOOD_PRESSURE | import("D:/Health/src/types/tool-features").ToolType.GLUCOSE_MONITOR | import("D:/Health/src/types/tool-features").ToolType.SYMPTOM_CHECKER | import("D:/Health/src/types/tool-features").ToolType.MEDICINE_REMIND | import("D:/Health/src/types/tool-features").ToolType.HEALTH_REPORT | import("D:/Health/src/types/tool-features").ToolType.EXERCISE_PLAN | import("D:/Health/src/types/tool-features").ToolType.WORKOUT_TRACKER | import("D:/Health/src/types/tool-features").ToolType.STEP_COUNTER | import("D:/Health/src/types/tool-features").ToolType.POSTURE_CHECK | import("D:/Health/src/types/tool-features").ToolType.TRAINING_VIDEO | import("D:/Health/src/types/tool-features").ToolType.SPORTS_TIMER | import("D:/Health/src/types/tool-features").ToolType.MUSCLE_MAP | import("D:/Health/src/types/tool-features").ToolType.CALORIE_COUNTER | import("D:/Health/src/types/tool-features").ToolType.RECOVERY_GUIDE | import("D:/Health/src/types/tool-features").ToolType.FITNESS_TEST | import("D:/Health/src/types/tool-features").ToolType.TCM_DIAGNOSIS | import("D:/Health/src/types/tool-features").ToolType.MERIDIAN_GUIDE | import("D:/Health/src/types/tool-features").ToolType.ACUPOINT_MAP | import("D:/Health/src/types/tool-features").ToolType.MASSAGE_GUIDE | import("D:/Health/src/types/tool-features").ToolType.HERBAL_LIBRARY | import("D:/Health/src/types/tool-features").ToolType.HEALTH_PRESERVE | import("D:/Health/src/types/tool-features").ToolType.SEASON_HEALTH | import("D:/Health/src/types/tool-features").ToolType.MEDITATION_GUIDE | import("D:/Health/src/types/tool-features").ToolType.TCM_RECIPE | import("D:/Health/src/types/tool-features").ToolType.QIGONG_EXERCISE | import("D:/Health/src/types/tool-features").ToolType.POST_CREATOR | import("D:/Health/src/types/tool-features").ToolType.CHALLENGE_JOINER | import("D:/Health/src/types/tool-features").ToolType.GROUP_CHAT | import("D:/Health/src/types/tool-features").ToolType.EXPERT_QA | import("D:/Health/src/types/tool-features").ToolType.EXPERIENCE_SHARE | import("D:/Health/src/types/tool-features").ToolType.HEALTH_TOPIC | import("D:/Health/src/types/tool-features").ToolType.SUCCESS_STORY | import("D:/Health/src/types/tool-features").ToolType.SUPPORT_GROUP | import("D:/Health/src/types/tool-features").ToolType.LIVE_STREAM | import("D:/Health/src/types/tool-features").ToolType.COMMUNITY_EVENT | import("D:/Health/src/types/tool-features").ToolType.AI_COACH | import("D:/Health/src/types/tool-features").ToolType.EXPERT_CONSULT | import("D:/Health/src/types/tool-features").ToolType.VIP_CONTENT | import("D:/Health/src/types/tool-features").ToolType.PREMIUM_TOOLS | import("D:/Health/src/types/tool-features").ToolType.PERSONAL_TRAINER | import("D:/Health/src/types/tool-features").ToolType.DIET_CONSULTANT | import("D:/Health/src/types/tool-features").ToolType.TCM_CONSULTANT | import("D:/Health/src/types/tool-features").ToolType.HEALTH_COURSE | import("D:/Health/src/types/tool-features").ToolType.DATA_ANALYSIS | import("D:/Health/src/types/tool-features").ToolType.PREMIUM_PLAN;
+  /** userId 的描述 */
+  userId: string;
+  /** usageCount 的描述 */
+  usageCount: number;
+  /** lastUsed 的描述 */
+  lastUsed: Date;
+  /** averageDuration 的描述 */
+  averageDuration: number;
+  /** successRate 的描述 */
+  successRate: number;
+  /** favoriteFeatures 的描述 */
+  favoriteFeatures: string;
+  /** achievedGoals 的描述 */
+  achievedGoals: string;
+  /** dataPoints 的描述 */
+  dataPoints: number;
+  /** syncStatus 的描述 */
+  syncStatus: {
+    lastSync: Date;
+    syncSuccess: boolean;
+    errorMessage: string;
+  };
+  /** deviceInfo 的描述 */
+  deviceInfo: {
+    platform: string;
+    version: string;
+    device: string;
+  };
+}
+
+// ���具反馈接口
+export interface IToolFeedback {
+  /** toolType 的描述 */
+  toolType: import("D:/Health/src/types/tool-features").ToolType.FOOD_SEARCH | import("D:/Health/src/types/tool-features").ToolType.FOOD_SCANNER | import("D:/Health/src/types/tool-features").ToolType.NUTRITION_CALC | import("D:/Health/src/types/tool-features").ToolType.MEAL_PLANNER | import("D:/Health/src/types/tool-features").ToolType.RECIPE_MAKER | import("D:/Health/src/types/tool-features").ToolType.DIET_ANALYSIS | import("D:/Health/src/types/tool-features").ToolType.FOOD_DIARY | import("D:/Health/src/types/tool-features").ToolType.RESTAURANT_GUIDE | import("D:/Health/src/types/tool-features").ToolType.SEASONAL_FOOD | import("D:/Health/src/types/tool-features").ToolType.DIET_RECOMMEND | import("D:/Health/src/types/tool-features").ToolType.VITAL_MONITOR | import("D:/Health/src/types/tool-features").ToolType.WEIGHT_TRACKER | import("D:/Health/src/types/tool-features").ToolType.SLEEP_MONITOR | import("D:/Health/src/types/tool-features").ToolType.MOOD_TRACKER | import("D:/Health/src/types/tool-features").ToolType.PERIOD_TRACKER | import("D:/Health/src/types/tool-features").ToolType.BLOOD_PRESSURE | import("D:/Health/src/types/tool-features").ToolType.GLUCOSE_MONITOR | import("D:/Health/src/types/tool-features").ToolType.SYMPTOM_CHECKER | import("D:/Health/src/types/tool-features").ToolType.MEDICINE_REMIND | import("D:/Health/src/types/tool-features").ToolType.HEALTH_REPORT | import("D:/Health/src/types/tool-features").ToolType.EXERCISE_PLAN | import("D:/Health/src/types/tool-features").ToolType.WORKOUT_TRACKER | import("D:/Health/src/types/tool-features").ToolType.STEP_COUNTER | import("D:/Health/src/types/tool-features").ToolType.POSTURE_CHECK | import("D:/Health/src/types/tool-features").ToolType.TRAINING_VIDEO | import("D:/Health/src/types/tool-features").ToolType.SPORTS_TIMER | import("D:/Health/src/types/tool-features").ToolType.MUSCLE_MAP | import("D:/Health/src/types/tool-features").ToolType.CALORIE_COUNTER | import("D:/Health/src/types/tool-features").ToolType.RECOVERY_GUIDE | import("D:/Health/src/types/tool-features").ToolType.FITNESS_TEST | import("D:/Health/src/types/tool-features").ToolType.TCM_DIAGNOSIS | import("D:/Health/src/types/tool-features").ToolType.MERIDIAN_GUIDE | import("D:/Health/src/types/tool-features").ToolType.ACUPOINT_MAP | import("D:/Health/src/types/tool-features").ToolType.MASSAGE_GUIDE | import("D:/Health/src/types/tool-features").ToolType.HERBAL_LIBRARY | import("D:/Health/src/types/tool-features").ToolType.HEALTH_PRESERVE | import("D:/Health/src/types/tool-features").ToolType.SEASON_HEALTH | import("D:/Health/src/types/tool-features").ToolType.MEDITATION_GUIDE | import("D:/Health/src/types/tool-features").ToolType.TCM_RECIPE | import("D:/Health/src/types/tool-features").ToolType.QIGONG_EXERCISE | import("D:/Health/src/types/tool-features").ToolType.POST_CREATOR | import("D:/Health/src/types/tool-features").ToolType.CHALLENGE_JOINER | import("D:/Health/src/types/tool-features").ToolType.GROUP_CHAT | import("D:/Health/src/types/tool-features").ToolType.EXPERT_QA | import("D:/Health/src/types/tool-features").ToolType.EXPERIENCE_SHARE | import("D:/Health/src/types/tool-features").ToolType.HEALTH_TOPIC | import("D:/Health/src/types/tool-features").ToolType.SUCCESS_STORY | import("D:/Health/src/types/tool-features").ToolType.SUPPORT_GROUP | import("D:/Health/src/types/tool-features").ToolType.LIVE_STREAM | import("D:/Health/src/types/tool-features").ToolType.COMMUNITY_EVENT | import("D:/Health/src/types/tool-features").ToolType.AI_COACH | import("D:/Health/src/types/tool-features").ToolType.EXPERT_CONSULT | import("D:/Health/src/types/tool-features").ToolType.VIP_CONTENT | import("D:/Health/src/types/tool-features").ToolType.PREMIUM_TOOLS | import("D:/Health/src/types/tool-features").ToolType.PERSONAL_TRAINER | import("D:/Health/src/types/tool-features").ToolType.DIET_CONSULTANT | import("D:/Health/src/types/tool-features").ToolType.TCM_CONSULTANT | import("D:/Health/src/types/tool-features").ToolType.HEALTH_COURSE | import("D:/Health/src/types/tool-features").ToolType.DATA_ANALYSIS | import("D:/Health/src/types/tool-features").ToolType.PREMIUM_PLAN;
+  /** userId 的描述 */
+  userId: string;
+  /** rating 的描述 */
+  rating: number;
+  /** comment 的描述 */
+  comment: string;
+  /** timestamp 的描述 */
+  timestamp: Date;
+  /** deviceInfo 的描述 */
+  deviceInfo: string;
+  /** suggestions 的描述 */
+  suggestions: string;
+  /** usageContext 的描述 */
+  usageContext: string;
+  /** satisfaction 的描述 */
+  satisfaction: {
+    ease: number;
+    effectiveness: number;
+    reliability: number;
+  };
+  /** featureRequests 的描述 */
+  featureRequests?: undefined | string[];
+  /** bugReport 的描述 */
+  bugReport?: undefined | { description: string; steps: string[]; expectedResult: string; actualResult: string; };
+}
+
+// 工具数据同步接口
+export interface IToolDataSync {
+  /** toolType 的描述 */
+  toolType: import("D:/Health/src/types/tool-features").ToolType.FOOD_SEARCH | import("D:/Health/src/types/tool-features").ToolType.FOOD_SCANNER | import("D:/Health/src/types/tool-features").ToolType.NUTRITION_CALC | import("D:/Health/src/types/tool-features").ToolType.MEAL_PLANNER | import("D:/Health/src/types/tool-features").ToolType.RECIPE_MAKER | import("D:/Health/src/types/tool-features").ToolType.DIET_ANALYSIS | import("D:/Health/src/types/tool-features").ToolType.FOOD_DIARY | import("D:/Health/src/types/tool-features").ToolType.RESTAURANT_GUIDE | import("D:/Health/src/types/tool-features").ToolType.SEASONAL_FOOD | import("D:/Health/src/types/tool-features").ToolType.DIET_RECOMMEND | import("D:/Health/src/types/tool-features").ToolType.VITAL_MONITOR | import("D:/Health/src/types/tool-features").ToolType.WEIGHT_TRACKER | import("D:/Health/src/types/tool-features").ToolType.SLEEP_MONITOR | import("D:/Health/src/types/tool-features").ToolType.MOOD_TRACKER | import("D:/Health/src/types/tool-features").ToolType.PERIOD_TRACKER | import("D:/Health/src/types/tool-features").ToolType.BLOOD_PRESSURE | import("D:/Health/src/types/tool-features").ToolType.GLUCOSE_MONITOR | import("D:/Health/src/types/tool-features").ToolType.SYMPTOM_CHECKER | import("D:/Health/src/types/tool-features").ToolType.MEDICINE_REMIND | import("D:/Health/src/types/tool-features").ToolType.HEALTH_REPORT | import("D:/Health/src/types/tool-features").ToolType.EXERCISE_PLAN | import("D:/Health/src/types/tool-features").ToolType.WORKOUT_TRACKER | import("D:/Health/src/types/tool-features").ToolType.STEP_COUNTER | import("D:/Health/src/types/tool-features").ToolType.POSTURE_CHECK | import("D:/Health/src/types/tool-features").ToolType.TRAINING_VIDEO | import("D:/Health/src/types/tool-features").ToolType.SPORTS_TIMER | import("D:/Health/src/types/tool-features").ToolType.MUSCLE_MAP | import("D:/Health/src/types/tool-features").ToolType.CALORIE_COUNTER | import("D:/Health/src/types/tool-features").ToolType.RECOVERY_GUIDE | import("D:/Health/src/types/tool-features").ToolType.FITNESS_TEST | import("D:/Health/src/types/tool-features").ToolType.TCM_DIAGNOSIS | import("D:/Health/src/types/tool-features").ToolType.MERIDIAN_GUIDE | import("D:/Health/src/types/tool-features").ToolType.ACUPOINT_MAP | import("D:/Health/src/types/tool-features").ToolType.MASSAGE_GUIDE | import("D:/Health/src/types/tool-features").ToolType.HERBAL_LIBRARY | import("D:/Health/src/types/tool-features").ToolType.HEALTH_PRESERVE | import("D:/Health/src/types/tool-features").ToolType.SEASON_HEALTH | import("D:/Health/src/types/tool-features").ToolType.MEDITATION_GUIDE | import("D:/Health/src/types/tool-features").ToolType.TCM_RECIPE | import("D:/Health/src/types/tool-features").ToolType.QIGONG_EXERCISE | import("D:/Health/src/types/tool-features").ToolType.POST_CREATOR | import("D:/Health/src/types/tool-features").ToolType.CHALLENGE_JOINER | import("D:/Health/src/types/tool-features").ToolType.GROUP_CHAT | import("D:/Health/src/types/tool-features").ToolType.EXPERT_QA | import("D:/Health/src/types/tool-features").ToolType.EXPERIENCE_SHARE | import("D:/Health/src/types/tool-features").ToolType.HEALTH_TOPIC | import("D:/Health/src/types/tool-features").ToolType.SUCCESS_STORY | import("D:/Health/src/types/tool-features").ToolType.SUPPORT_GROUP | import("D:/Health/src/types/tool-features").ToolType.LIVE_STREAM | import("D:/Health/src/types/tool-features").ToolType.COMMUNITY_EVENT | import("D:/Health/src/types/tool-features").ToolType.AI_COACH | import("D:/Health/src/types/tool-features").ToolType.EXPERT_CONSULT | import("D:/Health/src/types/tool-features").ToolType.VIP_CONTENT | import("D:/Health/src/types/tool-features").ToolType.PREMIUM_TOOLS | import("D:/Health/src/types/tool-features").ToolType.PERSONAL_TRAINER | import("D:/Health/src/types/tool-features").ToolType.DIET_CONSULTANT | import("D:/Health/src/types/tool-features").ToolType.TCM_CONSULTANT | import("D:/Health/src/types/tool-features").ToolType.HEALTH_COURSE | import("D:/Health/src/types/tool-features").ToolType.DATA_ANALYSIS | import("D:/Health/src/types/tool-features").ToolType.PREMIUM_PLAN;
+  /** userId 的描述 */
+  userId: string;
+  /** dataType 的描述 */
+  dataType: string;
+  /** timestamp 的描述 */
+  timestamp: Date;
+  /** data 的描述 */
+  data: any;
+  /** source 的描述 */
+  source: string;
+  /** version 的描述 */
+  version: string;
+  /** checksum 的描述 */
+  checksum: string;
+}

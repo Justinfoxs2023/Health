@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1734333530972" clover="3.2.0">
+  <project timestamp="1734333530972" name="All files">
+    <metrics statements="15" coveredstatements="2" conditionals="3" coveredconditionals="0" methods="4" coveredmethods="1" elements="22" coveredelements="3" complexity="0" loc="15" ncloc="15" packages="1" files="1" classes="1"/>
+    <file name="performance-monitoring.ts" path="D:\Health\src\utils\performance-monitoring.ts">
+      <metrics statements="15" coveredstatements="2" conditionals="3" coveredconditionals="0" methods="4" coveredmethods="1"/>
+      <line num="7" count="1" type="stmt"/>
+      <line num="11" count="1" type="stmt"/>
+      <line num="15" count="0" type="stmt"/>
+      <line num="16" count="0" type="stmt"/>
+      <line num="18" count="0" type="stmt"/>
+      <line num="19" count="0" type="stmt"/>
+      <line num="20" count="0" type="stmt"/>
+      <line num="21" count="0" type="stmt"/>
+      <line num="22" count="0" type="stmt"/>
+      <line num="24" count="0" type="stmt"/>
+      <line num="32" count="0" type="stmt"/>
+      <line num="34" count="0" type="stmt"/>
+      <line num="39" count="0" type="stmt"/>
+      <line num="40" count="0" type="stmt"/>
+      <line num="45" count="0" type="stmt"/>
+    </file>
+  </project>
+</coverage>

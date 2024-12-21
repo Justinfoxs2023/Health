@@ -1,9 +1,10 @@
-import { Request, Response } from 'express';
-import { Types } from 'mongoose';
 import { HealthRisk } from '../models/health-risk.model';
 import { IHealthRisk } from '../types/models';
+import { Request, Response } from 'express';
+import { Types } from 'mongoose';
 
-interface AuthRequest extends Request {
+interface IAuthRequest extends Request {
+  /** user 的描述 */
   user: {
     id: string;
   };
@@ -13,7 +14,7 @@ export class HealthRiskController {
   /**
    * 获取用户的风险预警列表
    */
-  public async getUserRisks(req: AuthRequest, res: Response): Promise<void> {
+  public async getUserRisks(req: IAuthRequest, res: Response): Promise<void> {
     try {
       const userId = req.user.id;
       const { status, severity, page = 1, limit = 10 } = req.query;
@@ -37,13 +38,13 @@ export class HealthRiskController {
           total,
           page: Number(page),
           limit: Number(limit),
-          pages: Math.ceil(total / Number(limit))
-        }
+          pages: Math.ceil(total / Number(limit)),
+        },
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -51,18 +52,18 @@ export class HealthRiskController {
   /**
    * 更新风险状态
    */
-  public async updateRiskStatus(req: AuthRequest, res: Response): Promise<void> {
+  public async updateRiskStatus(req: IAuthRequest, res: Response): Promise<void> {
     try {
       const { id } = req.params;
       const { status, handlingRecord } = req.body;
       const userId = req.user.id;
 
       const risk = await HealthRisk.findById(id);
-      
+
       if (!risk) {
         res.status(404).json({
           success: false,
-          message: '未找到该风险记录'
+          message: '未找到该风险记录',
         });
         return;
       }
@@ -72,7 +73,7 @@ export class HealthRiskController {
         risk.handlingRecords.push({
           ...handlingRecord,
           time: new Date(),
-          handler: new Types.ObjectId(userId)
+          handler: new Types.ObjectId(userId),
         });
       }
 
@@ -80,12 +81,12 @@ export class HealthRiskController {
 
       res.json({
         success: true,
-        data: risk
+        data: risk,
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -93,7 +94,7 @@ export class HealthRiskController {
   /**
    * 获取风险统计
    */
-  public async getRiskStats(req: AuthRequest, res: Response): Promise<void> {
+  public async getRiskStats(req: IAuthRequest, res: Response): Promise<void> {
     try {
       const userId = req.user.id;
 
@@ -104,20 +105,20 @@ export class HealthRiskController {
             _id: null,
             totalRisks: { $sum: 1 },
             activeRisks: {
-              $sum: { $cond: [{ $eq: ['$status', 'active'] }, 1, 0] }
+              $sum: { $cond: [{ $eq: ['$status', 'active'] }, 1, 0] },
             },
             highSeverityRisks: {
-              $sum: { $cond: [{ $eq: ['$severity', '高'] }, 1, 0] }
+              $sum: { $cond: [{ $eq: ['$severity', '高'] }, 1, 0] },
             },
             risksByType: {
               $push: {
                 type: '$riskType',
                 severity: '$severity',
-                status: '$status'
-              }
-            }
-          }
-        }
+                status: '$status',
+              },
+            },
+          },
+        },
       ]);
 
       res.json({
@@ -126,16 +127,16 @@ export class HealthRiskController {
           totalRisks: 0,
           activeRisks: 0,
           highSeverityRisks: 0,
-          risksByType: []
-        }
+          risksByType: [],
+        },
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
 }
 
-export const healthRiskController = new HealthRiskController(); 
+export const healthRiskController = new HealthRiskController();

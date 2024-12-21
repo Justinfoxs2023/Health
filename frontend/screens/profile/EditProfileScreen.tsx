@@ -1,14 +1,9 @@
 import React from 'react';
+
+import { FormInput, ImagePicker, LoadingOverlay, AlertDialog, DatePicker } from '../../components';
 import { View, ScrollView, StyleSheet, TouchableOpacity, Text, Image } from 'react-native';
-import { useMutation, useQueryClient } from 'react-query';
 import { updateProfile, uploadAvatar } from '../../api/user';
-import {
-  FormInput,
-  ImagePicker,
-  LoadingOverlay,
-  AlertDialog,
-  DatePicker
-} from '../../components';
+import { useMutation, useQueryClient } from 'react-query';
 
 export const EditProfileScreen = ({ route, navigation }) => {
   const { profile } = route.params;
@@ -23,7 +18,7 @@ export const EditProfileScreen = ({ route, navigation }) => {
     activityLevel: profile.activityLevel,
     dietaryRestrictions: profile.dietaryRestrictions || [],
     healthConditions: profile.healthConditions || [],
-    introduction: profile.introduction
+    introduction: profile.introduction,
   });
 
   const [showImagePicker, setShowImagePicker] = React.useState(false);
@@ -40,13 +35,13 @@ export const EditProfileScreen = ({ route, navigation }) => {
     onError: (error: any) => {
       setAlertMessage(error.message || '个人资料修改失败');
       setShowAlert(true);
-    }
+    },
   });
 
   const avatarMutation = useMutation(uploadAvatar, {
-    onSuccess: (data) => {
+    onSuccess: data => {
       setForm(prev => ({ ...prev, avatar: data.url }));
-    }
+    },
   });
 
   const handleSubmit = () => {
@@ -79,14 +74,8 @@ export const EditProfileScreen = ({ route, navigation }) => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.form}>
-        <TouchableOpacity
-          style={styles.avatarContainer}
-          onPress={() => setShowImagePicker(true)}
-        >
-          <Image
-            source={{ uri: form.avatar || 'default_avatar' }}
-            style={styles.avatar}
-          />
+        <TouchableOpacity style={styles.avatarContainer} onPress={() => setShowImagePicker(true)}>
+          <Image source={{ uri: form.avatar || 'default_avatar' }} style={styles.avatar} />
           <View style={styles.avatarOverlay}>
             <Text style={styles.avatarText}>更换头像</Text>
           </View>
@@ -96,7 +85,7 @@ export const EditProfileScreen = ({ route, navigation }) => {
           label="昵称"
           placeholder="请输入昵称"
           value={form.nickname}
-          onChangeText={(nickname) => setForm(prev => ({ ...prev, nickname }))}
+          onChangeText={nickname => setForm(prev => ({ ...prev, nickname }))}
           style={styles.field}
         />
 
@@ -106,17 +95,14 @@ export const EditProfileScreen = ({ route, navigation }) => {
           options={[
             { label: '男', value: 'male' },
             { label: '女', value: 'female' },
-            { label: '其他', value: 'other' }
+            { label: '其他', value: 'other' },
           ]}
           value={form.gender}
-          onChange={(gender) => setForm(prev => ({ ...prev, gender }))}
+          onChange={gender => setForm(prev => ({ ...prev, gender }))}
           style={styles.field}
         />
 
-        <TouchableOpacity
-          style={styles.field}
-          onPress={() => setShowDatePicker(true)}
-        >
+        <TouchableOpacity style={styles.field} onPress={() => setShowDatePicker(true)}>
           <Text style={styles.label}>生日</Text>
           <Text style={styles.value}>
             {form.birthday ? new Date(form.birthday).toLocaleDateString() : '请选择生日'}
@@ -127,7 +113,7 @@ export const EditProfileScreen = ({ route, navigation }) => {
           label="身高(cm)"
           keyboardType="numeric"
           value={form.height}
-          onChangeText={(height) => setForm(prev => ({ ...prev, height }))}
+          onChangeText={height => setForm(prev => ({ ...prev, height }))}
           style={styles.field}
         />
 
@@ -135,7 +121,7 @@ export const EditProfileScreen = ({ route, navigation }) => {
           label="体重(kg)"
           keyboardType="numeric"
           value={form.weight}
-          onChangeText={(weight) => setForm(prev => ({ ...prev, weight }))}
+          onChangeText={weight => setForm(prev => ({ ...prev, weight }))}
           style={styles.field}
         />
 
@@ -146,10 +132,10 @@ export const EditProfileScreen = ({ route, navigation }) => {
             { label: '久坐', value: 'sedentary' },
             { label: '轻度活动', value: 'light' },
             { label: '中度活动', value: 'moderate' },
-            { label: '重度活动', value: 'heavy' }
+            { label: '重度活动', value: 'heavy' },
           ]}
           value={form.activityLevel}
-          onChange={(activityLevel) => setForm(prev => ({ ...prev, activityLevel }))}
+          onChange={activityLevel => setForm(prev => ({ ...prev, activityLevel }))}
           style={styles.field}
         />
 
@@ -162,10 +148,10 @@ export const EditProfileScreen = ({ route, navigation }) => {
             { label: '乳糖不耐', value: 'lactose' },
             { label: '麸质敏感', value: 'gluten' },
             { label: '海鲜过敏', value: 'seafood' },
-            { label: '坚果过敏', value: 'nuts' }
+            { label: '坚果过敏', value: 'nuts' },
           ]}
           value={form.dietaryRestrictions}
-          onChange={(dietaryRestrictions) => setForm(prev => ({ ...prev, dietaryRestrictions }))}
+          onChange={dietaryRestrictions => setForm(prev => ({ ...prev, dietaryRestrictions }))}
           style={styles.field}
         />
 
@@ -177,10 +163,10 @@ export const EditProfileScreen = ({ route, navigation }) => {
             { label: '高血压', value: 'hypertension' },
             { label: '糖尿病', value: 'diabetes' },
             { label: '心脏病', value: 'heart' },
-            { label: '高血脂', value: 'cholesterol' }
+            { label: '高血脂', value: 'cholesterol' },
           ]}
           value={form.healthConditions}
-          onChange={(healthConditions) => setForm(prev => ({ ...prev, healthConditions }))}
+          onChange={healthConditions => setForm(prev => ({ ...prev, healthConditions }))}
           style={styles.field}
         />
 
@@ -190,7 +176,7 @@ export const EditProfileScreen = ({ route, navigation }) => {
           multiline
           numberOfLines={4}
           value={form.introduction}
-          onChangeText={(introduction) => setForm(prev => ({ ...prev, introduction }))}
+          onChangeText={introduction => setForm(prev => ({ ...prev, introduction }))}
           style={styles.field}
         />
 
@@ -212,7 +198,7 @@ export const EditProfileScreen = ({ route, navigation }) => {
       <DatePicker
         visible={showDatePicker}
         value={form.birthday ? new Date(form.birthday) : new Date()}
-        onConfirm={(date) => {
+        onConfirm={date => {
           setForm(prev => ({ ...prev, birthday: date.toISOString() }));
           setShowDatePicker(false);
         }}
@@ -234,19 +220,19 @@ export const EditProfileScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   form: {
-    padding: 15
+    padding: 15,
   },
   avatarContainer: {
     alignItems: 'center',
-    marginBottom: 20
+    marginBottom: 20,
   },
   avatar: {
     width: 100,
     height: 100,
-    borderRadius: 50
+    borderRadius: 50,
   },
   avatarOverlay: {
     position: 'absolute',
@@ -255,40 +241,40 @@ const styles = StyleSheet.create({
     right: 0,
     backgroundColor: 'rgba(0,0,0,0.5)',
     paddingVertical: 5,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   avatarText: {
     color: '#fff',
-    fontSize: 14
+    fontSize: 14,
   },
   field: {
     marginBottom: 15,
     backgroundColor: '#fff',
     borderRadius: 8,
-    padding: 15
+    padding: 15,
   },
   label: {
     fontSize: 16,
     color: '#333',
-    marginBottom: 8
+    marginBottom: 8,
   },
   value: {
     fontSize: 16,
-    color: '#666'
+    color: '#666',
   },
   submitButton: {
     backgroundColor: '#2E7D32',
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',
-    marginTop: 20
+    marginTop: 20,
   },
   submitButtonDisabled: {
-    backgroundColor: '#ccc'
+    backgroundColor: '#ccc',
   },
   submitButtonText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: 'bold'
-  }
-}); 
+    fontWeight: 'bold',
+  },
+});

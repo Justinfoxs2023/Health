@@ -18,15 +18,11 @@ declare global {
 
     interface Response {
       status(code: number): this;
-      json(body: {
-        code: number;
-        data?: any;
-        message?: string;
-      }): this;
+      json(body: { code: number; data?: any; message?: string }): this;
     }
   }
 }
 
-export interface NextFunction {
+export interface INextFunction {
   (err?: any): void;
-} 
+}

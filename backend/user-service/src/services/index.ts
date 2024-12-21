@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 index.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // 基础服务
 export * from './base.service';
 export * from './user.service';
@@ -21,4 +28,4 @@ export * from './admin/admin.service';
 export * from './admin/analytics.service';
 export * from './admin/audit.service';
 export * from './admin/content.service';
-export * from './admin/icon.service'; 
+export * from './admin/icon.service';

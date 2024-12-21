@@ -1,6 +1,6 @@
-import { Request, Response } from 'express';
 import { FitnessService } from '../services/fitness.service';
 import { Logger } from '../utils/logger';
+import { Request, Response } from 'express';
 
 export class FitnessController {
   private fitnessService: FitnessService;
@@ -25,19 +25,19 @@ export class FitnessController {
         exercises,
         schedule,
         intensity,
-        startDate: new Date()
+        startDate: new Date(),
       });
 
       return res.status(201).json({
         code: 201,
         data: trainingPlan,
-        message: '训练计划创建成功'
+        message: '训练计划创建成功',
       });
     } catch (error) {
       this.logger.error('创建训练计划失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
@@ -53,19 +53,19 @@ export class FitnessController {
       const assessment = await this.fitnessService.createAssessment({
         clientId,
         assessmentData,
-        date: new Date()
+        date: new Date(),
       });
 
       return res.json({
         code: 200,
         data: assessment,
-        message: '体能评估完成'
+        message: '体能评估完成',
       });
     } catch (error) {
       this.logger.error('体能评估失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
@@ -83,19 +83,19 @@ export class FitnessController {
         exerciseType,
         guidance,
         corrections,
-        date: new Date()
+        date: new Date(),
       });
 
       return res.json({
         code: 200,
         data: exerciseGuidance,
-        message: '运动指导提供成功'
+        message: '运动指导提供成功',
       });
     } catch (error) {
       this.logger.error('提供运动指导失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
@@ -113,20 +113,20 @@ export class FitnessController {
         metrics,
         achievements,
         notes,
-        date: new Date()
+        date: new Date(),
       });
 
       return res.json({
         code: 200,
         data: progress,
-        message: '进度记录成功'
+        message: '进度记录成功',
       });
     } catch (error) {
       this.logger.error('记录进度失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
-} 
+}

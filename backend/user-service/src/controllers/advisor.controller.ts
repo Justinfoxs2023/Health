@@ -1,6 +1,6 @@
-import { Request, Response } from 'express';
 import { AdvisorService } from '../services/advisor.service';
 import { Logger } from '../utils/logger';
+import { Request, Response } from 'express';
 
 export class AdvisorController {
   private advisorService: AdvisorService;
@@ -23,18 +23,18 @@ export class AdvisorController {
         advisorId,
         Number(page),
         Number(limit),
-        status as string
+        status as string,
       );
 
       return res.json({
         code: 200,
-        data: clients
+        data: clients,
       });
     } catch (error) {
       this.logger.error('获取客户列表失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
@@ -53,19 +53,19 @@ export class AdvisorController {
         planType,
         goals,
         activities,
-        duration
+        duration,
       });
 
       return res.status(201).json({
         code: 201,
         data: healthPlan,
-        message: '健康计划创建成功'
+        message: '健康计划创建成功',
       });
     } catch (error) {
       this.logger.error('创建健康计划失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
@@ -83,19 +83,19 @@ export class AdvisorController {
         advisorId,
         clientId,
         startDate as string,
-        endDate as string
+        endDate as string,
       );
 
       return res.json({
         code: 200,
-        data: progress
+        data: progress,
       });
     } catch (error) {
       this.logger.error('获取客户进度失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
-} 
+}

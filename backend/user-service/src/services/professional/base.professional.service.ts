@@ -1,14 +1,14 @@
-import { injectable, inject } from 'inversify';
-import { TYPES } from '../../di/types';
-import { Logger } from '../../types/logger';
-import { RedisClient } from '../../infrastructure/redis/types';
 import { AppError } from '../../utils/errors';
+import { ILogger } from '../../types/logger';
+import { IRedisClient } from '../../infrastructure/redis/types';
+import { TYPES } from '../../di/types';
+import { injectable, inject } from 'inversify';
 
 @injectable()
 export class BaseProfessionalService {
   constructor(
-    @inject(TYPES.Logger) protected logger: Logger,
-    @inject(TYPES.Redis) protected redis: RedisClient
+    @inject(TYPES.Logger) protected logger: ILogger,
+    @inject(TYPES.Redis) protected redis: IRedisClient,
   ) {}
 
   protected async validateProfessionalAccess(userId: string, role: string): Promise<void> {
@@ -28,4 +28,4 @@ export class BaseProfessionalService {
       throw new AppError('FORBIDDEN', 403, '无权访问该客户信息');
     }
   }
-} 
+}

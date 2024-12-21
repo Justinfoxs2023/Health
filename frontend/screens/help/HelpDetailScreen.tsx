@@ -1,25 +1,39 @@
 import React from 'react';
-import { View, ScrollView, StyleSheet, Text, TouchableOpacity } from 'react-native';
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { getHelpArticle, markArticleHelpful } from '../../api/help';
-import { LoadingSpinner, Icon } from '../../components';
 
-interface ArticleSection {
+import { LoadingSpinner, Icon } from '../../components';
+import { View, ScrollView, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { getHelpArticle, markArticleHelpful } from '../../api/help';
+import { useQuery, useMutation } from '@tanstack/react-query';
+
+interface IArticleSection {
+  /** title 的描述 */
   title?: string;
+  /** content 的描述 */
   content: string;
+  /** tips 的描述 */
   tips?: string;
+  /** imageUrl 的描述 */
   imageUrl?: string;
 }
 
-interface HelpArticle {
+interface IHelpArticle {
+  /** id 的描述 */
   id: string;
+  /** title 的描述 */
   title: string;
+  /** category 的描述 */
   category: string;
-  content: ArticleSection[];
+  /** content 的描述 */
+  content: IArticleSection[];
+  /** viewCount 的描述 */
   viewCount: number;
+  /** helpfulCount 的描述 */
   helpfulCount: number;
+  /** notHelpfulCount 的描述 */
   notHelpfulCount: number;
+  /** updatedAt 的描述 */
   updatedAt: string;
+  /** relatedQuestions 的描述 */
   relatedQuestions: {
     id: string;
     title: string;
@@ -28,9 +42,8 @@ interface HelpArticle {
 
 export const HelpDetailScreen = ({ route, navigation }) => {
   const { id } = route.params;
-  const { data: article, isLoading } = useQuery<HelpArticle>(
-    ['helpArticle', id],
-    () => getHelpArticle(id)
+  const { data: article, isLoading } = useQuery<IHelpArticle>(['helpArticle', id], () =>
+    getHelpArticle(id),
   );
 
   const [feedbackGiven, setFeedbackGiven] = React.useState(false);
@@ -46,7 +59,7 @@ export const HelpDetailScreen = ({ route, navigation }) => {
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      title: article?.category || '帮助详情'
+      title: article?.category || '帮助详情',
     });
   }, [navigation, article?.category]);
 
@@ -58,18 +71,14 @@ export const HelpDetailScreen = ({ route, navigation }) => {
         <Text style={styles.title}>{article?.title}</Text>
         <View style={styles.meta}>
           <Text style={styles.category}>{article?.category}</Text>
-          <Text style={styles.date}>
-            {new Date(article?.updatedAt || '').toLocaleDateString()}
-          </Text>
+          <Text style={styles.date}>{new Date(article?.updatedAt || '').toLocaleDateString()}</Text>
         </View>
       </View>
 
       <View style={styles.content}>
         {article?.content.map((section, index) => (
           <View key={index} style={styles.section}>
-            {section.title && (
-              <Text style={styles.sectionTitle}>{section.title}</Text>
-            )}
+            {section.title && <Text style={styles.sectionTitle}>{section.title}</Text>}
             <Text style={styles.sectionContent}>{section.content}</Text>
             {section.tips && (
               <View style={styles.tips}>
@@ -83,7 +92,7 @@ export const HelpDetailScreen = ({ route, navigation }) => {
 
       <View style={styles.relatedSection}>
         <Text style={styles.relatedTitle}>相关问题</Text>
-        {article?.relatedQuestions.map((question) => (
+        {article?.relatedQuestions.map(question => (
           <TouchableOpacity
             key={question.id}
             style={styles.relatedItem}
@@ -127,21 +136,21 @@ export const HelpDetailScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   header: {
     padding: 20,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 10
+    marginBottom: 10,
   },
   meta: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   category: {
     fontSize: 14,
@@ -150,86 +159,86 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 10,
-    marginRight: 10
+    marginRight: 10,
   },
   date: {
     fontSize: 14,
-    color: '#666'
+    color: '#666',
   },
   content: {
     backgroundColor: '#fff',
     marginTop: 10,
-    padding: 20
+    padding: 20,
   },
   section: {
-    marginBottom: 20
+    marginBottom: 20,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 10
+    marginBottom: 10,
   },
   sectionContent: {
     fontSize: 16,
     color: '#333',
-    lineHeight: 24
+    lineHeight: 24,
   },
   tips: {
     flexDirection: 'row',
     backgroundColor: '#E3F2FD',
     padding: 15,
     borderRadius: 8,
-    marginTop: 10
+    marginTop: 10,
   },
   tipsIcon: {
     marginRight: 10,
-    marginTop: 2
+    marginTop: 2,
   },
   tipsText: {
     flex: 1,
     fontSize: 14,
     color: '#1976D2',
-    lineHeight: 20
+    lineHeight: 20,
   },
   relatedSection: {
     marginTop: 10,
     backgroundColor: '#fff',
-    padding: 20
+    padding: 20,
   },
   relatedTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 15
+    marginBottom: 15,
   },
   relatedItem: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 12,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#f0f0f0'
+    borderBottomColor: '#f0f0f0',
   },
   relatedText: {
     flex: 1,
     fontSize: 16,
     color: '#333',
-    marginRight: 10
+    marginRight: 10,
   },
   feedback: {
     marginTop: 10,
     backgroundColor: '#fff',
     padding: 20,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   feedbackTitle: {
     fontSize: 16,
     color: '#333',
-    marginBottom: 15
+    marginBottom: 15,
   },
   feedbackButtons: {
     flexDirection: 'row',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   feedbackButton: {
     flexDirection: 'row',
@@ -237,22 +246,22 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 15,
     borderRadius: 20,
-    marginHorizontal: 10
+    marginHorizontal: 10,
   },
   helpfulButton: {
-    backgroundColor: '#E8F5E9'
+    backgroundColor: '#E8F5E9',
   },
   unhelpfulButton: {
-    backgroundColor: '#FFEBEE'
+    backgroundColor: '#FFEBEE',
   },
   feedbackButtonText: {
     fontSize: 14,
-    marginLeft: 5
+    marginLeft: 5,
   },
   helpfulText: {
-    color: '#2E7D32'
+    color: '#2E7D32',
   },
   unhelpfulText: {
-    color: '#D32F2F'
-  }
-}); 
+    color: '#D32F2F',
+  },
+});

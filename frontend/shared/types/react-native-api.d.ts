@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 react-native-api.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 declare module 'react-native' {
   // Platform API
   export const Platform: {
@@ -16,10 +23,16 @@ declare module 'react-native' {
   // Animated API
   export const Animated: {
     Value: typeof AnimatedValue;
-    timing: (value: AnimatedValue, config: AnimatedTimingConfig) => {
+    timing: (
+      value: AnimatedValue,
+      config: AnimatedTimingConfig,
+    ) => {
       start: (callback?: (result: { finished: boolean }) => void) => void;
     };
-    spring: (value: AnimatedValue, config: AnimatedSpringConfig) => {
+    spring: (
+      value: AnimatedValue,
+      config: AnimatedSpringConfig,
+    ) => {
       start: (callback?: (result: { finished: boolean }) => void) => void;
     };
     View: React.ComponentType<ViewProps>;
@@ -31,7 +44,7 @@ declare module 'react-native' {
   export const Keyboard: {
     addListener: (
       eventName: string,
-      callback: (event: KeyboardEvent) => void
+      callback: (event: KeyboardEvent) => void,
     ) => { remove: () => void };
     removeListener: (eventName: string, callback: Function) => void;
     dismiss: () => void;
@@ -47,7 +60,7 @@ declare module 'react-native' {
         onPress?: () => void;
         style?: 'default' | 'cancel' | 'destructive';
       }>,
-      options?: { cancelable?: boolean }
+      options?: { cancelable?: boolean },
     ) => void;
   };
 
@@ -56,4 +69,4 @@ declare module 'react-native' {
     create: <T extends { [key: string]: any }>(styles: T) => T;
     flatten: (style: any) => { [key: string]: any };
   };
-} 
+}

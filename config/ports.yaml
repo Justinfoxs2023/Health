@@ -1,0 +1,7 @@
+ports:
+  gateway: 3000
+  user_service: 3001
+  health_data: 3002
+  ai_service: 3003
+  monitoring: 3004
+  websocket: 3005

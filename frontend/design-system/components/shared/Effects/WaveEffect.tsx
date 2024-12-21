@@ -1,20 +1,25 @@
 import React from 'react';
-import { View, StyleSheet, Animated } from 'react-native';
+
 import Svg, { Path } from 'react-native-svg';
 import { DesignTokens } from '../../../tokens';
+import { View, StyleSheet, Animated } from 'react-native';
 
-interface WaveEffectProps {
+interface IWaveEffectProps {
+  /** color 的描述 */
   color?: string;
+  /** height 的描述 */
   height?: number;
+  /** amplitude 的描述 */
   amplitude?: number;
+  /** frequency 的描述 */
   frequency?: number;
 }
 
-export const WaveEffect: React.FC<WaveEffectProps> = ({
+export const WaveEffect: React.FC<IWaveEffectProps> = ({
   color = DesignTokens.colors.brand.primary,
   height = 100,
   amplitude = 20,
-  frequency = 2
+  frequency = 2,
 }) => {
   const animatedValue = React.useRef(new Animated.Value(0)).current;
 
@@ -24,14 +29,14 @@ export const WaveEffect: React.FC<WaveEffectProps> = ({
         Animated.timing(animatedValue, {
           toValue: 1,
           duration: 2000,
-          useNativeDriver: true
+          useNativeDriver: true,
         }),
         Animated.timing(animatedValue, {
           toValue: 0,
           duration: 2000,
-          useNativeDriver: true
-        })
-      ])
+          useNativeDriver: true,
+        }),
+      ]),
     ).start();
   }, []);
 
@@ -59,11 +64,11 @@ export const WaveEffect: React.FC<WaveEffectProps> = ({
               {
                 translateX: animatedValue.interpolate({
                   inputRange: [0, 1],
-                  outputRange: [0, -100]
-                })
-              }
-            ]
-          }
+                  outputRange: [0, -100],
+                }),
+              },
+            ],
+          },
         ]}
       >
         <Svg width="200%" height="100%" viewBox="0 0 100 100">
@@ -78,11 +83,11 @@ export const WaveEffect: React.FC<WaveEffectProps> = ({
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   wave: {
     width: '200%',
     aspectRatio: 1,
-    position: 'absolute'
-  }
-}); 
+    position: 'absolute',
+  },
+});

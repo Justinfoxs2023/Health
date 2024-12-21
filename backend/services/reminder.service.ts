@@ -1,7 +1,7 @@
-import { Schedule } from 'node-schedule';
 import { Logger } from '../utils/logger';
-import { User } from '../models/user.model';
 import { NotificationService } from './notification.service';
+import { Schedule } from 'node-schedule';
+import { User } from '../models/user.model';
 
 export class ReminderService {
   private logger: Logger;
@@ -24,9 +24,9 @@ export class ReminderService {
     try {
       // 获取需要更新问卷的用户
       const users = await User.find({
-        'lastSurveyDate': {
-          $lt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) // 30天前
-        }
+        lastSurveyDate: {
+          $lt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30天前
+        },
       });
 
       for (const user of users) {
@@ -34,11 +34,11 @@ export class ReminderService {
           type: 'SURVEY_REMINDER',
           title: '健康问卷更新提醒',
           content: '建议您定期更新健康问卷，以获得更准确的健康分析',
-          action: '/survey'
+          action: '/survey',
         });
       }
     } catch (error) {
       this.logger.error('发送问卷提醒失败', error);
     }
   }
-} 
+}

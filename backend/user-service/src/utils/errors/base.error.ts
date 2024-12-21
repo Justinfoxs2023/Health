@@ -1,11 +1,11 @@
-import { ErrorCode } from '../../types/error.types';
+import { ErrorCodeType } from '../../types/error.types';
 
 export class AppError extends Error {
   constructor(
-    public code: ErrorCode,
+    public code: ErrorCodeType,
     public status: number,
     message: string,
-    public details?: any
+    public details?: any,
   ) {
     super(message);
     this.name = this.constructor.name;
@@ -17,7 +17,7 @@ export class AppError extends Error {
       code: this.code,
       status: this.status,
       message: this.message,
-      details: this.details
+      details: this.details,
     };
   }
-} 
+}

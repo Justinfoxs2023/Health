@@ -1,17 +1,17 @@
-import { injectable, inject } from 'inversify';
+import { ILogger } from '../types/logger';
+import { IPermission, IRole, ResourceType } from '../types/permission.types';
+import { IRedisClient } from '../infrastructure/redis';
 import { TYPES } from '../di/types';
-import { Logger } from '../types/logger';
-import { RedisClient } from '../infrastructure/redis';
-import { Permission, Role, Resource } from '../types/permission.types';
+import { injectable, inject } from 'inversify';
 
 @injectable()
 export class PermissionService {
   constructor(
-    @inject(TYPES.Logger) private logger: Logger,
-    @inject(TYPES.Redis) private redis: RedisClient
+    @inject(TYPES.Logger) private logger: ILogger,
+    @inject(TYPES.Redis) private redis: IRedisClient,
   ) {}
 
-  async checkPermission(userId: string, resource: Resource, action: string): Promise<boolean> {
+  async checkPermission(userId: string, resource: ResourceType, action: string): Promise<boolean> {
     try {
       const cacheKey = `permissions:${userId}`;
       let permissions = await this.redis.get(cacheKey);
@@ -30,19 +30,22 @@ export class PermissionService {
     }
   }
 
-  private async loadUserPermissions(userId: string): Promise<Permission[]> {
+  private async loadUserPermissions(userId: string): Promise<IPermission[]> {
     const user = await this.userRepository.findById(userId);
     const roles = await this.roleRepository.findByIds(user.roles);
-    
+
     return roles.reduce((acc, role) => {
       return [...acc, ...role.permissions];
     }, []);
   }
 
-  private evaluatePermission(permissions: Permission[], resource: Resource, action: string): boolean {
-    return permissions.some(permission => 
-      permission.resource === resource &&
-      permission.actions.includes(action)
+  private evaluatePermission(
+    permissions: IPermission[],
+    resource: ResourceType,
+    action: string,
+  ): boolean {
+    return permissions.some(
+      permission => permission.resource === resource && permission.actions.includes(action),
     );
   }
-} 
+}

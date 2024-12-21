@@ -1,11 +1,18 @@
-export interface RedisClient {
+/**
+ * @fileoverview TS 文件 index.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
+export interface IRedisClient {
   get(key: string): Promise<string | null>;
   set(key: string, value: string, ttl?: number): Promise<void>;
   del(key: string): Promise<void>;
   exists(key: string): Promise<boolean>;
 }
 
-export class RedisClientImpl implements RedisClient {
+export class RedisClientImpl implements IRedisClient {
   private client: any; // 使用实际的Redis客户端类型
 
   constructor() {
@@ -31,4 +38,4 @@ export class RedisClientImpl implements RedisClient {
   async exists(key: string): Promise<boolean> {
     return this.client.exists(key) === 1;
   }
-} 
+}

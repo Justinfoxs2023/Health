@@ -8,7 +8,7 @@ export const animations = {
         toValue: 1,
         duration: 300,
         easing: Easing.ease,
-        useNativeDriver: true
+        useNativeDriver: true,
       });
     },
     out: (value: Animated.Value) => {
@@ -16,9 +16,9 @@ export const animations = {
         toValue: 0,
         duration: 300,
         easing: Easing.ease,
-        useNativeDriver: true
+        useNativeDriver: true,
       });
-    }
+    },
   },
 
   // 滑动
@@ -28,16 +28,16 @@ export const animations = {
         left: 100,
         right: -100,
         up: 100,
-        down: -100
+        down: -100,
       }[direction];
 
       value.setValue(initialValue);
       return Animated.spring(value, {
         toValue: 0,
         useNativeDriver: true,
-        bounciness: 8
+        bounciness: 8,
       });
-    }
+    },
   },
 
   // 缩放
@@ -48,9 +48,9 @@ export const animations = {
         toValue: 1,
         useNativeDriver: true,
         friction: 7,
-        tension: 40
+        tension: 40,
       });
-    }
+    },
   },
 
   // 加载动画
@@ -62,9 +62,9 @@ export const animations = {
           toValue: 1,
           duration: 2000,
           easing: Easing.linear,
-          useNativeDriver: true
-        })
+          useNativeDriver: true,
+        }),
       );
-    }
-  }
-}; 
+    },
+  },
+};

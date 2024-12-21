@@ -1,6 +1,6 @@
+import { ConfigService } from '../config/config.service';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { initTracer, JaegerTracer } from 'jaeger-client';
-import { ConfigService } from '../config/config.service';
 
 @Injectable()
 export class JaegerTracingService implements OnModuleInit {
@@ -17,13 +17,13 @@ export class JaegerTracingService implements OnModuleInit {
       serviceName: this.config.get('SERVICE_NAME'),
       sampler: {
         type: 'probabilistic',
-        param: 0.1
+        param: 0.1,
       },
       reporter: {
         logSpans: true,
         agentHost: this.config.get('JAEGER_AGENT_HOST'),
-        agentPort: parseInt(this.config.get('JAEGER_AGENT_PORT'))
-      }
+        agentPort: parseInt(this.config.get('JAEGER_AGENT_PORT')),
+      },
     };
 
     this.tracer = initTracer(config);
@@ -36,4 +36,4 @@ export class JaegerTracingService implements OnModuleInit {
   injectContext(span: any, format: string, carrier: any) {
     this.tracer.inject(span, format, carrier);
   }
-} 
+}

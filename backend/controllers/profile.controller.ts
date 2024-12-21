@@ -1,6 +1,6 @@
+import { IAuthRequest } from '../types/models';
 import { Response } from 'express';
 import { User } from '../models/user.model';
-import { IAuthRequest } from '../types/models';
 import { uploadImage } from '../utils/upload';
 
 export class ProfileController {
@@ -25,7 +25,7 @@ export class ProfileController {
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -56,7 +56,7 @@ export class ProfileController {
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -86,10 +86,10 @@ export class ProfileController {
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
 }
 
-export const profileController = new ProfileController(); 
+export const profileController = new ProfileController();

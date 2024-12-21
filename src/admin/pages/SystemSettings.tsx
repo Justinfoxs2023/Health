@@ -1,29 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Card,
-  Tabs,
-  Form,
-  Input,
-  Switch,
-  Button,
-  message 
-} from 'antd';
+
+import { Card, Tabs, Form, Input, Switch, Button, message } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
-import { SystemConfigType } from '@/types/system-config';
-import { 
+
+import {
   getSystemConfig,
   updateSystemConfig,
   exportSystemConfig,
-  importSystemConfig 
+  importSystemConfig,
 } from '@/store/actions/system';
 import { ConfigPanel } from '@/components/ConfigPanel';
 import { PermissionGuard } from '@/components/PermissionGuard';
+import { SystemConfigType } from '@/types/system-config';
 
-export const SystemSettings = () => {
+expor
+t const SystemSettings = () => {
   const dispatch = useDispatch();
   const [activeTab, setActiveTab] = useState('storage');
   const [loading, setLoading] = useState(false);
-  
+
   const systemConfig = useSelector(state => state.system.config);
 
   useEffect(() => {
@@ -106,9 +101,9 @@ export const SystemSettings = () => {
       </Tabs>
 
       <div style={{ marginTop: 24 }}>
-        <Button onClick={handleExport}>导出配置</Button>
-        <Button style={{ marginLeft: 8 }}>导入配置</Button>
+        <Button onClick={handleExport}></Button>
+        <Button style={{ marginLeft 8 }}></Button>
       </div>
     </Card>
   );
-}; 
+};

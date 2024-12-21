@@ -1,0 +1,33 @@
+.digital-human-container {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+  padding: 20px;
+  background: var(--bg-gradient);
+  border-radius: 15px;
+  
+  .profile-view {
+    position: relative;
+    
+    canvas {
+      width: 100%;
+      height: 100%;
+      border-radius: 10px;
+    }
+    
+    .health-metrics {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 15px;
+      border-radius: 8px;
+    }
+  }
+  
+  .interaction-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+} 

@@ -6,13 +6,13 @@ export class AnimationSystem {
     duration: {
       quick: 200,
       normal: 300,
-      slow: 500
+      slow: 500,
     },
     easing: {
       standard: Easing.bezier(0.4, 0, 0.2, 1),
       accelerate: Easing.bezier(0.4, 0, 1, 1),
-      decelerate: Easing.bezier(0, 0, 0.2, 1)
-    }
+      decelerate: Easing.bezier(0, 0, 0.2, 1),
+    },
   };
 
   // 淡入淡出动画
@@ -21,7 +21,7 @@ export class AnimationSystem {
       toValue,
       duration: this.config.duration.normal,
       easing: this.config.easing.standard,
-      useNativeDriver: true
+      useNativeDriver: true,
     });
   }
 
@@ -31,20 +31,24 @@ export class AnimationSystem {
       toValue,
       tension: 40,
       friction: 7,
-      useNativeDriver: true
+      useNativeDriver: true,
     });
   }
 
   // 位移动画
-  static translate(value: Animated.Value, toValue: number, options?: {
-    direction?: 'x' | 'y';
-    duration?: number;
-  }) {
+  static translate(
+    value: Animated.Value,
+    toValue: number,
+    options?: {
+      direction?: 'x' | 'y';
+      duration?: number;
+    },
+  ) {
     return Animated.timing(value, {
       toValue,
       duration: options?.duration || this.config.duration.normal,
       easing: this.config.easing.standard,
-      useNativeDriver: true
+      useNativeDriver: true,
     });
   }
 
@@ -57,4 +61,4 @@ export class AnimationSystem {
   static sequence(animations: Animated.CompositeAnimation[]) {
     return Animated.sequence(animations);
   }
-} 
+}

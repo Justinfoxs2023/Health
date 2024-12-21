@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { authController } from '../controllers/auth.controller';
 import { auth } from '../middleware/auth';
+import { authController } from '../controllers/auth.controller';
 
 const router = Router();
 
@@ -22,4 +22,4 @@ router.post('/reset-password/:token', authController.resetPassword);
 // 修改密码(需要登录)
 router.post('/change-password', auth.required, authController.changePassword);
 
-export default router; 
+export default router;

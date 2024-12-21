@@ -1,88 +1,92 @@
-import { Schema, model } from 'mongoose';
 import { IWorkoutLog } from '../types/models';
+import { Schema, model } from 'mongoose';
 
 const workoutLogSchema = new Schema<IWorkoutLog>({
   userId: {
     type: Schema.Types.ObjectId,
     ref: 'User',
-    required: true
+    required: true,
   },
   planId: {
     type: Schema.Types.ObjectId,
-    ref: 'ExercisePlan'
+    ref: 'ExercisePlan',
   },
   date: {
     type: Date,
     required: true,
-    default: Date.now
+    default: Date.now,
   },
   duration: {
     type: Number,
-    required: true
+    required: true,
   },
   type: {
     type: String,
     enum: ['有氧', '力量', '柔韧', '平衡'],
-    required: true
+    required: true,
   },
-  exercises: [{
-    name: {
-      type: String,
-      required: true
+  exercises: [
+    {
+      name: {
+        type: String,
+        required: true,
+      },
+      sets: [
+        {
+          reps: Number,
+          weight: Number,
+          duration: Number,
+          distance: Number,
+          notes: String,
+        },
+      ],
+      restTime: Number,
     },
-    sets: [{
-      reps: Number,
-      weight: Number,
-      duration: Number,
-      distance: Number,
-      notes: String
-    }],
-    restTime: Number
-  }],
+  ],
   heartRate: {
     avg: Number,
     max: Number,
-    min: Number
+    min: Number,
   },
   caloriesBurned: {
     type: Number,
-    required: true
+    required: true,
   },
   intensity: {
     type: String,
     enum: ['低', '中', '高'],
-    required: true
+    required: true,
   },
   feeling: {
     type: String,
     enum: ['很差', '差', '一般', '好', '很好'],
-    required: true
+    required: true,
   },
   notes: String,
   location: {
     type: {
       type: String,
       enum: ['Point'],
-      default: 'Point'
+      default: 'Point',
     },
     coordinates: {
       type: [Number],
-      required: true
-    }
+      required: true,
+    },
   },
   weather: {
     temperature: Number,
     humidity: Number,
-    condition: String
+    condition: String,
   },
   createdAt: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
 // 创建索引
 workoutLogSchema.index({ userId: 1, date: -1 });
 workoutLogSchema.index({ location: '2dsphere' });
 
-export const WorkoutLog = model<IWorkoutLog>('WorkoutLog', workoutLogSchema); 
+export const WorkoutLog = model<IWorkoutLog>('WorkoutLog', workoutLogSchema);

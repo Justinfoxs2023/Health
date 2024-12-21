@@ -1,53 +1,58 @@
-import { Router } from 'express';
-import { foodController } from '../controllers/food.controller';
-import { auth } from '../middleware/auth.tsx';
 import { IAuthRequest } from '../types/models';
+import { Router } from 'express';
+import { auth } from '../middleware/auth.tsx';
+import { foodController } from '../controllers/food.controller';
 
 const router = Router();
 
 // 获取食物列表
-router.get('/', 
+router.get(
+  '/',
   async (req, res, next) => {
     const authReq = req as IAuthRequest;
     await auth.required(authReq, res, next);
   },
-  foodController.getFoodList
+  foodController.getFoodList,
 );
 
 // 获取食物详情
-router.get('/:id',
+router.get(
+  '/:id',
   async (req, res, next) => {
     const authReq = req as IAuthRequest;
     await auth.required(authReq, res, next);
   },
-  foodController.getFoodDetails
+  foodController.getFoodDetails,
 );
 
 // 添加新食物(需要管理员权限)
-router.post('/',
+router.post(
+  '/',
   async (req, res, next) => {
     const authReq = req as IAuthRequest;
     await auth.adminRequired(authReq, res, next);
   },
-  foodController.createFood
+  foodController.createFood,
 );
 
 // 更新食物信息(需要管理员权限)
-router.put('/:id',
+router.put(
+  '/:id',
   async (req, res, next) => {
     const authReq = req as IAuthRequest;
     await auth.adminRequired(authReq, res, next);
   },
-  foodController.updateFood
+  foodController.updateFood,
 );
 
 // 删除食物(需要管理员权限)
-router.delete('/:id',
+router.delete(
+  '/:id',
   async (req, res, next) => {
     const authReq = req as IAuthRequest;
     await auth.adminRequired(authReq, res, next);
   },
-  foodController.deleteFood
+  foodController.deleteFood,
 );
 
-export default router; 
+export default router;

@@ -1,6 +1,6 @@
-import { Logger } from '../utils/logger';
-import { BaseService } from './base.service';
 import { AIError } from '../utils/errors';
+import { BaseService } from './base.service';
+import { Logger } from '../utils/logger';
 
 export abstract class BaseAIService extends BaseService {
   protected logger: Logger;
@@ -41,4 +41,4 @@ export abstract class BaseAIService extends BaseService {
       throw new AIError('结果后处理失败');
     }
   }
-} 
+}

@@ -1,12 +1,12 @@
-import { Injectable } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class ConfigService {
   constructor() {
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env'
+      envFilePath: '.env',
     });
   }
 
@@ -17,7 +17,7 @@ export class ConfigService {
   async getServiceLimits(serviceName: string) {
     return {
       rateLimit: parseInt(process.env[`${serviceName.toUpperCase()}_RATE_LIMIT`] || '100'),
-      concurrency: parseInt(process.env[`${serviceName.toUpperCase()}_CONCURRENCY`] || '10')
+      concurrency: parseInt(process.env[`${serviceName.toUpperCase()}_CONCURRENCY`] || '10'),
     };
   }
-} 
+}

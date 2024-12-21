@@ -1,0 +1,305 @@
+# 服务集成配置
+
+# 核心服务配置
+core_services:
+  metrics:
+    name: "Metrics Service"
+    enabled: true
+    startup_priority: 1
+    startup_timeout: 5000
+    shutdown_timeout: 5000
+    health_check:
+      enabled: true
+      interval: 30000
+      timeout: 5000
+
+  logger:
+    name: "Logger Service"
+    enabled: true
+    startup_priority: 1
+    startup_timeout: 5000
+    shutdown_timeout: 5000
+    health_check:
+      enabled: true
+      interval: 30000
+      timeout: 5000
+
+  event_emitter:
+    name: "Event Emitter"
+    enabled: true
+    startup_priority: 1
+    startup_timeout: 5000
+    shutdown_timeout: 5000
+    health_check:
+      enabled: true
+      interval: 30000
+      timeout: 5000
+
+# 基础服务配置
+base_services:
+  performance_optimizer:
+    name: "Performance Optimizer"
+    enabled: true
+    startup_priority: 2
+    startup_timeout: 10000
+    shutdown_timeout: 10000
+    dependencies:
+      - service: metrics
+        required: true
+      - service: logger
+        required: true
+    health_check:
+      enabled: true
+      interval: 60000
+      timeout: 10000
+      method: getPerformanceReport
+      params: ["system"]
+
+  security_auditor:
+    name: "Security Auditor"
+    enabled: true
+    startup_priority: 2
+    startup_timeout: 10000
+    shutdown_timeout: 10000
+    dependencies:
+      - service: metrics
+        required: true
+      - service: logger
+        required: true
+    health_check:
+      enabled: true
+      interval: 300000
+      timeout: 10000
+      method: generateSecurityReport
+
+  alert_manager:
+    name: "Alert Manager"
+    enabled: true
+    startup_priority: 2
+    startup_timeout: 10000
+    shutdown_timeout: 10000
+    dependencies:
+      - service: metrics
+        required: true
+      - service: logger
+        required: true
+    health_check:
+      enabled: true
+      interval: 30000
+      timeout: 10000
+      method: getActiveAlerts
+
+# 数据服务配置
+data_services:
+  data_management:
+    name: "Data Management"
+    enabled: true
+    startup_priority: 3
+    startup_timeout: 15000
+    shutdown_timeout: 15000
+    dependencies:
+      - service: metrics
+        required: true
+      - service: logger
+        required: true
+    health_check:
+      enabled: true
+      interval: 60000
+      timeout: 15000
+      method: getDataTypes
+    storage:
+      type: timeseries
+      compression: true
+      retention:
+        raw: 7
+        hourly: 30
+        daily: 365
+    backup:
+      enabled: true
+      interval: 86400000
+      retention: 30
+    archive:
+      enabled: true
+      interval: 2592000000
+      format: parquet
+
+  dashboard_analysis:
+    name: "Dashboard Analysis"
+    enabled: true
+    startup_priority: 4
+    startup_timeout: 10000
+    shutdown_timeout: 10000
+    dependencies:
+      - service: metrics
+        required: true
+      - service: logger
+        required: true
+      - service: data_management
+        required: true
+    health_check:
+      enabled: true
+      interval: 60000
+      timeout: 10000
+    analysis:
+      trend:
+        enabled: true
+        max_points: 1000
+        methods:
+          - linear
+          - moving_average
+          - exponential
+      correlation:
+        enabled: true
+        max_metrics: 5
+        methods:
+          - pearson
+          - spearman
+      anomaly:
+        enabled: true
+        sensitivity: 0.8
+        methods:
+          - zscore
+          - isolation_forest
+      forecast:
+        enabled: true
+        horizon: 24
+        methods:
+          - arima
+          - prophet
+
+# 应用服务配置
+app_services:
+  dashboard_service:
+    name: "Dashboard Service"
+    enabled: true
+    startup_priority: 5
+    startup_timeout: 10000
+    shutdown_timeout: 10000
+    dependencies:
+      - service: performance_optimizer
+        required: true
+      - service: security_auditor
+        required: true
+      - service: alert_manager
+        required: true
+    health_check:
+      enabled: true
+      interval: 30000
+      timeout: 10000
+    update_interval: 30000
+    retention_period: 7
+    max_data_points: 1000
+
+  custom_dashboard:
+    name: "Custom Dashboard"
+    enabled: true
+    startup_priority: 6
+    startup_timeout: 10000
+    shutdown_timeout: 10000
+    dependencies:
+      - service: dashboard_service
+        required: true
+      - service: dashboard_analysis
+        required: true
+    health_check:
+      enabled: true
+      interval: 30000
+      timeout: 10000
+    features:
+      max_dashboards_per_user: 5
+      max_widgets_per_dashboard: 20
+      widget_types:
+        - performance
+        - security
+        - alerts
+        - metrics
+        - status
+        - custom
+      layouts:
+        - name: "1x1"
+          columns: 1
+          rows: 1
+        - name: "2x2"
+          columns: 2
+          rows: 2
+        - name: "3x3"
+          columns: 3
+          rows: 3
+      themes:
+        - name: "default"
+          colors:
+            primary: "#1976D2"
+            secondary: "#424242"
+            success: "#4CAF50"
+            warning: "#FFC107"
+            error: "#F44336"
+        - name: "dark"
+          colors:
+            primary: "#90CAF9"
+            secondary: "#B0BEC5"
+            success: "#A5D6A7"
+            warning: "#FFE082"
+            error: "#EF9A9A"
+
+# 服务监控配置
+monitoring:
+  health_check:
+    enabled: true
+    interval: 60000
+    timeout: 5000
+    retry_count: 3
+  metrics:
+    enabled: true
+    collection_interval: 10000
+    retention_days: 30
+  logging:
+    enabled: true
+    level: info
+    retention_days: 90
+  alerts:
+    enabled: true
+    channels:
+      - email
+      - slack
+      - webhook
+
+# 性能优化配置
+performance:
+  caching:
+    enabled: true
+    ttl: 300000
+  lazy_loading:
+    enabled: true
+    threshold: 20
+  batch_processing:
+    enabled: true
+    max_batch_size: 50
+    timeout: 100
+
+# 安全配置
+security:
+  encryption:
+    enabled: true
+    algorithm: AES-256-GCM
+    key_rotation: 86400000
+  audit:
+    enabled: true
+    retention_days: 365
+  access_control:
+    enabled: true
+    token_expiration: 3600000
+    refresh_token_expiration: 2592000000
+
+# 错误处理配置
+error_handling:
+  retry:
+    enabled: true
+    max_attempts: 3
+    delay: 1000
+  fallback:
+    enabled: true
+    default_timeout: 5000
+  circuit_breaker:
+    enabled: true
+    failure_threshold: 5
+    reset_timeout: 60000

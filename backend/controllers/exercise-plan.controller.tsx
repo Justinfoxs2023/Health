@@ -1,7 +1,7 @@
-import { Response } from 'express';
 import { ExercisePlan } from '../models/exercise-plan.model';
-import { WorkoutLog } from '../models/workout-log.model';
 import { IAuthRequest, IExercisePlan } from '../types/models';
+import { Response } from 'express';
+import { WorkoutLog } from '../models/workout-log.model';
 
 export class ExercisePlanController {
   /**
@@ -13,9 +13,12 @@ export class ExercisePlanController {
       const planData = req.body;
 
       // 计算总训练次数
-      const totalWorkouts = planData.schedule.length * 
-        Math.ceil((new Date(planData.endDate).getTime() - new Date(planData.startDate).getTime()) 
-        / (7 * 24 * 60 * 60 * 1000));
+      const totalWorkouts =
+        planData.schedule.length *
+        Math.ceil(
+          (new Date(planData.endDate).getTime() - new Date(planData.startDate).getTime()) /
+            (7 * 24 * 60 * 60 * 1000),
+        );
 
       const plan = new ExercisePlan({
         userId,
@@ -23,20 +26,20 @@ export class ExercisePlanController {
         progress: {
           completedWorkouts: 0,
           totalWorkouts,
-          adherenceRate: 0
-        }
+          adherenceRate: 0,
+        },
       });
 
       await plan.save();
 
       res.status(201).json({
         success: true,
-        data: plan
+        data: plan,
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -67,13 +70,13 @@ export class ExercisePlanController {
           total,
           page: Number(page),
           limit: Number(limit),
-          pages: Math.ceil(total / Number(limit))
-        }
+          pages: Math.ceil(total / Number(limit)),
+        },
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -90,7 +93,7 @@ export class ExercisePlanController {
       if (!plan) {
         res.status(404).json({
           success: false,
-          message: '未找到该运动计划'
+          message: '未找到该运动计划',
         });
         return;
       }
@@ -99,20 +102,20 @@ export class ExercisePlanController {
       const workoutLogs = await WorkoutLog.find({
         userId,
         planId: id,
-        date: { $gte: plan.startDate, $lte: plan.endDate }
+        date: { $gte: plan.startDate, $lte: plan.endDate },
       }).sort({ date: -1 });
 
       res.json({
         success: true,
         data: {
           plan,
-          workoutLogs
-        }
+          workoutLogs,
+        },
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -130,7 +133,7 @@ export class ExercisePlanController {
       if (!plan) {
         res.status(404).json({
           success: false,
-          message: '未找到该运动计划'
+          message: '未找到该运动计划',
         });
         return;
       }
@@ -140,12 +143,12 @@ export class ExercisePlanController {
 
       res.json({
         success: true,
-        data: plan
+        data: plan,
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -162,7 +165,7 @@ export class ExercisePlanController {
       if (!plan) {
         res.status(404).json({
           success: false,
-          message: '未找到该运动计划'
+          message: '未找到该运动计划',
         });
         return;
       }
@@ -171,29 +174,29 @@ export class ExercisePlanController {
       const completedWorkouts = await WorkoutLog.countDocuments({
         userId,
         planId: id,
-        date: { $gte: plan.startDate, $lte: plan.endDate }
+        date: { $gte: plan.startDate, $lte: plan.endDate },
       });
 
       // 更新进度
       plan.progress = {
         completedWorkouts,
         totalWorkouts: plan.progress.totalWorkouts,
-        adherenceRate: (completedWorkouts / plan.progress.totalWorkouts) * 100
+        adherenceRate: (completedWorkouts / plan.progress.totalWorkouts) * 100,
       };
 
       await plan.save();
 
       res.json({
         success: true,
-        data: plan.progress
+        data: plan.progress,
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
 }
 
-export const exercisePlanController = new ExercisePlanController(); 
+export const exercisePlanController = new ExercisePlanController();

@@ -1,6 +1,6 @@
-import { Response } from 'express';
 import { HealthTracking } from '../models/health-tracking.model';
 import { IAuthRequest, IHealthTracking, IHealthStats } from '../types/models';
+import { Response } from 'express';
 
 export class HealthTrackingController {
   /**
@@ -13,19 +13,19 @@ export class HealthTrackingController {
 
       const tracking = new HealthTracking({
         userId,
-        ...trackingData
+        ...trackingData,
       });
 
       await tracking.save();
 
       res.status(201).json({
         success: true,
-        data: tracking
+        data: tracking,
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -39,11 +39,11 @@ export class HealthTrackingController {
       const { startDate, endDate, type, page = 1, limit = 10 } = req.query;
 
       const query: any = { userId };
-      
+
       if (startDate && endDate) {
         query.date = {
           $gte: new Date(startDate as string),
-          $lte: new Date(endDate as string)
+          $lte: new Date(endDate as string),
         };
       }
 
@@ -67,13 +67,13 @@ export class HealthTrackingController {
           total,
           page: Number(page),
           limit: Number(limit),
-          pages: Math.ceil(total / Number(limit))
-        }
+          pages: Math.ceil(total / Number(limit)),
+        },
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -89,19 +89,19 @@ export class HealthTrackingController {
       const startDate = this.getStartDateForPeriod(period as string);
       const records = await HealthTracking.find({
         userId,
-        date: { $gte: startDate }
+        date: { $gte: startDate },
       }).sort({ date: 1 });
 
       const stats = await this.calculateHealthStats(records, period as string);
 
       res.json({
         success: true,
-        data: stats
+        data: stats,
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -126,7 +126,10 @@ export class HealthTrackingController {
   /**
    * 计算健康统计数据
    */
-  private async calculateHealthStats(records: IHealthTracking[], period: string): Promise<IHealthStats> {
+  private async calculateHealthStats(
+    records: IHealthTracking[],
+    period: string,
+  ): Promise<IHealthStats> {
     // 实现统计计算逻辑
     // 这里需要根据不同类型的数据进行统计分析
     // 返回符合IHealthStats接口的数据
@@ -137,4 +140,4 @@ export class HealthTrackingController {
   }
 }
 
-export const healthTrackingController = new HealthTrackingController(); 
+export const healthTrackingController = new HealthTrackingController();

@@ -1,5 +1,5 @@
-import { Router } from 'express';
 import { InteractionController } from '../controllers/interaction.controller';
+import { Router } from 'express';
 import { auth } from '../middleware/auth.middleware';
 import { rateLimit } from '../middleware/rate-limit.middleware';
 
@@ -11,7 +11,7 @@ router.post(
   '/query',
   auth.verifyToken,
   rateLimit.standard,
-  interactionController.handleQuery.bind(interactionController)
+  interactionController.handleQuery.bind(interactionController),
 );
 
 // 获取UI配置
@@ -19,7 +19,7 @@ router.get(
   '/ui-config/:userId',
   auth.verifyToken,
   rateLimit.standard,
-  interactionController.getUIConfig.bind(interactionController)
+  interactionController.getUIConfig.bind(interactionController),
 );
 
-export default router; 
+export default router;

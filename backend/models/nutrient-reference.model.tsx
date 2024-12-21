@@ -1,62 +1,64 @@
-import { Schema, model } from 'mongoose';
 import { INutrientReference } from '../types/models';
+import { Schema, model } from 'mongoose';
 
 const nutrientReferenceSchema = new Schema<INutrientReference>({
   name: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
   },
   category: {
     type: String,
     required: true,
-    enum: ['宏量营养素', '维生素', '矿物质', '其他']
+    enum: ['宏量营养素', '维生素', '矿物质', '其他'],
   },
   unit: {
     type: String,
-    required: true
+    required: true,
   },
   dailyValue: {
     default: {
       type: Number,
-      required: true
+      required: true,
     },
-    byAge: [{
-      range: String,
-      value: Number
-    }],
+    byAge: [
+      {
+        range: String,
+        value: Number,
+      },
+    ],
     byGender: {
       male: Number,
-      female: Number
+      female: Number,
     },
     byLifeStage: {
       pregnancy: Number,
-      lactation: Number
-    }
+      lactation: Number,
+    },
   },
   upperLimit: Number,
   description: {
     type: String,
-    required: true
+    required: true,
   },
   foodSources: {
     type: [String],
-    required: true
+    required: true,
   },
   deficiencySymptoms: [String],
   excessSymptoms: [String],
   createdAt: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   updatedAt: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
 // 更新时自动更新updateAt字段
-nutrientReferenceSchema.pre('save', function(next) {
+nutrientReferenceSchema.pre('save', function (next) {
   this.updatedAt = new Date();
   next();
 });
@@ -65,4 +67,7 @@ nutrientReferenceSchema.pre('save', function(next) {
 nutrientReferenceSchema.index({ category: 1 });
 nutrientReferenceSchema.index({ name: 'text' });
 
-export const NutrientReference = model<INutrientReference>('NutrientReference', nutrientReferenceSchema); 
+export const NutrientReference = model<INutrientReference>(
+  'NutrientReference',
+  nutrientReferenceSchema,
+);

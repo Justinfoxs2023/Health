@@ -1,5 +1,5 @@
-import { Logger } from '../../utils/logger';
 import { EventEmitter } from '../../utils/event-emitter';
+import { Logger } from '../../utils/logger';
 
 export abstract class BaseComponent {
   protected logger: Logger;
@@ -41,4 +41,4 @@ export abstract class BaseComponent {
   protected emit(event: string, data?: any): void {
     this.events.emit(event, data);
   }
-} 
+}

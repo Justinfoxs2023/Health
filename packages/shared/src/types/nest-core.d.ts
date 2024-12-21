@@ -1,0 +1,25 @@
+/**
+ * @fileoverview TS 文件 nest-core.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
+declare module '@nestjs/core' {
+  export const APP_FILTER: symbol;
+  export const APP_PIPE: symbol;
+  export const APP_GUARD: symbol;
+  export const APP_INTERCEPTOR: symbol;
+
+  export interface Type<T = any> extends Function {
+    new (...args: any[]): T;
+  }
+
+  export class NestFactory {
+    static create(module: any): Promise<any>;
+  }
+
+  export class Reflector {
+    get<T>(metadataKey: string, target: object): T;
+  }
+}

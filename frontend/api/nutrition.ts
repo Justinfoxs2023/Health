@@ -1,42 +1,68 @@
-import { ApiResponse } from '../types/api';
+import { IApiResponse } from '../types/api';
 
-export interface NutritionQuestion {
+export interface INutritionQuestion {
+  /** id 的描述 */
   id: string;
+  /** title 的描述 */
   title: string;
+  /** content 的描述 */
   content: string;
+  /** category 的描述 */
   category: string;
+  /** tags 的描述 */
   tags: string[];
+  /** images 的描述 */
   images: string[];
+  /** status 的描述 */
   status: string;
+  /** userId 的描述 */
   userId: string;
+  /** createdAt 的描述 */
   createdAt: string;
-  answers: Answer[];
+  /** answers 的描述 */
+  answers: IAnswer[];
 }
 
-export interface Answer {
+export interface IAnswer {
+  /** _id 的描述 */
   _id: string;
+  /** content 的描述 */
   content: string;
+  /** userId 的描述 */
   userId: string;
+  /** likes 的描述 */
   likes: number;
+  /** isAccepted 的描述 */
   isAccepted: boolean;
+  /** createdAt 的描述 */
   createdAt: string;
 }
 
-export interface NutritionArticle {
+export interface INutritionArticle {
+  /** id 的描述 */
   id: string;
+  /** title 的描述 */
   title: string;
+  /** content 的描述 */
   content: string;
+  /** category 的描述 */
   category: string;
+  /** author 的描述 */
   author: {
     id: string;
     name: string;
     avatar: string;
     title: string;
   };
+  /** coverImage 的描述 */
   coverImage: string;
+  /** summary 的描述 */
   summary: string;
+  /** likes 的描述 */
   likes: number;
+  /** views 的描述 */
   views: number;
+  /** createdAt 的描述 */
   createdAt: string;
 }
 
@@ -45,12 +71,12 @@ export const getNutritionQuestions = async (params?: {
   keyword?: string;
   page?: number;
   limit?: number;
-}): Promise<ApiResponse<NutritionQuestion[]>> => {
+}): Promise<IApiResponse<INutritionQuestion[]>> => {
   // API implementation
   return {} as any;
 };
 
-export const getQuestionDetails = async (id: string): Promise<ApiResponse<NutritionQuestion>> => {
+export const getQuestionDetails = async (id: string): Promise<IApiResponse<INutritionQuestion>> => {
   // API implementation
   return {} as any;
 };
@@ -62,7 +88,7 @@ export const createQuestion = async (data: {
   tags: string[];
   images: string[];
   isPrivate: boolean;
-}): Promise<ApiResponse<NutritionQuestion>> => {
+}): Promise<IApiResponse<INutritionQuestion>> => {
   // API implementation
   return {} as any;
 };
@@ -72,12 +98,12 @@ export const getNutritionArticles = async (params?: {
   keyword?: string;
   page?: number;
   limit?: number;
-}): Promise<ApiResponse<NutritionArticle[]>> => {
+}): Promise<IApiResponse<INutritionArticle[]>> => {
   // API implementation
   return {} as any;
 };
 
-export const getArticleDetails = async (id: string): Promise<ApiResponse<NutritionArticle>> => {
-  // API implementation 
+export const getArticleDetails = async (id: string): Promise<IApiResponse<INutritionArticle>> => {
+  // API implementation
   return {} as any;
-}; 
+};

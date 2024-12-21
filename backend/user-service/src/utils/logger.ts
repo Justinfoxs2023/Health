@@ -1,8 +1,8 @@
+import { ILogger } from '../types/logger';
 import { injectable } from 'inversify';
-import { Logger } from '../types/logger';
 
 @injectable()
-export class LoggerImpl implements Logger {
+export class LoggerImpl implements ILogger {
   constructor(private context: string) {}
 
   info(message: string, ...args: any[]): void {
@@ -10,7 +10,12 @@ export class LoggerImpl implements Logger {
   }
 
   error(message: string, error: Error | unknown, context?: string): void {
-    console.error(`[${this.context}${context ? `:${context}` : ''}] ERROR:`, message, error);
+    console.error(
+      'Error in logger.ts:',
+      `[${this.context}${context ? `:${context}` : ''}] ERROR:`,
+      message,
+      error,
+    );
   }
 
   warn(message: string, ...args: any[]): void {
@@ -20,4 +25,4 @@ export class LoggerImpl implements Logger {
   debug(message: string, ...args: any[]): void {
     console.debug(`[${this.context}] DEBUG:`, message, ...args);
   }
-} 
+}

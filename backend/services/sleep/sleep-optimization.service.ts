@@ -1,7 +1,8 @@
 import { EventEmitter } from 'events';
 import { Logger } from '../../utils/logger';
 
-interface OptimizationPlan {
+interface IOptimizationPlan {
+  /** circadianRhythm 的描述 */
   circadianRhythm: {
     lightExposure: {
       morning: string[];
@@ -12,6 +13,7 @@ interface OptimizationPlan {
       meals: string[];
     };
   };
+  /** environment 的描述 */
   environment: {
     temperature: {
       optimal: number;
@@ -40,14 +42,14 @@ export class SleepOptimizationService extends EventEmitter {
     this.logger = new Logger('SleepOptimization');
   }
 
-  async generateOptimizationPlan(userId: string, analysis: any): Promise<OptimizationPlan> {
+  async generateOptimizationPlan(userId: string, analysis: any): Promise<IOptimizationPlan> {
     try {
       // 基于分析结果生成优化方案
       const plan = await this.createPlan(analysis);
-      
+
       // 个性化调整
       await this.customizePlan(plan, userId);
-      
+
       return plan;
     } catch (error) {
       this.logger.error('生成睡眠优化方案失败:', error);
@@ -55,12 +57,12 @@ export class SleepOptimizationService extends EventEmitter {
     }
   }
 
-  private async createPlan(analysis: any): Promise<OptimizationPlan> {
+  private async createPlan(analysis: any): Promise<IOptimizationPlan> {
     // 实现方案生成逻辑
     return null;
   }
 
-  private async customizePlan(plan: OptimizationPlan, userId: string): Promise<void> {
+  private async customizePlan(plan: IOptimizationPlan, userId: string): Promise<void> {
     // 实现个性化调整逻辑
   }
-} 
+}

@@ -1,19 +1,23 @@
-import { Router, Request, Response, NextFunction } from 'express';
-import { Logger } from '../utils/logger';
-import { EventEmitter } from 'events';
-import { validate } from 'class-validator';
-import { MiddlewareChain } from './middleware/middleware-chain';
 import { ErrorHandler } from './middleware/error-handler';
+import { EventEmitter } from 'events';
+import { Logger } from '../utils/logger';
+import { MiddlewareChain } from './middleware/middleware-chain';
 import { RequestValidator } from './middleware/request-validator';
 import { ResponseFormatter } from './middleware/response-formatter';
+import { Router, Request, Response, NextFunction } from 'express';
+import { validate } from 'class-validator';
 
-export interface ApiConfig {
+export interface IApiConfig {
+  /** prefix 的描述 */
   prefix?: string;
+  /** cors 的描述 */
   cors?: boolean;
+  /** rateLimit 的描述 */
   rateLimit?: {
     windowMs: number;
     max: number;
   };
+  /** timeout 的描述 */
   timeout?: number;
 }
 
@@ -25,11 +29,11 @@ export class ApiService extends EventEmitter {
   private validator: RequestValidator;
   private formatter: ResponseFormatter;
 
-  constructor(config: ApiConfig = {}) {
+  constructor(config: IApiConfig = {}) {
     super();
     this.router = Router();
     this.logger = new Logger('ApiService');
-    
+
     // 初始化各个组件
     this.middlewareChain = new MiddlewareChain();
     this.errorHandler = new ErrorHandler(this.logger);
@@ -40,10 +44,10 @@ export class ApiService extends EventEmitter {
   }
 
   // 初始化基础中间件
-  private initializeMiddlewares(config: ApiConfig): void {
+  private initializeMiddlewares(config: IApiConfig): void {
     // 请求日志
     this.use(this.createRequestLogger());
-    
+
     // CORS
     if (config.cors) {
       this.use(this.createCorsMiddleware());
@@ -80,12 +84,12 @@ export class ApiService extends EventEmitter {
     const chain = [
       ...middlewares,
       validation ? this.validator.validate(validation) : [],
-      this.wrapHandler(handler)
+      this.wrapHandler(handler),
     ].flat();
 
     // 注册路由
     this.router[method](path, ...chain);
-    
+
     this.logger.info(`注册路由: ${method.toUpperCase()} ${path}`);
   }
 
@@ -137,8 +141,8 @@ export class ApiService extends EventEmitter {
       handler: async () => ({
         status: 'ok',
         timestamp: Date.now(),
-        uptime: process.uptime()
-      })
+        uptime: process.uptime(),
+      }),
     });
   }
 
@@ -154,4 +158,4 @@ export class ApiService extends EventEmitter {
     this.emit('stopped');
     this.logger.info('API服务已停止');
   }
-} 
+}

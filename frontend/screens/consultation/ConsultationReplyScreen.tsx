@@ -1,13 +1,9 @@
 import React from 'react';
+
+import { FormInput, MealPlanEditor, LoadingOverlay, AlertDialog } from '../../components';
 import { View, ScrollView, StyleSheet, TouchableOpacity, Text } from 'react-native';
-import { useMutation } from 'react-query';
 import { replyConsultation } from '../../api/consultation';
-import {
-  FormInput,
-  MealPlanEditor,
-  LoadingOverlay,
-  AlertDialog
-} from '../../components';
+import { useMutation } from 'react-query';
 
 export const ConsultationReplyScreen = ({ route, navigation }) => {
   const { id } = route.params;
@@ -16,18 +12,18 @@ export const ConsultationReplyScreen = ({ route, navigation }) => {
       {
         category: '',
         content: '',
-        priority: '中'
-      }
+        priority: '中',
+      },
     ],
     mealPlan: [],
-    followUpDate: null
+    followUpDate: null,
   });
   const [showAlert, setShowAlert] = React.useState(false);
 
   const mutation = useMutation(replyConsultation, {
     onSuccess: () => {
       navigation.goBack();
-    }
+    },
   });
 
   const handleAddRecommendation = () => {
@@ -38,9 +34,9 @@ export const ConsultationReplyScreen = ({ route, navigation }) => {
         {
           category: '',
           content: '',
-          priority: '中'
-        }
-      ]
+          priority: '中',
+        },
+      ],
     }));
   };
 
@@ -53,7 +49,7 @@ export const ConsultationReplyScreen = ({ route, navigation }) => {
 
     mutation.mutate({
       consultationId: id,
-      ...form
+      ...form,
     });
   };
 
@@ -68,7 +64,7 @@ export const ConsultationReplyScreen = ({ route, navigation }) => {
               type="select"
               options={['饮食建议', '运动建议', '生活方式', '其他']}
               value={rec.category}
-              onChangeText={(category) => {
+              onChangeText={category => {
                 const newRecs = [...form.recommendations];
                 newRecs[index].category = category;
                 setForm(prev => ({ ...prev, recommendations: newRecs }));
@@ -82,7 +78,7 @@ export const ConsultationReplyScreen = ({ route, navigation }) => {
               multiline
               numberOfLines={4}
               value={rec.content}
-              onChangeText={(content) => {
+              onChangeText={content => {
                 const newRecs = [...form.recommendations];
                 newRecs[index].content = content;
                 setForm(prev => ({ ...prev, recommendations: newRecs }));
@@ -95,7 +91,7 @@ export const ConsultationReplyScreen = ({ route, navigation }) => {
               type="select"
               options={['高', '中', '低']}
               value={rec.priority}
-              onChangeText={(priority) => {
+              onChangeText={priority => {
                 const newRecs = [...form.recommendations];
                 newRecs[index].priority = priority;
                 setForm(prev => ({ ...prev, recommendations: newRecs }));
@@ -105,10 +101,7 @@ export const ConsultationReplyScreen = ({ route, navigation }) => {
           </View>
         ))}
 
-        <TouchableOpacity
-          style={styles.addButton}
-          onPress={handleAddRecommendation}
-        >
+        <TouchableOpacity style={styles.addButton} onPress={handleAddRecommendation}>
           <Text style={styles.addButtonText}>添加建议</Text>
         </TouchableOpacity>
 
@@ -117,7 +110,7 @@ export const ConsultationReplyScreen = ({ route, navigation }) => {
         <Text style={styles.groupTitle}>膳食计划</Text>
         <MealPlanEditor
           value={form.mealPlan}
-          onChange={(mealPlan) => setForm(prev => ({ ...prev, mealPlan }))}
+          onChange={mealPlan => setForm(prev => ({ ...prev, mealPlan }))}
           style={styles.field}
         />
 
@@ -125,14 +118,11 @@ export const ConsultationReplyScreen = ({ route, navigation }) => {
           label="随访日期"
           type="date"
           value={form.followUpDate}
-          onChange={(date) => setForm(prev => ({ ...prev, followUpDate: date }))}
+          onChange={date => setForm(prev => ({ ...prev, followUpDate: date }))}
           style={styles.field}
         />
 
-        <TouchableOpacity
-          style={styles.submitButton}
-          onPress={handleSubmit}
-        >
+        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
           <Text style={styles.submitButtonText}>提交回复</Text>
         </TouchableOpacity>
       </View>
@@ -152,52 +142,52 @@ export const ConsultationReplyScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   form: {
-    padding: 15
+    padding: 15,
   },
   recommendationForm: {
     backgroundColor: '#fff',
     borderRadius: 8,
     padding: 15,
-    marginBottom: 15
+    marginBottom: 15,
   },
   groupTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 15
+    marginBottom: 15,
   },
   field: {
-    marginBottom: 15
+    marginBottom: 15,
   },
   addButton: {
     backgroundColor: '#E8F5E9',
     padding: 15,
     borderRadius: 8,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   addButtonText: {
     color: '#2E7D32',
     fontSize: 16,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   divider: {
     height: 1,
     backgroundColor: '#E0E0E0',
-    marginVertical: 20
+    marginVertical: 20,
   },
   submitButton: {
     backgroundColor: '#2E7D32',
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',
-    marginTop: 20
+    marginTop: 20,
   },
   submitButtonText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: 'bold'
-  }
-}); 
+    fontWeight: 'bold',
+  },
+});

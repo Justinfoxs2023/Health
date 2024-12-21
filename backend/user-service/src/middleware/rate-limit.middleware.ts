@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
-import { Redis } from '../utils/redis';
 import { Logger } from '../utils/logger';
+import { Redis } from '../utils/redis';
+import { Request, Response, NextFunction } from 'express';
 
 export class RateLimitMiddleware {
   private redis: Redis;
@@ -20,4 +20,4 @@ export class RateLimitMiddleware {
       next(error);
     }
   }
-} 
+}

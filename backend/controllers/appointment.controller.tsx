@@ -1,8 +1,8 @@
-import { Response } from 'express';
 import { Appointment } from '../models/appointment.model';
-import { User } from '../models/user.model';
 import { IAuthRequest } from '../types/models';
+import { Response } from 'express';
 import { Types } from 'mongoose';
+import { User } from '../models/user.model';
 
 export class AppointmentController {
   /**
@@ -17,13 +17,13 @@ export class AppointmentController {
       const nutritionist = await User.findOne({
         _id: nutritionistId,
         role: 'nutritionist',
-        'nutritionistProfile.availability.isWorking': true
+        'nutritionistProfile.availability.isWorking': true,
       });
 
       if (!nutritionist) {
         res.status(404).json({
           success: false,
-          message: '未找到该营养师或营养师不可预约'
+          message: '未找到该营养师或营养师不可预约',
         });
         return;
       }
@@ -32,13 +32,13 @@ export class AppointmentController {
       const appointmentDate = new Date(date);
       const dayOfWeek = appointmentDate.getDay() || 7;
       const availability = nutritionist.nutritionistProfile?.availability.find(
-        a => a.dayOfWeek === dayOfWeek
+        a => a.dayOfWeek === dayOfWeek,
       );
 
       if (!availability?.isWorking) {
         res.status(400).json({
           success: false,
-          message: '该时间段营养师不工作'
+          message: '该时间段营养师不工作',
         });
         return;
       }
@@ -48,15 +48,15 @@ export class AppointmentController {
         nutritionistId,
         date: {
           $gte: new Date(appointmentDate.setHours(0, 0, 0, 0)),
-          $lt: new Date(appointmentDate.setHours(24, 0, 0, 0))
+          $lt: new Date(appointmentDate.setHours(24, 0, 0, 0)),
         },
-        status: { $in: ['待确认', '已确认'] }
+        status: { $in: ['待确认', '已确认'] },
       });
 
       if (existingAppointments >= (availability.maxAppointments || 8)) {
         res.status(400).json({
           success: false,
-          message: '该时间段预约已满'
+          message: '该时间段预约已满',
         });
         return;
       }
@@ -65,19 +65,19 @@ export class AppointmentController {
         userId,
         nutritionistId,
         date,
-        ...appointmentData
+        ...appointmentData,
       });
 
       await appointment.save();
 
       res.status(201).json({
         success: true,
-        data: appointment
+        data: appointment,
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -91,8 +91,7 @@ export class AppointmentController {
       const { role } = req.user!;
       const { status, startDate, endDate, page = 1, limit = 10 } = req.query;
 
-      const query: any = role === 'nutritionist' ? 
-        { nutritionistId: userId } : { userId };
+      const query: any = role === 'nutritionist' ? { nutritionistId: userId } : { userId };
 
       if (status) {
         query.status = status;
@@ -101,7 +100,7 @@ export class AppointmentController {
       if (startDate && endDate) {
         query.date = {
           $gte: new Date(startDate as string),
-          $lte: new Date(endDate as string)
+          $lte: new Date(endDate as string),
         };
       }
 
@@ -122,13 +121,13 @@ export class AppointmentController {
           total,
           page: Number(page),
           limit: Number(limit),
-          pages: Math.ceil(total / Number(limit))
-        }
+          pages: Math.ceil(total / Number(limit)),
+        },
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -145,13 +144,13 @@ export class AppointmentController {
 
       const appointment = await Appointment.findOne({
         _id: id,
-        [role === 'nutritionist' ? 'nutritionistId' : 'userId']: userId
+        [role === 'nutritionist' ? 'nutritionistId' : 'userId']: userId,
       });
 
       if (!appointment) {
         res.status(404).json({
           success: false,
-          message: '未找到该预约'
+          message: '未找到该预约',
         });
         return;
       }
@@ -160,7 +159,7 @@ export class AppointmentController {
       if (!this.canUpdateStatus(role, appointment.status, status)) {
         res.status(403).json({
           success: false,
-          message: '无权进行此操作'
+          message: '无权进行此操作',
         });
         return;
       }
@@ -170,12 +169,12 @@ export class AppointmentController {
 
       res.json({
         success: true,
-        data: appointment
+        data: appointment,
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -192,13 +191,13 @@ export class AppointmentController {
       const appointment = await Appointment.findOne({
         _id: id,
         nutritionistId: userId,
-        status: '已确认'
+        status: '已确认',
       });
 
       if (!appointment) {
         res.status(404).json({
           success: false,
-          message: '未找到该预约或预约未确认'
+          message: '未找到该预约或预约未确认',
         });
         return;
       }
@@ -209,12 +208,12 @@ export class AppointmentController {
 
       res.json({
         success: true,
-        data: appointment
+        data: appointment,
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -231,13 +230,13 @@ export class AppointmentController {
       const appointment = await Appointment.findOne({
         _id: id,
         userId,
-        status: '已完成'
+        status: '已完成',
       });
 
       if (!appointment) {
         res.status(404).json({
           success: false,
-          message: '未找到该预约或预约未完成'
+          message: '未找到该预约或预约未完成',
         });
         return;
       }
@@ -245,7 +244,7 @@ export class AppointmentController {
       if (appointment.rating) {
         res.status(400).json({
           success: false,
-          message: '已评价过该预约'
+          message: '已评价过该预约',
         });
         return;
       }
@@ -253,7 +252,7 @@ export class AppointmentController {
       appointment.rating = {
         score,
         comment,
-        createdAt: new Date()
+        createdAt: new Date(),
       };
       await appointment.save();
 
@@ -262,12 +261,12 @@ export class AppointmentController {
 
       res.json({
         success: true,
-        data: appointment
+        data: appointment,
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -277,8 +276,10 @@ export class AppointmentController {
    */
   private canUpdateStatus(role: string, currentStatus: string, newStatus: string): boolean {
     if (role === 'nutritionist') {
-      return (currentStatus === '待确认' && ['已确认', '已取消'].includes(newStatus)) ||
-             (currentStatus === '已确认' && newStatus === '已完成');
+      return (
+        (currentStatus === '待确认' && ['已确认', '已取消'].includes(newStatus)) ||
+        (currentStatus === '已确认' && newStatus === '已完成')
+      );
     }
     return currentStatus === '待确认' && newStatus === '已取消';
   }
@@ -288,20 +289,21 @@ export class AppointmentController {
    */
   private async updateNutritionistRating(nutritionistId: string | Types.ObjectId) {
     const id = nutritionistId.toString();
-    
+
     const appointments = await Appointment.find({
       nutritionistId: id,
       status: 'completed',
-      'rating.score': { $exists: true }
+      'rating.score': { $exists: true },
     });
 
     const totalRating = appointments.reduce((sum, app) => sum + (app.rating?.score || 0), 0);
-    const averageRating = appointments.length > 0 ? Number((totalRating / appointments.length).toFixed(1)) : 0;
+    const averageRating =
+      appointments.length > 0 ? Number((totalRating / appointments.length).toFixed(1)) : 0;
 
     await User.findByIdAndUpdate(id, {
-      'nutritionistProfile.rating': averageRating
+      'nutritionistProfile.rating': averageRating,
     });
   }
 }
 
-export const appointmentController = new AppointmentController(); 
+export const appointmentController = new AppointmentController();

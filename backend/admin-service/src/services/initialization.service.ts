@@ -1,16 +1,16 @@
 import 'reflect-metadata';
-import { injectable, inject } from 'inversify';
-import { TYPES } from '../di/types';
-import { Logger } from '../types/logger';
 import { ConfigManagerService } from './config-manager.service';
+import { ILogger } from '../types/logger';
 import { SystemSettingsService } from './system-settings.service';
+import { TYPES } from '../di/types';
+import { injectable, inject } from 'inversify';
 
 @injectable()
 export class InitializationService {
   constructor(
-    @inject(TYPES.Logger) private readonly logger: Logger,
+    @inject(TYPES.Logger) private readonly logger: ILogger,
     @inject(TYPES.ConfigManager) private readonly configManager: ConfigManagerService,
-    @inject(TYPES.SystemSettings) private readonly systemSettings: SystemSettingsService
+    @inject(TYPES.SystemSettings) private readonly systemSettings: SystemSettingsService,
   ) {}
 
   async initialize() {
@@ -42,9 +42,9 @@ export class InitializationService {
   }
 
   private registerConfigListeners() {
-    this.configManager.onConfigUpdate(async (event) => {
+    this.configManager.onConfigUpdate(async event => {
       this.logger.info('配置更新', event);
       // 处理配置更新事件
     });
   }
-} 
+}

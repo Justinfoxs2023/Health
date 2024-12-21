@@ -37,4 +37,4 @@ export interface IPsychologistService extends IBaseService {
   createCounselingRecord(data: any): Promise<any>;
   createInterventionPlan(data: any): Promise<any>;
   createEmotionalRecord(data: any): Promise<any>;
-} 
+}

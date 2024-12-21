@@ -1,6 +1,6 @@
-import { Request as ExpressRequest, Response as ExpressResponse, NextFunction } from 'express';
 import { ParamsDictionary } from 'express-serve-static-core';
 import { ParsedQs } from 'qs';
+import { Request as ExpressRequest, Response as ExpressResponse, NextFunction } from 'express';
 
 // Express类型扩展
 declare global {
@@ -42,14 +42,14 @@ declare global {
 }
 
 // 中间件类型
-export interface RequestHandler {
+export interface IRequestHandler {
   (req: Express.Request, res: Express.Response, next: NextFunction): Promise<void> | void;
 }
 
-export interface ErrorRequestHandler {
+export interface IErrorRequestHandler {
   (err: any, req: Express.Request, res: Express.Response, next: NextFunction): void;
 }
 
-export interface Middleware {
+export interface IMiddleware {
   (req: Express.Request, res: Express.Response, next: NextFunction): Promise<void> | void;
-} 
+}

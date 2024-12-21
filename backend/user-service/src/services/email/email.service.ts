@@ -1,9 +1,9 @@
+import { IEmailService, IEmailOptions, ISecurityNotification } from './types';
 import { injectable } from 'inversify';
-import { EmailService, EmailOptions, SecurityNotification } from './types';
 
 @injectable()
-export class EmailServiceImpl implements EmailService {
-  async sendEmail(options: EmailOptions): Promise<void> {
+export class EmailServiceImpl implements IEmailService {
+  async sendEmail(options: IEmailOptions): Promise<void> {
     // 实现邮件发送逻辑
   }
 
@@ -12,16 +12,16 @@ export class EmailServiceImpl implements EmailService {
       to,
       subject: '验证码',
       template: 'verification',
-      context: { code }
+      context: { code },
     });
   }
 
-  async sendSecurityAlert(to: string, notification: SecurityNotification): Promise<void> {
+  async sendSecurityAlert(to: string, notification: ISecurityNotification): Promise<void> {
     await this.sendEmail({
       to,
       subject: notification.title,
       template: 'security-alert',
-      context: notification
+      context: notification,
     });
   }
-} 
+}

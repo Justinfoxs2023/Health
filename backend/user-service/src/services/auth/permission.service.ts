@@ -1,6 +1,6 @@
 import { BaseService } from '../base.service';
-import { RoleService } from './role.service';
 import { PermissionError } from '../../utils/errors';
+import { RoleService } from './role.service';
 
 export class PermissionService extends BaseService {
   private roleService: RoleService;
@@ -15,7 +15,7 @@ export class PermissionService extends BaseService {
       // 检查缓存
       const cacheKey = `permissions:${userId}:${resource}:${action}`;
       const cachedResult = await this.redis.get(cacheKey);
-      
+
       if (cachedResult !== null) {
         return cachedResult === 'true';
       }
@@ -23,10 +23,10 @@ export class PermissionService extends BaseService {
       // 获取用户角色和权限
       const userRoles = await this.roleService.getUserRoles(userId);
       const hasPermission = await this.validatePermission(userRoles, resource, action);
-      
+
       // 缓存结果
       await this.redis.setex(cacheKey, 3600, hasPermission.toString());
-      
+
       return hasPermission;
     } catch (error) {
       this.logger.error('Permission check failed', error);
@@ -54,7 +54,11 @@ export class PermissionService extends BaseService {
     }
   }
 
-  private async validatePermission(roles: string[], resource: string, action: string): Promise<boolean> {
+  private async validatePermission(
+    roles: string[],
+    resource: string,
+    action: string,
+  ): Promise<boolean> {
     for (const role of roles) {
       const permissions = await this.roleService.getRolePermissions(role);
       if (this.hasRequiredPermission(permissions, resource, action)) {
@@ -65,17 +69,14 @@ export class PermissionService extends BaseService {
   }
 
   private hasRequiredPermission(permissions: any[], resource: string, action: string): boolean {
-    return permissions.some(p => 
-      p.resource === resource && 
-      (p.action === action || p.action === '*')
+    return permissions.some(
+      p => p.resource === resource && (p.action === action || p.action === '*'),
     );
   }
 
   private async clearPermissionCache(roleId: string): Promise<void> {
     const users = await this.roleService.getUsersByRole(roleId);
-    const promises = users.map(user => 
-      this.redis.del(`permissions:${user.id}:*`)
-    );
+    const promises = users.map(user => this.redis.del(`permissions:${user.id}:*`));
     await Promise.all(promises);
   }
-} 
+}

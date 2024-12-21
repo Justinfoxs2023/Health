@@ -1,15 +1,12 @@
-import { Injectable } from '@nestjs/common';
 import { ConfigService } from '../config/config.service';
+import { Injectable } from '@nestjs/common';
 import { MetricsService } from '../monitoring/metrics.service';
 
 @Injectable()
 export class HealthCheckService {
   private checks: Map<string, () => Promise<boolean>>;
 
-  constructor(
-    private readonly config: ConfigService,
-    private readonly metrics: MetricsService
-  ) {
+  constructor(private readonly config: ConfigService, private readonly metrics: MetricsService) {
     this.checks = new Map();
     this.initializeHealthChecks();
   }
@@ -27,7 +24,7 @@ export class HealthCheckService {
 
   async checkHealth(): Promise<HealthStatus> {
     const results = new Map<string, boolean>();
-    
+
     for (const [name, check] of this.checks) {
       try {
         results.set(name, await check());
@@ -39,7 +36,7 @@ export class HealthCheckService {
     return {
       status: this.evaluateOverallHealth(results),
       checks: Object.fromEntries(results),
-      timestamp: new Date()
+      timestamp: new Date(),
     };
   }
 
@@ -61,4 +58,4 @@ export class HealthCheckService {
   private evaluateOverallHealth(results: Map<string, boolean>): string {
     return Array.from(results.values()).every(result => result) ? 'healthy' : 'unhealthy';
   }
-} 
+}

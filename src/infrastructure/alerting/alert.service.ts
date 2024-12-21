@@ -1,26 +1,32 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '../config/config.service';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { MetricsService } from '../monitoring/metrics.service';
 import { NotificationService } from '../notification/notification.service';
 
-interface AlertRule {
-  id: string;
-  name: string;
-  condition: string;
-  threshold: number;
-  duration: number;
-  severity: 'low' | 'medium' | 'high' | 'critical';
+interface IAlertRule {
+  /** id 的描述 */
+    id: string;
+  /** name 的描述 */
+    name: string;
+  /** condition 的描述 */
+    condition: string;
+  /** threshold 的描述 */
+    threshold: number;
+  /** duration 的描述 */
+    duration: number;
+  /** severity 的描述 */
+    severity: low  medium  high  critical;
 }
 
 @Injectable()
 export class AlertService implements OnModuleInit {
-  private rules: AlertRule[] = [];
+  private rules: IAlertRule[] = [];
   private readonly checkInterval: number;
 
   constructor(
     private readonly config: ConfigService,
     private readonly metrics: MetricsService,
-    private readonly notification: NotificationService
+    private readonly notification: NotificationService,
   ) {
     this.checkInterval = parseInt(config.get('ALERT_CHECK_INTERVAL') || '60000');
   }
@@ -39,8 +45,8 @@ export class AlertService implements OnModuleInit {
         condition: 'error_rate > threshold',
         threshold: 0.05,
         duration: 300000, // 5分钟
-        severity: 'high'
-      }
+        severity: 'high',
+      },
     ];
   }
 
@@ -56,22 +62,22 @@ export class AlertService implements OnModuleInit {
           await this.triggerAlert(rule);
         }
       } catch (error) {
-        console.error(`Error checking rule ${rule.id}:`, error);
+        console.error('Error in alert.service.ts:', `Error checking rule ${rule.id}:`, error);
       }
     }
   }
 
-  private async evaluateRule(rule: AlertRule): Promise<boolean> {
+  private async evaluateRule(rule: IAlertRule): Promise<boolean> {
     // 实现规则评估逻辑
     return false;
   }
 
-  private async triggerAlert(rule: AlertRule) {
+  private async triggerAlert(rule: IAlertRule) {
     await this.notification.send({
       type: 'alert',
       severity: rule.severity,
       message: `Alert: ${rule.name}`,
-      timestamp: new Date()
+      timestamp: new Date(),
     });
   }
-} 
+}

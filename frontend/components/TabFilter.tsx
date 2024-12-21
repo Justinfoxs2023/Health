@@ -1,22 +1,24 @@
 import React from 'react';
+
 import { View, ScrollView, TouchableOpacity, Text, StyleSheet } from 'react-native';
 
-interface Tab {
+interface ITab {
+  /** id 的描述 */
   id: string;
+  /** name 的描述 */
   name: string;
 }
 
-interface Props {
-  tabs: Tab[];
+interface IProps {
+  /** tabs 的描述 */
+  tabs: ITab[];
+  /** selectedId 的描述 */
   selectedId: string;
+  /** onChange 的描述 */
   onChange: (id: string) => void;
 }
 
-export const TabFilter: React.FC<Props> = ({
-  tabs,
-  selectedId,
-  onChange
-}) => {
+export const TabFilter: React.FC<IProps> = ({ tabs, selectedId, onChange }) => {
   return (
     <View style={styles.container}>
       <ScrollView
@@ -27,16 +29,10 @@ export const TabFilter: React.FC<Props> = ({
         {tabs.map(tab => (
           <TouchableOpacity
             key={tab.id}
-            style={[
-              styles.tab,
-              selectedId === tab.id && styles.selectedTab
-            ]}
+            style={[styles.tab, selectedId === tab.id && styles.selectedTab]}
             onPress={() => onChange(tab.id)}
           >
-            <Text style={[
-              styles.tabText,
-              selectedId === tab.id && styles.selectedText
-            ]}>
+            <Text style={[styles.tabText, selectedId === tab.id && styles.selectedText]}>
               {tab.name}
             </Text>
           </TouchableOpacity>
@@ -50,26 +46,26 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
     borderBottomWidth: 1,
-    borderBottomColor: '#eee'
+    borderBottomColor: '#eee',
   },
   scrollContent: {
-    paddingHorizontal: 16
+    paddingHorizontal: 16,
   },
   tab: {
     paddingVertical: 12,
     paddingHorizontal: 16,
-    marginRight: 16
+    marginRight: 16,
   },
   selectedTab: {
     borderBottomWidth: 2,
-    borderBottomColor: '#2E7D32'
+    borderBottomColor: '#2E7D32',
   },
   tabText: {
     fontSize: 14,
-    color: '#666'
+    color: '#666',
   },
   selectedText: {
     color: '#2E7D32',
-    fontWeight: '500'
-  }
-}); 
+    fontWeight: '500',
+  },
+});

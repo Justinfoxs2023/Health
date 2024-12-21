@@ -1,35 +1,42 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+
 import { CustomIcon } from '../../icons';
 import { DesignTokens } from '../../tokens';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 
-interface ExerciseData {
+interface IExerciseData {
+  /** type 的描述 */
   type: string;
+  /** duration 的描述 */
   duration: number;
+  /** calories 的描述 */
   calories: number;
+  /** distance 的描述 */
   distance?: number;
+  /** heartRate 的描述 */
   heartRate?: {
     avg: number;
     max: number;
     min: number;
   };
+  /** steps 的描述 */
   steps?: number;
+  /** pace 的描述 */
   pace?: number;
 }
 
-interface ExerciseRecordProps {
-  data: ExerciseData;
+interface IExerciseRecordProps {
+  /** data 的描述 */
+  data: IExerciseData;
+  /** date 的描述 */
   date: Date;
+  /** onEdit 的描述 */
   onEdit?: () => void;
+  /** onShare 的描述 */
   onShare?: () => void;
 }
 
-export const ExerciseRecord: React.FC<ExerciseRecordProps> = ({
-  data,
-  date,
-  onEdit,
-  onShare
-}) => {
+export const ExerciseRecord: React.FC<IExerciseRecordProps> = ({ data, date, onEdit, onShare }) => {
   const getExerciseIcon = (type: string) => {
     switch (type.toLowerCase()) {
       case 'running':
@@ -55,19 +62,19 @@ export const ExerciseRecord: React.FC<ExerciseRecordProps> = ({
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <View style={styles.typeContainer}>
-          <CustomIcon 
-            name={getExerciseIcon(data.type)} 
-            size={24} 
-            color={DesignTokens.colors.brand.primary} 
+          <CustomIcon
+            name={getExerciseIcon(data.type)}
+            size={24}
+            color={DesignTokens.colors.brand.primary}
           />
           <Text style={styles.type}>{data.type}</Text>
         </View>
         <Text style={styles.date}>
-          {date.toLocaleDateString('zh-CN', { 
-            month: 'long', 
+          {date.toLocaleDateString('zh-CN', {
+            month: 'long',
             day: 'numeric',
             hour: '2-digit',
-            minute: '2-digit'
+            minute: '2-digit',
           })}
         </Text>
       </View>
@@ -80,7 +87,11 @@ export const ExerciseRecord: React.FC<ExerciseRecordProps> = ({
         </View>
 
         <View style={styles.metricItem}>
-          <CustomIcon name="local-fire-department" size={20} color={DesignTokens.colors.text.secondary} />
+          <CustomIcon
+            name="local-fire-department"
+            size={20}
+            color={DesignTokens.colors.text.secondary}
+          />
           <Text style={styles.metricValue}>{data.calories}</Text>
           <Text style={styles.metricLabel}>卡路里</Text>
         </View>
@@ -134,87 +145,87 @@ const styles = StyleSheet.create({
     backgroundColor: DesignTokens.colors.background.paper,
     borderRadius: DesignTokens.radius.lg,
     padding: DesignTokens.spacing.lg,
-    ...DesignTokens.shadows.md
+    ...DesignTokens.shadows.md,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: DesignTokens.spacing.lg
+    marginBottom: DesignTokens.spacing.lg,
   },
   typeContainer: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   type: {
     marginLeft: DesignTokens.spacing.sm,
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: String(DesignTokens.typography.weights.semibold),
-    color: DesignTokens.colors.text.primary
+    color: DesignTokens.colors.text.primary,
   },
   date: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.text.secondary
+    color: DesignTokens.colors.text.secondary,
   },
   metricsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginBottom: DesignTokens.spacing.xl
+    marginBottom: DesignTokens.spacing.xl,
   },
   metricItem: {
-    alignItems: 'center'
+    alignItems: 'center',
   },
   metricValue: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: String(DesignTokens.typography.weights.bold),
     color: DesignTokens.colors.text.primary,
-    marginVertical: DesignTokens.spacing.xs
+    marginVertical: DesignTokens.spacing.xs,
   },
   metricLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.text.secondary
+    color: DesignTokens.colors.text.secondary,
   },
   heartRateContainer: {
-    marginBottom: DesignTokens.spacing.xl
+    marginBottom: DesignTokens.spacing.xl,
   },
   sectionTitle: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: String(DesignTokens.typography.weights.semibold),
     color: DesignTokens.colors.text.primary,
-    marginBottom: DesignTokens.spacing.md
+    marginBottom: DesignTokens.spacing.md,
   },
   heartRateMetrics: {
     flexDirection: 'row',
-    justifyContent: 'space-around'
+    justifyContent: 'space-around',
   },
   heartRateItem: {
-    alignItems: 'center'
+    alignItems: 'center',
   },
   heartRateValue: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: String(DesignTokens.typography.weights.bold),
-    color: DesignTokens.colors.brand.primary
+    color: DesignTokens.colors.brand.primary,
   },
   heartRateLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.text.secondary,
-    marginTop: DesignTokens.spacing.xs
+    marginTop: DesignTokens.spacing.xs,
   },
   actions: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
     borderTopWidth: 1,
     borderTopColor: DesignTokens.colors.border,
-    paddingTop: DesignTokens.spacing.md
+    paddingTop: DesignTokens.spacing.md,
   },
   actionButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginLeft: DesignTokens.spacing.md
+    marginLeft: DesignTokens.spacing.md,
   },
   actionText: {
     marginLeft: DesignTokens.spacing.xs,
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.brand.primary
-  }
-}); 
+    color: DesignTokens.colors.brand.primary,
+  },
+});

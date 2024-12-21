@@ -1,7 +1,7 @@
-import { Response } from 'express';
-import { IAuthRequest } from '../types/models';
 import { DietPlan } from '../models/diet-plan.model';
+import { IAuthRequest } from '../types/models';
 import { Recipe } from '../models/recipe.model';
+import { Response } from 'express';
 import { User } from '../models/user.model';
 
 export class DietPlanController {
@@ -17,7 +17,7 @@ export class DietPlanController {
       if (!user) {
         return res.status(404).json({
           success: false,
-          message: '用户不存在'
+          message: '用户不存在',
         });
       }
 
@@ -35,18 +35,18 @@ export class DietPlanController {
       // 计算营养素比例
       const nutritionRatio = this.calculateNutritionRatio(goal);
       const nutritionTargets = {
-        protein: Math.round(targetCalories * nutritionRatio.protein / 4), // 蛋白质4卡/克
-        fat: Math.round(targetCalories * nutritionRatio.fat / 9), // 脂肪9卡/克
-        carbohydrates: Math.round(targetCalories * nutritionRatio.carbs / 4), // 碳水4卡/克
-        fiber: Math.round(targetCalories / 1000 * 14) // 每1000卡推荐14克膳食纤维
+        protein: Math.round((targetCalories * nutritionRatio.protein) / 4), // 蛋白质4卡/克
+        fat: Math.round((targetCalories * nutritionRatio.fat) / 9), // 脂肪9卡/克
+        carbohydrates: Math.round((targetCalories * nutritionRatio.carbs) / 4), // 碳水4卡/克
+        fiber: Math.round((targetCalories / 1000) * 14), // 每1000卡推荐14克膳食纤维
       };
 
       // 获取符合条件的食谱
       const recipes = await Recipe.find({
-        'nutrition.calories': { 
+        'nutrition.calories': {
           $gte: targetCalories * 0.2, // 单餐热量不低于目标热量的20%
-          $lte: targetCalories * 0.4  // 单餐热量不超过目标热量的40%
-        }
+          $lte: targetCalories * 0.4, // 单餐热量不超过目标热量的40%
+        },
       });
 
       // 生成每日饮食计划
@@ -56,51 +56,71 @@ export class DietPlanController {
         let dailyCaloriesSum = 0;
 
         // 早餐 (25% 目标热量)
-        const breakfast = this.selectMeal(recipes, targetCalories * 0.25, dailyCaloriesSum, user.profile.dietaryRestrictions);
+        const breakfast = this.selectMeal(
+          recipes,
+          targetCalories * 0.25,
+          dailyCaloriesSum,
+          user.profile.dietaryRestrictions,
+        );
         if (breakfast) {
           meals.push({
             type: '早餐',
             recipe: breakfast._id,
-            portions: 1
+            portions: 1,
           });
           dailyCaloriesSum += breakfast.nutrition.calories;
         }
 
         // 午餐 (35% 目标热量)
-        const lunch = this.selectMeal(recipes, targetCalories * 0.35, dailyCaloriesSum, user.profile.dietaryRestrictions);
+        const lunch = this.selectMeal(
+          recipes,
+          targetCalories * 0.35,
+          dailyCaloriesSum,
+          user.profile.dietaryRestrictions,
+        );
         if (lunch) {
           meals.push({
             type: '午餐',
             recipe: lunch._id,
-            portions: 1
+            portions: 1,
           });
           dailyCaloriesSum += lunch.nutrition.calories;
         }
 
         // 晚餐 (30% 目标热量)
-        const dinner = this.selectMeal(recipes, targetCalories * 0.30, dailyCaloriesSum, user.profile.dietaryRestrictions);
+        const dinner = this.selectMeal(
+          recipes,
+          targetCalories * 0.3,
+          dailyCaloriesSum,
+          user.profile.dietaryRestrictions,
+        );
         if (dinner) {
           meals.push({
             type: '晚餐',
             recipe: dinner._id,
-            portions: 1
+            portions: 1,
           });
           dailyCaloriesSum += dinner.nutrition.calories;
         }
 
         // 加餐 (10% 目标热量)
-        const snack = this.selectMeal(recipes, targetCalories * 0.10, dailyCaloriesSum, user.profile.dietaryRestrictions);
+        const snack = this.selectMeal(
+          recipes,
+          targetCalories * 0.1,
+          dailyCaloriesSum,
+          user.profile.dietaryRestrictions,
+        );
         if (snack) {
           meals.push({
             type: '加餐',
             recipe: snack._id,
-            portions: 1
+            portions: 1,
           });
         }
 
         weeklyPlan.push({
           dayOfWeek: day,
-          meals
+          meals,
         });
       }
 
@@ -115,19 +135,19 @@ export class DietPlanController {
         restrictions: user.profile.dietaryRestrictions,
         startDate: new Date(),
         endDate: new Date(Date.now() + duration * 24 * 60 * 60 * 1000),
-        status: '进行中'
+        status: '进行中',
       });
 
       await dietPlan.save();
 
       res.status(201).json({
         success: true,
-        data: dietPlan
+        data: dietPlan,
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: error instanceof Error ? error.message : '未知错误'
+        message: error instanceof Error ? error.message : '未知错误',
       });
     }
   }
@@ -136,23 +156,23 @@ export class DietPlanController {
     // 基础代谢率计算 (Harris-Benedict公式)
     let bmr;
     if (user.profile.gender === '男') {
-      bmr = 66 + (13.7 * user.profile.weight) + (5 * user.profile.height) - (6.8 * user.profile.age);
+      bmr = 66 + 13.7 * user.profile.weight + 5 * user.profile.height - 6.8 * user.profile.age;
     } else {
-      bmr = 655 + (9.6 * user.profile.weight) + (1.8 * user.profile.height) - (4.7 * user.profile.age);
+      bmr = 655 + 9.6 * user.profile.weight + 1.8 * user.profile.height - 4.7 * user.profile.age;
     }
 
     // 活动系数
     const activityFactors = {
-      '久坐': 1.2,
-      '轻度活动': 1.375,
-      '中度活动': 1.55,
-      '重度活动': 1.725
+      久坐: 1.2,
+      轻度活动: 1.375,
+      中度活动: 1.55,
+      重度活动: 1.725,
     };
 
     return Math.round(bmr * activityFactors[user.profile.activityLevel]);
   }
 
-  private calculateNutritionRatio(goal: string): { protein: number, fat: number, carbs: number } {
+  private calculateNutritionRatio(goal: string): { protein: number; fat: number; carbs: number } {
     switch (goal) {
       case '增肌':
         return { protein: 0.3, fat: 0.2, carbs: 0.5 }; // 高蛋白
@@ -164,13 +184,18 @@ export class DietPlanController {
     }
   }
 
-  private selectMeal(recipes: any[], targetCalories: number, currentCalories: number, restrictions: string[]): any {
+  private selectMeal(
+    recipes: any[],
+    targetCalories: number,
+    currentCalories: number,
+    restrictions: string[],
+  ): any {
     // 过滤出符合限制条件的食谱
     const availableRecipes = recipes.filter(recipe => {
       // 检查是否符合饮食限制
       if (restrictions?.length > 0) {
         const hasRestriction = recipe.ingredients.some((ingredient: any) =>
-          restrictions.includes(ingredient.food.category)
+          restrictions.includes(ingredient.food.category),
         );
         if (hasRestriction) return false;
       }
@@ -190,4 +215,4 @@ export class DietPlanController {
   }
 }
 
-export const dietPlanController = new DietPlanController(); 
+export const dietPlanController = new DietPlanController();

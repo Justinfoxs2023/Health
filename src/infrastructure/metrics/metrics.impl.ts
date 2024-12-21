@@ -1,6 +1,6 @@
-import { Metrics } from '../../types/base';
+import { IMetrics } from '../../types/base';
 
-export class MetricsImpl implements Metrics {
+export class MetricsImpl implements IMetrics {
   private metrics: Map<string, number> = new Map();
 
   recordMetric(name: string, value: number): void {
@@ -28,4 +28,4 @@ export class MetricsImpl implements Metrics {
   recordGauge(name: string, value: number, tags?: Record<string, string>): void {
     this.recordMetric(`gauge.${name}`, value);
   }
-} 
+}

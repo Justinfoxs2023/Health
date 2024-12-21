@@ -1,6 +1,6 @@
-import { Redis } from '../utils/redis';
 import { Logger } from '../utils/logger';
 import { MetricsService } from './metrics.service';
+import { Redis } from '../utils/redis';
 
 export class CacheService {
   private redis: Redis;
@@ -13,10 +13,10 @@ export class CacheService {
     defaultTTL: 3600,
     // 分层缓存配置
     layers: {
-      l1: { ttl: 300, maxSize: 1000 },    // 热点数据
-      l2: { ttl: 3600, maxSize: 10000 },  // 常用数据
-      l3: { ttl: 86400, maxSize: 100000 } // 基础数据
-    }
+      l1: { ttl: 300, maxSize: 1000 }, // 热点数据
+      l2: { ttl: 3600, maxSize: 10000 }, // 常用数据
+      l3: { ttl: 86400, maxSize: 100000 }, // 基础数据
+    },
   };
 
   constructor() {
@@ -28,11 +28,15 @@ export class CacheService {
   /**
    * 智能缓存设置
    */
-  async smartSet(key: string, value: any, options?: {
-    ttl?: number;
-    layer?: 'l1' | 'l2' | 'l3';
-    tags?: string[];
-  }) {
+  async smartSet(
+    key: string,
+    value: any,
+    options?: {
+      ttl?: number;
+      layer?: 'l1' | 'l2' | 'l3';
+      tags?: string[];
+    },
+  ) {
     try {
       const startTime = Date.now();
       const layer = options?.layer || this.determineLayer(key);
@@ -43,7 +47,7 @@ export class CacheService {
         data: value,
         layer,
         tags: options?.tags,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
 
       // 设置缓存
@@ -53,12 +57,11 @@ export class CacheService {
       await this.metrics.recordCacheOperation('set', {
         key,
         layer,
-        duration: Date.now() - startTime
+        duration: Date.now() - startTime,
       });
 
       // 维护缓存大小
       await this.manageCacheSize(layer);
-
     } catch (error) {
       this.logger.error('缓存设置失败', error);
       throw error;
@@ -88,7 +91,7 @@ export class CacheService {
         key,
         layer,
         duration: Date.now() - startTime,
-        hit: true
+        hit: true,
       });
 
       return data;
@@ -104,9 +107,7 @@ export class CacheService {
   async preload(keys: string[], dataLoader: (keys: string[]) => Promise<any[]>) {
     try {
       // 检查现有缓存
-      const existingData = await Promise.all(
-        keys.map(key => this.smartGet(key))
-      );
+      const existingData = await Promise.all(keys.map(key => this.smartGet(key)));
 
       // 找出缺失的键
       const missingKeys = keys.filter((_, index) => !existingData[index]);
@@ -114,13 +115,9 @@ export class CacheService {
       if (missingKeys.length > 0) {
         // 加载缺失数据
         const newData = await dataLoader(missingKeys);
-        
+
         // 缓存新数据
-        await Promise.all(
-          newData.map((data, index) => 
-            this.smartSet(missingKeys[index], data)
-          )
-        );
+        await Promise.all(newData.map((data, index) => this.smartSet(missingKeys[index], data)));
       }
     } catch (error) {
       this.logger.error('预加载失败', error);
@@ -150,7 +147,7 @@ export class CacheService {
   private determineLayer(key: string): 'l1' | 'l2' | 'l3' {
     // 基于访问频率和模式确定缓存层级
     const accessStats = this.getAccessStats(key);
-    
+
     if (accessStats.frequency > 100) return 'l1';
     if (accessStats.frequency > 10) return 'l2';
     return 'l3';
@@ -213,4 +210,4 @@ export class CacheService {
   private deserialize(data: string): any {
     return JSON.parse(data);
   }
-} 
+}

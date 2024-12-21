@@ -1,7 +1,7 @@
-import { Router } from 'express';
 import multer from 'multer';
-import { nutritionQAController } from '../controllers/nutrition-qa.controller';
+import { Router } from 'express';
 import { auth } from '../middleware/auth';
+import { nutritionQAController } from '../controllers/nutrition-qa.controller';
 
 const upload = multer({ storage: multer.memoryStorage() });
 const router = Router();
@@ -16,7 +16,12 @@ router.get('/', nutritionQAController.getQuestions);
 router.get('/:id', auth.required, nutritionQAController.getQuestionDetails);
 
 // 回答问题(营养师)
-router.post('/:id/answers', auth.nutritionistRequired, upload.array('images', 5), nutritionQAController.answerQuestion);
+router.post(
+  '/:id/answers',
+  auth.nutritionistRequired,
+  upload.array('images', 5),
+  nutritionQAController.answerQuestion,
+);
 
 // 采纳答案
 router.put('/:id/answers/:answerId/accept', auth.required, nutritionQAController.acceptAnswer);
@@ -24,4 +29,4 @@ router.put('/:id/answers/:answerId/accept', auth.required, nutritionQAController
 // 点赞答案
 router.put('/:id/answers/:answerId/like', auth.required, nutritionQAController.likeAnswer);
 
-export default router; 
+export default router;

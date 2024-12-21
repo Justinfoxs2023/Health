@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, Image } from 'react-native';
-import { Questionnaire } from '../common/Questionnaire';
+
 import { ImageUploader } from '../common/ImageUploader';
 import { PulseReader } from './PulseReader';
+import { Questionnaire } from '../common/Questionnaire';
+import { View, Text, Image } from 'react-native';
 import { constitutionStyles } from '../../styles/tcm';
 
 export const ConstitutionAssessment: React.FC = () => {
@@ -33,9 +34,5 @@ export const ConstitutionAssessment: React.FC = () => {
     }
   };
 
-  return (
-    <View style={constitutionStyles.container}>
-      {/* 实现分步评估UI */}
-    </View>
-  );
-}; 
+  return <View style={constitutionStyles.container}>{/* 实现分步评估UI */}</View>;
+};

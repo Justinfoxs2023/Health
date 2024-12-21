@@ -1,14 +1,12 @@
-import { Request, Response, NextFunction } from 'express';
-import { injectable, inject } from 'inversify';
-import { TYPES } from '../di/types';
 import { JwtService } from '../utils/jwt.service';
+import { Request, Response, NextFunction } from 'express';
+import { TYPES } from '../di/types';
 import { UnauthorizedError } from '../utils/errors';
+import { injectable, inject } from 'inversify';
 
 @injectable()
 export class AuthMiddleware {
-  constructor(
-    @inject(TYPES.JwtService) private jwtService: JwtService
-  ) {}
+  constructor(@inject(TYPES.JwtService) private jwtService: JwtService) {}
 
   async verifyToken(req: Request, res: Response, next: NextFunction) {
     try {
@@ -34,4 +32,4 @@ export class AuthMiddleware {
       next();
     };
   }
-} 
+}

@@ -1,6 +1,6 @@
+import { ElasticsearchTransport } from 'winston-elasticsearch';
 import { Injectable } from '@nestjs/common';
 import { createLogger, format, transports } from 'winston';
-import { ElasticsearchTransport } from 'winston-elasticsearch';
 
 @Injectable()
 export class LogAggregatorService {
@@ -9,24 +9,21 @@ export class LogAggregatorService {
   constructor(private readonly config: ConfigService) {
     this.logger = createLogger({
       level: config.get('LOG_LEVEL') || 'info',
-      format: format.combine(
-        format.timestamp(),
-        format.json()
-      ),
+      format: format.combine(format.timestamp(), format.json()),
       transports: [
         new transports.Console(),
-        new transports.File({ 
-          filename: 'error.log', 
-          level: 'error' 
+        new transports.File({
+          filename: 'error.log',
+          level: 'error',
         }),
         new ElasticsearchTransport({
           level: 'info',
           clientOpts: {
-            node: config.get('ELASTICSEARCH_URL')
+            node: config.get('ELASTICSEARCH_URL'),
           },
-          index: 'logs'
-        })
-      ]
+          index: 'logs',
+        }),
+      ],
     });
   }
 
@@ -34,7 +31,7 @@ export class LogAggregatorService {
     this.logger.log(level, message, {
       ...meta,
       service: this.config.get('SERVICE_NAME'),
-      environment: this.config.get('NODE_ENV')
+      environment: this.config.get('NODE_ENV'),
     });
   }
 
@@ -42,4 +39,4 @@ export class LogAggregatorService {
     // 实现日志查询逻辑
     return [];
   }
-} 
+}

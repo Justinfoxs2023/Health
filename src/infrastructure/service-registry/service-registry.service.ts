@@ -1,20 +1,17 @@
-import { Injectable } from '@nestjs/common';
 import { ConfigService } from '../config/config.service';
 import { ConsulService } from './consul.service';
-import { ServiceDefinition, ServiceInstance } from '../../types/service';
+import { IServiceDefinition, IServiceInstance } from '../../types/service';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class ServiceRegistryService {
-  constructor(
-    private readonly config: ConfigService,
-    private readonly consul: ConsulService
-  ) {}
+  constructor(private readonly config: ConfigService, private readonly consul: ConsulService) {}
 
-  async register(service: ServiceDefinition): Promise<void> {
+  async register(service: IServiceDefinition): Promise<void> {
     await this.consul.register(service);
   }
 
-  async discover(serviceName: string): Promise<ServiceInstance[]> {
+  async discover(serviceName: string): Promise<IServiceInstance[]> {
     return this.consul.discover(serviceName);
   }
 
@@ -25,4 +22,4 @@ export class ServiceRegistryService {
   async getServiceHealth(serviceId: string): Promise<any> {
     return this.consul.healthCheck(serviceId);
   }
-} 
+}

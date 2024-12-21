@@ -1,13 +1,16 @@
 import React from 'react';
-import { View, FlatList, StyleSheet, Text, TouchableOpacity, Image } from 'react-native';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getChallenges, joinChallenge, quitChallenge } from '../../api/exercise';
+
 import { LoadingSpinner, Icon, ProgressBar, AlertDialog } from '../../components';
+import { View, FlatList, StyleSheet, Text, TouchableOpacity, Image } from 'react-native';
 import { format } from 'date-fns';
+import { getChallenges, joinChallenge, quitChallenge } from '../../api/exercise';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { zhCN } from 'date-fns/locale';
 
 export const ChallengeScreen = ({ navigation }) => {
-  const [selectedStatus, setSelectedStatus] = React.useState<'upcoming' | 'ongoing' | 'completed'>('ongoing');
+  const [selectedStatus, setSelectedStatus] = React.useState<'upcoming' | 'ongoing' | 'completed'>(
+    'ongoing',
+  );
   const [showAlert, setShowAlert] = React.useState(false);
   const [alertMessage, setAlertMessage] = React.useState('');
   const queryClient = useQueryClient();
@@ -23,7 +26,7 @@ export const ChallengeScreen = ({ navigation }) => {
     onError: (error: any) => {
       setAlertMessage(error.message || '加入失败，请重试');
       setShowAlert(true);
-    }
+    },
   });
 
   const quitMutation = useMutation(quitChallenge, {
@@ -35,7 +38,7 @@ export const ChallengeScreen = ({ navigation }) => {
     onError: (error: any) => {
       setAlertMessage(error.message || '退出失败，请重试');
       setShowAlert(true);
-    }
+    },
   });
 
   const handleJoin = (challengeId: string) => {
@@ -86,7 +89,7 @@ export const ChallengeScreen = ({ navigation }) => {
       <View style={styles.timeInfo}>
         <Icon name="calendar" size={16} color="#666" />
         <Text style={styles.timeText}>
-          {format(new Date(challenge.startDate), 'MM.dd', { locale: zhCN })} - 
+          {format(new Date(challenge.startDate), 'MM.dd', { locale: zhCN })} -
           {format(new Date(challenge.endDate), 'MM.dd', { locale: zhCN })}
         </Text>
       </View>
@@ -101,16 +104,15 @@ export const ChallengeScreen = ({ navigation }) => {
       </View>
 
       <TouchableOpacity
-        style={[
-          styles.actionButton,
-          challenge.isJoined ? styles.quitButton : styles.joinButton
-        ]}
-        onPress={() => challenge.isJoined ? handleQuit(challenge.id) : handleJoin(challenge.id)}
+        style={[styles.actionButton, challenge.isJoined ? styles.quitButton : styles.joinButton]}
+        onPress={() => (challenge.isJoined ? handleQuit(challenge.id) : handleJoin(challenge.id))}
       >
-        <Text style={[
-          styles.actionButtonText,
-          challenge.isJoined ? styles.quitButtonText : styles.joinButtonText
-        ]}>
+        <Text
+          style={[
+            styles.actionButtonText,
+            challenge.isJoined ? styles.quitButtonText : styles.joinButtonText,
+          ]}
+        >
           {challenge.isJoined ? '退出挑战' : '参与挑战'}
         </Text>
       </TouchableOpacity>
@@ -119,9 +121,7 @@ export const ChallengeScreen = ({ navigation }) => {
 
   if (isLoading) return <LoadingSpinner />;
 
-  const filteredChallenges = challenges?.filter(
-    challenge => challenge.status === selectedStatus
-  );
+  const filteredChallenges = challenges?.filter(challenge => challenge.status === selectedStatus);
 
   return (
     <View style={styles.container}>
@@ -160,11 +160,7 @@ export const ChallengeScreen = ({ navigation }) => {
         ItemSeparatorComponent={() => <View style={styles.separator} />}
       />
 
-      <AlertDialog
-        visible={showAlert}
-        message={alertMessage}
-        onClose={() => setShowAlert(false)}
-      />
+      <AlertDialog visible={showAlert} message={alertMessage} onClose={() => setShowAlert(false)} />
     </View>
   );
 };
@@ -172,94 +168,94 @@ export const ChallengeScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   tabs: {
     flexDirection: 'row',
     backgroundColor: '#fff',
     paddingHorizontal: 15,
-    paddingVertical: 10
+    paddingVertical: 10,
   },
   tab: {
     flex: 1,
     alignItems: 'center',
-    paddingVertical: 8
+    paddingVertical: 8,
   },
   activeTab: {
     borderBottomWidth: 2,
-    borderBottomColor: '#2E7D32'
+    borderBottomColor: '#2E7D32',
   },
   tabText: {
     fontSize: 14,
-    color: '#666'
+    color: '#666',
   },
   activeTabText: {
     color: '#2E7D32',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   list: {
-    padding: 15
+    padding: 15,
   },
   challengeCard: {
     backgroundColor: '#fff',
     borderRadius: 12,
-    padding: 15
+    padding: 15,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8
+    marginBottom: 8,
   },
   title: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#333',
-    flex: 1
+    flex: 1,
   },
   participants: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   participantCount: {
     fontSize: 12,
     color: '#666',
-    marginLeft: 4
+    marginLeft: 4,
   },
   description: {
     fontSize: 14,
     color: '#666',
     lineHeight: 20,
-    marginBottom: 12
+    marginBottom: 12,
   },
   targetInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8
+    marginBottom: 8,
   },
   targetLabel: {
     fontSize: 14,
-    color: '#666'
+    color: '#666',
   },
   targetValue: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#2E7D32',
-    marginLeft: 8
+    marginLeft: 8,
   },
   timeInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12
+    marginBottom: 12,
   },
   timeText: {
     fontSize: 14,
     color: '#666',
-    marginLeft: 6
+    marginLeft: 6,
   },
   rewards: {
     flexDirection: 'row',
-    marginBottom: 15
+    marginBottom: 15,
   },
   rewardItem: {
     flexDirection: 'row',
@@ -268,41 +264,41 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
-    marginRight: 8
+    marginRight: 8,
   },
   rewardIcon: {
     width: 16,
     height: 16,
-    marginRight: 4
+    marginRight: 4,
   },
   rewardValue: {
     fontSize: 12,
-    color: '#F57C00'
+    color: '#F57C00',
   },
   actionButton: {
     paddingVertical: 8,
     borderRadius: 20,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   joinButton: {
-    backgroundColor: '#2E7D32'
+    backgroundColor: '#2E7D32',
   },
   quitButton: {
     backgroundColor: '#fff',
     borderWidth: 1,
-    borderColor: '#2E7D32'
+    borderColor: '#2E7D32',
   },
   actionButtonText: {
     fontSize: 14,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   joinButtonText: {
-    color: '#fff'
+    color: '#fff',
   },
   quitButtonText: {
-    color: '#2E7D32'
+    color: '#2E7D32',
   },
   separator: {
-    height: 15
-  }
-}); 
+    height: 15,
+  },
+});

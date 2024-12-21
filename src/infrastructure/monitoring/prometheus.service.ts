@@ -1,7 +1,7 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
-import { Registry, Counter, Gauge, Histogram } from 'prom-client';
 import { ConfigService } from '../config/config.service';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Logger } from '../logger/logger.service';
+import { Registry, Counter, Gauge, Histogram } from 'prom-client';
 
 @Injectable()
 export class PrometheusService implements OnModuleInit {
@@ -41,66 +41,66 @@ export class PrometheusService implements OnModuleInit {
     this.requestCounter = new Counter({
       name: 'http_requests_total',
       help: 'Total number of HTTP requests',
-      labelNames: ['method', 'path', 'status']
+      labelNames: ['method', 'path', 'status'],
     });
 
     this.requestDuration = new Histogram({
       name: 'http_request_duration_seconds',
       help: 'HTTP request duration in seconds',
       labelNames: ['method', 'path'],
-      buckets: [0.1, 0.3, 0.5, 0.7, 1, 3, 5, 7, 10]
+      buckets: [0.1, 0.3, 0.5, 0.7, 1, 3, 5, 7, 10],
     });
 
     this.activeConnections = new Gauge({
       name: 'active_connections',
-      help: 'Number of active connections'
+      help: 'Number of active connections',
     });
 
     // 服务健康指标
     this.serviceHealth = new Gauge({
       name: 'service_health_status',
       help: 'Service health status (1 = healthy, 0 = unhealthy)',
-      labelNames: ['service']
+      labelNames: ['service'],
     });
 
     this.serviceUptime = new Gauge({
       name: 'service_uptime_seconds',
-      help: 'Service uptime in seconds'
+      help: 'Service uptime in seconds',
     });
 
     // 资源使用指标
     this.cpuUsage = new Gauge({
       name: 'process_cpu_usage',
-      help: 'Process CPU usage percentage'
+      help: 'Process CPU usage percentage',
     });
 
     this.memoryUsage = new Gauge({
       name: 'process_memory_bytes',
       help: 'Process memory usage in bytes',
-      labelNames: ['type']
+      labelNames: ['type'],
     });
 
     this.gcDuration = new Histogram({
       name: 'gc_duration_seconds',
-      help: 'Garbage collection duration'
+      help: 'Garbage collection duration',
     });
 
     // 业务指标
     this.activeUsers = new Gauge({
       name: 'active_users',
-      help: 'Number of active users'
+      help: 'Number of active users',
     });
 
     this.errorRate = new Gauge({
       name: 'error_rate',
       help: 'Error rate percentage',
-      labelNames: ['service']
+      labelNames: ['service'],
     });
 
     this.queueSize = new Gauge({
       name: 'queue_size',
       help: 'Current queue size',
-      labelNames: ['queue']
+      labelNames: ['queue'],
     });
 
     // 注册所有指标
@@ -143,7 +143,6 @@ export class PrometheusService implements OnModuleInit {
       this.memoryUsage.labels('heap').set(memUsage.heapUsed);
       this.memoryUsage.labels('rss').set(memUsage.rss);
       this.memoryUsage.labels('external').set(memUsage.external);
-
     } catch (error) {
       this.logger.error('Error collecting system metrics:', error);
     }
@@ -184,4 +183,4 @@ export class PrometheusService implements OnModuleInit {
   async getMetrics(): Promise<string> {
     return this.registry.metrics();
   }
-} 
+}

@@ -1,0 +1,229 @@
+# 仪表板基础配置
+dashboard:
+  update_interval: 30000  # 更新间隔（毫秒）
+  retention_period: 7     # 数据保留天数
+  max_data_points: 1000   # 每个指标最大数据点数
+
+# 健康检查配置
+health_check:
+  timeout: 5000          # 检查超时时间（毫秒）
+  retry_count: 3         # 重试次数
+  services:
+    performance:
+      enabled: true
+      check_interval: 60000
+    security:
+      enabled: true
+      check_interval: 300000
+    config:
+      enabled: true
+      check_interval: 600000
+    alerts:
+      enabled: true
+      check_interval: 30000
+
+# 性能监控阈值
+performance_thresholds:
+  cpu:
+    warning: 70
+    critical: 90
+  memory:
+    warning: 80
+    critical: 90
+  io:
+    latency_warning: 100  # 毫秒
+    latency_critical: 200
+  network:
+    latency_warning: 50   # 毫秒
+    latency_critical: 100
+
+# 安全监控设置
+security_monitoring:
+  event_retention: 30     # 事件保留天数
+  scan_interval: 3600000  # 安全扫描间隔（毫秒）
+  threat_levels:
+    low: 1
+    medium: 2
+    high: 3
+    critical: 4
+
+# 告警显示设置
+alert_display:
+  max_active_alerts: 100  # 最大活动告警显示数
+  max_recent_alerts: 50   # 最大最近告警显示数
+  refresh_interval: 15000 # 告警刷新间隔（毫秒）
+  severity_colors:
+    info: "#2196F3"
+    warning: "#FFC107"
+    error: "#FF5722"
+    critical: "#F44336"
+
+# 图表显示设置
+chart_display:
+  default_time_range: 3600000  # 默认时间范围（毫秒）
+  refresh_interval: 60000      # 图表刷新间隔（毫秒）
+  chart_types:
+    performance:
+      type: "line"
+      stacked: false
+      fill_opacity: 0.1
+    metrics:
+      type: "bar"
+      stacked: true
+      fill_opacity: 0.8
+    distribution:
+      type: "pie"
+      inner_radius: 0.5
+      label_position: "outside"
+
+# 自定义仪表板设置
+custom_dashboard:
+  enabled: true
+  max_dashboards_per_user: 5
+  max_widgets_per_dashboard: 20
+  widget_types:
+    - performance
+    - security
+    - alerts
+    - metrics
+    - status
+    - custom
+  layouts:
+    - name: "1x1"
+      columns: 1
+      rows: 1
+    - name: "2x2"
+      columns: 2
+      rows: 2
+    - name: "3x3"
+      columns: 3
+      rows: 3
+  themes:
+    - name: "default"
+      colors:
+        primary: "#1976D2"
+        secondary: "#424242"
+        success: "#4CAF50"
+        warning: "#FFC107"
+        error: "#F44336"
+    - name: "dark"
+      colors:
+        primary: "#90CAF9"
+        secondary: "#B0BEC5"
+        success: "#A5D6A7"
+        warning: "#FFE082"
+        error: "#EF9A9A"
+
+# 数据分析设置
+data_analysis:
+  enabled: true
+  features:
+    trend_analysis:
+      enabled: true
+      max_points: 1000
+      methods:
+        - "linear"
+        - "moving_average"
+        - "exponential"
+    correlation_analysis:
+      enabled: true
+      max_metrics: 5
+      methods:
+        - "pearson"
+        - "spearman"
+    anomaly_detection:
+      enabled: true
+      sensitivity: 0.8
+      methods:
+        - "zscore"
+        - "isolation_forest"
+    forecasting:
+      enabled: true
+      horizon: 24  # 小时
+      methods:
+        - "arima"
+        - "prophet"
+
+# 数据管理设置
+data_management:
+  storage:
+    type: "timeseries"
+    compression: true
+    retention:
+      raw: 7      # 天
+      hourly: 30  # 天
+      daily: 365  # 天
+  backup:
+    enabled: true
+    interval: 86400000  # 24小时
+    retention: 30       # 保留30个备份
+  archive:
+    enabled: true
+    interval: 2592000000  # 30天
+    format: "parquet"
+
+# 移动端支持
+mobile_support:
+  enabled: true
+  layouts:
+    - name: "mobile_1x2"
+      columns: 1
+      rows: 2
+    - name: "mobile_2x2"
+      columns: 2
+      rows: 2
+  features:
+    touch_support: true
+    responsive_charts: true
+    offline_mode: true
+    push_notifications: true
+
+# 性能优化
+performance_optimization:
+  data_caching:
+    enabled: true
+    ttl: 300000  # 5分钟
+  lazy_loading:
+    enabled: true
+    threshold: 20  # 项
+  request_batching:
+    enabled: true
+    max_batch_size: 50
+    timeout: 100  # 毫秒
+
+# 导出设置
+export:
+  formats:
+    - pdf
+    - csv
+    - excel
+  max_records: 10000
+  include_charts: true
+  template_path: "templates/reports"
+
+# 通知设置
+notifications:
+  enabled: true
+  channels:
+    email:
+      enabled: true
+      template: "templates/email/dashboard-alert"
+    slack:
+      enabled: true
+      webhook_url: "${SLACK_WEBHOOK_URL}"
+    webhook:
+      enabled: true
+      endpoint: "${WEBHOOK_ENDPOINT}"
+
+# 权限设置
+permissions:
+  roles:
+    admin:
+      - "view:all"
+      - "export:all"
+      - "configure:all"
+    operator:
+      - "view:all"
+      - "export:basic"
+    viewer:
+      - "view:basic"

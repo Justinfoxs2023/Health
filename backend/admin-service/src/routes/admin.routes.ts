@@ -1,7 +1,7 @@
-import { Router } from 'express';
 import { AdminController } from '../controllers/admin.controller';
 import { AnalyticsController } from '../controllers/analytics.controller';
 import { ContentController } from '../controllers/content.controller';
+import { Router } from 'express';
 import { authMiddleware } from '../middleware/auth.middleware';
 import { roleMiddleware } from '../middleware/role.middleware';
 
@@ -11,60 +11,64 @@ const analyticsController = new AnalyticsController();
 const contentController = new ContentController();
 
 // 用户管理路由
-router.get('/users', 
-  authMiddleware, 
-  roleMiddleware(['ADMIN']), 
-  adminController.getUsers
-);
+router.get('/users', authMiddleware, roleMiddleware(['ADMIN']), adminController.getUsers);
 
-router.put('/users/:userId/roles',
+router.put(
+  '/users/:userId/roles',
   authMiddleware,
   roleMiddleware(['ADMIN']),
-  adminController.updateUserRole
+  adminController.updateUserRole,
 );
 
 // 数据分析路由
-router.get('/analytics/user-growth',
+router.get(
+  '/analytics/user-growth',
   authMiddleware,
   roleMiddleware(['ADMIN', 'DATA_ANALYST']),
-  analyticsController.getUserGrowth
+  analyticsController.getUserGrowth,
 );
 
-router.get('/analytics/health-stats',
+router.get(
+  '/analytics/health-stats',
   authMiddleware,
   roleMiddleware(['ADMIN', 'DATA_ANALYST']),
-  analyticsController.getHealthStats
+  analyticsController.getHealthStats,
 );
 
-router.post('/analytics/reports',
+router.post(
+  '/analytics/reports',
   authMiddleware,
   roleMiddleware(['ADMIN', 'DATA_ANALYST']),
-  analyticsController.generateReport
+  analyticsController.generateReport,
 );
 
 // 内容管理路由
-router.get('/contents',
+router.get(
+  '/contents',
   authMiddleware,
   roleMiddleware(['ADMIN', 'CONTENT_ADMIN']),
-  contentController.getContents
+  contentController.getContents,
 );
 
-router.put('/contents/:contentId/review',
+router.put(
+  '/contents/:contentId/review',
   authMiddleware,
   roleMiddleware(['ADMIN', 'CONTENT_ADMIN']),
-  contentController.reviewContent
+  contentController.reviewContent,
 );
 
-router.put('/contents/:contentId/publish',
+router.put(
+  '/contents/:contentId/publish',
   authMiddleware,
   roleMiddleware(['ADMIN', 'CONTENT_ADMIN']),
-  contentController.publishContent
+  contentController.publishContent,
 );
 
-router.get('/contents/stats',
+router.get(
+  '/contents/stats',
   authMiddleware,
   roleMiddleware(['ADMIN', 'CONTENT_ADMIN']),
-  contentController.getContentStats
+  contentController.getContentStats,
 );
 
-export default router; 
+export default router;

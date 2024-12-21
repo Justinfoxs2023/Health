@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 module-declarations.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // 声明Express模块
 declare module 'express' {
   export interface Request {
@@ -41,4 +48,4 @@ declare module '../services/*' {
 // 声明工具模块
 declare module '../utils/*' {
   export * from '../utils';
-} 
+}

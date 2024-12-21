@@ -1,19 +1,24 @@
 import React from 'react';
-import { View, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-import { Icon } from './Icon';
 
-interface Props {
+import { Icon } from './Icon';
+import { View, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+
+interface IProps {
+  /** value 的描述 */
   value: string;
+  /** onChangeText 的描述 */
   onChangeText: (text: string) => void;
+  /** placeholder 的描述 */
   placeholder?: string;
+  /** onSubmit 的描述 */
   onSubmit?: () => void;
 }
 
-export const SearchBar: React.FC<Props> = ({
+export const SearchBar: React.FC<IProps> = ({
   value,
   onChangeText,
   placeholder = '搜索',
-  onSubmit
+  onSubmit,
 }) => {
   return (
     <View style={styles.container}>
@@ -28,10 +33,7 @@ export const SearchBar: React.FC<Props> = ({
         onSubmitEditing={onSubmit}
       />
       {value.length > 0 && (
-        <TouchableOpacity
-          onPress={() => onChangeText('')}
-          style={styles.clearButton}
-        >
+        <TouchableOpacity onPress={() => onChangeText('')} style={styles.clearButton}>
           <Icon name="close" size={20} color="#999" />
         </TouchableOpacity>
       )}
@@ -47,18 +49,18 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 12,
     marginHorizontal: 16,
-    marginVertical: 8
+    marginVertical: 8,
   },
   icon: {
-    marginRight: 8
+    marginRight: 8,
   },
   input: {
     flex: 1,
     height: 40,
     fontSize: 14,
-    color: '#333'
+    color: '#333',
   },
   clearButton: {
-    padding: 4
-  }
-}); 
+    padding: 4,
+  },
+});

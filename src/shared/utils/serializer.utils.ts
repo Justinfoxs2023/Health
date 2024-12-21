@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 serializer.utils.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 export class SerializerUtils {
   // 序列化数据
   static serialize(data: any): string {
@@ -6,26 +13,26 @@ export class SerializerUtils {
         if (value instanceof Map) {
           return {
             dataType: 'Map',
-            value: Array.from(value.entries())
+            value: Array.from(value.entries()),
           };
         }
         if (value instanceof Set) {
           return {
             dataType: 'Set',
-            value: Array.from(value)
+            value: Array.from(value),
           };
         }
         if (value instanceof Date) {
           return {
             dataType: 'Date',
-            value: value.toISOString()
+            value: value.toISOString(),
           };
         }
         if (value instanceof RegExp) {
           return {
             dataType: 'RegExp',
             source: value.source,
-            flags: value.flags
+            flags: value.flags,
           };
         }
         return value;
@@ -59,4 +66,4 @@ export class SerializerUtils {
       throw new Error(`反序列化失败: ${error.message}`);
     }
   }
-} 
+}

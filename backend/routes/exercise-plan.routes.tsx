@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { exercisePlanController } from '../controllers/exercise-plan.controller';
 import { auth } from '../middleware/auth';
+import { exercisePlanController } from '../controllers/exercise-plan.controller';
 
 const router = Router();
 
@@ -19,4 +19,4 @@ router.put('/:id/status', auth.required, exercisePlanController.updatePlanStatus
 // 更新计划进度
 router.put('/:id/progress', auth.required, exercisePlanController.updateProgress);
 
-export default router; 
+export default router;

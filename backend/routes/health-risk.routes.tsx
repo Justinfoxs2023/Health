@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { healthRiskController } from '../controllers/health-risk.controller';
 import { auth } from '../middleware/auth';
+import { healthRiskController } from '../controllers/health-risk.controller';
 
 const router = Router();
 
@@ -16,4 +16,4 @@ router.get('/:id', auth.required, healthRiskController.getRiskDetails);
 // 获取风险统计
 router.get('/stats', auth.required, healthRiskController.getRiskStats);
 
-export default router; 
+export default router;

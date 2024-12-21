@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 modules.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 // 声明本地模块
 declare module '../*' {
   const content: any;
@@ -104,4 +111,4 @@ declare module '*.png' {
 declare module '*.json' {
   const content: any;
   export default content;
-} 
+}

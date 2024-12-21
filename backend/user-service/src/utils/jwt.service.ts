@@ -1,11 +1,11 @@
 import jwt from 'jsonwebtoken';
+import { ITokenPayload } from '../types/interfaces/auth.interface';
 import { config } from '../config';
-import { TokenPayload } from '../types/interfaces/auth.interface';
 import { injectable } from 'inversify';
 
 @injectable()
 export class JwtService {
-  async generateAccessToken(payload: TokenPayload): Promise<string> {
+  async generateAccessToken(payload: ITokenPayload): Promise<string> {
     return jwt.sign(payload, config.jwt.secret, {
       expiresIn: config.jwt.accessTokenExpiry,
     });
@@ -17,11 +17,11 @@ export class JwtService {
     });
   }
 
-  async verifyAccessToken(token: string): Promise<TokenPayload> {
-    return jwt.verify(token, config.jwt.secret) as TokenPayload;
+  async verifyAccessToken(token: string): Promise<ITokenPayload> {
+    return jwt.verify(token, config.jwt.secret) as ITokenPayload;
   }
 
   async verifyRefreshToken(token: string): Promise<{ userId: string }> {
     return jwt.verify(token, config.jwt.secret) as { userId: string };
   }
-} 
+}

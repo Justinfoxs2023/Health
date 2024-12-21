@@ -1,15 +1,17 @@
 import React from 'react';
-import { View, ScrollView, StyleSheet } from 'react-native';
-import { useQuery } from 'react-query';
-import { getHealthAnalysis } from '../../api/health';
+
 import {
   HealthIndexCard,
   RiskWarningCard,
   RecommendationList,
-  LoadingSpinner
+  LoadingSpinner,
 } from '../../components';
+import { View, ScrollView, StyleSheet } from 'react-native';
+import { getHealthAnalysis } from '../../api/health';
+import { useQuery } from 'react-query';
 
-export const HealthAnalysisScreen = () => {
+expor
+t const HealthAnalysisScreen = () => {
   const { data, isLoading } = useQuery('healthAnalysis', getHealthAnalysis);
 
   if (isLoading) return <LoadingSpinner />;
@@ -46,7 +48,7 @@ export const HealthAnalysisScreen = () => {
         <View style={styles.section}>
           <RiskWarningCard
             risks={risks}
-            onPress={(risk) => {
+            onPress={risk => {
               // 处理风险点击事件
             }}
           />
@@ -80,25 +82,25 @@ export const HealthAnalysisScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   indexContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     padding: 15,
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   card: {
     width: '48%',
-    marginBottom: 15
+    marginBottom: 15,
   },
   section: {
-    padding: 15
+    padding: 15,
   },
   recommendationList: {
     marginBottom: 15,
     backgroundColor: '#fff',
     borderRadius: 8,
-    padding: 15
-  }
-}); 
+    padding: 15,
+  },
+});

@@ -1,9 +1,11 @@
 import React from 'react';
-import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { UserInfo } from '../UserInfo';
-import { Tag } from '../Tag';
 
-interface Props {
+import { Tag } from '../Tag';
+import { UserInfo } from '../UserInfo';
+import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+
+interface IProps {
+  /** question 的描述 */
   question: {
     id: string;
     title: string;
@@ -18,10 +20,11 @@ interface Props {
     viewCount: number;
     createdAt: string;
   };
+  /** onPress 的描述 */
   onPress?: () => void;
 }
 
-export const QuestionCard: React.FC<Props> = ({ question, onPress }) => {
+export const QuestionCard: React.FC<IProps> = ({ question, onPress }) => {
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
       <Text style={styles.title} numberOfLines={2}>
@@ -56,35 +59,35 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 4
+    shadowRadius: 4,
   },
   title: {
     fontSize: 16,
     fontWeight: '500',
     color: '#333',
-    marginBottom: 8
+    marginBottom: 8,
   },
   content: {
     fontSize: 14,
     color: '#666',
-    marginBottom: 12
+    marginBottom: 12,
   },
   tags: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginBottom: 12
+    marginBottom: 12,
   },
   footer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   stats: {
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   stat: {
     fontSize: 12,
     color: '#999',
-    marginLeft: 12
-  }
-}); 
+    marginLeft: 12,
+  },
+});

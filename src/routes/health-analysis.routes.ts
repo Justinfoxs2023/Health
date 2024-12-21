@@ -1,5 +1,5 @@
-import { Router } from 'express';
 import { HealthAnalysisController } from '../controllers/health-analysis.controller';
+import { Router } from 'express';
 import { auth } from '../middleware/auth.middleware';
 import { rateLimit } from '../middleware/rate-limit.middleware';
 
@@ -11,7 +11,7 @@ router.post(
   '/risks',
   auth.verifyToken,
   rateLimit.standard,
-  healthAnalysisController.assessHealthRisks.bind(healthAnalysisController)
+  healthAnalysisController.assessHealthRisks.bind(healthAnalysisController),
 );
 
 // 获取健康建议
@@ -19,7 +19,7 @@ router.post(
   '/recommendations',
   auth.verifyToken,
   rateLimit.standard,
-  healthAnalysisController.getRecommendations.bind(healthAnalysisController)
+  healthAnalysisController.getRecommendations.bind(healthAnalysisController),
 );
 
-export default router; 
+export default router;

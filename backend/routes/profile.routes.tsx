@@ -1,7 +1,7 @@
-import { Router } from 'express';
 import multer from 'multer';
-import { profileController } from '../controllers/profile.controller';
+import { Router } from 'express';
 import { auth } from '../middleware/auth';
+import { profileController } from '../controllers/profile.controller';
 
 const upload = multer({ storage: multer.memoryStorage() });
 const router = Router();
@@ -21,4 +21,4 @@ router.put('/health-data', auth.required, profileController.updateHealthData);
 // 更新用户设置
 router.put('/settings', auth.required, profileController.updateSettings);
 
-export default router; 
+export default router;

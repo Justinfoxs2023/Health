@@ -1,31 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Table,
-  Card,
-  Button,
-  Switch,
-  Modal,
-  Form,
-  Input,
-  Select,
-  message 
-} from 'antd';
+
+import { Table, Card, Button, Switch, Modal, Form, Input, Select, message } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
-import { 
-  ToolType, 
-  ToolCategory,
-  ToolFeature 
-} from '@/types/tool-features';
-import { 
-  fetchAllTools,
-  updateToolConfig,
-  getToolStats 
-} from '@/store/actions/tools';
+
 import { ToolConfigForm } from '@/components/ToolConfigForm';
 import { ToolStatsChart } from '@/components/ToolStatsChart';
+import { ToolType, ToolCategory, IToolFeature } from '@/types/tool-features';
+import { fetchAllTools, updateToolConfig, getToolStats } from '@/store/actions/tools';
 
 export const ToolManagement = () => {
-  const [selectedTool, setSelectedTool] = useState<ToolFeature | null>(null);
+  const [selectedTool, setSelectedTool] = useState<IToolFeature | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -45,7 +29,7 @@ export const ToolManagement = () => {
     }
   };
 
-  const handleConfigUpdate = async (toolType: ToolType, config: Partial<ToolFeature>) => {
+  const handleConfigUpdate = async (toolType: ToolType, config: Partial<IToolFeature>) => {
     try {
       await dispatch(updateToolConfig(toolType, config));
       message.success('工具配置已更新');
@@ -59,51 +43,46 @@ export const ToolManagement = () => {
     {
       title: '工具名称',
       dataIndex: 'name',
-      key: 'name'
+      key: 'name',
     },
     {
       title: '分类',
       dataIndex: 'category',
-      key: 'category'
+      key: 'category',
     },
     {
       title: '状态',
       dataIndex: 'enabled',
       key: 'enabled',
-      render: (enabled: boolean, record: ToolFeature) => (
+      render: (enabled: boolean, record: IToolFeature) => (
         <Switch
           checked={enabled}
           onChange={checked => handleConfigUpdate(record.type, { enabled: checked })}
         />
-      )
+      ),
     },
     {
       title: '操作',
       key: 'action',
-      render: (_, record: ToolFeature) => (
+      render: (_, record: IToolFeature) => (
         <>
-          <Button onClick={() => {
-            setSelectedTool(record);
-            setModalVisible(true);
-          }}>
-            配置
+          <Button
+            onClick={ => {
+              setSelectedToolrecord
+              setModalVisibletrue
+            }}
+          >
+            
           </Button>
-          <Button onClick={() => dispatch(getToolStats(record.type))}>
-            统计
-          </Button>
+          <Button onClick={ => dispatchgetToolStatsrecordtype}></Button>
         </>
-      )
-    }
+      ),
+    },
   ];
 
   return (
     <Card title="工具管理">
-      <Table
-        loading={loading}
-        dataSource={tools}
-        columns={columns}
-        rowKey="type"
-      />
+      <Table loading={loading} dataSource={tools} columns={columns} rowKey="type" />
 
       <Modal
         title="工具配置"
@@ -121,4 +100,4 @@ export const ToolManagement = () => {
       </Modal>
     </Card>
   );
-}; 
+};

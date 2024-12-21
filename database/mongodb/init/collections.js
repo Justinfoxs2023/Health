@@ -9,58 +9,58 @@ db.createCollection('users', {
       bsonType: "object",
       required: ["username", "email", "password_hash", "created_at"],
       properties: {
-        username: { 
+        username: {
           bsonType: "string",
-          description: "用户名" 
+          description: "用户名"
         },
-        email: { 
+        email: {
           bsonType: "string",
-          description: "邮箱" 
+          description: "邮箱"
         },
-        password_hash: { 
+        password_hash: {
           bsonType: "string",
-          description: "密码哈希" 
+          description: "密码哈希"
         },
         profile: {
           bsonType: "object",
           properties: {
-            name: { 
+            name: {
               bsonType: "string",
-              description: "姓名" 
+              description: "姓名"
             },
-            gender: { 
+            gender: {
               enum: ["male", "female", "other"],
-              description: "性别" 
+              description: "性别"
             },
-            birth_date: { 
+            birth_date: {
               bsonType: "date",
-              description: "出生日期" 
+              description: "出生日期"
             },
-            height: { 
+            height: {
               bsonType: "number",
-              description: "身高(cm)" 
+              description: "身高(cm)"
             },
-            weight: { 
+            weight: {
               bsonType: "number",
-              description: "体重(kg)" 
+              description: "体重(kg)"
             }
           }
         },
-        roles: { 
+        roles: {
           bsonType: "array",
-          description: "用户角色" 
+          description: "用户角色"
         },
-        status: { 
+        status: {
           enum: ["active", "inactive", "suspended"],
-          description: "账户状态" 
+          description: "账户状态"
         },
-        created_at: { 
+        created_at: {
           bsonType: "date",
-          description: "创建时间" 
+          description: "创建时间"
         },
-        updated_at: { 
+        updated_at: {
           bsonType: "date",
-          description: "更新时间" 
+          description: "更新时间"
         }
       }
     }
@@ -68,10 +68,10 @@ db.createCollection('users', {
 }),  // 添加逗号
 
 // 更新用户角色
-db.users.updateMany({}, { $set: { roles: [] } }),  // 添加逗号
+db.users.updateMany({}, { $set: { roles: [] } }),
 
 // 添加用户状态管理逻辑
-db.users.createIndex({ status: 1 }),  // 添加逗号
+db.users.createIndex({ status: 1 }),
 
 // 健康记录集合
 db.createCollection('health_records', {
@@ -80,13 +80,13 @@ db.createCollection('health_records', {
       bsonType: "object",
       required: ["user_id", "record_type", "data", "created_at"],
       properties: {
-        user_id: { 
+        user_id: {
           bsonType: "objectId",
-          description: "用户ID" 
+          description: "用户ID"
         },
-        record_type: { 
+        record_type: {
           enum: ["vital_signs", "exercise", "diet", "sleep", "medication"],
-          description: "记录类型" 
+          description: "记录类型"
         },
         data: {
           bsonType: "object",
@@ -95,59 +95,59 @@ db.createCollection('health_records', {
               bsonType: "object",
               properties: {
                 blood_pressure: {
-                  systolic: { 
+                  systolic: {
                     bsonType: "number",
-                    description: "收缩压" 
+                    description: "收缩压"
                   },
-                  diastolic: { 
+                  diastolic: {
                     bsonType: "number",
-                    description: "舒张压" 
+                    description: "舒张压"
                   }
                 },
-                heart_rate: { 
+                heart_rate: {
                   bsonType: "number",
-                  description: "心率" 
+                  description: "心率"
                 },
-                blood_oxygen: { 
+                blood_oxygen: {
                   bsonType: "number",
-                  description: "血氧" 
+                  description: "血氧"
                 },
-                temperature: { 
+                temperature: {
                   bsonType: "number",
-                  description: "体温" 
+                  description: "体温"
                 }
               }
             },
             exercise: {
               bsonType: "object",
               properties: {
-                type: { 
+                type: {
                   bsonType: "string",
-                  description: "运动类型" 
+                  description: "运动类型"
                 },
-                duration: { 
+                duration: {
                   bsonType: "number",
-                  description: "时长(分钟)" 
+                  description: "时长(分钟)"
                 },
-                intensity: { 
+                intensity: {
                   bsonType: "number",
-                  description: "强度" 
+                  description: "强度"
                 },
-                calories: { 
+                calories: {
                   bsonType: "number",
-                  description: "消耗卡路里" 
+                  description: "消耗卡路里"
                 }
               }
             }
           }
         },
-        device_id: { 
+        device_id: {
           bsonType: "string",
-          description: "设备ID" 
+          description: "设备ID"
         },
-        created_at: { 
+        created_at: {
           bsonType: "date",
-          description: "创建时间" 
+          description: "创建时间"
         }
       }
     }
@@ -164,13 +164,13 @@ db.createCollection('ai_analysis', {
       bsonType: "object",
       required: ["user_id", "analysis_type", "results", "created_at"],
       properties: {
-        user_id: { 
+        user_id: {
           bsonType: "objectId",
-          description: "用户ID" 
+          description: "用户ID"
         },
-        analysis_type: { 
+        analysis_type: {
           enum: ["pose_estimation", "diet_analysis", "sleep_quality", "health_risk"],
-          description: "分析类型" 
+          description: "分析类型"
         },
         input_data: {
           bsonType: "object",
@@ -179,40 +179,40 @@ db.createCollection('ai_analysis', {
         results: {
           bsonType: "object",
           properties: {
-            predictions: { 
+            predictions: {
               bsonType: "array",
-              description: "预测结果" 
+              description: "预测结果"
             },
-            confidence: { 
+            confidence: {
               bsonType: "number",
-              description: "置信度" 
+              description: "置信度"
             },
-            recommendations: { 
+            recommendations: {
           bsonType: "array",
-              description: "建议" 
+              description: "建议"
             }
           }
         },
         model_info: {
           bsonType: "object",
           properties: {
-            model_id: { 
+            model_id: {
               bsonType: "string",
-              description: "模型ID" 
+              description: "模型ID"
             },
-            version: { 
+            version: {
               bsonType: "string",
-              description: "版本" 
+              description: "版本"
             }
           }
         },
-        processing_time: { 
+        processing_time: {
           bsonType: "number",
-          description: "处理时间(ms)" 
+          description: "处理时间(ms)"
         },
-        created_at: { 
+        created_at: {
           bsonType: "date",
-          description: "创建时间" 
+          description: "创建时间"
         }
       }
     }
@@ -259,31 +259,31 @@ db.createCollection('mood_journals', {
       bsonType: "object",
       required: ["user_id", "mood_data", "created_at"],
       properties: {
-        user_id: { 
+        user_id: {
           bsonType: "objectId",
-          description: "用户ID" 
+          description: "用户ID"
         },
         mood_data: {
           bsonType: "object",
           required: ["primary_mood", "intensity"],
           properties: {
-            primary_mood: { 
+            primary_mood: {
               enum: ["happy", "sad", "anxious", "calm", "angry", "energetic"],
-              description: "主要情绪" 
+              description: "主要情绪"
             },
-            intensity: { 
+            intensity: {
               bsonType: "number",
               minimum: 1,
               maximum: 10,
-              description: "情绪强度" 
+              description: "情绪强度"
             },
-            secondary_moods: { 
+            secondary_moods: {
               bsonType: "array",
-              description: "次要情绪" 
+              description: "次要情绪"
             },
-            triggers: { 
+            triggers: {
               bsonType: "array",
-              description: "诱发因素" 
+              description: "诱发因素"
             }
           }
         },
@@ -319,17 +319,17 @@ db.createCollection('health_courses', {
       bsonType: "object",
       required: ["title", "category", "content", "status"],
       properties: {
-        title: { 
+        title: {
           bsonType: "string",
-          description: "课程标题" 
+          description: "课程标题"
         },
-        category: { 
+        category: {
           enum: ["nutrition", "exercise", "mental_health", "sleep", "rehabilitation"],
-          description: "课程类别" 
+          description: "课程类别"
         },
-        difficulty_level: { 
+        difficulty_level: {
           enum: ["beginner", "intermediate", "advanced"],
-          description: "难度等级" 
+          description: "难度等级"
         },
         content: {
           bsonType: "object",
@@ -339,9 +339,9 @@ db.createCollection('health_courses', {
             quizzes: { bsonType: "array" }
           }
         },
-        status: { 
+        status: {
           enum: ["draft", "published", "archived"],
-          description: "课程状态" 
+          description: "课程状态"
         }
       }
     }
@@ -355,25 +355,25 @@ db.createCollection('social_support', {
       bsonType: "object",
       required: ["user_id", "type", "content"],
       properties: {
-        user_id: { 
+        user_id: {
           bsonType: "objectId",
-          description: "用户ID" 
+          description: "用户ID"
         },
-        type: { 
+        type: {
           enum: ["group", "challenge", "achievement", "support_message"],
-          description: "社交类型" 
+          description: "社交类型"
         },
-        content: { 
+        content: {
           bsonType: "object",
-          description: "内容" 
+          description: "内容"
         },
-        participants: { 
+        participants: {
           bsonType: "array",
-          description: "参与者" 
+          description: "参与者"
         },
-        status: { 
+        status: {
           enum: ["active", "completed", "archived"],
-          description: "状态" 
+          description: "状态"
         }
       }
     }
@@ -387,9 +387,9 @@ db.createCollection('training_plans', {
       bsonType: "object",
       required: ["user_id", "plan_type", "exercises", "status"],
       properties: {
-        user_id: { 
+        user_id: {
           bsonType: "objectId",
-          description: "用户ID" 
+          description: "用户ID"
         },
         plan_type: {
           enum: ["rehabilitation", "fitness", "professional", "weight_loss"],
@@ -433,9 +433,9 @@ db.createCollection('nutrition_tracking', {
       bsonType: "object",
       required: ["user_id", "meal_type", "foods", "timestamp"],
       properties: {
-        user_id: { 
+        user_id: {
           bsonType: "objectId",
-          description: "用户ID" 
+          description: "用户ID"
         },
         meal_type: {
           enum: ["breakfast", "lunch", "dinner", "snack"],
@@ -484,9 +484,9 @@ db.users.createIndex({ "created_at": 1 }),  // 添加逗号
 // 健康记录索引
 db.health_records.createIndex({ "user_id": 1, "record_type": 1 }),  // 添加逗号
 db.health_records.createIndex({ "created_at": 1 }),  // 添加逗号
-db.health_records.createIndex({ 
-  "created_at": 1 
-}, { 
+db.health_records.createIndex({
+  "created_at": 1
+}, {
   expireAfterSeconds: 31536000,  // 一年后过期
   partialFilterExpression: {
     "record_type": "vital_signs"  // 仅对生命体征数据应用
@@ -499,20 +499,20 @@ db.ai_analysis.createIndex({ "model_info.model_id": 1 }),  // 添加逗号
 db.ai_analysis.createIndex({ "created_at": 1 }),  // 添加逗号
 
 // 系统指标索引
-db.system_metrics.createIndex({ "timestamp": 1 }, { 
+db.system_metrics.createIndex({ "timestamp": 1 }, {
   expireAfterSeconds: 2592000  // 30天后期
 }),  // 添加逗号
-db.system_metrics.createIndex({ 
-  "metric_type": 1, 
-  "service_name": 1, 
-  "timestamp": -1 
+db.system_metrics.createIndex({
+  "metric_type": 1,
+  "service_name": 1,
+  "timestamp": -1
 }),  // 添加逗号
 
 // 情绪日记索引
 db.mood_journals.createIndex({ "user_id": 1, "created_at": -1 }),  // 添加逗号
-db.mood_journals.createIndex({ 
-  "created_at": 1 
-}, { 
+db.mood_journals.createIndex({
+  "created_at": 1
+}, {
   expireAfterSeconds: 31536000,  // 一年后过期
 }),  // 添加逗号
 
@@ -527,18 +527,18 @@ db.social_support.createIndex({ "participants": 1 }),  // 添加逗号
 // 训练计划索引
 db.training_plans.createIndex({ "user_id": 1, "status": 1 }),  // 添加逗号
 db.training_plans.createIndex({ "plan_type": 1 }),  // 添加逗号
-db.training_plans.createIndex({ 
-  "created_at": 1 
-}, { 
+db.training_plans.createIndex({
+  "created_at": 1
+}, {
   expireAfterSeconds: 7776000,  // 90天后过期
 }),  // 添加逗号
 
 // 营养追踪索引
 db.nutrition_tracking.createIndex({ "user_id": 1, "timestamp": -1 }),  // 添加逗号
 db.nutrition_tracking.createIndex({ "meal_type": 1, "timestamp": -1 }),  // 添加逗号
-db.nutrition_tracking.createIndex({ 
-  "timestamp": 1 
-}, { 
+db.nutrition_tracking.createIndex({
+  "timestamp": 1
+}, {
   expireAfterSeconds: 15552000,  // 180天后过期
 }),  // 添加逗号
 
@@ -549,18 +549,18 @@ sh.enableSharding("health_management_dev"),  // 添加逗号
 sh.shardCollection("health_management_dev.users", { "_id": "hashed" }),  // 添加逗号
 
 // 康记录分片
-sh.shardCollection("health_management_dev.health_records", { 
-  "user_id": "hashed" 
+sh.shardCollection("health_management_dev.health_records", {
+  "user_id": "hashed"
 }),  // 添加逗号
 
 // AI分析果分片
-sh.shardCollection("health_management_dev.ai_analysis", { 
-  "user_id": "hashed" 
+sh.shardCollection("health_management_dev.ai_analysis", {
+  "user_id": "hashed"
 }),  // 添加逗号
 
 // 系指分片
-sh.shardCollection("health_management_dev.system_metrics", { 
-  "timestamp": 1 
+sh.shardCollection("health_management_dev.system_metrics", {
+  "timestamp": 1
 }),  // 添加逗号
 
 // 情绪日记分片
@@ -582,7 +582,7 @@ sh.shardCollection("health_management_dev.nutrition_tracking", { "user_id": "has
 // 添加数据质量检查触发器
 db.training_plans.createIndex(
   { "exercises.intensity": 1 },
-  { 
+  {
     partialFilterExpression: {
       "exercises.intensity": { $gt: 0, $lte: 10 }  // 确保运动强度在合理范围内
     }
@@ -590,7 +590,7 @@ db.training_plans.createIndex(
 
 db.nutrition_tracking.createIndex(
   { "foods.calories": 1 },
-  { 
+  {
     partialFilterExpression: {
       "foods.calories": { $gt: 0, $lt: 5000 }  // 确保卡路里值在合理范围内
     }
@@ -689,7 +689,7 @@ db.createCollection('index_usage_stats', {
         index_name: { bsonType: "string" },
         usage_count: { bsonType: "number" },
         last_used: { bsonType: "date" },
-        query_patterns: { 
+        query_patterns: {
           bsonType: "array",
           items: {
             bsonType: "object",
@@ -720,12 +720,12 @@ db.createView(
       }
     }
   ]
-),  // 添加逗号
+),
 
 // 优化现有索引
 db.health_records.createIndex(
   { "user_id": 1, "type": 1, "created_at": -1 },
-  { 
+  {
     partialFilterExpression: {
       "validation_status": "validated"
     },
@@ -735,7 +735,7 @@ db.health_records.createIndex(
 // 添加数据质量检查索引
 db.health_records.createIndex(
   { "data_quality.completeness": 1 },
-  { 
+  {
     partialFilterExpression: {
       "data_quality.completeness": { $lt: 80 }
     },
@@ -775,7 +775,7 @@ db.createCollection('health_goals', {
         },
         status: {
           enum: ["active", "completed", "abandoned"],
-          description: "目标状态"
+          description: "目标状��"
         }
       }
     }
@@ -800,7 +800,7 @@ db.createCollection('health_knowledge', {
           enum: ["beginner", "intermediate", "advanced"],
           description: "难度级别"
         },
-        references: { 
+        references: {
           bsonType: "array",
           items: {
             bsonType: "object",
@@ -829,7 +829,7 @@ db.createCollection('user_feedback', {
           description: "反馈类型"
         },
         content: { bsonType: "string" },
-        satisfaction_level: { 
+        satisfaction_level: {
           bsonType: "number",
           minimum: 1,
           maximum: 5
@@ -845,13 +845,13 @@ db.createCollection('user_feedback', {
 
 // 创建相应的索引
 db.health_goals.createIndex({ "user_id": 1, "status": 1 }),  // 添加逗号
-db.health_goals.createIndex({ "end_date": 1 }, { 
+db.health_goals.createIndex({ "end_date": 1 }, {
   expireAfterSeconds: 7776000  // 90天后过期
 }),  // 添加逗号
 
-db.health_knowledge.createIndex({ 
-  "title": "text", 
-  "content": "text" 
+db.health_knowledge.createIndex({
+  "title": "text",
+  "content": "text"
 }, {
   weights: {
     title: 10,
@@ -881,7 +881,7 @@ db.createView(
         _id: "$user_id",
         total_records: { $sum: 1 },
         avg_completion_rate: { $avg: "$goals.progress.completion_rate" },
-        recent_activities: { 
+        recent_activities: {
           $push: {
             type: "$type",
             timestamp: "$created_at",
@@ -896,7 +896,7 @@ db.createView(
 // 添加性能监控索引
 db.system_monitoring.createIndex(
   { "timestamp": 1, "metric_type": 1 },
-  { 
+  {
     partialFilterExpression: {
       "value": { $gt: 0 }
     },
@@ -949,8 +949,8 @@ db.ai_analysis.updateMany({}, {
 
 // 添加新的复合索引
 db.health_records.createIndex(
-  { 
-    "user_id": 1, 
+  {
+    "user_id": 1,
     "data.value": 1,
     "created_at": -1,
     "data_quality.accuracy": 1
@@ -964,7 +964,7 @@ db.health_records.createIndex(
 
 // 添加文本搜索索引
 db.health_records.createIndex(
-  { 
+  {
     "data.metadata.notes": "text",
     "data.metadata.tags": "text"
   },
@@ -979,7 +979,7 @@ db.health_records.createIndex(
 // 添加TTL索引用于数据归档
 db.health_records.createIndex(
   { "archived_at": 1 },
-  { 
+  {
     expireAfterSeconds: 15552000,  // 180天后自动归档
     partialFilterExpression: {
       "is_archived": true
@@ -1026,7 +1026,7 @@ db.createView(
 
 // 添加性能优化索引
 db.ai_analysis.createIndex(
-  { 
+  {
     "user_id": 1,
     "created_at": -1,
     "results.confidence": -1
@@ -1112,20 +1112,20 @@ db.createView(
 
 // 添加索引使用情况监控
 db.data_monitoring.createIndex(
-  { 
+  {
     "collection_name": 1,
     "metric_type": 1,
-    "timestamp": -1 
+    "timestamp": -1
   },
-  { 
+  {
     name: "monitoring_lookup"
   }),  // 添加逗号
 
-// 添加数据质量监控触发器
+// 添加数据质量��控触发器
 db.data_monitoring.createIndex(
-  { 
+  {
     "details.quality_metrics.accuracy": 1,
-    "timestamp": -1 
+    "timestamp": -1
   },
   {
     partialFilterExpression: {
@@ -1174,7 +1174,7 @@ db.createView(
 // 添加自动清理策略
 db.data_monitoring.createIndex(
   { "timestamp": 1 },
-  { 
+  {
     expireAfterSeconds: 7776000  // 90后自动清理监控数
   }),  // 添加逗号
 
@@ -1230,10 +1230,10 @@ db.createCollection('model_performance_metrics', {
 
 // 添加查询性能监控索引
 db.health_records.createIndex(
-  { 
+  {
     "query_pattern": 1,
     "execution_time": 1,
-    "timestamp": -1 
+    "timestamp": -1
   },
   {
     partialFilterExpression: {
@@ -1251,10 +1251,10 @@ db.createView(
       $group: {
         _id: {
           collection: "$type",
-          day: { 
-            $dateToString: { 
-              format: "%Y-%m-%d", 
-              date: "$created_at" 
+          day: {
+            $dateToString: {
+              format: "%Y-%m-%d",
+              date: "$created_at"
             }
           }
         },
@@ -1302,8 +1302,7 @@ db.createView(
           }
         }
       }
-    }
-),  // 添加逗号
+    ),  // 添加逗号
 
 // 添加数据增长趋势分析索引
 db.health_records.createIndex(
@@ -1320,61 +1319,6 @@ db.health_records.createIndex(
 db.createView(
   "query_pattern_analysis",
   "system_monitoring",
-  [
-    {
-      $match: {
-        "metric_type": "query_execution"
-      }
-    },
-    {
-      $group: {
-        _id: "$query_pattern",
-        avg_execution_time: { $avg: "$execution_time" },
-        total_executions: { $sum: 1 },
-        index_usage: {
-          $addToSet: "$index_name"
-        },
-        peak_times: {
-          $push: {
-            $dateToString: {
-              format: "%H:00",
-              date: "$timestamp"
-            }
-          }
-        }
-      }
-    },
-    {
-      $addFields: {
-        optimization_score: {
-          $multiply: [
-            { $divide: [100, { $add: ["$avg_execution_time", 1] }] },
-            { $size: "$index_usage" }
-          ]
-        }
-      }
-    }
-  ]
-),  // 添加逗号
-
-// 添加数据质量监控索引
-db.health_records.createIndex(
-  {
-    "data_quality.completeness": 1,
-    "data_quality.accuracy": 1,
-    "created_at": -1
-  },
-  {
-    name: "quality_monitoring",
-    partialFilterExpression: {
-      "data_quality.completeness": { $lt: 0.8 }  // 重点监控低质量数据
-    }
-  }),  // 添加逗号
-
-// 创建性能分析视图
-db.createView(
-  "performance_analysis",
-  "system_metrics",
   [
     {
       $match: {
@@ -1399,8 +1343,50 @@ db.createView(
         }
       }
     }
-  ]
-),  // 添加逗号
+  ]), // 第三处逗号修复
+
+// 添加数据质量监控索引
+db.health_records.createIndex(
+  {
+    "data_quality.completeness": 1,
+    "data_quality.accuracy": 1,
+    "created_at": -1
+  },
+  {
+    name: "quality_monitoring",
+    partialFilterExpression: {
+      "data_quality.completeness": { $lt: 0.8 }  // 重点监控低质量数据
+    }
+  }),  // 添加逗号
+
+// 创建性能分析视图
+db.createView(
+  "performance_analysis",
+  "system_metrics",
+  [
+    {
+      $match: {
+        metric_type: { $in: ["index_usage", "query_performance"] }
+    },
+    {
+      $group: {
+        _id: {
+          collection: "$details.collection_name",
+          pattern: "$details.query_pattern"
+        },
+        avg_execution_time: { $avg: "$details.execution_time" },
+        index_utilization: {
+          $avg: {
+            $cond: [
+              { $gt: ["$details.index_name", null] },
+              1,
+              0
+            ]
+          }
+        }
+      }
+    }
+  ]), // 第三处逗号修复
 
 // 添加数据增长趋势监控索引
 db.health_records.createIndex(
@@ -1435,7 +1421,6 @@ db.createCollection('monitoring_reports', {
                 slow_queries: { bsonType: "array" },
                 avg_response_time: { bsonType: "number" },
                 index_usage_stats: { bsonType: "object" }
-              }
             },
             storage_stats: {
               bsonType: "object",
@@ -1458,7 +1443,7 @@ db.createCollection('monitoring_reports', {
               items: {
                 bsonType: "object",
                 properties: {
-                  level: { 
+                  level: {
                     enum: ["critical", "warning", "info"],
                     description: "告警级别"
                   },
@@ -1473,12 +1458,12 @@ db.createCollection('monitoring_reports', {
               items: {
                 bsonType: "object",
                 properties: {
-                  type: { 
+                  type: {
                     enum: ["index", "query", "schema", "storage"],
                     description: "优化类型"
                   },
                   description: { bsonType: "string" },
-                  impact: { 
+                  impact: {
                     enum: ["high", "medium", "low"],
                     description: "影程度"
                   },
@@ -1532,12 +1517,10 @@ db.createCollection('capacity_planning', {
               timeframe: { bsonType: "string" },
               action: { bsonType: "string" },
               estimated_cost: { bsonType: "number" }
-            }
           }
-      }
     }
   }
-}),  // 添加逗号
+}), // 第四处逗号修复
 
 // 添加性能优化视图
 db.createView(
@@ -1596,11 +1579,11 @@ db.createCollection('system_performance', {
           items: {
             bsonType: "object",
             properties: {
-              type: { 
-                enum: ["performance", "capacity", "error", "security"] 
+              type: {
+                enum: ["performance", "capacity", "error", "security"]
               },
-              severity: { 
-                enum: ["critical", "warning", "info"] 
+              severity: {
+                enum: ["critical", "warning", "info"]
               },
               message: { bsonType: "string" },
               threshold: { bsonType: "number" },
@@ -1637,8 +1620,8 @@ db.createCollection('optimization_suggestions', {
           properties: {
             performance_gain: { bsonType: "number" },
             storage_impact: { bsonType: "number" },
-            risk_level: { 
-              enum: ["low", "medium", "high"] 
+            risk_level: {
+              enum: ["low", "medium", "high"]
             }
           }
         },
@@ -1789,34 +1772,19 @@ db.createCollection('distributed_tasks', {
   }
 }),  // 添加逗号
 
-// 3. 添加实时分析结果集合
+// 3. 添加实��分析��果集合
 db.createCollection('realtime_analysis', {
   validator: {
     $jsonSchema: {
       bsonType: "object",
-      required: ["session_id", "analysis_type", "data", "timestamp"],
+      required: ["user_id", "analysis_type", "data", "timestamp"],
       properties: {
-        session_id: { bsonType: "string" },
+        user_id: { bsonType: "objectId" },
         analysis_type: {
-          enum: ["pose_tracking", "movement_analysis", "safety_monitoring"],
+          enum: ["vital_signs", "activity", "diet", "sleep"],
           description: "分析类型"
         },
-        data: {
-          bsonType: "object",
-          properties: {
-            frames_processed: { bsonType: "number" },
-            detected_events: { bsonType: "array" },
-            metrics: { bsonType: "object" }
-          }
-        },
-        performance_stats: {
-          bsonType: "object",
-          properties: {
-            processing_time: { bsonType: "number" },
-            fps: { bsonType: "number" },
-            latency: { bsonType: "number" }
-          }
-        },
+        data: { bsonType: "object" },
         timestamp: { bsonType: "date" }
       }
     }
@@ -1836,7 +1804,7 @@ db.distributed_tasks.createIndex(
 
 db.realtime_analysis.createIndex(
   { "session_id": 1, "timestamp": -1 },
-  { 
+  {
     name: "realtime_monitoring",
     expireAfterSeconds: 86400 // 24小时后过期
   }
@@ -1945,7 +1913,7 @@ db.createCollection('model_evaluations', {
   validator: {
     $jsonSchema: {
       bsonType: "object",
-      required: ["model_id", "metrics", "created_at"],
+      required: ["model_id", "metrics", "timestamp"],
       properties: {
         model_id: { bsonType: "string" },
         metrics: {
@@ -1953,27 +1921,10 @@ db.createCollection('model_evaluations', {
           properties: {
             accuracy: { bsonType: "number" },
             precision: { bsonType: "number" },
-            recall: { bsonType: "number" },
-            f1_score: { bsonType: "number" }
+            recall: { bsonType: "number" }
           }
         },
-        performance_analysis: {
-          bsonType: "object",
-          properties: {
-            strengths: { bsonType: "array" },
-            weaknesses: { bsonType: "array" },
-            recommendations: { bsonType: "array" }
-          }
-        },
-        visualization_data: {
-          bsonType: "object",
-          properties: {
-            confusion_matrix: { bsonType: "array" },
-            roc_curve: { bsonType: "array" },
-            pr_curve: { bsonType: "array" }
-          }
-        },
-        created_at: { bsonType: "date" }
+        timestamp: { bsonType: "date" }
       }
     }
   }
@@ -2138,7 +2089,7 @@ db.performance_metrics.createIndex(
 // 5. 更新现有集合的TTL索引
 db.system_metrics.createIndex(
   { "timestamp": 1 },
-  { 
+  {
     expireAfterSeconds: 2592000,  // 30天后过期
     partialFilterExpression: {
       "metric_type": { $in: ["cpu_usage", "memory_usage"] }
@@ -2147,12 +2098,12 @@ db.system_metrics.createIndex(
 
 // 6. 添加复合索引以优化查询性能
 db.vision_tasks.createIndex(
-  { 
+  {
     "analysis_type": 1,
     "status": 1,
     "created_at": -1
   },
-  { 
+  {
     partialFilterExpression: {
       "status": "processing"
     },
@@ -2430,18 +2381,18 @@ db.visualization_cache.createIndex(
 ),  // 添加逗号
 
 // 5. 添加分片配置
-sh.shardCollection("health_management_dev.ui_feedback", { 
-  "user_id": "hashed" 
+sh.shardCollection("health_management_dev.ui_feedback", {
+  "user_id": "hashed"
 }),  // 添加逗号
 
-sh.shardCollection("health_management_dev.visualization_cache", { 
-  "cache_key": "hashed" 
+sh.shardCollection("health_management_dev.visualization_cache", {
+  "cache_key": "hashed"
 }),  // 添加逗号
 
 // 6. 更新现有集合的TTL索引
 db.ui_sessions.createIndex(
   { "created_at": 1 },
-  { 
+  {
     expireAfterSeconds: 86400,  // 24小时后过期
     partialFilterExpression: {
       "session_status": "completed"
@@ -2650,8 +2601,8 @@ db.createCollection('nutrition_logs', {
           items: {
             bsonType: "object",
             properties: {
-              meal_type: { 
-                enum: ["breakfast", "lunch", "dinner", "snack"] 
+              meal_type: {
+                enum: ["breakfast", "lunch", "dinner", "snack"]
               },
               time: { bsonType: "date" },
               foods: [{
@@ -2743,7 +2694,7 @@ sh.shardCollection("health_management_dev.nutrition_logs", {
 
 sh.shardCollection("health_management_dev.sleep_quality_analysis", {
   "user_id": "hashed"
-}),  // 添加逗号
+}),  // ���加逗���
 
 // 创建心理健康评估集合
 db.createCollection('mental_health_assessments', {
@@ -2985,7 +2936,7 @@ db.createCollection('training_plan_templates', {
       required: ["template_name", "category", "difficulty_level", "created_at"],
       properties: {
         template_name: { bsonType: "string" },
-        category: { 
+        category: {
           enum: ["strength", "cardio", "flexibility", "balance", "hybrid"],
           description: "训练类别"
         },
@@ -3441,7 +3392,7 @@ db.mental_health_interventions.createIndex(
   { "user_id": 1, "created_at": -1 }
 ),  // 添加逗号
 
-// 添加TTL索引
+// 添加TTL��引
 db.social_support_network.createIndex(
   { "created_at": 1 },
   { expireAfterSeconds: 31536000 }  // 365天后过期
@@ -3595,7 +3546,7 @@ db.createCollection('nutrition_management', {
           items: {
             bsonType: "object",
             properties: {
-              meal_type: { 
+              meal_type: {
                 enum: ["breakfast", "lunch", "dinner", "snack"],
                 description: "餐食类型"
               },
@@ -3745,7 +3696,7 @@ db.createCollection('user_devices', {
   }
 }),  // 添加逗号
 
-// 2. 数据采集配置集合
+// 2. 数据采集配置����合
 db.createCollection('data_collection_config', {
   validator: {
     $jsonSchema: {
@@ -4019,7 +3970,7 @@ db.createCollection('data_quality_monitoring', {
       bsonType: "object",
       required: ["data_source", "check_type", "check_result", "timestamp"],
       properties: {
-        data_source: { 
+        data_source: {
           bsonType: "string",
           description: "数据源"
         },
@@ -4030,7 +3981,7 @@ db.createCollection('data_quality_monitoring', {
         check_result: {
           bsonType: "object",
           properties: {
-            status: { 
+            status: {
               enum: ["passed", "warning", "failed"],
               description: "检查状态"
             },
@@ -4140,7 +4091,7 @@ db.final_operation.createIndex(
   { field: 1 }
 );  // 最后一个语句不加逗号
 
-// 更新权限管理逻辑
+// 更新��限管理逻辑
 db.access_control.updateMany({}, { $set: { permissions: { read: false, write: false, delete: false, share: false } } });
 
 // 更新检查结果结构
@@ -4156,7 +4107,7 @@ db.createCollection('products', {
       bsonType: "object",
       required: ["name", "category", "price", "status", "created_at"],
       properties: {
-        name: { 
+        name: {
           bsonType: "string",
           description: "商品名称"
         },
@@ -4857,7 +4808,7 @@ db.users.updateMany({}, {
   }
 });
 
-// 1. 用户行为分析集合
+// 1. 用户行为分��集合
 db.createCollection('user_behavior_analytics', {
   validator: {
     $jsonSchema: {
@@ -4981,26 +4932,26 @@ db.createCollection('health_predictions', {
 // 创建相关索引
 db.user_behavior_analytics.createIndex({ "user_id": 1, "timestamp": -1 }),
 db.user_behavior_analytics.createIndex({ "event_type": 1, "timestamp": -1 }),
-db.user_behavior_analytics.createIndex({ 
-  "context.session_id": 1, 
-  "timestamp": 1 
+db.user_behavior_analytics.createIndex({
+  "context.session_id": 1,
+  "timestamp": 1
 }),
 
-db.health_trends.createIndex({ 
-  "user_id": 1, 
-  "analysis_type": 1, 
-  "period.start_date": -1 
+db.health_trends.createIndex({
+  "user_id": 1,
+  "analysis_type": 1,
+  "period.start_date": -1
 }),
-db.health_trends.createIndex({ 
-  "metrics.anomalies": 1 
-}, { 
-  sparse: true 
+db.health_trends.createIndex({
+  "metrics.anomalies": 1
+}, {
+  sparse: true
 }),
 
-db.health_predictions.createIndex({ 
-  "user_id": 1, 
-  "prediction_type": 1, 
-  "created_at": -1 
+db.health_predictions.createIndex({
+  "user_id": 1,
+  "prediction_type": 1,
+  "created_at": -1
 }),
 
 // 添加TTL索引用于数据清理
@@ -5023,3 +4974,279 @@ db.users.updateMany({}, {
     }
   }
 });
+
+// 用户集合索引
+db.users.createIndex({ "username": 1 }, { unique: true });
+db.users.createIndex({ "email": 1 }, { unique: true });
+db.users.createIndex({ "phone": 1 }, { sparse: true });
+db.users.createIndex({ "createdAt": -1 });
+db.users.createIndex({ "lastLoginAt": -1 });
+
+// 健康数据索引
+db.health_records.createIndex({ "userId": 1, "type": 1, "timestamp": -1 });
+db.health_records.createIndex({ "userId": 1, "timestamp": -1 });
+db.health_records.createIndex({
+  "userId": 1,
+  "type": 1,
+  "timestamp": -1,
+  "metrics.value": 1
+}, {
+  partialFilterExpression: {
+    "type": { $in: ["heart_rate", "blood_pressure", "blood_sugar"] }
+  }
+});
+
+// 运动数据索引
+db.exercise_records.createIndex({ "userId": 1, "timestamp": -1 });
+db.exercise_records.createIndex({
+  "userId": 1,
+  "type": 1,
+  "timestamp": -1
+});
+db.exercise_records.createIndex({
+  "location": "2dsphere"
+}, {
+  sparse: true
+});
+
+// 饮食数据索引
+db.diet_records.createIndex({ "userId": 1, "timestamp": -1 });
+db.diet_records.createIndex({
+  "userId": 1,
+  "category": 1,
+  "timestamp": -1
+});
+db.diet_records.createIndex({
+  "nutrients.type": 1,
+  "nutrients.value": 1
+}, {
+  sparse: true
+});
+
+// 睡眠数据索引
+db.sleep_records.createIndex({ "userId": 1, "timestamp": -1 });
+db.sleep_records.createIndex({
+  "userId": 1,
+  "quality": 1,
+  "timestamp": -1
+});
+
+// 中医体质数据索引
+db.tcm_records.createIndex({ "userId": 1, "timestamp": -1 });
+db.tcm_records.createIndex({
+  "userId": 1,
+  "constitution": 1,
+  "timestamp": -1
+});
+
+// 社区内容索引
+db.contents.createIndex({ "authorId": 1, "createdAt": -1 });
+db.contents.createIndex({ "type": 1, "status": 1, "createdAt": -1 });
+db.contents.createIndex({ "tags": 1, "status": 1, "createdAt": -1 });
+db.contents.createIndex({
+  "title": "text",
+  "content": "text",
+  "tags": "text"
+}, {
+  weights: {
+    title: 10,
+    content: 5,
+    tags: 3
+  },
+  default_language: "chinese"
+});
+
+// 评论索引
+db.comments.createIndex({ "contentId": 1, "createdAt": -1 });
+db.comments.createIndex({ "authorId": 1, "createdAt": -1 });
+db.comments.createIndex({ "parentId": 1, "createdAt": -1 });
+
+// 支付记录索引
+db.payment_transactions.createIndex({ "userId": 1, "createdAt": -1 });
+db.payment_transactions.createIndex({ "status": 1, "createdAt": -1 });
+db.payment_transactions.createIndex({
+  "orderId": 1
+}, {
+  unique: true,
+  sparse: true
+});
+
+// 钱包记录索引
+db.wallet_records.createIndex({ "userId": 1, "timestamp": -1 });
+db.wallet_records.createIndex({ "type": 1, "timestamp": -1 });
+db.wallet_records.createIndex({
+  "transactionId": 1
+}, {
+  unique: true,
+  sparse: true
+});
+
+// 通知索引
+db.notifications.createIndex({ "userId": 1, "createdAt": -1 });
+db.notifications.createIndex({ "type": 1, "status": 1, "createdAt": -1 });
+db.notifications.createIndex({ "priority": -1, "createdAt": -1 });
+
+// 系统日志索引
+db.system_logs.createIndex({ "timestamp": -1 });
+db.system_logs.createIndex({ "level": 1, "timestamp": -1 });
+db.system_logs.createIndex({ "service": 1, "timestamp": -1 });
+
+// 性能监控索引
+db.performance_metrics.createIndex({ "timestamp": -1 });
+db.performance_metrics.createIndex({ "type": 1, "timestamp": -1 });
+db.performance_metrics.createIndex({
+  "service": 1,
+  "type": 1,
+  "timestamp": -1
+});
+
+// 用户会话索引
+db.sessions.createIndex({ "userId": 1, "createdAt": -1 });
+db.sessions.createIndex({ "token": 1 }, { unique: true });
+db.sessions.createIndex({ "expiresAt": 1 }, { expireAfterSeconds: 0 });
+
+// 数据统计视图
+db.createView(
+  "user_activity_stats",
+  "users",
+  [
+    {
+      $lookup: {
+        from: "health_records",
+        localField: "_id",
+        foreignField: "userId",
+        as: "healthRecords"
+      }
+    },
+    {
+      $lookup: {
+        from: "exercise_records",
+        localField: "_id",
+        foreignField: "userId",
+        as: "exerciseRecords"
+      }
+    },
+    {
+      $project: {
+        _id: 1,
+        username: 1,
+        healthRecordCount: { $size: "$healthRecords" },
+        exerciseRecordCount: { $size: "$exerciseRecords" },
+        lastHealthRecord: { $max: "$healthRecords.timestamp" },
+        lastExerciseRecord: { $max: "$exerciseRecords.timestamp" }
+      }
+    }
+  ]
+);
+
+// 健康趋势视图
+db.createView(
+  "health_trends",
+  "health_records",
+  [
+    {
+      $match: {
+        type: { $in: ["heart_rate", "blood_pressure", "blood_sugar"] }
+      }
+    },
+    {
+      $group: {
+        _id: {
+          userId: "$userId",
+          type: "$type",
+          date: {
+            $dateToString: {
+              format: "%Y-%m-%d",
+              date: "$timestamp"
+            }
+          }
+        },
+        avgValue: { $avg: "$metrics.value" },
+        minValue: { $min: "$metrics.value" },
+        maxValue: { $max: "$metrics.value" },
+        count: { $sum: 1 }
+      }
+    },
+    {
+      $sort: {
+        "_id.userId": 1,
+        "_id.type": 1,
+        "_id.date": -1
+      }
+    }
+  ]
+);
+
+// 运动统计视图
+db.createView(
+  "exercise_stats",
+  "exercise_records",
+  [
+    {
+      $group: {
+        _id: {
+          userId: "$userId",
+          type: "$type",
+          year: { $year: "$timestamp" },
+          month: { $month: "$timestamp" }
+        },
+        totalDuration: { $sum: "$duration" },
+        totalCalories: { $sum: "$calories" },
+        avgIntensity: { $avg: "$intensity" },
+        count: { $sum: 1 }
+      }
+    },
+    {
+      $sort: {
+        "_id.userId": 1,
+        "_id.year": -1,
+        "_id.month": -1
+      }
+    }
+  ]
+);
+
+// 内容热度视图
+db.createView(
+  "content_popularity",
+  "contents",
+  [
+    {
+      $match: {
+        status: "published"
+      }
+    },
+    {
+      $lookup: {
+        from: "comments",
+        localField: "_id",
+        foreignField: "contentId",
+        as: "comments"
+      }
+    },
+    {
+      $project: {
+        _id: 1,
+        title: 1,
+        type: 1,
+        authorId: 1,
+        createdAt: 1,
+        commentCount: { $size: "$comments" },
+        likeCount: "$stats.likes",
+        shareCount: "$stats.shares",
+        score: {
+          $add: [
+            { $multiply: [{ $size: "$comments" }, 2] },
+            "$stats.likes",
+            { $multiply: ["$stats.shares", 3] }
+          ]
+        }
+      }
+    },
+    {
+      $sort: {
+        score: -1
+      }
+    }
+  ]
+);

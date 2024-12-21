@@ -1,7 +1,7 @@
-import { Response } from 'express';
-import { WorkoutLog } from '../models/workout-log.model';
 import { ExercisePlan } from '../models/exercise-plan.model';
 import { IAuthRequest } from '../types/models';
+import { Response } from 'express';
+import { WorkoutLog } from '../models/workout-log.model';
 
 export class WorkoutLogController {
   /**
@@ -14,7 +14,7 @@ export class WorkoutLogController {
 
       const log = new WorkoutLog({
         userId,
-        ...workoutData
+        ...workoutData,
       });
 
       await log.save();
@@ -24,7 +24,7 @@ export class WorkoutLogController {
         const plan = await ExercisePlan.findById(workoutData.planId);
         if (plan) {
           plan.progress.completedWorkouts += 1;
-          plan.progress.adherenceRate = 
+          plan.progress.adherenceRate =
             (plan.progress.completedWorkouts / plan.progress.totalWorkouts) * 100;
           await plan.save();
         }
@@ -32,12 +32,12 @@ export class WorkoutLogController {
 
       res.status(201).json({
         success: true,
-        data: log
+        data: log,
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -51,11 +51,11 @@ export class WorkoutLogController {
       const { startDate, endDate, type, page = 1, limit = 10 } = req.query;
 
       const query: any = { userId };
-      
+
       if (startDate && endDate) {
         query.date = {
           $gte: new Date(startDate as string),
-          $lte: new Date(endDate as string)
+          $lte: new Date(endDate as string),
         };
       }
 
@@ -64,10 +64,7 @@ export class WorkoutLogController {
       }
 
       const skip = (Number(page) - 1) * Number(limit);
-      const logs = await WorkoutLog.find(query)
-        .sort({ date: -1 })
-        .skip(skip)
-        .limit(Number(limit));
+      const logs = await WorkoutLog.find(query).sort({ date: -1 }).skip(skip).limit(Number(limit));
 
       const total = await WorkoutLog.countDocuments(query);
 
@@ -78,13 +75,13 @@ export class WorkoutLogController {
           total,
           page: Number(page),
           limit: Number(limit),
-          pages: Math.ceil(total / Number(limit))
-        }
+          pages: Math.ceil(total / Number(limit)),
+        },
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -100,7 +97,7 @@ export class WorkoutLogController {
       const startDate = this.getStartDateForPeriod(period as string);
       const logs = await WorkoutLog.find({
         userId,
-        date: { $gte: startDate }
+        date: { $gte: startDate },
       });
 
       const stats = {
@@ -109,17 +106,17 @@ export class WorkoutLogController {
         totalCalories: logs.reduce((sum, log) => sum + log.caloriesBurned, 0),
         byType: this.groupByType(logs),
         byIntensity: this.groupByIntensity(logs),
-        averageHeartRate: this.calculateAverageHeartRate(logs)
+        averageHeartRate: this.calculateAverageHeartRate(logs),
       };
 
       res.json({
         success: true,
-        data: stats
+        data: stats,
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -150,7 +147,7 @@ export class WorkoutLogController {
         acc[log.type] = {
           count: 0,
           duration: 0,
-          calories: 0
+          calories: 0,
         };
       }
       acc[log.type].count++;
@@ -179,10 +176,10 @@ export class WorkoutLogController {
   private calculateAverageHeartRate(logs: any[]): number {
     const logsWithHeartRate = logs.filter(log => log.heartRate?.avg);
     if (logsWithHeartRate.length === 0) return 0;
-    
+
     const sum = logsWithHeartRate.reduce((sum, log) => sum + log.heartRate.avg, 0);
     return Math.round(sum / logsWithHeartRate.length);
   }
 }
 
-export const workoutLogController = new WorkoutLogController(); 
+export const workoutLogController = new WorkoutLogController();

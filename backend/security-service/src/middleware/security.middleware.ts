@@ -1,7 +1,7 @@
+import { Logger } from '../utils/logger';
+import { RateLimiter } from '../utils/rate-limiter';
 import { Request, Response, NextFunction } from 'express';
 import { SecurityService } from '../services/security.service';
-import { RateLimiter } from '../utils/rate-limiter';
-import { Logger } from '../utils/logger';
 
 export class SecurityMiddleware {
   private securityService: SecurityService;
@@ -23,24 +23,24 @@ export class SecurityMiddleware {
       if (!this.validateHeaders(req)) {
         return res.status(400).json({
           code: 400,
-          message: '无效的请求头'
+          message: '无效的请求头',
         });
       }
 
       // 验证令牌
       const token = req.headers.authorization?.split(' ')[1];
-      if (!token || !await this.securityService.validateToken(token)) {
+      if (!token || !(await this.securityService.validateToken(token))) {
         return res.status(401).json({
           code: 401,
-          message: '无效的访问令牌'
+          message: '无效的访问令牌',
         });
       }
 
       // 检查权限
-      if (!await this.checkPermissions(req)) {
+      if (!(await this.checkPermissions(req))) {
         return res.status(403).json({
           code: 403,
-          message: '权限不足'
+          message: '权限不足',
         });
       }
 
@@ -49,7 +49,7 @@ export class SecurityMiddleware {
       this.logger.error('请求验证失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   };
@@ -60,10 +60,10 @@ export class SecurityMiddleware {
   rateLimit = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const key = `rate:${req.ip}`;
-      if (!await this.rateLimiter.checkLimit(key)) {
+      if (!(await this.rateLimiter.checkLimit(key))) {
         return res.status(429).json({
           code: 429,
-          message: '请求过于频繁'
+          message: '请求过于频繁',
         });
       }
       next();
@@ -79,7 +79,7 @@ export class SecurityMiddleware {
   encryptResponse = async (req: Request, res: Response, next: NextFunction) => {
     const originalSend = res.send;
 
-    res.send = async function(body: any) {
+    res.send = async function (body: any) {
       try {
         if (body && typeof body === 'object') {
           const encryptedData = await this.securityService.encryptData(body);
@@ -125,8 +125,8 @@ export class SecurityMiddleware {
       GET: 'read',
       POST: 'create',
       PUT: 'update',
-      DELETE: 'delete'
+      DELETE: 'delete',
     };
     return actionMap[method] || 'read';
   }
-} 
+}

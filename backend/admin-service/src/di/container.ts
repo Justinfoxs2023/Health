@@ -1,12 +1,12 @@
-import { Container } from 'inversify';
-import { TYPES } from './types';
-import { LoggerImpl } from '../infrastructure/logger';
-import { RedisClientImpl } from '../infrastructure/redis';
-import { SystemSettingsService } from '../services/system-settings.service';
 import { AuditService } from '../services/audit.service';
 import { ConfigManagerService } from '../services/config-manager.service';
+import { Container } from 'inversify';
 import { InitializationService } from '../services/initialization.service';
+import { LoggerImpl } from '../infrastructure/logger';
+import { RedisClientImpl } from '../infrastructure/redis';
 import { SystemSettingsController } from '../controllers/system-settings.controller';
+import { SystemSettingsService } from '../services/system-settings.service';
+import { TYPES } from './types';
 
 const container = new Container();
 
@@ -23,4 +23,4 @@ container.bind(TYPES.InitializationService).to(InitializationService);
 // 控制器
 container.bind(TYPES.SystemSettingsController).to(SystemSettingsController);
 
-export { container }; 
+export { container };

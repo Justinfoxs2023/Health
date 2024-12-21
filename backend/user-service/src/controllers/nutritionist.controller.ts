@@ -1,6 +1,6 @@
-import { Request, Response } from 'express';
-import { NutritionistService } from '../services/nutritionist.service';
 import { Logger } from '../utils/logger';
+import { NutritionistService } from '../services/nutritionist.service';
+import { Request, Response } from 'express';
 
 export class NutritionistController {
   private nutritionistService: NutritionistService;
@@ -25,19 +25,19 @@ export class NutritionistController {
         planDetails,
         duration,
         goals,
-        startDate: new Date()
+        startDate: new Date(),
       });
 
       return res.status(201).json({
         code: 201,
         data: dietPlan,
-        message: '饮食计划创建成功'
+        message: '饮食计划创建成功',
       });
     } catch (error) {
       this.logger.error('创建饮食计划失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
@@ -53,19 +53,19 @@ export class NutritionistController {
       const assessment = await this.nutritionistService.createAssessment({
         clientId,
         assessmentData,
-        date: new Date()
+        date: new Date(),
       });
 
       return res.json({
         code: 200,
         data: assessment,
-        message: '营养评估完成'
+        message: '营养评估完成',
       });
     } catch (error) {
       this.logger.error('营养评估失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
@@ -82,20 +82,20 @@ export class NutritionistController {
         clientId,
         advice,
         recommendations,
-        date: new Date()
+        date: new Date(),
       });
 
       return res.json({
         code: 200,
         data: dietaryAdvice,
-        message: '饮食建议提供成功'
+        message: '饮食建议提供成功',
       });
     } catch (error) {
       this.logger.error('提供饮食建议失败', error);
       return res.status(500).json({
         code: 500,
-        message: '服务器错误'
+        message: '服务器错误',
       });
     }
   }
-} 
+}

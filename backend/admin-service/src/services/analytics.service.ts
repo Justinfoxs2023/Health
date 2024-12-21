@@ -1,8 +1,8 @@
-import { BaseService } from './base.service';
-import { Logger } from '../utils/logger';
 import { AnalyticsError } from '../utils/errors';
+import { BaseService } from './base.service';
 import { DatabaseOperations } from '../database/operations';
 import { HealthDataModel } from '../models/health-data.model';
+import { Logger } from '../utils/logger';
 
 export class AnalyticsService extends BaseService {
   private dbOps: DatabaseOperations<any>;
@@ -14,11 +14,7 @@ export class AnalyticsService extends BaseService {
     this.logger = new Logger('AnalyticsService');
   }
 
-  async getMetrics(options: {
-    startDate: string;
-    endDate: string;
-    metrics: string[];
-  }) {
+  async getMetrics(options: { startDate: string; endDate: string; metrics: string[] }) {
     try {
       const { startDate, endDate, metrics } = options;
 
@@ -27,16 +23,16 @@ export class AnalyticsService extends BaseService {
           $match: {
             timestamp: {
               $gte: new Date(startDate),
-              $lte: new Date(endDate)
-            }
-          }
+              $lte: new Date(endDate),
+            },
+          },
         },
         {
           $group: {
             _id: null,
-            ...this.buildMetricsAggregation(metrics)
-          }
-        }
+            ...this.buildMetricsAggregation(metrics),
+          },
+        },
       ];
 
       const results = await this.dbOps.model.aggregate(pipeline);
@@ -49,10 +45,10 @@ export class AnalyticsService extends BaseService {
 
   private buildMetricsAggregation(metrics: string[]) {
     const aggregation: Record<string, any> = {};
-    
+
     metrics.forEach(metric => {
       aggregation[metric] = {
-        $avg: `$metrics.${metric}`
+        $avg: `$metrics.${metric}`,
       };
     });
 
@@ -69,4 +65,4 @@ export class AnalyticsService extends BaseService {
 
     return formatted;
   }
-} 
+}

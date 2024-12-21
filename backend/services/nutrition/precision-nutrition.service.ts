@@ -1,18 +1,21 @@
+import { AI } from '../../utils/ai';
 import { EventEmitter } from 'events';
 import { Logger } from '../../utils/logger';
-import { AI } from '../../utils/ai';
 
-interface NutritionProfile {
+interface INutritionProfile {
+  /** geneticFactors 的描述 */
   geneticFactors: {
     metabolismType: string;
     sensitivities: string[];
     vitaminNeeds: Record<string, string>;
   };
+  /** healthConditions 的描述 */
   healthConditions: {
     restrictions: string[];
     allergies: string[];
     intolerances: string[];
   };
+  /** lifestyleFactors 的描述 */
   lifestyleFactors: {
     activityLevel: number;
     stressLevel: number;
@@ -31,17 +34,17 @@ export class PrecisionNutritionService extends EventEmitter {
   }
 
   // 生成个性化营养方案
-  async generatePlan(userId: string, profile: NutritionProfile): Promise<any> {
+  async generatePlan(userId: string, profile: INutritionProfile): Promise<any> {
     try {
       // 使用AI分析用户画像
       const analysis = await this.ai.analyze('nutrition_profile', profile);
-      
+
       // 生成营养方案
       const plan = {
         macroDistribution: this.calculateMacros(analysis),
         micronutrients: this.optimizeMicronutrients(analysis),
         mealTiming: this.planMealTiming(analysis),
-        portionGuide: this.createPortionGuide(analysis)
+        portionGuide: this.createPortionGuide(analysis),
       };
 
       return plan;
@@ -52,4 +55,4 @@ export class PrecisionNutritionService extends EventEmitter {
   }
 
   // 其他辅助方法...
-} 
+}

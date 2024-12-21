@@ -1,7 +1,7 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '../config/config.service';
-import { Logger } from '../logger/logger.service';
 import { Counter, Gauge, Histogram, Registry } from 'prom-client';
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Logger } from '../logger/logger.service';
 
 @Injectable()
 export class MonitoringService implements OnModuleInit {
@@ -35,39 +35,39 @@ export class MonitoringService implements OnModuleInit {
     this.requestCounter = new Counter({
       name: 'http_requests_total',
       help: 'Total number of HTTP requests',
-      labelNames: ['method', 'path', 'status']
+      labelNames: ['method', 'path', 'status'],
     });
 
     this.errorCounter = new Counter({
       name: 'error_total',
       help: 'Total number of errors',
-      labelNames: ['type', 'service']
+      labelNames: ['type', 'service'],
     });
 
     this.responseTimeHistogram = new Histogram({
       name: 'http_request_duration_seconds',
       help: 'HTTP request duration in seconds',
-      labelNames: ['method', 'path']
+      labelNames: ['method', 'path'],
     });
 
     this.activeConnections = new Gauge({
       name: 'active_connections',
-      help: 'Number of active connections'
+      help: 'Number of active connections',
     });
 
     this.cpuUsage = new Gauge({
       name: 'process_cpu_usage',
-      help: 'Process CPU usage percentage'
+      help: 'Process CPU usage percentage',
     });
 
     this.memoryUsage = new Gauge({
       name: 'process_memory_usage_bytes',
-      help: 'Process memory usage in bytes'
+      help: 'Process memory usage in bytes',
     });
 
     this.gcDuration = new Histogram({
       name: 'gc_duration_seconds',
-      help: 'Garbage collection duration'
+      help: 'Garbage collection duration',
     });
 
     // 注册所有指标
@@ -128,4 +128,4 @@ export class MonitoringService implements OnModuleInit {
   async getMetrics(): Promise<string> {
     return this.registry.metrics();
   }
-} 
+}

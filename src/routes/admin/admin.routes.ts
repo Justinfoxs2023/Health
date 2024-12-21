@@ -1,7 +1,7 @@
-import { Router } from 'express';
 import { AdminController } from '../../controllers/admin/admin.controller';
-import { auth } from '../../middleware/auth.middleware';
+import { Router } from 'express';
 import { adminAuth } from '../../middleware/admin-auth.middleware';
+import { auth } from '../../middleware/auth.middleware';
 
 const router = Router();
 const adminController = new AdminController();
@@ -10,21 +10,21 @@ const adminController = new AdminController();
 router.post(
   '/users',
   [auth.verifyToken, adminAuth.verifyAdmin],
-  adminController.handleUserManagement.bind(adminController)
+  adminController.handleUserManagement.bind(adminController),
 );
 
 // 角色管理路由
 router.post(
   '/roles',
   [auth.verifyToken, adminAuth.verifyAdmin],
-  adminController.handleRoleManagement.bind(adminController)
+  adminController.handleRoleManagement.bind(adminController),
 );
 
 // 系统配置路由
 router.post(
   '/settings',
   [auth.verifyToken, adminAuth.verifyAdmin],
-  adminController.handleSystemSettings.bind(adminController)
+  adminController.handleSystemSettings.bind(adminController),
 );
 
-export default router; 
+export default router;

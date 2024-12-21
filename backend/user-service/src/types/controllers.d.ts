@@ -1,3 +1,10 @@
+/**
+ * @fileoverview TS 文件 controllers.d.ts 的功能描述
+ * @author Team
+ * @copyright 2024 组织名称
+ * @license ISC
+ */
+
 declare module '../controllers/*' {
   // 管理员服务
   export interface AdminService {
@@ -22,4 +29,4 @@ declare module '../controllers/*' {
     uploadIcon(file: any): Promise<string>;
     getIconList(): Promise<any[]>;
   }
-} 
+}

@@ -1,16 +1,23 @@
 import React from 'react';
-import { View, FlatList, StyleSheet, Text, TouchableOpacity, TextInput } from 'react-native';
-import { useQuery } from '@tanstack/react-query';
-import { searchHelp } from '../../api/help';
-import { LoadingSpinner, Icon, EmptyState } from '../../components';
-import debounce from 'lodash/debounce';
 
-interface SearchResult {
+import debounce from 'lodash/debounce';
+import { LoadingSpinner, Icon, EmptyState } from '../../components';
+import { View, FlatList, StyleSheet, Text, TouchableOpacity, TextInput } from 'react-native';
+import { searchHelp } from '../../api/help';
+import { useQuery } from '@tanstack/react-query';
+
+interface ISearchResult {
+  /** id 的描述 */
   id: string;
+  /** title 的描述 */
   title: string;
+  /** description 的描述 */
   description: string;
+  /** category 的描述 */
   category: string;
+  /** viewCount 的描述 */
   viewCount: number;
+  /** matchedContent 的描述 */
   matchedContent?: string;
 }
 
@@ -19,17 +26,17 @@ export const HelpSearchScreen = ({ navigation, route }) => {
   const [keyword, setKeyword] = React.useState(initialKeyword);
   const [debouncedKeyword, setDebouncedKeyword] = React.useState(initialKeyword);
 
-  const { data, isLoading, refetch } = useQuery<SearchResult[]>(
+  const { data, isLoading, refetch } = useQuery<ISearchResult[]>(
     ['helpSearch', debouncedKeyword],
     () => searchHelp(debouncedKeyword),
     {
-      enabled: debouncedKeyword.length > 0
-    }
+      enabled: debouncedKeyword.length > 0,
+    },
   );
 
   const debouncedSearch = React.useMemo(
     () => debounce((text: string) => setDebouncedKeyword(text), 500),
-    []
+    [],
   );
 
   const handleSearch = (text: string) => {
@@ -37,7 +44,7 @@ export const HelpSearchScreen = ({ navigation, route }) => {
     debouncedSearch(text);
   };
 
-  const renderSearchResult = ({ item }: { item: SearchResult }) => (
+  const renderSearchResult = ({ item }: { item: ISearchResult }) => (
     <TouchableOpacity
       style={styles.resultItem}
       onPress={() => navigation.navigate('HelpDetail', { id: item.id })}
@@ -78,18 +85,12 @@ export const HelpSearchScreen = ({ navigation, route }) => {
             returnKeyType="search"
           />
           {keyword && (
-            <TouchableOpacity
-              onPress={() => handleSearch('')}
-              style={styles.clearButton}
-            >
+            <TouchableOpacity onPress={() => handleSearch('')} style={styles.clearButton}>
               <Icon name="x" size={20} color="#999" />
             </TouchableOpacity>
           )}
         </View>
-        <TouchableOpacity
-          style={styles.cancelButton}
-          onPress={() => navigation.goBack()}
-        >
+        <TouchableOpacity style={styles.cancelButton} onPress={() => navigation.goBack()}>
           <Text style={styles.cancelText}>取消</Text>
         </TouchableOpacity>
       </View>
@@ -119,7 +120,7 @@ export const HelpSearchScreen = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   searchHeader: {
     flexDirection: 'row',
@@ -127,7 +128,7 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: '#fff',
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#f0f0f0'
+    borderBottomColor: '#f0f0f0',
   },
   searchBox: {
     flex: 1,
@@ -136,61 +137,61 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
     borderRadius: 8,
     paddingHorizontal: 10,
-    marginRight: 10
+    marginRight: 10,
   },
   searchIcon: {
-    marginRight: 10
+    marginRight: 10,
   },
   searchInput: {
     flex: 1,
     height: 40,
     fontSize: 16,
-    color: '#333'
+    color: '#333',
   },
   clearButton: {
-    padding: 5
+    padding: 5,
   },
   cancelButton: {
-    padding: 5
+    padding: 5,
   },
   cancelText: {
     fontSize: 16,
-    color: '#2E7D32'
+    color: '#2E7D32',
   },
   list: {
-    padding: 15
+    padding: 15,
   },
   resultItem: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#fff',
     borderRadius: 8,
-    padding: 15
+    padding: 15,
   },
   resultContent: {
     flex: 1,
-    marginRight: 10
+    marginRight: 10,
   },
   resultTitle: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 5
+    marginBottom: 5,
   },
   resultDesc: {
     fontSize: 14,
     color: '#666',
-    marginBottom: 8
+    marginBottom: 8,
   },
   matchedContent: {
     fontSize: 14,
     color: '#666',
     marginBottom: 8,
-    lineHeight: 20
+    lineHeight: 20,
   },
   resultMeta: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   category: {
     fontSize: 12,
@@ -199,13 +200,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 10,
-    marginRight: 10
+    marginRight: 10,
   },
   viewCount: {
     fontSize: 12,
-    color: '#999'
+    color: '#999',
   },
   separator: {
-    height: 10
-  }
-}); 
+    height: 10,
+  },
+});

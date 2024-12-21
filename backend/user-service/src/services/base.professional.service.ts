@@ -1,7 +1,7 @@
-import { BaseService } from './base.service';
-import { Logger } from '../utils/logger';
 import { AppError } from '../utils/errors';
+import { BaseService } from './base.service';
 import { DatabaseOperations } from '../database/operations';
+import { Logger } from '../utils/logger';
 
 export abstract class BaseProfessionalService extends BaseService {
   protected dbOps: DatabaseOperations<any>;
@@ -18,7 +18,7 @@ export abstract class BaseProfessionalService extends BaseService {
       const relationship = await this.dbOps.findOne({
         professionalId,
         clientId,
-        status: 'active'
+        status: 'active',
       });
       return !!relationship;
     } catch (error) {
@@ -27,21 +27,26 @@ export abstract class BaseProfessionalService extends BaseService {
     }
   }
 
-  protected async getClientList(professionalId: string, page: number, limit: number, status?: string) {
+  protected async getClientList(
+    professionalId: string,
+    page: number,
+    limit: number,
+    status?: string,
+  ) {
     try {
       const query = { professionalId };
       if (status) {
         Object.assign(query, { status });
       }
-      
+
       return await this.dbOps.find(query, {
         skip: (page - 1) * limit,
         limit,
-        sort: { updatedAt: -1 }
+        sort: { updatedAt: -1 },
       });
     } catch (error) {
       this.logger.error('Failed to get client list', error);
       throw new AppError('获取客户列表失败', 500);
     }
   }
-} 
+}

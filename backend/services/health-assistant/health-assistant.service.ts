@@ -1,8 +1,9 @@
+import { AI } from '../../utils/ai';
 import { EventEmitter } from 'events';
 import { Logger } from '../../utils/logger';
-import { AI } from '../../utils/ai';
 
-interface DailyRoutine {
+interface IDailyRoutine {
+  /** morning 的描述 */
   morning: {
     vitalSigns: {
       time: string;
@@ -18,6 +19,7 @@ interface DailyRoutine {
       intensity: string;
     };
   };
+  /** daytime 的描述 */
   daytime: {
     activityGoal: number;
     waterIntake: {
@@ -36,6 +38,7 @@ interface DailyRoutine {
       }>;
     };
   };
+  /** evening 的描述 */
   evening: {
     healthSummary: {
       achievements: string[];
@@ -64,16 +67,16 @@ export class HealthAssistantService extends EventEmitter {
     this.ai = new AI();
   }
 
-  async generateDailyRoutine(userId: string): Promise<DailyRoutine> {
+  async generateDailyRoutine(userId: string): Promise<IDailyRoutine> {
     try {
       // 获取用户健康档案
       const profile = await this.getUserHealthProfile(userId);
-      
+
       // 使用AI生成个性化方案
       const routine = await this.ai.generate('daily_routine', {
         profile,
         preferences: await this.getUserPreferences(userId),
-        history: await this.getActivityHistory(userId)
+        history: await this.getActivityHistory(userId),
       });
 
       return routine;
@@ -87,10 +90,10 @@ export class HealthAssistantService extends EventEmitter {
     try {
       // 评估紧急程度
       const severity = await this.assessEmergency(alert);
-      
+
       // 执行应急预案
       await this.executeEmergencyPlan(userId, severity, alert);
-      
+
       // 通知相关人员
       await this.notifyContacts(userId, alert);
     } catch (error) {
@@ -126,4 +129,4 @@ export class HealthAssistantService extends EventEmitter {
   private async notifyContacts(userId: string, alert: any): Promise<void> {
     // 实现联系人通知
   }
-} 
+}

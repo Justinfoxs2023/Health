@@ -1,9 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
 
-interface ApiResponse<T = any> {
+interface IApiResponse<T = any> {
+  /** success 的描述 */
   success: boolean;
+  /** data 的描述 */
   data?: T;
+  /** message 的描述 */
   message?: string;
+  /** meta 的描述 */
   meta: {
     timestamp: number;
     path: string;
@@ -21,12 +25,12 @@ export class ResponseFormatter {
   middleware() {
     return (req: Request, res: Response, next: NextFunction) => {
       // 扩展response对象,添加格式化方法
-      res.sendSuccess = function(data: any, message?: string) {
+      res.sendSuccess = function (data: any, message?: string) {
         const response = this.formatResponse(data, true, message);
         res.json(response);
       };
 
-      res.sendError = function(message: string, errors?: any[]) {
+      res.sendError = function (message: string, errors?: any[]) {
         const response = this.formatResponse(null, false, message, errors);
         res.status(400).json(response);
       };
@@ -35,12 +39,12 @@ export class ResponseFormatter {
     };
   }
 
-  format(data: any, success: boolean = true, message?: string): ApiResponse {
-    const response: ApiResponse = {
+  format(data: any, success = true, message?: string): IApiResponse {
+    const response: IApiResponse = {
       success,
       meta: {
-        timestamp: Date.now()
-      }
+        timestamp: Date.now(),
+      },
     };
 
     if (data) {
@@ -51,7 +55,7 @@ export class ResponseFormatter {
           page: data.page,
           pageSize: data.pageSize,
           total: data.total,
-          totalPages: Math.ceil(data.total / data.pageSize)
+          totalPages: Math.ceil(data.total / data.pageSize),
         };
       } else {
         response.data = data;
@@ -66,12 +70,14 @@ export class ResponseFormatter {
   }
 
   private isPaginatedData(data: any): boolean {
-    return data && 
+    return (
+      data &&
       typeof data === 'object' &&
       'items' in data &&
       'total' in data &&
       'page' in data &&
-      'pageSize' in data;
+      'pageSize' in data
+    );
   }
 
   // 处理特殊响应类型
@@ -79,11 +85,11 @@ export class ResponseFormatter {
     if (data instanceof Date) {
       return data.toISOString();
     }
-    
+
     if (data instanceof Map) {
       return Object.fromEntries(data);
     }
-    
+
     if (data instanceof Set) {
       return Array.from(data);
     }
@@ -111,4 +117,4 @@ export class ResponseFormatter {
 
     return this.formatSpecialTypes(obj);
   }
-} 
+}

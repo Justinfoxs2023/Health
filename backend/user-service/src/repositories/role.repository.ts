@@ -1,10 +1,10 @@
-import { Role } from '../types/permission.types';
+import { IRole } from '../types/permission.types';
 
-export interface RoleRepository {
-  findById(id: string): Promise<Role | null>;
-  findByIds(ids: string[]): Promise<Role[]>;
-  findByName(name: string): Promise<Role | null>;
-  create(data: Partial<Role>): Promise<Role>;
-  update(id: string, data: Partial<Role>): Promise<Role>;
+export interface IRoleRepository {
+  findById(id: string): Promise<IRole | null>;
+  findByIds(ids: string[]): Promise<IRole[]>;
+  findByName(name: string): Promise<IRole | null>;
+  create(data: Partial<IRole>): Promise<IRole>;
+  update(id: string, data: Partial<IRole>): Promise<IRole>;
   delete(id: string): Promise<void>;
-} 
+}

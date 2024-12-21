@@ -14,8 +14,8 @@ export class AIService {
   async recognizeFood(imageData: FormData) {
     return this.api.post('/ai/recognize-food', imageData, {
       headers: {
-        'Content-Type': 'multipart/form-data'
-      }
+        'Content-Type': 'multipart/form-data',
+      },
     });
   }
 
@@ -25,8 +25,8 @@ export class AIService {
   async analyzeMeal(imageData: FormData) {
     return this.api.post('/ai/analyze-meal', imageData, {
       headers: {
-        'Content-Type': 'multipart/form-data'
-      }
+        'Content-Type': 'multipart/form-data',
+      },
     });
   }
 
@@ -58,7 +58,7 @@ export class AIService {
     const key = `assessment:${assessmentId}`;
     await storage.set(key, {
       data,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -69,4 +69,4 @@ export class AIService {
     const key = `assessment:${assessmentId}`;
     return storage.get(key);
   }
-} 
+}

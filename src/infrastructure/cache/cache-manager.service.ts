@@ -1,40 +1,47 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '../config/config.service';
-import { RedisService } from '../redis/redis.service';
-import { MetricsService } from '../monitoring/metrics.service';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Logger } from '../logger/logger.service';
+import { MetricsService } from '../monitoring/metrics.service';
+import { RedisService } from '../redis/redis.service';
 
-interface CacheConfig {
+interface ICacheConfig {
+  /** localTTL 的描述 */
   localTTL: number;
+  /** remoteTTL 的描述 */
   remoteTTL: number;
+  /** maxSize 的描述 */
   maxSize: number;
+  /** syncInterval 的描述 */
   syncInterval: number;
 }
 
-interface CacheStats {
+interface ICacheStats {
+  /** hits 的描述 */
   hits: number;
+  /** misses 的描述 */
   misses: number;
+  /** evictions 的描述 */
   evictions: number;
 }
 
 @Injectable()
 export class CacheManagerService implements OnModuleInit {
   private readonly localCache: Map<string, { value: any; expiry: number }>;
-  private readonly config: CacheConfig;
-  private readonly stats: CacheStats = { hits: 0, misses: 0, evictions: 0 };
+  private readonly config: ICacheConfig;
+  private readonly stats: ICacheStats = { hits: 0, misses: 0, evictions: 0 };
   private readonly logger = new Logger(CacheManagerService.name);
 
   constructor(
     private readonly configService: ConfigService,
     private readonly redis: RedisService,
-    private readonly metrics: MetricsService
+    private readonly metrics: MetricsService,
   ) {
     this.localCache = new Map();
     this.config = {
       localTTL: parseInt(configService.get('CACHE_LOCAL_TTL') || '300000'),
       remoteTTL: parseInt(configService.get('CACHE_REMOTE_TTL') || '3600000'),
       maxSize: parseInt(configService.get('CACHE_MAX_SIZE') || '1000'),
-      syncInterval: parseInt(configService.get('CACHE_SYNC_INTERVAL') || '60000')
+      syncInterval: parseInt(configService.get('CACHE_SYNC_INTERVAL') || '60000'),
     };
   }
 
@@ -57,7 +64,7 @@ export class CacheManagerService implements OnModuleInit {
         hits: this.stats.hits,
         misses: this.stats.misses,
         evictions: this.stats.evictions,
-        size: this.localCache.size
+        size: this.localCache.size,
       });
     }, 5000);
   }
@@ -83,12 +90,20 @@ export class CacheManagerService implements OnModuleInit {
     return null;
   }
 
-  async set(key: string, value: any, options?: {
-    localTTL?: number;
-    remoteTTL?: number;
-    onlyLocal?: boolean;
-  }): Promise<void> {
-    const { localTTL = this.config.localTTL, remoteTTL = this.config.remoteTTL, onlyLocal = false } = options || {};
+  async set(
+    key: string,
+    value: any,
+    options?: {
+      localTTL?: number;
+      remoteTTL?: number;
+      onlyLocal?: boolean;
+    },
+  ): Promise<void> {
+    const {
+      localTTL = this.config.localTTL,
+      remoteTTL = this.config.remoteTTL,
+      onlyLocal = false,
+    } = options || {};
 
     // 设置本地缓存
     this.setToLocalCache(key, value, localTTL);
@@ -129,11 +144,15 @@ export class CacheManagerService implements OnModuleInit {
 
     this.localCache.set(key, {
       value,
-      expiry: Date.now() + ttl
+      expiry: Date.now() + ttl,
     });
   }
 
-  private async setToRedis(key: string, value: any, ttl: number = this.config.remoteTTL): Promise<void> {
+  private async setToRedis(
+    key: string,
+    value: any,
+    ttl: number = this.config.remoteTTL,
+  ): Promise<void> {
     try {
       await this.redis.set(key, JSON.stringify(value), ttl);
     } catch (error) {
@@ -181,7 +200,7 @@ export class CacheManagerService implements OnModuleInit {
     await this.redis.flushdb();
   }
 
-  getStats(): CacheStats {
+  getStats(): ICacheStats {
     return { ...this.stats };
   }
-} 
+}
